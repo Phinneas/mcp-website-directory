@@ -1,5 +1,145 @@
 ---
-// Remove the API call for now to focus on the static design
+import { getMCPServers } from '../utils/teableApi.js';
+
+// Define interface for MCP server data
+interface MCPServer {
+  id: string;
+  fields: {
+    name: string;
+    description: string;
+    version?: string;
+    status?: string;
+    author?: string;
+    category?: string;
+    language?: string;
+    stars?: number;
+    github_url?: string;
+    npm_package?: string;
+  };
+}
+
+// Fetch MCP servers from Teable CMS with fallback to static data
+let mcpServers: MCPServer[] = [];
+try {
+  mcpServers = await getMCPServers() as MCPServer[];
+} catch (error) {
+  console.error('Failed to fetch from Teable, using static data:', error);
+}
+
+// Static fallback data if Teable fails or returns empty
+const staticServers: MCPServer[] = [
+  {
+    id: 'github-mcp',
+    fields: {
+      name: 'GitHub MCP Server',
+      description: 'Access GitHub repositories, issues, and pull requests directly through MCP. Perfect for AI assistants that need to interact with code repositories.',
+      author: '@modelcontextprotocol',
+      category: 'development',
+      language: 'TypeScript',
+      stars: 1200,
+      github_url: 'https://github.com/modelcontextprotocol/servers',
+      npm_package: '@modelcontextprotocol/server-github'
+    }
+  },
+  {
+    id: 'filesystem-mcp',
+    fields: {
+      name: 'File System MCP',
+      description: 'Secure file operations with configurable access controls. Read, write, and manage files safely through AI conversations.',
+      author: '@anthropic',
+      category: 'productivity',
+      language: 'Python',
+      stars: 890,
+      github_url: 'https://github.com/anthropics/mcp-filesystem',
+      npm_package: '@anthropic/mcp-filesystem'
+    }
+  },
+  {
+    id: 'web-scraper-mcp',
+    fields: {
+      name: 'Web Scraper MCP',
+      description: 'Extract and analyze web content efficiently. Built with Puppeteer for JavaScript-heavy sites and dynamic content.',
+      author: '@community',
+      category: 'web-scraping',
+      language: 'JavaScript',
+      stars: 654,
+      github_url: 'https://github.com/mcp-community/web-scraper',
+      npm_package: '@mcp/web-scraper'
+    }
+  },
+  {
+    id: 'database-mcp',
+    fields: {
+      name: 'Database MCP',
+      description: 'Connect to PostgreSQL, MySQL, and SQLite databases. Execute queries and manage database operations through natural language.',
+      author: '@dbtools',
+      category: 'database',
+      language: 'Go',
+      stars: 432,
+      github_url: 'https://github.com/dbtools/mcp-database',
+      npm_package: '@dbtools/mcp-database'
+    }
+  },
+  {
+    id: 'slack-mcp',
+    fields: {
+      name: 'Slack MCP Server',
+      description: 'Send messages, read channels, and manage Slack workspaces. Perfect for AI assistants that need to interact with team communication.',
+      author: '@slackapi',
+      category: 'communication',
+      language: 'Python',
+      stars: 567,
+      github_url: 'https://github.com/slackapi/mcp-slack',
+      npm_package: '@slack/mcp-server'
+    }
+  },
+  {
+    id: 'aws-mcp',
+    fields: {
+      name: 'AWS MCP Server',
+      description: 'Manage AWS resources through MCP. Control EC2 instances, S3 buckets, and other AWS services with AI assistance.',
+      author: '@aws-samples',
+      category: 'cloud',
+      language: 'Python',
+      stars: 789,
+      github_url: 'https://github.com/aws-samples/mcp-aws',
+      npm_package: '@aws/mcp-server'
+    }
+  }
+];
+
+// Use Teable data if available, otherwise use static data
+if (mcpServers.length === 0) {
+  mcpServers = staticServers;
+}
+
+// Helper function to get the first letter of server name for icon
+function getServerIcon(name: string): string {
+  return name.charAt(0).toUpperCase();
+}
+
+// Helper function to format star count
+function formatStars(stars?: number): string {
+  if (!stars) return '';
+  if (stars >= 1000) {
+    return `★ ${(stars / 1000).toFixed(1)}k`;
+  }
+  return `★ ${stars}`;
+}
+
+// Helper function to get appropriate icon for category
+function getCategoryIcon(category?: string): string {
+  const icons: { [key: string]: string } = {
+    development: 'github',
+    productivity: 'folder',
+    'web-scraping': 'globe',
+    database: 'database',
+    communication: 'message-circle',
+    cloud: 'cloud',
+    'file-system': 'folder'
+  };
+  return icons[category || ''] || 'box';
+}
 ---
 
 <html lang="en">
@@ -313,174 +453,40 @@
     </div>
 
     <div class="servers-grid" id="serversGrid">
-        <!-- Sample MCP Server Cards -->
-        <div class="server-card" data-category="development">
-            <div class="server-header">
-                <div class="server-icon">G</div>
-                <div class="server-title">
-                    <h3>GitHub MCP Server</h3>
-                    <div class="server-author">@modelcontextprotocol</div>
+        {mcpServers.map((server) => (
+            <div class="server-card" data-category={server.fields.category || 'other'}>
+                <div class="server-header">
+                    <div class="server-icon">{getServerIcon(server.fields.name)}</div>
+                    <div class="server-title">
+                        <h3>{server.fields.name}</h3>
+                        <div class="server-author">{server.fields.author || ''}</div>
+                    </div>
+                </div>
+                <div class="server-description">
+                    {server.fields.description}
+                </div>
+                <div class="server-meta">
+                    {server.fields.language && <span class="meta-tag">{server.fields.language}</span>}
+                    {server.fields.author && <span class="meta-tag">{server.fields.author.includes('@') ? 'Official' : 'Community'}</span>}
+                    {server.fields.stars && <span class="meta-tag">{formatStars(server.fields.stars)}</span>}
+                </div>
+                <div class="server-actions">
+                    <a 
+                        href={server.fields.github_url || '#'} 
+                        class="btn btn-primary"
+                        target={server.fields.github_url ? '_blank' : '_self'}
+                        rel={server.fields.github_url ? 'noopener noreferrer' : ''}
+                    >
+                        <i data-lucide={getCategoryIcon(server.fields.category)} size="16"></i>
+                        View Details
+                    </a>
+                    <button class="btn btn-secondary copy-btn" data-package={server.fields.npm_package || `mcp-${server.fields.name.toLowerCase().replace(/\s+/g, '-')}`}>
+                        <i data-lucide="copy" size="16"></i>
+                        Copy
+                    </button>
                 </div>
             </div>
-            <div class="server-description">
-                Access GitHub repositories, issues, and pull requests directly through MCP. Perfect for AI assistants that need to interact with code repositories.
-            </div>
-            <div class="server-meta">
-                <span class="meta-tag">TypeScript</span>
-                <span class="meta-tag">Official</span>
-                <span class="meta-tag">★ 1.2k</span>
-            </div>
-            <div class="server-actions">
-                <a href="#" class="btn btn-primary">
-                    <i data-lucide="github" size="16"></i>
-                    View Details
-                </a>
-                <a href="#" class="btn btn-secondary">
-                    <i data-lucide="copy" size="16"></i>
-                    Copy
-                </a>
-            </div>
-        </div>
-
-        <div class="server-card" data-category="productivity">
-            <div class="server-header">
-                <div class="server-icon">F</div>
-                <div class="server-title">
-                    <h3>File System MCP</h3>
-                    <div class="server-author">@anthropic</div>
-                </div>
-            </div>
-            <div class="server-description">
-                Secure file operations with configurable access controls. Read, write, and manage files safely through AI conversations.
-            </div>
-            <div class="server-meta">
-                <span class="meta-tag">Python</span>
-                <span class="meta-tag">Official</span>
-                <span class="meta-tag">★ 890</span>
-            </div>
-            <div class="server-actions">
-                <a href="#" class="btn btn-primary">
-                    <i data-lucide="folder" size="16"></i>
-                    View Details
-                </a>
-                <a href="#" class="btn btn-secondary">
-                    <i data-lucide="copy" size="16"></i>
-                    Copy
-                </a>
-            </div>
-        </div>
-
-        <div class="server-card" data-category="web-scraping">
-            <div class="server-header">
-                <div class="server-icon">W</div>
-                <div class="server-title">
-                    <h3>Web Scraper MCP</h3>
-                    <div class="server-author">@community</div>
-                </div>
-            </div>
-            <div class="server-description">
-                Extract and analyze web content efficiently. Built with Puppeteer for JavaScript-heavy sites and dynamic content.
-            </div>
-            <div class="server-meta">
-                <span class="meta-tag">JavaScript</span>
-                <span class="meta-tag">Community</span>
-                <span class="meta-tag">★ 654</span>
-            </div>
-            <div class="server-actions">
-                <a href="#" class="btn btn-primary">
-                    <i data-lucide="globe" size="16"></i>
-                    View Details
-                </a>
-                <a href="#" class="btn btn-secondary">
-                    <i data-lucide="copy" size="16"></i>
-                    Copy
-                </a>
-            </div>
-        </div>
-
-        <div class="server-card" data-category="database">
-            <div class="server-header">
-                <div class="server-icon">D</div>
-                <div class="server-title">
-                    <h3>Database MCP</h3>
-                    <div class="server-author">@dbtools</div>
-                </div>
-            </div>
-            <div class="server-description">
-                Connect to PostgreSQL, MySQL, and SQLite databases. Execute queries and manage database operations through natural language.
-            </div>
-            <div class="server-meta">
-                <span class="meta-tag">Go</span>
-                <span class="meta-tag">Community</span>
-                <span class="meta-tag">★ 432</span>
-            </div>
-            <div class="server-actions">
-                <a href="#" class="btn btn-primary">
-                    <i data-lucide="database" size="16"></i>
-                    View Details
-                </a>
-                <a href="#" class="btn btn-secondary">
-                    <i data-lucide="copy" size="16"></i>
-                    Copy
-                </a>
-            </div>
-        </div>
-
-        <div class="server-card" data-category="communication">
-            <div class="server-header">
-                <div class="server-icon">S</div>
-                <div class="server-title">
-                    <h3>Slack MCP Server</h3>
-                    <div class="server-author">@slackapi</div>
-                </div>
-            </div>
-            <div class="server-description">
-                Send messages, read channels, and manage Slack workspaces. Perfect for AI assistants that need to interact with team communication.
-            </div>
-            <div class="server-meta">
-                <span class="meta-tag">Python</span>
-                <span class="meta-tag">Official</span>
-                <span class="meta-tag">★ 567</span>
-            </div>
-            <div class="server-actions">
-                <a href="#" class="btn btn-primary">
-                    <i data-lucide="message-circle" size="16"></i>
-                    View Details
-                </a>
-                <a href="#" class="btn btn-secondary">
-                    <i data-lucide="copy" size="16"></i>
-                    Copy
-                </a>
-            </div>
-        </div>
-
-        <div class="server-card" data-category="cloud">
-            <div class="server-header">
-                <div class="server-icon">A</div>
-                <div class="server-title">
-                    <h3>AWS MCP Server</h3>
-                    <div class="server-author">@aws-samples</div>
-                </div>
-            </div>
-            <div class="server-description">
-                Manage AWS resources through MCP. Control EC2 instances, S3 buckets, and other AWS services with AI assistance.
-            </div>
-            <div class="server-meta">
-                <span class="meta-tag">Python</span>
-                <span class="meta-tag">Community</span>
-                <span class="meta-tag">★ 789</span>
-            </div>
-            <div class="server-actions">
-                <a href="#" class="btn btn-primary">
-                    <i data-lucide="cloud" size="16"></i>
-                    View Details
-                </a>
-                <a href="#" class="btn btn-secondary">
-                    <i data-lucide="copy" size="16"></i>
-                    Copy
-                </a>
-            </div>
-        </div>
+        ))}
     </div>
 
     <div class="stats-section">
@@ -549,15 +555,33 @@
         }
 
         // Copy functionality
-        document.querySelectorAll('.btn-secondary').forEach(btn => {
+        document.querySelectorAll('.copy-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 
-                // Get server name for demo
-                const serverName = btn.closest('.server-card').querySelector('h3').textContent;
+                // Get package name from data attribute
+                const packageName = btn.getAttribute('data-package');
+                const copyText = packageName.startsWith('@') ? `npm install ${packageName}` : `npx ${packageName}`;
                 
-                // Copy to clipboard (demo)
-                navigator.clipboard.writeText(`npx @modelcontextprotocol/server-${serverName.toLowerCase().replace(/\s+/g, '-')}`).then(() => {
+                // Copy to clipboard
+                navigator.clipboard.writeText(copyText).then(() => {
+                    const originalText = btn.innerHTML;
+                    btn.innerHTML = '<i data-lucide="check" size="16"></i> Copied!';
+                    lucide.createIcons();
+                    
+                    setTimeout(() => {
+                        btn.innerHTML = originalText;
+                        lucide.createIcons();
+                    }, 2000);
+                }).catch(() => {
+                    // Fallback for browsers that don't support clipboard API
+                    const textArea = document.createElement('textarea');
+                    textArea.value = copyText;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    
                     const originalText = btn.innerHTML;
                     btn.innerHTML = '<i data-lucide="check" size="16"></i> Copied!';
                     lucide.createIcons();
