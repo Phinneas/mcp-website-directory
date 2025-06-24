@@ -6,9 +6,13 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "start": "node ./dist/server/entry.mjs",
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^5.10.1"
+    "@astrojs/node": "^9.0.0",
+    "astro": "^5.10.1",
+    "axios": "^1.10.0",
+    "dotenv": "^16.3.1"
   }
 }

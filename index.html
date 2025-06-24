@@ -1,7 +1,4 @@
----
-// Remove the API call for now to focus on the static design
----
-
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -116,7 +113,7 @@
 
         .servers-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 1.5rem;
             max-width: 1200px;
             margin: 0 auto;
