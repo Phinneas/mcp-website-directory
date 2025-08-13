@@ -7,13 +7,18 @@
     "build": "astro build",
     "preview": "astro preview",
     "start": "node ./dist/server/entry.mjs",
-    "astro": "astro"
+    "astro": "astro",
+    "tina:dev": "tinacms dev -c \"npm run dev\"",
+    "tina:build": "tinacms build",
+    "tina:init": "tinacms init"
   },
   "dependencies": {
     "@astrojs/node": "^9.0.0",
+    "@tinacms/cli": "^1.10.2",
     "astro": "^5.10.1",
     "axios": "^1.10.0",
     "dotenv": "^16.3.1",
-    "meilisearch": "^0.51.0"
+    "meilisearch": "^0.51.0",
+    "tinacms": "^2.8.2"
   }
 }

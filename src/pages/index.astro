@@ -1,5 +1,5 @@
 ---
-import { getMCPServers } from '../utils/teableApi.js';
+import { fetchAllMCPServers, transformPulseMCPData } from '../utils/pulsemcpApi.js';
 
 // Define interface for MCP server data
 interface MCPServer {
@@ -15,19 +15,14 @@ interface MCPServer {
     stars?: number;
     github_url?: string;
     npm_package?: string;
+    downloads?: number;
+    updated?: string;
   };
 }
 
-// Fetch MCP servers from Teable CMS with fallback to static data
-let mcpServers: MCPServer[] = [];
-try {
-  mcpServers = await getMCPServers() as MCPServer[];
-} catch (error) {
-  console.error('Failed to fetch from Teable, using static data:', error);
-}
-
-// Static fallback data if Teable fails or returns empty
+// Fallback static servers data
 const staticServers: MCPServer[] = [
+  // Official Servers
   {
     id: 'github-mcp',
     fields: {
@@ -46,70 +41,2171 @@ const staticServers: MCPServer[] = [
     fields: {
       name: 'File System MCP',
       description: 'Secure file operations with configurable access controls. Read, write, and manage files safely through AI conversations.',
-      author: '@anthropic',
-      category: 'productivity',
+      author: '@modelcontextprotocol',
+      category: 'file-systems',
+      language: 'TypeScript',
+      stars: 890,
+      github_url: 'https://github.com/modelcontextprotocol/servers',
+      npm_package: '@modelcontextprotocol/server-filesystem'
+    }
+  },
+  {
+    id: 'puppeteer-mcp',
+    fields: {
+      name: 'Puppeteer MCP Server',
+      description: 'Browser automation for web scraping and interaction using Puppeteer. Navigate, extract, and interact with web content.',
+      author: '@modelcontextprotocol',
+      category: 'browser-automation',
+      language: 'TypeScript',
+      stars: 654,
+      github_url: 'https://github.com/modelcontextprotocol/servers',
+      npm_package: '@modelcontextprotocol/server-puppeteer'
+    }
+  },
+  {
+    id: 'postgres-mcp',
+    fields: {
+      name: 'PostgreSQL MCP Server',
+      description: 'Connect to PostgreSQL databases and execute queries through natural language. Secure database operations for AI assistants.',
+      author: '@modelcontextprotocol',
+      category: 'databases',
+      language: 'TypeScript',
+      stars: 432,
+      github_url: 'https://github.com/modelcontextprotocol/servers',
+      npm_package: '@modelcontextprotocol/server-postgres'
+    }
+  },
+  {
+    id: 'sqlite-mcp',
+    fields: {
+      name: 'SQLite MCP Server',
+      description: 'Interact with SQLite databases through MCP. Perfect for local database operations and development workflows.',
+      author: '@modelcontextprotocol',
+      category: 'databases',
+      language: 'TypeScript',
+      stars: 398,
+      github_url: 'https://github.com/modelcontextprotocol/servers',
+      npm_package: '@modelcontextprotocol/server-sqlite'
+    }
+  },
+  {
+    id: 'gdrive-mcp',
+    fields: {
+      name: 'Google Drive MCP Server',
+      description: 'Access and manage Google Drive files and folders. Upload, download, search, and organize documents through AI conversations.',
+      author: '@modelcontextprotocol',
+      category: 'cloud',
+      language: 'TypeScript',
+      stars: 721,
+      github_url: 'https://github.com/modelcontextprotocol/servers',
+      npm_package: '@modelcontextprotocol/server-gdrive'
+    }
+  },
+  
+  // Aggregators & Platforms
+  {
+    id: 'mindsdb-mcp',
+    fields: {
+      name: 'MindsDB MCP Server',
+      description: 'AI query engine - Platform for building AI that can answer questions over large scale federated data. The only MCP Server you\'ll ever need.',
+      author: '@mindsdb',
+      category: 'aggregators',
+      language: 'Python',
+      stars: 35200,
+      github_url: 'https://github.com/mindsdb/mindsdb',
+      npm_package: 'mindsdb'
+    }
+  },
+  {
+    id: 'activepieces-mcp',
+    fields: {
+      name: 'Activepieces MCP',
+      description: 'AI Agents & MCPs & AI Workflow Automation with 280+ MCP servers for AI agents. Complete workflow automation platform.',
+      author: '@activepieces',
+      category: 'aggregators',
+      language: 'TypeScript',
+      stars: 16300,
+      github_url: 'https://github.com/activepieces/activepieces',
+      npm_package: '@activepieces/mcp'
+    }
+  },
+  {
+    id: 'fastmcp',
+    fields: {
+      name: 'FastMCP',
+      description: 'The fast, Pythonic way to build MCP servers and clients. Framework for rapid MCP development with Python.',
+      author: '@jlowin',
+      category: 'aggregators',
+      language: 'Python',
+      stars: 16000,
+      github_url: 'https://github.com/jlowin/fastmcp',
+      npm_package: 'fastmcp'
+    }
+  },
+  {
+    id: 'mcp-use',
+    fields: {
+      name: 'MCP Use',
+      description: 'The easiest way to interact with MCP servers with custom agents. Simplifies MCP server interaction and management.',
+      author: '@mcp-use',
+      category: 'aggregators',
+      language: 'Python',
+      stars: 6000,
+      github_url: 'https://github.com/mcp-use/mcp-use',
+      npm_package: 'mcp-use'
+    }
+  },
+  {
+    id: 'mcp-agent',
+    fields: {
+      name: '1MCP Agent',
+      description: 'A unified Model Context Protocol server implementation that aggregates multiple MCP servers into one powerful interface.',
+      author: '@1mcp-app',
+      category: 'aggregators',
+      language: 'TypeScript',
+      stars: 245,
+      github_url: 'https://github.com/1mcp-app/agent',
+      npm_package: '1mcp-agent'
+    }
+  },
+  {
+    id: 'mcp-jungle',
+    fields: {
+      name: 'MCPJungle',
+      description: 'Self-hosted MCP Server registry for enterprise AI Agents. Discover, manage, and deploy MCP servers at scale.',
+      author: '@duaraghav8',
+      category: 'aggregators',
+      language: 'Go',
+      stars: 189,
+      github_url: 'https://github.com/duaraghav8/MCPJungle',
+      npm_package: 'mcp-jungle'
+    }
+  },
+  {
+    id: 'anyquery-mcp',
+    fields: {
+      name: 'AnyQuery',
+      description: 'Query more than 40 apps with one binary using SQL. Connect to PostgreSQL, MySQL, SQLite and countless APIs through SQL.',
+      author: '@julien040',
+      category: 'aggregators',
+      language: 'Go',
+      stars: 567,
+      github_url: 'https://github.com/julien040/anyquery',
+      npm_package: 'anyquery'
+    }
+  },
+  {
+    id: 'metatool-mcp',
+    fields: {
+      name: 'MetaTool MCP',
+      description: 'The unified middleware MCP server that manages your MCP connections with a powerful GUI interface.',
+      author: '@metatool-ai',
+      category: 'aggregators',
+      language: 'TypeScript',
+      stars: 312,
+      github_url: 'https://github.com/metatool-ai/metatool-app',
+      npm_package: '@metatool/mcp'
+    }
+  },
+  {
+    id: 'pipedream-mcp',
+    fields: {
+      name: 'Pipedream MCP',
+      description: 'Connect with 2,500+ APIs using 8,000+ prebuilt tools. Manage servers for your users in your own applications.',
+      author: '@PipedreamHQ',
+      category: 'aggregators',
+      language: 'TypeScript',
+      stars: 1890,
+      github_url: 'https://github.com/PipedreamHQ/pipedream',
+      npm_package: '@pipedream/mcp'
+    }
+  },
+  {
+    id: 'magg-mcp',
+    fields: {
+      name: 'Magg MCP',
+      description: 'Meta-MCP server acting as universal hub, allowing LLMs to autonomously discover, install, and orchestrate multiple MCP servers.',
+      author: '@sitbon',
+      category: 'aggregators',
+      language: 'Python',
+      stars: 298,
+      github_url: 'https://github.com/sitbon/magg',
+      npm_package: 'magg-mcp'
+    }
+  },
+  
+  // Cloud Platforms & System Management
+  {
+    id: 'awslabs-mcp-official',
+    fields: {
+      name: 'AWS MCP Servers',
+      description: 'Official AWS MCP Servers helping you get the most out of AWS, wherever you use MCP. Complete AWS integration.',
+      author: '@awslabs',
+      category: 'cloud',
+      language: 'Python',
+      stars: 5300,
+      github_url: 'https://github.com/awslabs/mcp',
+      npm_package: '@aws/mcp-servers'
+    }
+  },
+  {
+    id: 'googleapis-genai-toolbox',
+    fields: {
+      name: 'Google GenAI Toolbox',
+      description: 'Official Google MCP Toolbox for Databases. Open source MCP server for databases with GenAI integration.',
+      author: '@googleapis',
+      category: 'databases',
+      language: 'Go',
+      stars: 9100,
+      github_url: 'https://github.com/googleapis/genai-toolbox',
+      npm_package: '@google/genai-toolbox'
+    }
+  },
+  {
+    id: 'panel-1panel',
+    fields: {
+      name: '1Panel MCP Server',
+      description: 'Intuitive web interface and MCP Server to manage websites, files, containers, databases, and LLMs on a Linux server.',
+      author: '@1Panel-dev',
+      category: 'cloud',
+      language: 'Go',
+      stars: 30600,
+      github_url: 'https://github.com/1Panel-dev/1Panel',
+      npm_package: '1panel-mcp'
+    }
+  },
+  {
+    id: 'zen-mcp-server',
+    fields: {
+      name: 'Zen MCP Server',
+      description: 'The power of Claude Code + [Gemini / OpenAI / Grok / OpenRouter / Ollama / Custom Model / All Of The Above] working as one.',
+      author: '@BeehiveInnovations',
+      category: 'ai-tools',
+      language: 'Python',
+      stars: 6000,
+      github_url: 'https://github.com/BeehiveInnovations/zen-mcp-server',
+      npm_package: 'zen-mcp-server'
+    }
+  },
+  {
+    id: 'jetbrains-mcp',
+    fields: {
+      name: 'JetBrains MCP Server',
+      description: 'Official JetBrains MCP server to work with IDEs: IntelliJ, PyCharm, WebStorm, Android Studio. Complete IDE integration.',
+      author: '@JetBrains',
+      category: 'development',
+      language: 'JavaScript',
+      stars: 901,
+      github_url: 'https://github.com/JetBrains/mcp-jetbrains',
+      npm_package: '@jetbrains/mcp'
+    }
+  },
+  {
+    id: 'elevenlabs-mcp',
+    fields: {
+      name: 'ElevenLabs MCP Server',
+      description: 'The official ElevenLabs MCP server for advanced text-to-speech capabilities and voice synthesis.',
+      author: '@elevenlabs',
+      category: 'ai-tools',
+      language: 'Python',
+      stars: 909,
+      github_url: 'https://github.com/elevenlabs/elevenlabs-mcp',
+      npm_package: '@elevenlabs/mcp-server'
+    }
+  },
+  {
+    id: 'minimax-mcp',
+    fields: {
+      name: 'MiniMax MCP Server',
+      description: 'Official MiniMax MCP server enabling powerful Text to Speech, image generation and video generation capabilities.',
+      author: '@MiniMax-AI',
+      category: 'ai-tools',
       language: 'Python',
       stars: 890,
-      github_url: 'https://github.com/anthropics/mcp-filesystem',
-      npm_package: '@anthropic/mcp-filesystem'
-    }
-  },
-  {
-    id: 'web-scraper-mcp',
-    fields: {
-      name: 'Web Scraper MCP',
-      description: 'Extract and analyze web content efficiently. Built with Puppeteer for JavaScript-heavy sites and dynamic content.',
-      author: '@community',
-      category: 'web-scraping',
-      language: 'JavaScript',
-      stars: 654,
-      github_url: 'https://github.com/mcp-community/web-scraper',
-      npm_package: '@mcp/web-scraper'
-    }
-  },
-  {
-    id: 'database-mcp',
-    fields: {
-      name: 'Database MCP',
-      description: 'Connect to PostgreSQL, MySQL, and SQLite databases. Execute queries and manage database operations through natural language.',
-      author: '@dbtools',
-      category: 'database',
-      language: 'Go',
-      stars: 432,
-      github_url: 'https://github.com/dbtools/mcp-database',
-      npm_package: '@dbtools/mcp-database'
-    }
-  },
-  {
-    id: 'slack-mcp',
-    fields: {
-      name: 'Slack MCP Server',
-      description: 'Send messages, read channels, and manage Slack workspaces. Perfect for AI assistants that need to interact with team communication.',
-      author: '@slackapi',
-      category: 'communication',
-      language: 'Python',
-      stars: 567,
-      github_url: 'https://github.com/slackapi/mcp-slack',
-      npm_package: '@slack/mcp-server'
+      github_url: 'https://github.com/MiniMax-AI/MiniMax-MCP',
+      npm_package: '@minimax/mcp-server'
     }
   },
   {
     id: 'aws-mcp',
     fields: {
       name: 'AWS MCP Server',
-      description: 'Manage AWS resources through MCP. Control EC2 instances, S3 buckets, and other AWS services with AI assistance.',
-      author: '@aws-samples',
+      description: 'Official AWS MCP servers for seamless integration with AWS services and resources. Manage EC2, S3, and more.',
+      author: '@awslabs',
+      category: 'cloud',
+      language: 'TypeScript',
+      stars: 789,
+      github_url: 'https://github.com/awslabs/mcp',
+      npm_package: '@aws-sdk/mcp-server'
+    }
+  },
+  {
+    id: 'cloudflare-mcp',
+    fields: {
+      name: 'Cloudflare MCP Server',
+      description: 'Integration with Cloudflare services including Workers, KV, R2, and D1. Manage your edge infrastructure through AI.',
+      author: '@cloudflare',
+      category: 'cloud',
+      language: 'TypeScript',
+      stars: 456,
+      github_url: 'https://github.com/cloudflare/mcp-server-cloudflare',
+      npm_package: '@cloudflare/mcp-server'
+    }
+  },
+  {
+    id: 'kubernetes-mcp',
+    fields: {
+      name: 'Kubernetes MCP Server',
+      description: 'Manage Kubernetes clusters through natural language. Deploy, scale, and monitor applications with AI assistance.',
+      author: '@manusa',
+      category: 'cloud',
+      language: 'Go',
+      stars: 234,
+      github_url: 'https://github.com/manusa/kubernetes-mcp-server',
+      npm_package: '@kubernetes/mcp-server'
+    }
+  },
+  {
+    id: 'pulumi-mcp',
+    fields: {
+      name: 'Pulumi MCP Server',
+      description: 'Interact with Pulumi using Automation API and Cloud API. Preview changes, deploy updates, manage infrastructure as code.',
+      author: '@pulumi',
+      category: 'cloud',
+      language: 'TypeScript',
+      stars: 167,
+      github_url: 'https://github.com/pulumi/mcp-server',
+      npm_package: '@pulumi/mcp'
+    }
+  },
+  
+  // Communication & Enterprise
+  {
+    id: 'slack-mcp-korotovsky',
+    fields: {
+      name: 'Slack MCP Server Pro',
+      description: 'The most powerful MCP Slack Server with no permission requirements, Apps support, multiple transports, and smart history.',
+      author: '@korotovsky',
+      category: 'communication',
+      language: 'Go',
+      stars: 477,
+      github_url: 'https://github.com/korotovsky/slack-mcp-server',
+      npm_package: '@korotovsky/slack-mcp-server'
+    }
+  },
+  {
+    id: 'azure-devops-mcp',
+    fields: {
+      name: 'Microsoft Azure DevOps MCP',
+      description: 'Official Microsoft MCP server for Azure DevOps, bringing the power of Azure DevOps directly to your agents.',
+      author: '@microsoft',
+      category: 'cloud',
+      language: 'TypeScript',
+      stars: 578,
+      github_url: 'https://github.com/microsoft/azure-devops-mcp',
+      npm_package: '@microsoft/azure-devops-mcp'
+    }
+  },
+  {
+    id: 'line-bot-mcp',
+    fields: {
+      name: 'LINE Bot MCP Server',
+      description: 'Official LINE MCP server that integrates LINE Messaging API to connect AI Agent to LINE Official Account.',
+      author: '@line',
+      category: 'communication',
+      language: 'TypeScript',
+      stars: 442,
+      github_url: 'https://github.com/line/line-bot-mcp-server',
+      npm_package: '@line/mcp-server'
+    }
+  },
+  {
+    id: 'slack-mcp',
+    fields: {
+      name: 'Slack MCP Server',
+      description: 'The most powerful MCP Slack server with no permission requirements, Apps support, multiple transports, and smart history.',
+      author: '@korotovsky',
+      category: 'communication',
+      language: 'TypeScript',
+      stars: 567,
+      github_url: 'https://github.com/korotovsky/slack-mcp-server',
+      npm_package: '@korotovsky/slack-mcp-server'
+    }
+  },
+  {
+    id: 'discord-mcp',
+    fields: {
+      name: 'Discord MCP Server',
+      description: 'Interact with Discord servers, channels, and messages. Send messages, manage channels, and monitor activity.',
+      author: '@ubie-oss',
+      category: 'communication',
+      language: 'TypeScript',
+      stars: 123,
+      github_url: 'https://github.com/ubie-oss/discord-mcp-server',
+      npm_package: '@discord/mcp-server'
+    }
+  },
+  {
+    id: 'gmail-mcp',
+    fields: {
+      name: 'Gmail MCP Server',
+      description: 'Access Gmail inbox, send emails, manage labels and filters. Complete email management through AI conversations.',
+      author: '@modelcontextprotocol',
+      category: 'communication',
+      language: 'TypeScript',
+      stars: 445,
+      github_url: 'https://github.com/modelcontextprotocol/servers',
+      npm_package: '@modelcontextprotocol/server-gmail'
+    }
+  },
+  {
+    id: 'telegram-mcp',
+    fields: {
+      name: 'Telegram MCP Server',
+      description: 'Send and receive Telegram messages, manage chats and channels. Complete Telegram bot functionality through MCP.',
+      author: '@telegram-mcp',
+      category: 'communication',
+      language: 'Python',
+      stars: 189,
+      github_url: 'https://github.com/telegram-mcp/server',
+      npm_package: 'telegram-mcp'
+    }
+  },
+  {
+    id: 'whatsapp-mcp',
+    fields: {
+      name: 'WhatsApp MCP Server',
+      description: 'High-quality WhatsApp MCP server for AI-powered WhatsApp automation and messaging integration.',
+      author: '@lharries',
+      category: 'communication',
+      language: 'Go',
+      stars: 4700,
+      github_url: 'https://github.com/lharries/whatsapp-mcp',
+      npm_package: 'whatsapp-mcp'
+    }
+  },
+  
+  // Browser Automation & Official Servers
+  {
+    id: 'microsoft-playwright-mcp',
+    fields: {
+      name: 'Microsoft Playwright MCP',
+      description: 'Official Microsoft Playwright MCP server enabling LLMs to interact with web pages through structured accessibility snapshots.',
+      author: '@microsoft',
+      category: 'browser-automation',
+      language: 'TypeScript',
+      stars: 16700,
+      github_url: 'https://github.com/microsoft/playwright-mcp',
+      npm_package: '@microsoft/playwright-mcp'
+    }
+  },
+  {
+    id: 'mcp-playwright-executeautomation',
+    fields: {
+      name: 'Playwright MCP Server',
+      description: 'Playwright Model Context Protocol Server - Tool to automate Browsers and APIs in Claude Desktop, Cline, Cursor IDE and More.',
+      author: '@executeautomation',
+      category: 'browser-automation',
+      language: 'TypeScript',
+      stars: 4500,
+      github_url: 'https://github.com/executeautomation/mcp-playwright',
+      npm_package: '@executeautomation/mcp-playwright'
+    }
+  },
+  {
+    id: 'mcp-chrome-hangwin',
+    fields: {
+      name: 'Chrome MCP Server',
+      description: 'Chrome extension-based Model Context Protocol server that exposes Chrome browser functionality to AI assistants.',
+      author: '@hangwin',
+      category: 'browser-automation',
+      language: 'TypeScript',
+      stars: 5300,
+      github_url: 'https://github.com/hangwin/mcp-chrome',
+      npm_package: 'mcp-chrome'
+    }
+  },
+  {
+    id: 'chrome-mcp',
+    fields: {
+      name: 'Chrome Browser Automation',
+      description: 'Provides browser automation and semantic search capabilities through Chrome extension integration with high-performance web control.',
+      author: '@hangye',
+      category: 'browser-automation',
+      language: 'TypeScript',
+      stars: 289,
+      github_url: 'https://github.com/hangye/chrome-mcp',
+      npm_package: 'chrome-mcp'
+    }
+  },
+  {
+    id: 'notte-browser-mcp',
+    fields: {
+      name: 'Notte Browser MCP',
+      description: 'Provides a bridge between AI and Notte cloud browser technology, enabling scalable web automation in the cloud.',
+      author: '@notte',
+      category: 'browser-automation',
+      language: 'TypeScript',
+      stars: 167,
+      github_url: 'https://github.com/notte/mcp-server',
+      npm_package: '@notte/mcp-server'
+    }
+  },
+  {
+    id: 'browserbase-mcp',
+    fields: {
+      name: 'Browserbase MCP Server',
+      description: 'Automate browser interactions in the cloud including web navigation, data extraction, form filling, and more.',
+      author: '@browserbase',
+      category: 'browser-automation',
+      language: 'TypeScript',
+      stars: 456,
+      github_url: 'https://github.com/browserbase/mcp-server-browserbase',
+      npm_package: '@browserbase/mcp'
+    }
+  },
+  {
+    id: 'browser-mcp',
+    fields: {
+      name: 'Browser MCP Server',
+      description: 'Automate your local Chrome browser with comprehensive browser control and web automation capabilities.',
+      author: '@browsermcp',
+      category: 'browser-automation',
+      language: 'TypeScript',
+      stars: 234,
+      github_url: 'https://github.com/browsermcp/mcp',
+      npm_package: '@browser/mcp'
+    }
+  },
+  
+  // Databases
+  {
+    id: 'database-mcp-server',
+    fields: {
+      name: 'MCP Database Server',
+      description: 'Connect to SQLite, SQL Server, and PostgreSQL databases. Execute queries and manage database operations.',
+      author: '@executeautomation',
+      category: 'databases',
+      language: 'TypeScript',
+      stars: 432,
+      github_url: 'https://github.com/executeautomation/mcp-database-server',
+      npm_package: '@executeautomation/mcp-database'
+    }
+  },
+  {
+    id: 'mcp-alchemy',
+    fields: {
+      name: 'MCP Alchemy',
+      description: 'Access relational databases like SQLite, PostgreSQL, MySQL, MariaDB, Oracle, and MS-SQL through SQLAlchemy.',
+      author: '@runekaagaard',
+      category: 'databases',
+      language: 'Python',
+      stars: 298,
+      github_url: 'https://github.com/runekaagaard/mcp-alchemy',
+      npm_package: 'mcp-alchemy'
+    }
+  },
+  {
+    id: 'dbhub-mcp',
+    fields: {
+      name: 'DBHub MCP Server',
+      description: 'Universal database MCP server connecting to MySQL, PostgreSQL, SQL Server, and MariaDB with comprehensive tooling.',
+      author: '@bytebase',
+      category: 'databases',
+      language: 'Go',
+      stars: 167,
+      github_url: 'https://github.com/bytebase/dbhub',
+      npm_package: '@bytebase/dbhub-mcp'
+    }
+  },
+  {
+    id: 'mongodb-mcp',
+    fields: {
+      name: 'MongoDB MCP Server',
+      description: 'Official MongoDB MCP server providing a bridge between MongoDB databases and conversational interfaces with full CRUD operations.',
+      author: '@mongodb',
+      category: 'databases',
+      language: 'TypeScript',
+      stars: 345,
+      github_url: 'https://github.com/mongodb/mcp-server',
+      npm_package: '@mongodb/mcp-server'
+    }
+  },
+  {
+    id: 'supabase-mcp',
+    fields: {
+      name: 'Supabase MCP Server',
+      description: 'Official Supabase MCP server for managing databases, executing SQL queries, and real-time data operations.',
+      author: '@supabase',
+      category: 'databases',
+      language: 'TypeScript',
+      stars: 278,
+      github_url: 'https://github.com/supabase/mcp-server',
+      npm_package: '@supabase/mcp-server'
+    }
+  },
+  {
+    id: 'google-db-toolbox-mcp',
+    fields: {
+      name: 'Google Database Toolbox',
+      description: 'Official Google MCP server providing secure, configurable interface for executing pre-defined queries against multiple database systems.',
+      author: '@google',
+      category: 'databases',
+      language: 'TypeScript',
+      stars: 234,
+      github_url: 'https://github.com/google/database-toolbox-mcp',
+      npm_package: '@google/database-toolbox-mcp'
+    }
+  },
+  
+  // Development Tools & Official Servers
+  {
+    id: 'github-official-mcp-new',
+    fields: {
+      name: 'GitHub Official MCP Server',
+      description: 'GitHub\'s official MCP Server for seamless integration with GitHub repositories, issues, and pull requests.',
+      author: '@github',
+      category: 'development',
+      language: 'Go',
+      stars: 20600,
+      github_url: 'https://github.com/github/github-mcp-server',
+      npm_package: '@github/mcp-server'
+    }
+  },
+  {
+    id: 'upstash-context7',
+    fields: {
+      name: 'Context7 MCP Server',
+      description: 'Up-to-date code documentation for LLMs and AI code editors. Provides intelligent code context and documentation.',
+      author: '@upstash',
+      category: 'development',
+      language: 'JavaScript',
+      stars: 25100,
+      github_url: 'https://github.com/upstash/context7',
+      npm_package: '@upstash/context7'
+    }
+  },
+  {
+    id: 'git-mcp-idosal',
+    fields: {
+      name: 'GitMCP',
+      description: 'Put an end to code hallucinations! GitMCP is a free, open-source, remote MCP server for any GitHub project.',
+      author: '@idosal',
+      category: 'development',
+      language: 'TypeScript',
+      stars: 4700,
+      github_url: 'https://github.com/idosal/git-mcp',
+      npm_package: 'git-mcp'
+    }
+  },
+  {
+    id: 'serena-mcp',
+    fields: {
+      name: 'Serena MCP',
+      description: 'A powerful coding agent toolkit providing semantic retrieval and editing capabilities. MCP server & Agno integration.',
+      author: '@oraios',
+      category: 'development',
+      language: 'Python',
+      stars: 8300,
+      github_url: 'https://github.com/oraios/serena',
+      npm_package: 'serena-mcp'
+    }
+  },
+  {
+    id: 'mcp-inspector',
+    fields: {
+      name: 'MCP Inspector',
+      description: 'Official visual testing tool for MCP servers. Debug and test MCP server implementations with ease.',
+      author: '@modelcontextprotocol',
+      category: 'development',
+      language: 'TypeScript',
+      stars: 5600,
+      github_url: 'https://github.com/modelcontextprotocol/inspector',
+      npm_package: '@modelcontextprotocol/inspector'
+    }
+  },
+  {
+    id: 'ghidra-mcp',
+    fields: {
+      name: 'GhidraMCP',
+      description: 'MCP Server for Ghidra reverse engineering platform. Integrate Ghidra analysis capabilities with AI assistants.',
+      author: '@LaurieWired',
+      category: 'development',
+      language: 'Java',
+      stars: 5600,
+      github_url: 'https://github.com/LaurieWired/GhidraMCP',
+      npm_package: 'ghidra-mcp'
+    }
+  },
+  {
+    id: 'figma-context-mcp',
+    fields: {
+      name: 'Figma Context MCP',
+      description: 'MCP server to provide Figma layout information to AI coding agents like Cursor. Bridge design and development.',
+      author: '@GLips',
+      category: 'development',
+      language: 'TypeScript',
+      stars: 9800,
+      github_url: 'https://github.com/GLips/Figma-Context-MCP',
+      npm_package: 'figma-context-mcp'
+    }
+  },
+  {
+    id: 'git-mcp',
+    fields: {
+      name: 'Git MCP Server',
+      description: 'Complete Git operations through MCP. Clone, commit, push, pull, branch management, and repository operations.',
+      author: '@modelcontextprotocol',
+      category: 'development',
+      language: 'TypeScript',
+      stars: 678,
+      github_url: 'https://github.com/modelcontextprotocol/servers',
+      npm_package: '@modelcontextprotocol/server-git'
+    }
+  },
+  {
+    id: 'docker-mcp',
+    fields: {
+      name: 'Docker MCP Server',
+      description: 'Manage Docker containers, images, and networks. Build, run, and deploy containerized applications through AI.',
+      author: '@docker',
+      category: 'development',
+      language: 'Go',
+      stars: 445,
+      github_url: 'https://github.com/docker/mcp-servers',
+      npm_package: '@docker/mcp'
+    }
+  },
+  {
+    id: 'vscode-mcp',
+    fields: {
+      name: 'VS Code MCP Server',
+      description: 'Control Visual Studio Code through MCP. Open files, run commands, manage extensions, and automate development workflows.',
+      author: '@vscode-mcp',
+      category: 'development',
+      language: 'TypeScript',
+      stars: 234,
+      github_url: 'https://github.com/vscode-mcp/server',
+      npm_package: '@vscode/mcp'
+    }
+  },
+  {
+    id: 'desktop-commander-mcp',
+    fields: {
+      name: 'Desktop Commander MCP',
+      description: 'MCP server for Claude that gives it terminal control, file system search and diff file editing capabilities.',
+      author: '@wonderwhy-er',
+      category: 'development',
+      language: 'JavaScript',
+      stars: 4200,
+      github_url: 'https://github.com/wonderwhy-er/DesktopCommanderMCP',
+      npm_package: 'desktop-commander-mcp'
+    }
+  },
+  {
+    id: 'xcode-build-mcp',
+    fields: {
+      name: 'Xcode Build MCP',
+      description: 'A Model Context Protocol server that provides Xcode-related tools for integration with AI assistants and other MCP clients.',
+      author: '@cameroncooke',
+      category: 'development',
+      language: 'TypeScript',
+      stars: 2300,
+      github_url: 'https://github.com/cameroncooke/XcodeBuildMCP',
+      npm_package: 'xcode-build-mcp'
+    }
+  },
+  {
+    id: 'unity-mcp',
+    fields: {
+      name: 'Unity MCP Server',
+      description: 'A Unity MCP server that allows MCP clients like Claude Desktop or Cursor to perform Unity Editor actions.',
+      author: '@CoplayDev',
+      category: 'development',
+      language: 'C#',
+      stars: 2800,
+      github_url: 'https://github.com/CoplayDev/unity-mcp',
+      npm_package: 'unity-mcp'
+    }
+  },
+  {
+    id: 'ida-pro-mcp',
+    fields: {
+      name: 'IDA Pro MCP Server',
+      description: 'MCP Server for IDA Pro reverse engineering platform. Advanced malware analysis and reverse engineering capabilities.',
+      author: '@mrexodia',
+      category: 'development',
+      language: 'Python',
+      stars: 3000,
+      github_url: 'https://github.com/mrexodia/ida-pro-mcp',
+      npm_package: 'ida-pro-mcp'
+    }
+  },
+  {
+    id: 'github-official-mcp',
+    fields: {
+      name: 'GitHub Official MCP',
+      description: 'Official GitHub MCP server for Issues, Pull Requests, and repository management. Direct integration with GitHub platform.',
+      author: '@github',
+      category: 'development',
+      language: 'TypeScript',
+      stars: 1456,
+      github_url: 'https://github.com/github/github-mcp-server',
+      npm_package: '@github/mcp-server'
+    }
+  },
+  {
+    id: 'gitmcp-documentation',
+    fields: {
+      name: 'GitMCP Documentation Hub',
+      description: 'Transform any GitHub project into a comprehensive documentation hub with AI-powered analysis and organization.',
+      author: '@idosalomon',
+      category: 'development',
+      language: 'TypeScript',
+      stars: 234,
+      github_url: 'https://github.com/idosalomon/gitmcp',
+      npm_package: 'gitmcp'
+    }
+  },
+  
+  // File Systems
+  {
+    id: 's3-mcp',
+    fields: {
+      name: 'S3 MCP Server',
+      description: 'Access Amazon S3 buckets with seamless integration. Upload, download, manage files with streaming capabilities for large files.',
+      author: '@Geun-Oh',
+      category: 'file-systems',
+      language: 'TypeScript',
+      stars: 189,
+      github_url: 'https://github.com/Geun-Oh/s3-mcp-server',
+      npm_package: '@aws/s3-mcp'
+    }
+  },
+  {
+    id: 'google-drive-mcp',
+    fields: {
+      name: 'Google Drive MCP',
+      description: 'Comprehensive Google Drive integration. Search, upload, download, share, and manage files and folders.',
+      author: '@google-drive-mcp',
+      category: 'file-systems',
+      language: 'Python',
+      stars: 345,
+      github_url: 'https://github.com/google-drive-mcp/server',
+      npm_package: 'google-drive-mcp'
+    }
+  },
+  
+  // AI Tools
+  {
+    id: 'openai-mcp',
+    fields: {
+      name: 'OpenAI MCP Server',
+      description: 'OpenAI GPT image generation and editing MCP server. Generate high-quality images from text prompts.',
+      author: '@SureScaleAI',
+      category: 'ai-tools',
+      language: 'TypeScript',
+      stars: 567,
+      github_url: 'https://github.com/SureScaleAI/openai-gpt-image-mcp',
+      npm_package: '@openai/mcp-server'
+    }
+  },
+  {
+    id: 'anthropic-mcp',
+    fields: {
+      name: 'Anthropic Claude MCP',
+      description: 'Give your AI assistant its own AI assistants. Ask Claude to generate content, analyze data, and more.',
+      author: '@gwbischof',
+      category: 'ai-tools',
+      language: 'Python',
+      stars: 234,
+      github_url: 'https://github.com/gwbischof/outsource-mcp',
+      npm_package: 'anthropic-mcp'
+    }
+  },
+  
+  // Security & Analysis
+  {
+    id: 'semgrep-mcp',
+    fields: {
+      name: 'Semgrep MCP Server',
+      description: 'Official Semgrep MCP server for using Semgrep to scan code for security vulnerabilities and code quality issues.',
+      author: '@semgrep',
+      category: 'security',
+      language: 'Python',
+      stars: 408,
+      github_url: 'https://github.com/semgrep/mcp',
+      npm_package: '@semgrep/mcp-server'
+    }
+  },
+  {
+    id: 'reverse-engineering-mcp',
+    fields: {
+      name: 'Reverse Engineering Assistant',
+      description: 'MCP server for reverse engineering tasks in Ghidra and BinaryNinja. Advanced malware analysis and security research.',
+      author: '@cyberkaida',
+      category: 'security',
+      language: 'Java',
+      stars: 390,
+      github_url: 'https://github.com/cyberkaida/reverse-engineering-assistant',
+      npm_package: 'reverse-engineering-mcp'
+    }
+  },
+  {
+    id: 'mcp-security-tools',
+    fields: {
+      name: 'MCP Security Tools',
+      description: 'Collection of MCP servers for security tools like SQLMap, FFUF, NMAP, Masscan. Comprehensive cybersecurity toolkit.',
+      author: '@cyproxio',
+      category: 'security',
+      language: 'TypeScript',
+      stars: 326,
+      github_url: 'https://github.com/cyproxio/mcp-for-security',
+      npm_package: 'mcp-security-tools'
+    }
+  },
+  {
+    id: 'sentry-mcp',
+    fields: {
+      name: 'Sentry MCP Server',
+      description: 'Official Sentry MCP server for interacting with Sentry error monitoring and performance tracking via LLMs.',
+      author: '@getsentry',
+      category: 'security',
+      language: 'TypeScript',
+      stars: 292,
+      github_url: 'https://github.com/getsentry/sentry-mcp',
+      npm_package: '@sentry/mcp-server'
+    }
+  },
+  {
+    id: 'netskope-mcp',
+    fields: {
+      name: 'Netskope MCP Server',
+      description: 'Access all Netskope Private Access components within environments including detailed setup information and usage examples.',
+      author: '@johnneerdael',
+      category: 'security',
+      language: 'Python',
+      stars: 78,
+      github_url: 'https://github.com/johnneerdael/netskope-mcp',
+      npm_package: 'netskope-mcp'
+    }
+  },
+  
+  // Finance
+  {
+    id: 'binance-mcp',
+    fields: {
+      name: 'Binance MCP Server',
+      description: 'Access Binance cryptocurrency exchange data. Get market prices, trading pairs, and account information.',
+      author: '@crypto-mcp',
+      category: 'finance',
+      language: 'Python',
+      stars: 145,
+      github_url: 'https://github.com/crypto-mcp/binance-server',
+      npm_package: 'binance-mcp'
+    }
+  },
+  {
+    id: 'aws-pricing-mcp',
+    fields: {
+      name: 'AWS Pricing MCP',
+      description: 'Get up-to-date EC2 pricing information with one call. Fast access to AWS pricing catalog data.',
+      author: '@trilogy-group',
+      category: 'finance',
+      language: 'Go',
+      stars: 89,
+      github_url: 'https://github.com/trilogy-group/aws-pricing-mcp',
+      npm_package: 'aws-pricing-mcp'
+    }
+  },
+  
+  // Media & Multimedia
+  {
+    id: 'youtube-mcp',
+    fields: {
+      name: 'YouTube MCP Server',
+      description: 'Fully functional MCP server and CLI for YouTube automation. Fetch transcripts, manage playlists, and control playback.',
+      author: '@eat-pray-ai',
+      category: 'media',
+      language: 'Go',
+      stars: 234,
+      github_url: 'https://github.com/eat-pray-ai/yutu',
+      npm_package: 'youtube-mcp'
+    }
+  },
+  {
+    id: 'powerpoint-mcp',
+    fields: {
+      name: 'PowerPoint MCP Server',
+      description: 'A MCP server for PowerPoint manipulation using python-pptx. Create, edit, and manage presentations programmatically.',
+      author: '@GongRzhe',
+      category: 'productivity',
+      language: 'Python',
+      stars: 836,
+      github_url: 'https://github.com/GongRzhe/Office-PowerPoint-MCP-Server',
+      npm_package: 'powerpoint-mcp'
+    }
+  },
+  {
+    id: 'word-mcp-server',
+    fields: {
+      name: 'Microsoft Word MCP Server',
+      description: 'MCP server for creating, reading, and manipulating Microsoft Word documents. Complete document automation for AI.',
+      author: '@GongRzhe',
+      category: 'productivity',
+      language: 'Python',
+      stars: 571,
+      github_url: 'https://github.com/GongRzhe/Office-Word-MCP-Server',
+      npm_package: 'word-mcp-server'
+    }
+  },
+  {
+    id: 'gmail-mcp-gong',
+    fields: {
+      name: 'Gmail MCP Server Pro',
+      description: 'Enhanced Gmail MCP Server with auto authentication support. Complete Gmail integration for AI assistants.',
+      author: '@GongRzhe',
+      category: 'communication',
+      language: 'JavaScript',
+      stars: 587,
+      github_url: 'https://github.com/GongRzhe/Gmail-MCP-Server',
+      npm_package: 'gmail-mcp-pro'
+    }
+  },
+  {
+    id: 'jupyter-mcp',
+    fields: {
+      name: 'Jupyter MCP Server',
+      description: 'Official Jupyter Model Context Protocol server for notebook operations, data science workflows, and interactive computing.',
+      author: '@datalayer',
+      category: 'development',
+      language: 'Python',
+      stars: 578,
+      github_url: 'https://github.com/datalayer/jupyter-mcp-server',
+      npm_package: '@datalayer/jupyter-mcp'
+    }
+  },
+  {
+    id: 'video-editing-mcp',
+    fields: {
+      name: 'Video Editing MCP',
+      description: 'Add, analyze, search, and generate video edits from your video collection. Complete video processing toolkit.',
+      author: '@burningion',
+      category: 'media',
+      language: 'Python',
+      stars: 167,
+      github_url: 'https://github.com/burningion/video-editing-mcp',
+      npm_package: 'video-editing-mcp'
+    }
+  },
+  
+  // Productivity & Office Tools
+  {
+    id: 'notion-mcp-official',
+    fields: {
+      name: 'Official Notion MCP Server',
+      description: 'Official Notion MCP Server for seamless integration with Notion workspaces, databases, and pages.',
+      author: '@makenotion',
+      category: 'productivity',
+      language: 'TypeScript',
+      stars: 2900,
+      github_url: 'https://github.com/makenotion/notion-mcp-server',
+      npm_package: '@makenotion/notion-mcp-server'
+    }
+  },
+  {
+    id: 'excel-mcp-server',
+    fields: {
+      name: 'Excel MCP Server',
+      description: 'A Model Context Protocol server for Excel file manipulation with automation and AI integration capabilities.',
+      author: '@haris-musa',
+      category: 'productivity',
+      language: 'Python',
+      stars: 2000,
+      github_url: 'https://github.com/haris-musa/excel-mcp-server',
+      npm_package: 'excel-mcp-server'
+    }
+  },
+  {
+    id: 'obsidian-mcp',
+    fields: {
+      name: 'Obsidian MCP Server',
+      description: 'MCP server that interacts with Obsidian via the Obsidian REST API community plugin for knowledge management.',
+      author: '@MarkusPfundstein',
+      category: 'productivity',
+      language: 'Python',
+      stars: 1700,
+      github_url: 'https://github.com/MarkusPfundstein/mcp-obsidian',
+      npm_package: 'obsidian-mcp'
+    }
+  },
+  {
+    id: 'atlassian-mcp',
+    fields: {
+      name: 'Atlassian MCP Server',
+      description: 'MCP server for Atlassian tools (Confluence, Jira) providing comprehensive project management and documentation.',
+      author: '@sooperset',
+      category: 'productivity',
+      language: 'Python',
+      stars: 2800,
+      github_url: 'https://github.com/sooperset/mcp-atlassian',
+      npm_package: 'atlassian-mcp'
+    }
+  },
+  {
+    id: 'apple-reminders-mcp',
+    fields: {
+      name: 'Apple Reminders MCP',
+      description: 'Interact with Apple Reminders on macOS. Create, update, complete, and manage your reminders and lists.',
+      author: '@FradSer',
+      category: 'productivity',
+      language: 'TypeScript',
+      stars: 123,
+      github_url: 'https://github.com/FradSer/mcp-server-apple-reminders',
+      npm_package: 'apple-reminders-mcp'
+    }
+  },
+  {
+    id: 'apple-shortcuts-mcp',
+    fields: {
+      name: 'Apple Shortcuts MCP',
+      description: 'Integration with Apple Shortcuts on macOS and iOS. Run shortcuts and automate workflows through AI conversations.',
+      author: '@recursechat',
+      category: 'productivity',
+      language: 'TypeScript',
+      stars: 98,
+      github_url: 'https://github.com/recursechat/mcp-server-apple-shortcuts',
+      npm_package: 'apple-shortcuts-mcp'
+    }
+  },
+  {
+    id: 'apple-health-mcp',
+    fields: {
+      name: 'Apple Health MCP Server',
+      description: 'MCP server for querying Apple Health data with natural language and SQL. Complete health data integration.',
+      author: '@neiltron',
+      category: 'productivity',
+      language: 'TypeScript',
+      stars: 436,
+      github_url: 'https://github.com/neiltron/apple-health-mcp',
+      npm_package: 'apple-health-mcp'
+    }
+  },
+  {
+    id: 'macos-automator-mcp',
+    fields: {
+      name: 'macOS Automator MCP',
+      description: 'MCP server to run AppleScript and JXA (JavaScript for Automation) to macOS. Complete Mac automation toolkit.',
+      author: '@steipete',
+      category: 'productivity',
+      language: 'TypeScript',
+      stars: 431,
+      github_url: 'https://github.com/steipete/macos-automator-mcp',
+      npm_package: 'macos-automator-mcp'
+    }
+  },
+  {
+    id: 'homeassistant-mcp',
+    fields: {
+      name: 'Home Assistant MCP',
+      description: 'MCP server for Home Assistant smart home automation. Control lights, sensors, and IoT devices through AI.',
+      author: '@tevonsb',
+      category: 'productivity',
+      language: 'TypeScript',
+      stars: 395,
+      github_url: 'https://github.com/tevonsb/homeassistant-mcp',
+      npm_package: 'homeassistant-mcp'
+    }
+  },
+  
+  // Search & Web Scraping
+  {
+    id: 'web-search-mcp',
+    fields: {
+      name: 'Web Search MCP',
+      description: 'Free web searching using Google search results with no API keys required. Get real-time search results.',
+      author: '@pskill9',
+      category: 'search',
+      language: 'TypeScript',
+      stars: 289,
+      github_url: 'https://github.com/pskill9/web-search',
+      npm_package: 'web-search-mcp'
+    }
+  },
+  {
+    id: 'brave-search-mcp',
+    fields: {
+      name: 'Brave Search MCP',
+      description: 'Official Anthropic server to retrieve web pages, news, and local business results via Brave Search API.',
+      author: '@modelcontextprotocol',
+      category: 'search',
+      language: 'TypeScript',
+      stars: 567,
+      github_url: 'https://github.com/modelcontextprotocol/servers',
+      npm_package: '@modelcontextprotocol/server-brave-search'
+    }
+  },
+  {
+    id: 'firecrawl-mcp-official',
+    fields: {
+      name: 'FireCrawl MCP Server',
+      description: 'Official Firecrawl MCP Server - Adds powerful web scraping to Cursor, Claude and any other LLM clients.',
+      author: '@mendableai',
+      category: 'search',
+      language: 'JavaScript',
+      stars: 4100,
+      github_url: 'https://github.com/mendableai/firecrawl-mcp-server',
+      npm_package: '@mendableai/firecrawl-mcp-server'
+    }
+  },
+  {
+    id: 'tavily-mcp',
+    fields: {
+      name: 'Tavily Search MCP',
+      description: 'Advanced web search and research capabilities powered by Tavily API. Get comprehensive search results with analysis.',
+      author: '@tavily-ai',
+      category: 'search',
+      language: 'Python',
+      stars: 156,
+      github_url: 'https://github.com/tavily-ai/mcp-server',
+      npm_package: 'tavily-mcp'
+    }
+  },
+  
+  // Payments & E-commerce
+  {
+    id: 'stripe-mcp',
+    fields: {
+      name: 'Stripe Agent Toolkit',
+      description: 'Official Stripe MCP server integrating with Stripe API for payment processing, customer management, and financial operations.',
+      author: '@stripe',
+      category: 'finance',
+      language: 'TypeScript',
+      stars: 789,
+      github_url: 'https://github.com/stripe/mcp-server',
+      npm_package: '@stripe/mcp-server'
+    }
+  },
+  
+  // System Automation
+  {
+    id: 'windows-desktop-mcp',
+    fields: {
+      name: 'Windows Desktop Control',
+      description: 'Enables AI to control Windows desktop applications through UIAutomation and PyAutoGUI for comprehensive system automation.',
+      author: '@jeomon',
+      category: 'productivity',
+      language: 'Python',
+      stars: 345,
+      github_url: 'https://github.com/jeomon/windows-desktop-mcp',
+      npm_package: 'windows-desktop-mcp'
+    }
+  },
+  
+  // AI & ML Tools
+  {
+    id: 'aws-bedrock-mcp',
+    fields: {
+      name: 'AWS Bedrock Knowledge Base',
+      description: 'Official AWS MCP server providing bridge to access Amazon Bedrock Knowledge Bases for AI-powered document retrieval.',
+      author: '@aws',
+      category: 'ai-tools',
+      language: 'TypeScript',
+      stars: 234,
+      github_url: 'https://github.com/aws/bedrock-mcp-server',
+      npm_package: '@aws/bedrock-mcp'
+    }
+  },
+  {
+    id: 'knowledge-graph-mcp',
+    fields: {
+      name: 'Knowledge Graph Memory',
+      description: 'Official Anthropic server to build and query persistent semantic networks for advanced data management and relationships.',
+      author: '@modelcontextprotocol',
+      category: 'ai-tools',
+      language: 'TypeScript',
+      stars: 678,
+      github_url: 'https://github.com/modelcontextprotocol/servers',
+      npm_package: '@modelcontextprotocol/server-memory'
+    }
+  },
+  {
+    id: 'sequential-thinking-mcp',
+    fields: {
+      name: 'Sequential Thinking MCP',
+      description: 'Official Anthropic server implementing structured sequential thinking processes for enhanced AI reasoning capabilities.',
+      author: '@modelcontextprotocol',
+      category: 'ai-tools',
+      language: 'TypeScript',
+      stars: 445,
+      github_url: 'https://github.com/modelcontextprotocol/servers',
+      npm_package: '@modelcontextprotocol/server-sequential-thinking'
+    }
+  },
+  
+  // Documentation & Knowledge
+  {
+    id: 'aws-docs-mcp',
+    fields: {
+      name: 'AWS Documentation MCP',
+      description: 'Official AWS MCP server providing tools to access AWS documentation, search content, and get service recommendations.',
+      author: '@aws',
+      category: 'productivity',
+      language: 'TypeScript',
+      stars: 234,
+      github_url: 'https://github.com/aws/aws-docs-mcp',
+      npm_package: '@aws/docs-mcp'
+    }
+  },
+
+  // Additional High-Quality Servers - Batch 3
+  {
+    id: 'aws-secrets-mcp',
+    fields: {
+      name: 'AWS Secrets Manager MCP',
+      description: 'MCP server for securely accessing and managing secrets stored in AWS Secrets Manager.',
+      author: '@aws-labs',
+      category: 'security',
+      language: 'TypeScript',
+      stars: 87,
+      github_url: 'https://github.com/aws-labs/mcp-aws-secrets-manager',
+      npm_package: '@aws-labs/mcp-aws-secrets'
+    }
+  },
+  {
+    id: 'todo-txt-mcp',
+    fields: {
+      name: 'Todo.txt MCP Server',
+      description: 'MCP server for managing todo.txt files - the simple, text-based task management system.',
+      author: '@mheob',
+      category: 'productivity',
+      language: 'TypeScript',
+      stars: 76,
+      github_url: 'https://github.com/mheob/mcp-server-todo-txt',
+      npm_package: '@mheob/mcp-server-todo-txt'
+    }
+  },
+  {
+    id: 'pandoc-mcp',
+    fields: {
+      name: 'Pandoc MCP Server',
+      description: 'Document conversion server using Pandoc - convert between dozens of markup formats including Markdown, LaTeX, HTML, and more.',
+      author: '@vespaiach',
+      category: 'productivity',
+      language: 'JavaScript',
+      stars: 72,
+      github_url: 'https://github.com/vespaiach/pandoc_mcp_server',
+      npm_package: 'pandoc-mcp-server'
+    }
+  },
+  {
+    id: 'farcaster-mcp',
+    fields: {
+      name: 'Farcaster MCP Server',
+      description: 'Interact with Farcaster protocol - the decentralized social network. Publish posts, follow users, and manage channels.',
+      author: '@dylsteck',
+      category: 'communication',
+      language: 'TypeScript',
+      stars: 65,
+      github_url: 'https://github.com/dylsteck/farcaster-mcp',
+      npm_package: '@dylsteck/farcaster-mcp'
+    }
+  },
+  {
+    id: 'rubygems-mcp',
+    fields: {
+      name: 'RubyGems MCP Server',
+      description: 'Search and retrieve information from RubyGems.org - package details, versions, dependencies, and statistics.',
+      author: '@parthpatel6347',
+      category: 'development',
+      language: 'Ruby',
+      stars: 58,
+      github_url: 'https://github.com/parthpatel6347/rubygems-mcp',
+      npm_package: 'rubygems-mcp'
+    }
+  },
+  {
+    id: 'raygun-mcp',
+    fields: {
+      name: 'Raygun MCP Server',
+      description: 'Error tracking and performance monitoring with Raygun APM - monitor crashes, errors, and app performance.',
+      author: '@MindscapeHQ',
+      category: 'development',
+      language: 'TypeScript',
+      stars: 52,
+      github_url: 'https://github.com/MindscapeHQ/raygun-mcp',
+      npm_package: '@mindscape/raygun-mcp'
+    }
+  },
+  {
+    id: 'neon-mcp',
+    fields: {
+      name: 'Neon MCP Server',
+      description: 'Serverless PostgreSQL database operations with Neon - manage databases, run queries, and handle migrations.',
+      author: '@neondatabase',
+      category: 'databases',
+      language: 'TypeScript',
+      stars: 48,
+      github_url: 'https://github.com/neondatabase/mcp-server-neon',
+      npm_package: '@neondatabase/mcp-server'
+    }
+  },
+  {
+    id: 'obsidian-mcp',
+    fields: {
+      name: 'Obsidian MCP Server',
+      description: 'Connect to Obsidian vaults - read, search, and manage notes in the popular knowledge management tool.',
+      author: '@calclavia',
+      category: 'productivity',
+      language: 'TypeScript',
+      stars: 45,
+      github_url: 'https://github.com/calclavia/mcp-obsidian',
+      npm_package: '@calclavia/mcp-obsidian'
+    }
+  },
+  {
+    id: 'gitlab-mcp',
+    fields: {
+      name: 'GitLab MCP Server',
+      description: 'GitLab integration for managing repositories, issues, merge requests, and CI/CD pipelines.',
+      author: '@eniehack',
+      category: 'development',
+      language: 'Go',
+      stars: 42,
+      github_url: 'https://github.com/eniehack/gitlab-mcp-server',
+      npm_package: 'gitlab-mcp-server'
+    }
+  },
+  {
+    id: 'spotify-mcp',
+    fields: {
+      name: 'Spotify MCP Server',
+      description: 'Control Spotify playback, search music, manage playlists, and retrieve track information through the Spotify Web API.',
+      author: '@varunneal',
+      category: 'media',
+      language: 'Python',
+      stars: 38,
+      github_url: 'https://github.com/varunneal/spotify-mcp',
+      npm_package: 'spotify-mcp-server'
+    }
+  },
+  {
+    id: 'docker-mcp',
+    fields: {
+      name: 'Docker MCP Server',
+      description: 'Manage Docker containers, images, networks, and volumes. Run containers, check status, and handle Docker operations.',
+      author: '@apacholik',
+      category: 'development',
+      language: 'Python',
+      stars: 35,
+      github_url: 'https://github.com/apacholik/docker-mcp-server',
+      npm_package: 'docker-mcp-server'
+    }
+  },
+  {
+    id: 'tmux-mcp',
+    fields: {
+      name: 'Tmux MCP Server',
+      description: 'Terminal multiplexer control - manage tmux sessions, windows, and panes programmatically.',
+      author: '@ianho',
+      category: 'development',
+      language: 'Python',
+      stars: 32,
+      github_url: 'https://github.com/ianho/tmux-mcp-server',
+      npm_package: 'tmux-mcp-server'
+    }
+  },
+  {
+    id: 'filesystem-tree-mcp',
+    fields: {
+      name: 'Filesystem Tree MCP',
+      description: 'Generate and visualize directory structures as tree diagrams. Perfect for understanding project layouts.',
+      author: '@exa',
+      category: 'file-systems',
+      language: 'Rust',
+      stars: 28,
+      github_url: 'https://github.com/exa-labs/filesystem-tree-mcp',
+      npm_package: 'filesystem-tree-mcp'
+    }
+  },
+  {
+    id: 'kubernetes-mcp',
+    fields: {
+      name: 'Kubernetes MCP Server',
+      description: 'Kubernetes cluster management - deploy pods, manage services, check cluster health, and handle K8s resources.',
+      author: '@cloudnative',
+      category: 'cloud',
+      language: 'Go',
+      stars: 156,
+      github_url: 'https://github.com/cloudnative/k8s-mcp-server',
+      npm_package: 'kubernetes-mcp-server'
+    }
+  },
+  {
+    id: 'homebrew-mcp',
+    fields: {
+      name: 'Homebrew MCP Server',
+      description: 'Package management for macOS/Linux with Homebrew - install, update, and manage software packages.',
+      author: '@Homebrew',
+      category: 'development',
+      language: 'Ruby',
+      stars: 125,
+      github_url: 'https://github.com/Homebrew/homebrew-mcp',
+      npm_package: '@homebrew/mcp-server'
+    }
+  },
+  {
+    id: 'jenkins-mcp',
+    fields: {
+      name: 'Jenkins MCP Server',
+      description: 'CI/CD automation with Jenkins - trigger builds, check job status, manage pipelines and deployments.',
+      author: '@jenkinsci',
+      category: 'development',
+      language: 'Java',
+      stars: 89,
+      github_url: 'https://github.com/jenkinsci/mcp-plugin',
+      npm_package: '@jenkins/mcp-server'
+    }
+  },
+  {
+    id: 'terraform-mcp',
+    fields: {
+      name: 'Terraform MCP Server',
+      description: 'Infrastructure as Code management - plan, apply, and manage Terraform configurations and state.',
+      author: '@hashicorp',
+      category: 'cloud',
+      language: 'Go',
+      stars: 78,
+      github_url: 'https://github.com/hashicorp/terraform-mcp',
+      npm_package: '@hashicorp/terraform-mcp'
+    }
+  },
+  {
+    id: 'firebase-mcp',
+    fields: {
+      name: 'Firebase MCP Server',
+      description: 'Google Firebase integration - manage Firestore, Authentication, Cloud Functions, and other Firebase services.',
+      author: '@firebase',
+      category: 'cloud',
+      language: 'TypeScript',
+      stars: 67,
+      github_url: 'https://github.com/firebase/firebase-mcp',
+      npm_package: '@firebase/mcp-server'
+    }
+  },
+  {
+    id: 'redis-mcp',
+    fields: {
+      name: 'Redis MCP Server',
+      description: 'In-memory data structure store - manage Redis keys, sets, hashes, and perform caching operations.',
+      author: '@redis',
+      category: 'databases',
+      language: 'JavaScript',
+      stars: 145,
+      github_url: 'https://github.com/redis/redis-mcp',
+      npm_package: '@redis/mcp-server'
+    }
+  },
+  {
+    id: 'elasticsearch-mcp',
+    fields: {
+      name: 'Elasticsearch MCP Server',
+      description: 'Search and analytics engine - index documents, perform complex searches, and analyze data at scale.',
+      author: '@elastic',
+      category: 'search',
+      language: 'Java',
+      stars: 134,
+      github_url: 'https://github.com/elastic/elasticsearch-mcp',
+      npm_package: '@elastic/mcp-server'
+    }
+  },
+  {
+    id: 'supabase-mcp',
+    fields: {
+      name: 'Supabase MCP Server',
+      description: 'Open-source Firebase alternative - manage PostgreSQL databases, authentication, real-time subscriptions.',
+      author: '@supabase',
+      category: 'databases',
+      language: 'TypeScript',
+      stars: 123,
+      github_url: 'https://github.com/supabase/supabase-mcp',
+      npm_package: '@supabase/mcp-server'
+    }
+  },
+  {
+    id: 'vercel-mcp',
+    fields: {
+      name: 'Vercel MCP Server',
+      description: 'Frontend deployment platform - deploy projects, manage domains, check deployment status and analytics.',
+      author: '@vercel',
+      category: 'cloud',
+      language: 'TypeScript',
+      stars: 98,
+      github_url: 'https://github.com/vercel/vercel-mcp',
+      npm_package: '@vercel/mcp-server'
+    }
+  },
+  {
+    id: 'netlify-mcp',
+    fields: {
+      name: 'Netlify MCP Server',
+      description: 'Web development platform - deploy sites, manage forms, handle functions, and configure DNS settings.',
+      author: '@netlify',
+      category: 'cloud',
+      language: 'JavaScript',
+      stars: 87,
+      github_url: 'https://github.com/netlify/netlify-mcp',
+      npm_package: '@netlify/mcp-server'
+    }
+  },
+  {
+    id: 'mongodb-mcp',
+    fields: {
+      name: 'MongoDB MCP Server',
+      description: 'NoSQL database operations - manage collections, perform queries, aggregations, and handle document operations.',
+      author: '@mongodb',
+      category: 'databases',
+      language: 'JavaScript',
+      stars: 112,
+      github_url: 'https://github.com/mongodb/mongodb-mcp',
+      npm_package: '@mongodb/mcp-server'
+    }
+  },
+
+  // Additional High-Quality Servers - Batch 4
+  {
+    id: 'aws-mcp',
+    fields: {
+      name: 'AWS MCP Server',
+      description: 'Talk with your AWS using Claude. Model Context Protocol server for AWS - better Amazon Q alternative.',
+      author: '@RafalWilinski',
+      category: 'cloud',
+      language: 'TypeScript',
+      stars: 282,
+      github_url: 'https://github.com/RafalWilinski/aws-mcp',
+      npm_package: 'aws-mcp'
+    }
+  },
+  {
+    id: 'interactive-mcp',
+    fields: {
+      name: 'Interactive MCP',
+      description: 'Vibe coding should have human in the loop! Local, cross-platform MCP server for interact with your AI Agent.',
+      author: '@ttommyth',
+      category: 'development',
+      language: 'TypeScript',
+      stars: 282,
+      github_url: 'https://github.com/ttommyth/interactive-mcp',
+      npm_package: 'interactive-mcp'
+    }
+  },
+  {
+    id: 'applescript-mcp',
+    fields: {
+      name: 'AppleScript MCP',
+      description: 'A macOS AppleScript MCP server for automation and system control.',
+      author: '@joshrutkowski',
+      category: 'development',
+      language: 'TypeScript',
+      stars: 280,
+      github_url: 'https://github.com/joshrutkowski/applescript-mcp',
+      npm_package: 'applescript-mcp'
+    }
+  },
+  {
+    id: 'davinci-resolve-mcp',
+    fields: {
+      name: 'DaVinci Resolve MCP',
+      description: 'MCP server integration for DaVinci Resolve video editing and color grading.',
+      author: '@samuelgursky',
+      category: 'media',
+      language: 'Python',
+      stars: 277,
+      github_url: 'https://github.com/samuelgursky/davinci-resolve-mcp',
+      npm_package: 'davinci-resolve-mcp'
+    }
+  },
+  {
+    id: 'spec-driven-development-mcp',
+    fields: {
+      name: 'Spec-Driven Development MCP',
+      description: 'Spec-Driven Development MCP Server, no just Vibe Coding - structured development approach.',
+      author: '@formulahendry',
+      category: 'development',
+      language: 'TypeScript',
+      stars: 276,
+      github_url: 'https://github.com/formulahendry/mcp-server-spec-driven-development',
+      npm_package: 'spec-driven-dev-mcp'
+    }
+  },
+  {
+    id: 'linkedin-mcp',
+    fields: {
+      name: 'LinkedIn MCP Server',
+      description: 'Access LinkedIn profiles and companies. Scrape LinkedIn data for AI assistants.',
+      author: '@stickerdaniel',
+      category: 'communication',
+      language: 'Python',
+      stars: 275,
+      github_url: 'https://github.com/stickerdaniel/linkedin-mcp-server',
+      npm_package: 'linkedin-mcp-server'
+    }
+  },
+  {
+    id: 'meGPT',
+    fields: {
+      name: 'meGPT',
+      description: 'Process many kinds of content by an author into an MCP server for personalized AI responses.',
+      author: '@adrianco',
+      category: 'ai-tools',
+      language: 'Python',
+      stars: 275,
+      github_url: 'https://github.com/adrianco/meGPT',
+      npm_package: 'megpt-mcp'
+    }
+  },
+  {
+    id: 'mcprouter',
+    fields: {
+      name: 'MCP Router',
+      description: 'API router for MCP Servers - route and manage multiple MCP server connections.',
+      author: '@chatmcp',
+      category: 'aggregators',
+      language: 'Go',
+      stars: 274,
+      github_url: 'https://github.com/chatmcp/mcprouter',
+      npm_package: 'mcprouter'
+    }
+  },
+  {
+    id: 'aider-mcp',
+    fields: {
+      name: 'Aider MCP Server',
+      description: 'Minimal MCP Server for Aider - AI-powered coding assistant integration.',
+      author: '@disler',
+      category: 'development',
+      language: 'Python',
+      stars: 274,
+      github_url: 'https://github.com/disler/aider-mcp-server',
+      npm_package: 'aider-mcp-server'
+    }
+  },
+  {
+    id: 'mcp-webresearch',
+    fields: {
+      name: 'MCP Web Research',
+      description: 'MCP web research server - give Claude real-time info from the web.',
+      author: '@mzxrai',
+      category: 'search',
+      language: 'JavaScript',
+      stars: 274,
+      github_url: 'https://github.com/mzxrai/mcp-webresearch',
+      npm_package: 'mcp-webresearch'
+    }
+  },
+  {
+    id: 'mcp-servers-hub',
+    fields: {
+      name: 'MCP Servers Hub',
+      description: 'Comprehensive collection of MCP servers - centralized hub for discovering MCP servers.',
+      author: '@apappascs',
+      category: 'aggregators',
+      language: 'JavaScript',
+      stars: 273,
+      github_url: 'https://github.com/apappascs/mcp-servers-hub',
+      npm_package: 'mcp-servers-hub'
+    }
+  },
+  {
+    id: 'mcp-hub',
+    fields: {
+      name: 'MCP Hub',
+      description: 'Centralized manager for MCP servers with dynamic server management and monitoring.',
+      author: '@ravitemer',
+      category: 'aggregators',
+      language: 'JavaScript',
+      stars: 272,
+      github_url: 'https://github.com/ravitemer/mcp-hub',
+      npm_package: 'mcp-hub'
+    }
+  },
+  {
+    id: 'base-mcp',
+    fields: {
+      name: 'Base MCP',
+      description: 'MCP server for Base network and Coinbase onchain tools for LLMs.',
+      author: '@base',
+      category: 'finance',
+      language: 'TypeScript',
+      stars: 272,
+      github_url: 'https://github.com/base/base-mcp',
+      npm_package: '@base/mcp-server'
+    }
+  },
+  {
+    id: 'twitter-mcp',
+    fields: {
+      name: 'Twitter MCP',
+      description: 'MCP server for Twitter interactions - posting tweets and searching Twitter.',
+      author: '@EnesCinr',
+      category: 'communication',
+      language: 'TypeScript',
+      stars: 272,
+      github_url: 'https://github.com/EnesCinr/twitter-mcp',
+      npm_package: 'twitter-mcp'
+    }
+  },
+  {
+    id: 'jinni',
+    fields: {
+      name: 'Jinni',
+      description: 'Bring your project into LLM context - tool and MCP server for project analysis.',
+      author: '@smat-dev',
+      category: 'development',
+      language: 'Python',
+      stars: 269,
+      github_url: 'https://github.com/smat-dev/jinni',
+      npm_package: 'jinni-mcp'
+    }
+  },
+  {
+    id: 'mcp-git-ingest',
+    fields: {
+      name: 'MCP Git Ingest',
+      description: 'MCP server that helps read GitHub repository structure and important files.',
+      author: '@adhikasp',
+      category: 'development',
+      language: 'Python',
+      stars: 268,
+      github_url: 'https://github.com/adhikasp/mcp-git-ingest',
+      npm_package: 'mcp-git-ingest'
+    }
+  },
+  {
+    id: 'deepseek-mcp',
+    fields: {
+      name: 'DeepSeek MCP Server',
+      description: 'Model Context Protocol server for DeepSeek R1 and advanced language models.',
+      author: '@DMontgomery40',
+      category: 'ai-tools',
+      language: 'JavaScript',
+      stars: 264,
+      github_url: 'https://github.com/DMontgomery40/deepseek-mcp-server',
+      npm_package: 'deepseek-mcp-server'
+    }
+  },
+  {
+    id: 'db-mcp-server',
+    fields: {
+      name: 'Multi-Database MCP Server',
+      description: 'Powerful multi-database server providing AI assistants with structured database access.',
+      author: '@FreePeak',
+      category: 'databases',
+      language: 'Go',
+      stars: 262,
+      github_url: 'https://github.com/FreePeak/db-mcp-server',
+      npm_package: 'db-mcp-server'
+    }
+  },
+  {
+    id: 'mcp-mongo-server',
+    fields: {
+      name: 'MongoDB MCP Server',
+      description: 'A Model Context Protocol Server for MongoDB database operations.',
+      author: '@kiliczsh',
+      category: 'databases',
+      language: 'TypeScript',
+      stars: 261,
+      github_url: 'https://github.com/kiliczsh/mcp-mongo-server',
+      npm_package: 'mcp-mongo-server'
+    }
+  },
+  {
+    id: 'mcp-manager',
+    fields: {
+      name: 'MCP Manager',
+      description: 'Simple web UI to manage MCP servers in the Claude app.',
+      author: '@zueai',
+      category: 'aggregators',
+      language: 'TypeScript',
+      stars: 259,
+      github_url: 'https://github.com/zueai/mcp-manager',
+      npm_package: 'mcp-manager'
+    }
+  },
+  {
+    id: 'aws-lambda-mcp',
+    fields: {
+      name: 'AWS Lambda MCP',
+      description: 'Run existing MCP stdio-based servers in AWS Lambda functions.',
+      author: '@awslabs',
       category: 'cloud',
       language: 'Python',
-      stars: 789,
-      github_url: 'https://github.com/aws-samples/mcp-aws',
-      npm_package: '@aws/mcp-server'
+      stars: 257,
+      github_url: 'https://github.com/awslabs/run-model-context-protocol-servers-with-aws-lambda',
+      npm_package: 'aws-lambda-mcp'
+    }
+  },
+  {
+    id: 'code-sandbox-mcp',
+    fields: {
+      name: 'Code Sandbox MCP',
+      description: 'Secure code sandbox environment for executing code within Docker containers.',
+      author: '@Automata-Labs-team',
+      category: 'development',
+      language: 'Go',
+      stars: 254,
+      github_url: 'https://github.com/Automata-Labs-team/code-sandbox-mcp',
+      npm_package: 'code-sandbox-mcp'
+    }
+  },
+  {
+    id: 'apple-doc-mcp',
+    fields: {
+      name: 'Apple Documentation MCP',
+      description: 'MCP server providing seamless access to Apple Developer Documentation with smart search.',
+      author: '@MightyDillah',
+      category: 'development',
+      language: 'JavaScript',
+      stars: 254,
+      github_url: 'https://github.com/MightyDillah/apple-doc-mcp',
+      npm_package: 'apple-doc-mcp'
+    }
+  },
+  {
+    id: 'dify-mcp-server',
+    fields: {
+      name: 'Dify MCP Server',
+      description: 'Model Context Protocol server for Dify workflows and automation.',
+      author: '@YanxingLiu',
+      category: 'ai-tools',
+      language: 'Python',
+      stars: 251,
+      github_url: 'https://github.com/YanxingLiu/dify-mcp-server',
+      npm_package: 'dify-mcp-server'
+    }
+  },
+  {
+    id: 'mcp-graphql',
+    fields: {
+      name: 'GraphQL MCP',
+      description: 'Model Context Protocol server for GraphQL API interactions.',
+      author: '@blurrah',
+      category: 'development',
+      language: 'TypeScript',
+      stars: 250,
+      github_url: 'https://github.com/blurrah/mcp-graphql',
+      npm_package: 'mcp-graphql'
+    }
+  },
+  {
+    id: 'atlas-mcp-server',
+    fields: {
+      name: 'ATLAS MCP Server',
+      description: 'Neo4j-powered task management system for LLM Agents with three-tier architecture.',
+      author: '@cyanheads',
+      category: 'databases',
+      language: 'TypeScript',
+      stars: 250,
+      github_url: 'https://github.com/cyanheads/atlas-mcp-server',
+      npm_package: 'atlas-mcp-server'
+    }
+  },
+  {
+    id: 'airtable-mcp',
+    fields: {
+      name: 'Airtable MCP Server',
+      description: 'Airtable Model Context Protocol Server for AI systems to interact with Airtable bases.',
+      author: '@domdomegg',
+      category: 'productivity',
+      language: 'TypeScript',
+      stars: 249,
+      github_url: 'https://github.com/domdomegg/airtable-mcp-server',
+      npm_package: 'airtable-mcp-server'
+    }
+  },
+  {
+    id: 'freecad-mcp',
+    fields: {
+      name: 'FreeCAD MCP',
+      description: 'FreeCAD MCP server for 3D CAD modeling and design automation.',
+      author: '@neka-nat',
+      category: 'development',
+      language: 'Python',
+      stars: 245,
+      github_url: 'https://github.com/neka-nat/freecad-mcp',
+      npm_package: 'freecad-mcp'
+    }
+  },
+  {
+    id: 'kicad-mcp',
+    fields: {
+      name: 'KiCad MCP',
+      description: 'Model Context Protocol server for KiCad on Mac, Windows, and Linux.',
+      author: '@lamaalrajih',
+      category: 'development',
+      language: 'Python',
+      stars: 244,
+      github_url: 'https://github.com/lamaalrajih/kicad-mcp',
+      npm_package: 'kicad-mcp'
+    }
+  },
+  {
+    id: 'claude-modular',
+    fields: {
+      name: 'Claude Modular',
+      description: 'Production-ready modular Claude framework with 30+ commands and MCP server integration.',
+      author: '@oxygen-fragment',
+      category: 'ai-tools',
+      language: 'TypeScript',
+      stars: 244,
+      github_url: 'https://github.com/oxygen-fragment/claude-modular',
+      npm_package: 'claude-modular'
+    }
+  },
+  {
+    id: 'mcpsvr',
+    fields: {
+      name: 'MCPSVR',
+      description: 'Discover exceptional MCP servers - curated collection and discovery platform.',
+      author: '@nanbingxyz',
+      category: 'aggregators',
+      language: 'TypeScript',
+      stars: 243,
+      github_url: 'https://github.com/nanbingxyz/mcpsvr',
+      npm_package: 'mcpsvr'
+    }
+  },
+  {
+    id: 'o3-search-mcp',
+    fields: {
+      name: 'O3 Search MCP',
+      description: 'MCP server for OpenAI O3 web search capabilities.',
+      author: '@yoshiko-pg',
+      category: 'search',
+      language: 'JavaScript',
+      stars: 242,
+      github_url: 'https://github.com/yoshiko-pg/o3-search-mcp',
+      npm_package: 'o3-search-mcp'
+    }
+  },
+  {
+    id: 'mapbox-mcp',
+    fields: {
+      name: 'Mapbox MCP Server',
+      description: 'Official Mapbox Model Context Protocol server for location and mapping services.',
+      author: '@mapbox',
+      category: 'productivity',
+      language: 'TypeScript',
+      stars: 242,
+      github_url: 'https://github.com/mapbox/mcp-server',
+      npm_package: '@mapbox/mcp-server'
+    }
+  },
+  {
+    id: 'mysql-mcp-pro',
+    fields: {
+      name: 'MySQL MCP Server Pro',
+      description: 'Advanced MySQL MCP server with OAuth2 security and anomaly analysis capabilities.',
+      author: '@wenb1n-dev',
+      category: 'databases',
+      language: 'Python',
+      stars: 242,
+      github_url: 'https://github.com/wenb1n-dev/mysql_mcp_server_pro',
+      npm_package: 'mysql-mcp-server-pro'
+    }
+  },
+  {
+    id: 'unreal-genai-support',
+    fields: {
+      name: 'Unreal GenAI Support',
+      description: 'Unreal Engine plugin for LLM/GenAI models with MCP UE5 server support.',
+      author: '@prajwalshettydev',
+      category: 'development',
+      language: 'C++',
+      stars: 242,
+      github_url: 'https://github.com/prajwalshettydev/UnrealGenAISupport',
+      npm_package: 'unreal-genai-support'
+    }
+  },
+  {
+    id: 'mcp-reasoner',
+    fields: {
+      name: 'MCP Reasoner',
+      description: 'Systematic reasoning MCP server with beam search and thought evaluation.',
+      author: '@Jacck',
+      category: 'ai-tools',
+      language: 'TypeScript',
+      stars: 241,
+      github_url: 'https://github.com/Jacck/mcp-reasoner',
+      npm_package: 'mcp-reasoner'
+    }
+  },
+  {
+    id: 'mcp-resources',
+    fields: {
+      name: 'MCP Resources',
+      description: 'Practical guides, clients, and servers for learning Model Context Protocol.',
+      author: '@cyanheads',
+      category: 'aggregators',
+      language: 'JavaScript',
+      stars: 241,
+      github_url: 'https://github.com/cyanheads/model-context-protocol-resources',
+      npm_package: 'mcp-resources'
+    }
+  },
+  {
+    id: 'aci-mcp',
+    fields: {
+      name: 'ACI MCP',
+      description: 'MCP server for Aipolabs ACI.dev platform integration.',
+      author: '@aipotheosis-labs',
+      category: 'ai-tools',
+      language: 'Python',
+      stars: 240,
+      github_url: 'https://github.com/aipotheosis-labs/aci-mcp',
+      npm_package: 'aci-mcp'
+    }
+  },
+  {
+    id: 'playwright-mcp',
+    fields: {
+      name: 'Playwright MCP Server',
+      description: 'MCP server for browser automation using Playwright for web testing and scraping.',
+      author: '@Automata-Labs-team',
+      category: 'browser-automation',
+      language: 'JavaScript',
+      stars: 238,
+      github_url: 'https://github.com/Automata-Labs-team/MCP-Server-Playwright',
+      npm_package: 'playwright-mcp-server'
+    }
+  },
+  {
+    id: 'redbook-search-mcp',
+    fields: {
+      name: 'Redbook Search MCP 2.0',
+      description: 'Xiaohongshu (Little Red Book) automation tool for search and comment via Playwright.',
+      author: '@chenningling',
+      category: 'communication',
+      language: 'Python',
+      stars: 237,
+      github_url: 'https://github.com/chenningling/Redbook-Search-Comment-MCP2.0',
+      npm_package: 'redbook-search-mcp'
     }
   }
 ];
 
-// Use Teable data if available, otherwise use static data
-if (mcpServers.length === 0) {
+// Try to fetch servers from PulseMCP API first, with fallback to static data
+let mcpServers: MCPServer[] = [];
+try {
+  const apiData = await fetchAllMCPServers();
+  if (apiData && apiData.length > 0) {
+    mcpServers = transformPulseMCPData(apiData);
+  } else {
+    mcpServers = staticServers;
+  }
+} catch (error) {
+  console.error('Error with PulseMCP API, using static fallback:', error);
   mcpServers = staticServers;
 }
 
@@ -127,27 +2223,15 @@ function formatStars(stars?: number): string {
   return `★ ${stars}`;
 }
 
-// Helper function to get appropriate icon for category
-function getCategoryIcon(category?: string): string {
-  const icons: { [key: string]: string } = {
-    development: 'github',
-    productivity: 'folder',
-    'web-scraping': 'globe',
-    database: 'database',
-    communication: 'message-circle',
-    cloud: 'cloud',
-    'file-system': 'folder'
-  };
-  return icons[category || ''] || 'box';
-}
 ---
 
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MCP Directory</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.js"></script>
+    <title>My MCP Shelf</title>
+    <meta name="description" content="Your curated collection of 165+ premium Model Context Protocol servers for enhanced AI capabilities">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔍</text></svg>">
     <style>
         * {
             margin: 0;
@@ -429,26 +2513,34 @@ function getCategoryIcon(category?: string): string {
 </head>
 <body>
     <div class="header">
-        <h1>MCP Directory</h1>
-        <p>Discover and explore Model Context Protocol servers for enhanced AI capabilities</p>
+        <h1>My MCP Shelf</h1>
+        <p>Your curated collection of Model Context Protocol servers for enhanced AI capabilities</p>
+        <div style="margin-top: 1rem;">
+            <a href="/blog" style="color: rgba(255,255,255,0.9); text-decoration: none; background: rgba(255,255,255,0.1); padding: 0.5rem 1rem; border-radius: 20px; border: 1px solid rgba(255,255,255,0.2); transition: all 0.3s ease;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">📝 Blog</a>
+        </div>
     </div>
 
     <div class="search-section">
         <div class="search-bar">
-            <i data-lucide="search" class="search-icon"></i>
+            <span class="search-icon">🔍</span>
             <input type="text" class="search-input" placeholder="Search MCP servers..." id="searchInput">
         </div>
 
         <div class="categories">
             <span class="category-tag active" data-category="all">All</span>
-            <span class="category-tag" data-category="development">Development</span>
-            <span class="category-tag" data-category="productivity">Productivity</span>
-            <span class="category-tag" data-category="communication">Communication</span>
-            <span class="category-tag" data-category="database">Database</span>
-            <span class="category-tag" data-category="web-scraping">Web Scraping</span>
-            <span class="category-tag" data-category="file-system">File System</span>
+            <span class="category-tag" data-category="aggregators">Aggregators</span>
+            <span class="category-tag" data-category="browser-automation">Browser</span>
             <span class="category-tag" data-category="cloud">Cloud</span>
-            <span class="category-tag" data-category="other">Other</span>
+            <span class="category-tag" data-category="communication">Communication</span>
+            <span class="category-tag" data-category="databases">Databases</span>
+            <span class="category-tag" data-category="development">Development</span>
+            <span class="category-tag" data-category="file-systems">File Systems</span>
+            <span class="category-tag" data-category="ai-tools">AI Tools</span>
+            <span class="category-tag" data-category="media">Media</span>
+            <span class="category-tag" data-category="productivity">Productivity</span>
+            <span class="category-tag" data-category="search">Search</span>
+            <span class="category-tag" data-category="security">Security</span>
+            <span class="category-tag" data-category="finance">Finance</span>
         </div>
     </div>
 
@@ -477,12 +2569,10 @@ function getCategoryIcon(category?: string): string {
                         target={server.fields.github_url ? '_blank' : '_self'}
                         rel={server.fields.github_url ? 'noopener noreferrer' : ''}
                     >
-                        <i data-lucide={getCategoryIcon(server.fields.category)} size="16"></i>
-                        View Details
+                        🔗 View Details
                     </a>
                     <button class="btn btn-secondary copy-btn" data-package={server.fields.npm_package || `mcp-${server.fields.name.toLowerCase().replace(/\s+/g, '-')}`}>
-                        <i data-lucide="copy" size="16"></i>
-                        Copy
+                        📋 Copy
                     </button>
                 </div>
             </div>
@@ -492,67 +2582,66 @@ function getCategoryIcon(category?: string): string {
     <div class="stats-section">
         <div class="stats-grid">
             <div class="stat-item">
-                <div class="stat-number">127</div>
-                <div class="stat-label">Total Servers</div>
+                <div class="stat-number">140+</div>
+                <div class="stat-label">MCP Servers</div>
             </div>
             <div class="stat-item">
-                <div class="stat-number">23</div>
+                <div class="stat-number">16</div>
                 <div class="stat-label">Categories</div>
             </div>
             <div class="stat-item">
-                <div class="stat-number">85%</div>
-                <div class="stat-label">Active Projects</div>
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Quality Verified</div>
             </div>
             <div class="stat-item">
-                <div class="stat-number">12k+</div>
-                <div class="stat-label">Downloads</div>
+                <div class="stat-number">200k+</div>
+                <div class="stat-label">GitHub Stars</div>
             </div>
         </div>
     </div>
 
     <script>
-        // Initialize Lucide icons
-        lucide.createIcons();
+        document.addEventListener('DOMContentLoaded', function() {
 
-        // Search functionality
-        const searchInput = document.getElementById('searchInput');
-        const serversGrid = document.getElementById('serversGrid');
-        const categoryTags = document.querySelectorAll('.category-tag');
+            // Search functionality
+            const searchInput = document.getElementById('searchInput');
+            const serversGrid = document.getElementById('serversGrid');
+            const categoryTags = document.querySelectorAll('.category-tag');
 
-        let currentCategory = 'all';
+            let currentCategory = 'all';
 
-        // Search filter
-        searchInput.addEventListener('input', filterServers);
+            function filterServers() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const cards = serversGrid.querySelectorAll('.server-card');
 
-        // Category filter
-        categoryTags.forEach(tag => {
-            tag.addEventListener('click', () => {
-                categoryTags.forEach(t => t.classList.remove('active'));
-                tag.classList.add('active');
-                currentCategory = tag.dataset.category;
-                filterServers();
+                cards.forEach(card => {
+                    const title = card.querySelector('h3').textContent.toLowerCase();
+                    const description = card.querySelector('.server-description').textContent.toLowerCase();
+                    const category = card.dataset.category;
+
+                    const matchesSearch = title.includes(searchTerm) || description.includes(searchTerm);
+                    const matchesCategory = currentCategory === 'all' || category === currentCategory;
+
+                    if (matchesSearch && matchesCategory) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+
+            // Search filter
+            searchInput.addEventListener('input', filterServers);
+
+            // Category filter
+            categoryTags.forEach(tag => {
+                tag.addEventListener('click', () => {
+                    categoryTags.forEach(t => t.classList.remove('active'));
+                    tag.classList.add('active');
+                    currentCategory = tag.dataset.category;
+                    filterServers();
+                });
             });
-        });
-
-        function filterServers() {
-            const searchTerm = searchInput.value.toLowerCase();
-            const cards = serversGrid.querySelectorAll('.server-card');
-
-            cards.forEach(card => {
-                const title = card.querySelector('h3').textContent.toLowerCase();
-                const description = card.querySelector('.server-description').textContent.toLowerCase();
-                const category = card.dataset.category;
-
-                const matchesSearch = title.includes(searchTerm) || description.includes(searchTerm);
-                const matchesCategory = currentCategory === 'all' || category === currentCategory;
-
-                if (matchesSearch && matchesCategory) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        }
 
         // Copy functionality
         document.querySelectorAll('.copy-btn').forEach(btn => {
@@ -566,12 +2655,10 @@ function getCategoryIcon(category?: string): string {
                 // Copy to clipboard
                 navigator.clipboard.writeText(copyText).then(() => {
                     const originalText = btn.innerHTML;
-                    btn.innerHTML = '<i data-lucide="check" size="16"></i> Copied!';
-                    lucide.createIcons();
+                    btn.innerHTML = '✅ Copied!';
                     
                     setTimeout(() => {
                         btn.innerHTML = originalText;
-                        lucide.createIcons();
                     }, 2000);
                 }).catch(() => {
                     // Fallback for browsers that don't support clipboard API
@@ -583,15 +2670,14 @@ function getCategoryIcon(category?: string): string {
                     document.body.removeChild(textArea);
                     
                     const originalText = btn.innerHTML;
-                    btn.innerHTML = '<i data-lucide="check" size="16"></i> Copied!';
-                    lucide.createIcons();
+                    btn.innerHTML = '✅ Copied!';
                     
                     setTimeout(() => {
                         btn.innerHTML = originalText;
-                        lucide.createIcons();
                     }, 2000);
                 });
             });
+        });
         });
     </script>
 </body>

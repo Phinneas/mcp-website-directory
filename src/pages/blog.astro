@@ -1,0 +1,203 @@
+---
+import { getCollection } from 'astro:content';
+
+// Get all blog posts
+const blogPosts = await getCollection('blog');
+
+// Sort by date (newest first)
+const sortedPosts = blogPosts.sort((a, b) => 
+  new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+);
+
+const pageTitle = "My MCP Shelf Blog";
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{pageTitle}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            color: white;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .nav {
+            margin-bottom: 2rem;
+        }
+
+        .nav a {
+            color: white;
+            text-decoration: none;
+            background: rgba(255,255,255,0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .nav a:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .blog-grid {
+            display: grid;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .blog-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .blog-card h3 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .blog-card h3 a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .blog-card h3 a:hover {
+            color: #667eea;
+        }
+
+        .blog-meta {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .blog-description {
+            color: #555;
+            margin-bottom: 1rem;
+        }
+
+        .blog-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            background: #f0f2ff;
+            color: #667eea;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+        }
+
+        .no-posts {
+            text-align: center;
+            color: rgba(255,255,255,0.8);
+            font-size: 1.1rem;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>{pageTitle}</h1>
+            <p class="subtitle">Insights, updates, and guides for the MCP ecosystem</p>
+            <div class="nav">
+                <a href="/">← Back to Shelf</a>
+            </div>
+        </header>
+
+        <main>
+            {sortedPosts.length > 0 ? (
+                <div class="blog-grid">
+                    {sortedPosts.map((post) => (
+                        <article class="blog-card">
+                            <h3>
+                                <a href={`/blog/${post.slug}`}>
+                                    {post.data.title}
+                                </a>
+                            </h3>
+                            <div class="blog-meta">
+                                By {post.data.author} • {new Date(post.data.date).toLocaleDateString('en-US', {
+                                    year: 'numeric',
+                                    month: 'long', 
+                                    day: 'numeric'
+                                })}
+                            </div>
+                            <p class="blog-description">
+                                {post.data.description}
+                            </p>
+                            {post.data.tags && (
+                                <div class="blog-tags">
+                                    {post.data.tags.map((tag: string) => (
+                                        <span class="tag">#{tag}</span>
+                                    ))}
+                                </div>
+                            )}
+                        </article>
+                    ))}
+                </div>
+            ) : (
+                <p class="no-posts">No blog posts available yet. Check back soon!</p>
+            )}
+        </main>
+    </div>
+</body>
+</html>
