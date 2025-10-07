@@ -2,7 +2,7 @@
 title: "Best GitHub Alternative Open Source Platforms: The Complete 2025 Guide"
 description: "A comprehensive guide to self-hosted and managed open-source Git platforms."
 author: "Your Name"
-date: 2025-01-01
+date: "2025-10-07T00:00:00.000Z"
 tags: ["github", "alternatives", "open-source", "devops", "gitea", "gitlab"]
 ---
 
