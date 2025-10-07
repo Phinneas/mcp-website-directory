@@ -11,6 +11,10 @@ var config_default = defineConfig({
     outputFolder: "admin",
     publicFolder: "public"
   },
+  // Enable local authentication when TINA_PUBLIC_IS_LOCAL is true
+  ...process.env.TINA_PUBLIC_IS_LOCAL === "true" && {
+    contentApiUrlOverride: "/api/tina/gql"
+  },
   media: {
     tina: {
       mediaRoot: "",

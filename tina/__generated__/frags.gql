@@ -1,0 +1,22 @@
+fragment BlogParts on Blog {
+  __typename
+  title
+  description
+  date
+  author
+  image
+  tags
+  body
+}
+
+fragment ServersParts on Servers {
+  __typename
+  name
+  description
+  author
+  category
+  language
+  stars
+  github_url
+  npm_package
+}
