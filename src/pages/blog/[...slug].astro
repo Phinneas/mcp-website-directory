@@ -23,6 +23,7 @@ const { Content } = await post.render();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{post.data.title} | My MCP Shelf Blog</title>
     <meta name="description" content={post.data.description}>
+    <link rel="canonical" href={`https://www.mymcpshelf.com/blog/${post.slug}/`} />
     <style>
         * {
             margin: 0;
