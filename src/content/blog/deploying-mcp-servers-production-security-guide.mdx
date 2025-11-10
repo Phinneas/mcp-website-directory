@@ -1,0 +1,179 @@
+---
+title: "Deploying MCP Servers in Production: A Security-First Guide"
+description: "Production-ready MCP deployment guide covering architecture, security, performance, observability, and operational best practices for enterprise environments."
+date: "2025-11-09T00:00:00.000Z"
+author: "Chester Beard"
+image: "/images/placeholder.jpg"
+tags: ["mcp", "production", "security", "deployment", "devops", "observability"]
+---
+
+# Deploying MCP Servers in Production: A Security-First Guide
+
+You understand the Model Context Protocol—now you need to ship it.
+Most tutorials stop at "hello world"; production is different. This guide is the missing run-book: architecture choices you can't undo later, security controls that keep you off the front page, and the observability that lets you sleep at night. Everything is framed for teams that already run a model gateway and need to expose *context-aware* tools to LLM clients safely.
+
+---
+
+## Architecture Decisions
+
+**Keep the server close to the data.** Colocation inside the same VPC—or the same rack—cuts latency and keeps egress cheap.
+**Transport:** stdio for sidecars on the same box; WebSocket for remote services so you can reuse existing layer-7 load balancers.
+**Size philosophy:** many small servers, one responsibility each. A monolith becomes a single point of failure the first time a long-running query wedges the event loop.
+**Versioning:** bump the *schema* version (`X-MCP-Schema-Version: v1.2`) for any breaking change; leave the tool name alone so older clients get a clean 422 instead of a cryptic prompt failure.
+
+---
+
+## Security Implementation
+
+### Authentication
+Issue short-lived JWTs (≤15 min) signed with ES256. Key material lives in a KMS; the public key set is exposed at `/.well-known/jwks`. Clients fetch it once and cache for 5 min.
+Example payload:
+```json
+{
+  "iss": "https://model-gateway.corp.com ",
+  "sub": "data-scientist@corp.com",
+  "aud": "mcp-server",
+  "exp": 1731450000,
+  "mcp": { "tenant": "acme-corp", "max_rows": 1000 }
+}
+```
+Sign it:
+```bash
+cosign sign-blob --key gcpkms://projects/prod/locations/global/keyRings/mcp/cryptoKeys/jwt \
+  --output-signature jwt.sig payload.json
+```
+Never put the key in the client; rotate hourly with a Cloud Scheduler job.
+
+### Authorization
+Map the `sub` claim to an internal RBAC profile. Each tool declares required scopes:
+```yaml
+tools:
+  - name: "bigquery/run"
+    scopes: ["bq:read"]
+```
+The *server* enforces; the model only sees the tools it is allowed to use. Denials return `403` with a structured code so the client can drop the tool from the prompt instead of retrying.
+
+### Context Protection
+Hard-cap row count (1 000) and payload size (1 MB) at the *schema* level. PII is redacted with a deterministic mask (`phone → ***-***-1234`) before serialization. Field-level ACLs are expressed in JSON-path:
+```json
+{"deny": ["$.user.ssn", "$.address.street"]}
+```
+
+### Dangerous-Tool Guards
+Any mutating call (`DELETE`, `INSERT`, `PUBLISH`) returns `412 Precondition Failed` and a confirmation token. The client must echo the token within 30 s; otherwise the operation is cancelled. Expensive queries are rate-limited per user (10 QPS) with a Redis sliding-window counter.
+
+### Secret Management
+Database creds, API keys, and third-party tokens are *not* in config maps. The server starts, calls Vault with its own SPIFFE cert, and caches secrets in an in-memory LRU for ≤5 min. Rotation is handled by watching the Vault lease—no redeploy required.
+
+---
+
+## Performance & Reliability
+
+**Caching:** Cache read-only resources aggressively; use `ETag` + `If-None-Match` so the client can skip round-trips. Invalidate on write by namespacing cache keys with `tenant:tool:hash(sql)`.
+
+**Streaming:** Long-running queries stream newline-delimited JSON. The UI shows progress and the gateway can timeout *partial* responses without losing the connection.
+
+**Timeouts & Retries:**
+- Tool default: 30 s
+- Expensive analytics: 120 s
+- Idempotent reads: exponential back-off (1 s, 2 s, 4 s) capped at three attempts.
+Circuit-breaker opens after 50 % 5xx in a 30 s window; half-open trial after 30 s.
+
+**Cost Control:**
+- Trim large responses >100 kB; return a signed URL to cloud storage instead.
+- Batch small tool calls (≤10) when they share the same downstream.
+- Emit `mcp_tokens_used` metric so finance can map spend to user.
+
+---
+
+## Observability
+
+**What to Log:**
+- Session open/close with capability list
+- Every tool call: name, arg hash, user, latency, status code
+- Sample (1 %) full payloads; otherwise log first and last 1 kB
+- Errors include `error_code` (enum) and `correlation_id`
+
+**Monitoring:**
+- p50, p95, p99 latency by tool
+- 4xx vs 5xx ratio
+- Auth-failure spikes
+- Rate-limit hits per user
+
+**Audit Trail:**
+Ship to a central Loki/S3 bucket with 30-day retention. Include `traceparent` header so the model gateway trace and the MCP server trace stitch together in Jaeger.
+
+---
+
+## Common Pitfalls
+
+**Over-scoped tools:** A single "run_query" tool lets the model shoot itself in the foot. Split into `run_read_query` and `run_mutating_query`; the latter requires confirmation token.
+
+**Vague schemas:** Use enums and maximum lengths. `"status": {"enum": ["active", "cancelled"]}` beats free-form strings.
+
+**Poor error handling:** Return structured errors:
+```json
+{"error_code": "RATE_LIMITED", "retry_after": 60}
+```
+so the client can back off intelligently.
+
+**Credential leakage:** Never echo the connection string in an error message. Mask secrets in logs:
+```go
+log.Printf("connecting to %s", maskDSN(dsn))
+```
+
+**Infinite retry loops:** Set `max_attempts=3` and use a circuit-breaker. After three failures return `502 Bad Gateway` and let the *client* decide.
+
+**Missing rate limits:** Protect *expensive* operations (embedding, BQ export) with per-user token buckets. A single prompt can parallel-fire 20 tool calls—account for that.
+
+---
+
+## Deployment Checklist
+
+### Pre-Production
+- [ ] **Auth layer:** mTLS or ES256 JWT; public JWKS reachable; kill-switch tested (revoke kid, expect 503)
+- [ ] **User scopes mapped:** RBAC CSV loaded; integration test for 403 path
+- [ ] **PII redaction:** unit test with synthetic data; regex performance ≤1 ms per MB
+- [ ] **Row/size limits:** 1 000 rows / 1 MB enforced in schema; integration test rejects 1 001st row
+- [ ] **Destructive-action flow:** confirmation token TTL 30 s; double-submit returns 409
+- [ ] **Secrets in Vault:** no `password:` in Git; `vault-agent` injects at startup
+- [ ] **Load test:** k6 script at 2× expected RPS for 10 min; p99 <600 ms
+- [ ] **Container hardening:** non-root UID, read-only root-fs, dropped caps, distroless image
+- [ ] **Artefact signed:** `cosign sign ${IMAGE} --key gcpkms://...`; SHA pinned in GitOps repo
+- [ ] **Canary stage:** 5 % traffic for 30 min; automatic rollback on 5xx >1 %
+
+### Monitoring
+- [ ] **Central logging:** Fluent-bit → Loki; labels `{tenant, tool}`
+- [ ] **Dashboard:** Grafana template variable by `tool`; SLO burn-rate alerts
+- [ ] **Alerts:** PagerDuty page on 5xx >5 % for 5 min; Slack on auth-failure spike
+- [ ] **Audit retention:** 30 days hot, 1 year cold (Glacier)
+
+### Runtime
+- [ ] **Timeouts tuned:** 30 s default, 120 s for heavy tools
+- [ ] **Circuit-breaker:** 50 % threshold, 30 s window
+- [ ] **Retry logic:** idempotent only; max 3; exponential back-off
+- [ ] **Rate limits:** 10 QPS per user per tool; 429 response with `Retry-After`
+
+### Operations
+- [ ] **Credential rotation:** hourly JWT kid flip; daily DB password via Vault
+- [ ] **Rollback plan:** `kubectl rollout undo deploy/mcp-server` tested in staging
+- [ ] **Runbook:** one-page grep commands for correlation_id, stuck leases, rate-limit keys
+- [ ] **On-call escalation:** primary 15 min, secondary 30 min; runbook link in alert
+
+### Starting Small
+1. Wrap *one* system (BigQuery, Snowflake, S3—pick one).
+2. Expose **three tools max** (describe, query, export).
+3. Test with **internal beta users** for two weeks.
+4. Add **monitoring & alerts** before you scale to 100 % traffic.
+5. Expand the catalog **one tool at a time**; require security review for anything that writes.
+
+---
+
+## Conclusion
+
+Production-grade MCP is about discipline, not complexity. The protocol is tiny; security and observability make it trustworthy. Start with one well-secured server, three tools, and a canary flag. Once the dashboards are green and the pager is quiet, expand. Done right, your servers become reusable assets—works with any model, any client, no rewrites. That's the payoff: build once, reuse everywhere, maintain safely.
+
+**Ready-made examples and signed WASM filters:**
+github.com/yourorg/mcp-production-blueprints
+
+Now ship it—and get some sleep.
