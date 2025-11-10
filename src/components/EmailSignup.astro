@@ -1,0 +1,198 @@
+---
+// Email Signup Component - Plunk Integration
+---
+
+<div class="email-signup">
+    <div class="signup-container">
+        <h3>Stay Updated on MCP</h3>
+        <p>Get the latest MCP servers, guides, and AI integration tips delivered to your inbox.</p>
+
+        <form class="signup-form" id="emailSignupForm">
+            <input
+                type="email"
+                name="email"
+                placeholder="Enter your email"
+                required
+                class="email-input"
+            />
+            <button type="submit" class="signup-button">Subscribe</button>
+        </form>
+
+        <p class="signup-message" id="signupMessage"></p>
+        <p class="privacy-note">We respect your privacy. Unsubscribe anytime.</p>
+    </div>
+</div>
+
+<style>
+    .email-signup {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 3rem 2rem;
+        margin: 4rem 0;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    }
+
+    .signup-container {
+        max-width: 600px;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    .signup-container h3 {
+        color: white;
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        font-weight: 700;
+    }
+
+    .signup-container > p {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+        line-height: 1.6;
+    }
+
+    .signup-form {
+        display: flex;
+        gap: 1rem;
+        max-width: 500px;
+        margin: 0 auto 1rem auto;
+    }
+
+    .email-input {
+        flex: 1;
+        padding: 1rem 1.5rem;
+        border: none;
+        border-radius: 50px;
+        font-size: 1rem;
+        outline: none;
+        background: white;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        transition: box-shadow 0.3s ease;
+    }
+
+    .email-input:focus {
+        box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+
+    .signup-button {
+        padding: 1rem 2rem;
+        background: white;
+        color: #667eea;
+        border: none;
+        border-radius: 50px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        white-space: nowrap;
+    }
+
+    .signup-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        background: #f8f9ff;
+    }
+
+    .signup-button:active {
+        transform: translateY(0);
+    }
+
+    .signup-button:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+
+    .signup-message {
+        color: white;
+        font-size: 0.95rem;
+        margin-top: 0.5rem;
+        min-height: 24px;
+        font-weight: 500;
+    }
+
+    .signup-message.success {
+        color: #4ade80;
+    }
+
+    .signup-message.error {
+        color: #fca5a5;
+    }
+
+    .privacy-note {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.85rem;
+        margin-top: 1rem;
+    }
+
+    @media (max-width: 600px) {
+        .email-signup {
+            padding: 2rem 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .signup-container h3 {
+            font-size: 1.5rem;
+        }
+
+        .signup-container > p {
+            font-size: 1rem;
+        }
+
+        .signup-form {
+            flex-direction: column;
+        }
+
+        .signup-button {
+            width: 100%;
+        }
+    }
+</style>
+
+<script>
+    const form = document.getElementById('emailSignupForm');
+    const message = document.getElementById('signupMessage');
+
+    if (form && message) {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const emailInput = form.querySelector('input[name="email"]') as HTMLInputElement;
+            const email = emailInput.value;
+            const button = form.querySelector('button') as HTMLButtonElement;
+
+            // Disable button during submission
+            button.disabled = true;
+            button.textContent = 'Subscribing...';
+            message.textContent = '';
+            message.className = 'signup-message';
+
+            try {
+                const response = await fetch('/api/subscribe', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    message.textContent = '✓ Successfully subscribed! Check your email.';
+                    message.classList.add('success');
+                    emailInput.value = '';
+                } else {
+                    throw new Error(data.error || 'Subscription failed');
+                }
+            } catch (error) {
+                message.textContent = `✗ ${error instanceof Error ? error.message : 'Something went wrong. Please try again.'}`;
+                message.classList.add('error');
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Subscribe';
+            }
+        });
+    }
+</script>

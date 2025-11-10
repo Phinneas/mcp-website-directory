@@ -1,5 +1,6 @@
 ---
 import { fetchAllMCPServers, transformPulseMCPData } from '../utils/pulsemcpApi.js';
+import EmailSignup from '../components/EmailSignup.astro';
 
 // Define interface for MCP server data
 interface MCPServer {
@@ -7553,6 +7554,8 @@ function formatStars(stars?: number): string {
             </div>
         </div>
     </div>
+
+    <EmailSignup />
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
