@@ -80,7 +80,7 @@ Database creds, API keys, and third-party tokens are *not* in config maps. The s
 Circuit-breaker opens after 50 % 5xx in a 30 s window; half-open trial after 30 s.
 
 **Cost Control:**
-- Trim large responses >100 kB; return a signed URL to cloud storage instead.
+- Trim large responses over 100 kB; return a signed URL to cloud storage instead.
 - Batch small tool calls (≤10) when they share the same downstream.
 - Emit `mcp_tokens_used` metric so finance can map spend to user.
 
@@ -137,15 +137,15 @@ log.Printf("connecting to %s", maskDSN(dsn))
 - [ ] **Row/size limits:** 1 000 rows / 1 MB enforced in schema; integration test rejects 1 001st row
 - [ ] **Destructive-action flow:** confirmation token TTL 30 s; double-submit returns 409
 - [ ] **Secrets in Vault:** no `password:` in Git; `vault-agent` injects at startup
-- [ ] **Load test:** k6 script at 2× expected RPS for 10 min; p99 <600 ms
+- [ ] **Load test:** k6 script at 2× expected RPS for 10 min; p99 less than 600 ms
 - [ ] **Container hardening:** non-root UID, read-only root-fs, dropped caps, distroless image
 - [ ] **Artefact signed:** `cosign sign ${IMAGE} --key gcpkms://...`; SHA pinned in GitOps repo
-- [ ] **Canary stage:** 5 % traffic for 30 min; automatic rollback on 5xx >1 %
+- [ ] **Canary stage:** 5 % traffic for 30 min; automatic rollback on 5xx above 1 %
 
 ### Monitoring
 - [ ] **Central logging:** Fluent-bit → Loki; labels `{tenant, tool}`
 - [ ] **Dashboard:** Grafana template variable by `tool`; SLO burn-rate alerts
-- [ ] **Alerts:** PagerDuty page on 5xx >5 % for 5 min; Slack on auth-failure spike
+- [ ] **Alerts:** PagerDuty page on 5xx above 5 % for 5 min; Slack on auth-failure spike
 - [ ] **Audit retention:** 30 days hot, 1 year cold (Glacier)
 
 ### Runtime
