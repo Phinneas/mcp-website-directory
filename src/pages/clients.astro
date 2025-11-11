@@ -1,5 +1,6 @@
 ---
 // MCP Clients Page
+import clientsData from '../../clients.json';
 ---
 
 <!DOCTYPE html>
@@ -105,35 +106,6 @@
             outline: none;
             font-size: 1.1rem;
             background: transparent;
-        }
-
-        .categories {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.75rem;
-            justify-content: center;
-        }
-
-        .category-tag {
-            background: rgba(255, 255, 255, 0.9);
-            padding: 0.6rem 1.2rem;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.95rem;
-            font-weight: 500;
-            border: 2px solid transparent;
-        }
-
-        .category-tag:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-
-        .category-tag.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-color: rgba(255,255,255,0.3);
         }
 
         .clients-grid {
@@ -260,39 +232,36 @@
                 <span class="search-icon">🔍</span>
                 <input type="text" class="search-input" placeholder="Search MCP clients..." id="searchInput">
             </div>
-
-            <div class="categories">
-                <button class="category-tag active" data-category="all">All Clients</button>
-                <button class="category-tag" data-category="desktop">Desktop Apps</button>
-                <button class="category-tag" data-category="cli">CLI Tools</button>
-                <button class="category-tag" data-category="ide">IDE Integration</button>
-                <button class="category-tag" data-category="web">Web Clients</button>
+            <div style="text-align: center; color: white; margin-top: 1rem;">
+                <p>{clientsData.length} MCP clients available</p>
             </div>
         </div>
 
         <div class="clients-grid" id="clientsGrid">
-            <!-- Placeholder client card - replace with actual data -->
-            <div class="client-card" data-category="desktop">
-                <div class="client-header">
-                    <div class="client-icon">🖥️</div>
-                    <div class="client-title">
-                        <h3>Claude Desktop</h3>
-                        <div class="client-category">Desktop App</div>
+            {clientsData.map((client) => (
+                <div class="client-card">
+                    <div class="client-header">
+                        <div class="client-icon">💻</div>
+                        <div class="client-title">
+                            <h3>{client.title}</h3>
+                            <div class="client-category">MCP Client</div>
+                        </div>
+                    </div>
+                    <div class="client-description">
+                        {client.description.length > 150
+                            ? client.description.substring(0, 150) + '...'
+                            : client.description}
+                    </div>
+                    {client.stars > 0 && (
+                        <div class="client-meta">
+                            <span class="meta-tag">⭐ {client.stars}</span>
+                        </div>
+                    )}
+                    <div class="client-actions">
+                        <a href={client.url} target="_blank" rel="noopener noreferrer" class="btn btn-primary">View on GitHub</a>
                     </div>
                 </div>
-                <div class="client-description">
-                    Native desktop application with built-in MCP support for connecting to local and remote servers.
-                </div>
-                <div class="client-meta">
-                    <span class="meta-tag">macOS</span>
-                    <span class="meta-tag">Windows</span>
-                </div>
-                <div class="client-actions">
-                    <a href="#" class="btn btn-primary">Learn More</a>
-                </div>
-            </div>
-
-            <!-- Add more client cards here -->
+            ))}
         </div>
     </div>
 
@@ -300,9 +269,6 @@
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('searchInput');
             const clientsGrid = document.getElementById('clientsGrid');
-            const categoryTags = document.querySelectorAll('.category-tag');
-
-            let currentCategory = 'all';
 
             function filterClients() {
                 const searchTerm = searchInput.value.toLowerCase();
@@ -311,12 +277,10 @@
                 cards.forEach(card => {
                     const title = card.querySelector('h3').textContent.toLowerCase();
                     const description = card.querySelector('.client-description').textContent.toLowerCase();
-                    const category = card.dataset.category;
 
                     const matchesSearch = title.includes(searchTerm) || description.includes(searchTerm);
-                    const matchesCategory = currentCategory === 'all' || category === currentCategory;
 
-                    if (matchesSearch && matchesCategory) {
+                    if (matchesSearch) {
                         card.style.display = 'block';
                     } else {
                         card.style.display = 'none';
@@ -325,15 +289,6 @@
             }
 
             searchInput.addEventListener('input', filterClients);
-
-            categoryTags.forEach(tag => {
-                tag.addEventListener('click', () => {
-                    categoryTags.forEach(t => t.classList.remove('active'));
-                    tag.classList.add('active');
-                    currentCategory = tag.dataset.category;
-                    filterClients();
-                });
-            });
         });
     </script>
 </body>
