@@ -1,5 +1,6 @@
 ---
 // Claude Skills Page
+import skillsData from '../../skills.json';
 ---
 
 <!DOCTYPE html>
@@ -260,39 +261,31 @@
                 <span class="search-icon">🔍</span>
                 <input type="text" class="search-input" placeholder="Search Claude skills..." id="searchInput">
             </div>
-
-            <div class="categories">
-                <button class="category-tag active" data-category="all">All Skills</button>
-                <button class="category-tag" data-category="productivity">Productivity</button>
-                <button class="category-tag" data-category="development">Development</button>
-                <button class="category-tag" data-category="data">Data & Analytics</button>
-                <button class="category-tag" data-category="content">Content Creation</button>
+            <div style="text-align: center; color: white; margin-top: 1rem;">
+                <p>{skillsData.length} Claude skills available</p>
             </div>
         </div>
 
         <div class="skills-grid" id="skillsGrid">
-            <!-- Placeholder skill card - replace with actual data -->
-            <div class="skill-card" data-category="development">
-                <div class="skill-header">
-                    <div class="skill-icon">💻</div>
-                    <div class="skill-title">
-                        <h3>Code Reviewer</h3>
-                        <div class="skill-category">Development</div>
+            {skillsData.map((skill) => (
+                <div class="skill-card">
+                    <div class="skill-header">
+                        <div class="skill-icon">⚡</div>
+                        <div class="skill-title">
+                            <h3>{skill.title}</h3>
+                            <div class="skill-category">{skill.category}</div>
+                        </div>
+                    </div>
+                    <div class="skill-description">
+                        {skill.description.length > 150
+                            ? skill.description.substring(0, 150) + '...'
+                            : skill.description}
+                    </div>
+                    <div class="skill-actions">
+                        <a href={skill.url} target="_blank" rel="noopener noreferrer" class="btn btn-primary">View Skill</a>
                     </div>
                 </div>
-                <div class="skill-description">
-                    Automated code review with best practices, security analysis, and improvement suggestions.
-                </div>
-                <div class="skill-meta">
-                    <span class="meta-tag">Python</span>
-                    <span class="meta-tag">JavaScript</span>
-                </div>
-                <div class="skill-actions">
-                    <a href="#" class="btn btn-primary">View Details</a>
-                </div>
-            </div>
-
-            <!-- Add more skill cards here -->
+            ))}
         </div>
     </div>
 
@@ -300,9 +293,6 @@
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('searchInput');
             const skillsGrid = document.getElementById('skillsGrid');
-            const categoryTags = document.querySelectorAll('.category-tag');
-
-            let currentCategory = 'all';
 
             function filterSkills() {
                 const searchTerm = searchInput.value.toLowerCase();
@@ -311,12 +301,13 @@
                 cards.forEach(card => {
                     const title = card.querySelector('h3').textContent.toLowerCase();
                     const description = card.querySelector('.skill-description').textContent.toLowerCase();
-                    const category = card.dataset.category;
+                    const category = card.querySelector('.skill-category').textContent.toLowerCase();
 
-                    const matchesSearch = title.includes(searchTerm) || description.includes(searchTerm);
-                    const matchesCategory = currentCategory === 'all' || category === currentCategory;
+                    const matchesSearch = title.includes(searchTerm) ||
+                                        description.includes(searchTerm) ||
+                                        category.includes(searchTerm);
 
-                    if (matchesSearch && matchesCategory) {
+                    if (matchesSearch) {
                         card.style.display = 'block';
                     } else {
                         card.style.display = 'none';
@@ -325,15 +316,6 @@
             }
 
             searchInput.addEventListener('input', filterSkills);
-
-            categoryTags.forEach(tag => {
-                tag.addEventListener('click', () => {
-                    categoryTags.forEach(t => t.classList.remove('active'));
-                    tag.classList.add('active');
-                    currentCategory = tag.dataset.category;
-                    filterSkills();
-                });
-            });
         });
     </script>
 </body>
