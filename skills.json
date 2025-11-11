@@ -376,5 +376,35 @@
     "url": "https://www.notion.so/notiondevs/Notion-Skills-for-Claude-28da4445d27180c7af1df7d8615723d0",
     "description": "Notion integration skills",
     "category": "Inspiration & Use Cases"
+  },
+  {
+    "title": "Algorithmic Art",
+    "url": "https://github.com/anthropics/skills",
+    "description": "Create generative art using p5.js with seeded randomness, flow fields, and particle systems. Best for generative artists and creative coders.",
+    "category": "Creative & Media"
+  },
+  {
+    "title": "Excel Mastery (XLSX)",
+    "url": "https://github.com/anthropics/skills/tree/main/document-skills/xlsx",
+    "description": "Create, edit, and analyze Excel spreadsheets with support for formulas, charts, and data transformations.",
+    "category": "Document Processing"
+  },
+  {
+    "title": "PowerPoint (PPTX)",
+    "url": "https://github.com/anthropics/skills/tree/main/document-skills/pptx",
+    "description": "Read, generate, and adjust PowerPoint slides, layouts, and templates.",
+    "category": "Document Processing"
+  },
+  {
+    "title": "Word Processing (DOCX)",
+    "url": "https://github.com/anthropics/skills/tree/main/document-skills/docx",
+    "description": "Create, edit, and analyze Word documents with tracked changes, comments, and formatting.",
+    "category": "Document Processing"
+  },
+  {
+    "title": "PDF Master",
+    "url": "https://github.com/anthropics/skills/tree/main/document-skills/pdf",
+    "description": "Extract text, tables, and metadata from PDFs. Merge and annotate PDF files.",
+    "category": "Document Processing"
   }
 ]
