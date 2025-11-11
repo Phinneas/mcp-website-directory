@@ -1,0 +1,339 @@
+---
+// Claude Skills Page
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Skills | My MCP Shelf</title>
+    <meta name="description" content="Discover and explore Claude AI skills for enhanced capabilities">
+    <link rel="canonical" href="https://www.mymcpshelf.com/skills/" />
+    <meta name="google-site-verification" content="qmL-eYN3ygqiuLXVWHuWWko8vIBJj3hAYizdpo7dDug" />
+    <meta name="msvalidate.01" content="8AA5A1EBF656D16B95B78BE654843905" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔍</text></svg>">
+
+    <!-- Plausible Analytics -->
+    <script defer data-domain="mymcpshelf.com" src="https://plausible-analytics-ce-production-7165.up.railway.app/js/script.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .nav-links {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+            background: rgba(255,255,255,0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        .search-section {
+            max-width: 900px;
+            margin: 2rem auto;
+        }
+
+        .search-bar {
+            background: white;
+            border-radius: 50px;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .search-icon {
+            font-size: 1.5rem;
+            margin-right: 1rem;
+        }
+
+        .search-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 1.1rem;
+            background: transparent;
+        }
+
+        .categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            justify-content: center;
+        }
+
+        .category-tag {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 0.6rem 1.2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            font-weight: 500;
+            border: 2px solid transparent;
+        }
+
+        .category-tag:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .category-tag.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .skill-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .skill-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+
+        .skill-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .skill-icon {
+            font-size: 2rem;
+            margin-right: 1rem;
+        }
+
+        .skill-title h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.3rem;
+            color: #333;
+        }
+
+        .skill-category {
+            font-size: 0.85rem;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .skill-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .skill-meta {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .meta-tag {
+            background: #f0f2ff;
+            color: #667eea;
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .skill-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .btn {
+            padding: 0.7rem 1.2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+
+            .skills-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Claude Skills</h1>
+            <p>Discover and explore pre-built Claude skills for enhanced AI capabilities</p>
+            <div class="nav-links">
+                <a href="/" class="nav-link">🏠 Home</a>
+                <a href="/blog" class="nav-link">📝 Blog</a>
+            </div>
+        </div>
+
+        <div class="search-section">
+            <div class="search-bar">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" placeholder="Search Claude skills..." id="searchInput">
+            </div>
+
+            <div class="categories">
+                <button class="category-tag active" data-category="all">All Skills</button>
+                <button class="category-tag" data-category="productivity">Productivity</button>
+                <button class="category-tag" data-category="development">Development</button>
+                <button class="category-tag" data-category="data">Data & Analytics</button>
+                <button class="category-tag" data-category="content">Content Creation</button>
+            </div>
+        </div>
+
+        <div class="skills-grid" id="skillsGrid">
+            <!-- Placeholder skill card - replace with actual data -->
+            <div class="skill-card" data-category="development">
+                <div class="skill-header">
+                    <div class="skill-icon">💻</div>
+                    <div class="skill-title">
+                        <h3>Code Reviewer</h3>
+                        <div class="skill-category">Development</div>
+                    </div>
+                </div>
+                <div class="skill-description">
+                    Automated code review with best practices, security analysis, and improvement suggestions.
+                </div>
+                <div class="skill-meta">
+                    <span class="meta-tag">Python</span>
+                    <span class="meta-tag">JavaScript</span>
+                </div>
+                <div class="skill-actions">
+                    <a href="#" class="btn btn-primary">View Details</a>
+                </div>
+            </div>
+
+            <!-- Add more skill cards here -->
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const skillsGrid = document.getElementById('skillsGrid');
+            const categoryTags = document.querySelectorAll('.category-tag');
+
+            let currentCategory = 'all';
+
+            function filterSkills() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const cards = skillsGrid.querySelectorAll('.skill-card');
+
+                cards.forEach(card => {
+                    const title = card.querySelector('h3').textContent.toLowerCase();
+                    const description = card.querySelector('.skill-description').textContent.toLowerCase();
+                    const category = card.dataset.category;
+
+                    const matchesSearch = title.includes(searchTerm) || description.includes(searchTerm);
+                    const matchesCategory = currentCategory === 'all' || category === currentCategory;
+
+                    if (matchesSearch && matchesCategory) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+
+            searchInput.addEventListener('input', filterSkills);
+
+            categoryTags.forEach(tag => {
+                tag.addEventListener('click', () => {
+                    categoryTags.forEach(t => t.classList.remove('active'));
+                    tag.classList.add('active');
+                    currentCategory = tag.dataset.category;
+                    filterSkills();
+                });
+            });
+        });
+    </script>
+</body>
+</html>
