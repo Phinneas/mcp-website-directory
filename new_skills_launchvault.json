@@ -1,0 +1,158 @@
+[
+  {
+    "title": "Last updated",
+    "url": "",
+    "description": "January 2025 | Reading time: 12 minutes",
+    "category": "General"
+  },
+  {
+    "title": "Best for",
+    "url": "",
+    "description": "Generative artists, creative coders, anyone who wants to make mesmerizing visuals",
+    "category": "🎨 Creative Skills: Where Art Meets Code"
+  },
+  {
+    "title": "Best for",
+    "url": "",
+    "description": "Graphic designers, marketers, content creators",
+    "category": "🎨 Creative Skills: Where Art Meets Code"
+  },
+  {
+    "title": "Best for",
+    "url": "",
+    "description": "Remote teams, community managers, anyone who loves spicing up workplace chat",
+    "category": "🎨 Creative Skills: Where Art Meets Code"
+  },
+  {
+    "title": "Best for",
+    "url": "",
+    "description": "Marketing teams, design departments, brand managers",
+    "category": "💼 Enterprise & Productivity Skills"
+  },
+  {
+    "title": "Best for",
+    "url": "",
+    "description": "Team leads, project managers, internal communications teams",
+    "category": "💼 Enterprise & Productivity Skills"
+  },
+  {
+    "title": "Style artifacts with 10 pre",
+    "url": "",
+    "description": "set professional themes or generate custom themes on-the-fly. Need your presentation to look sleek and professional without spending hours on design? This Skill offers ready-made themes plus the ability to create custom ones instantly.",
+    "category": "💼 Enterprise & Productivity Skills"
+  },
+  {
+    "title": "Best for",
+    "url": "",
+    "description": "Presenters, consultants, anyone who needs polished deliverables fast",
+    "category": "💼 Enterprise & Productivity Skills"
+  },
+  {
+    "title": "Best for",
+    "url": "",
+    "description": "Frontend developers, full-stack engineers, web designers",
+    "category": "🔧 Developer & Technical Skills"
+  },
+  {
+    "title": "Guide for creating high",
+    "url": "",
+    "description": "quality MCP servers to integrate external APIs and services. Want to connect Claude to external tools and data sources? This Skill teaches Claude how to build Model Context Protocol servers properly, opening up endless integration possibilities.",
+    "category": "🔧 Developer & Technical Skills"
+  },
+  {
+    "title": "Best for",
+    "url": "",
+    "description": "API developers, integration specialists, platform engineers",
+    "category": "🔧 Developer & Technical Skills"
+  },
+  {
+    "title": "Best for",
+    "url": "",
+    "description": "QA engineers, full-stack developers, DevOps teams",
+    "category": "🔧 Developer & Technical Skills"
+  },
+  {
+    "title": "Anthropic built specialized Skills for the heavy",
+    "url": "",
+    "description": "duty document formats we all use daily:",
+    "category": "🔧 Developer & Technical Skills"
+  },
+  {
+    "title": "🚀 The Meta Skill",
+    "url": "",
+    "description": "Skill Creator",
+    "category": "🔧 Developer & Technical Skills"
+  },
+  {
+    "title": "Guide for creating effective skills that extend Claude's capabilities. Here's the really cool part",
+    "url": "",
+    "description": "there's a Skill that helps you create new Skills! Claude asks about your workflow, generates the folder structure, and builds out the required files. No coding needed.",
+    "category": "🔧 Developer & Technical Skills"
+  },
+  {
+    "title": "Notion reports that with Skills, Claude works seamlessly with Notion",
+    "url": "",
+    "description": "taking users from questions to action faster. Less prompt wrangling on complex tasks, more predictable results.",
+    "category": "🔧 Developer & Technical Skills"
+  },
+  {
+    "title": "Skills are conceptually extremely simple",
+    "url": "",
+    "description": "a skill is a Markdown file telling the model how to do something, optionally accompanied by extra documents and pre-written scripts that the model can run.",
+    "category": "Why Skills Are a Big Deal"
+  },
+  {
+    "title": "But here's what makes them powerful",
+    "url": "",
+    "description": "At the start of a session Claude's various harnesses can scan all available skill files and read a short explanation for each one from the frontmatter YAML in the Markdown file. This is very token efficient: each skill only takes up a few dozen extra tokens, with the full details only loaded in should the user request a task that the skill can help solve.",
+    "category": "Why Skills Are a Big Deal"
+  },
+  {
+    "title": "We're working toward simplified skill creation workflows and enterprise",
+    "url": "",
+    "description": "wide deployment capabilities, making it easier for organizations to distribute skills across teams.",
+    "category": "Why Skills Are a Big Deal"
+  },
+  {
+    "title": "Claude Skills",
+    "url": "https://www.launchvault.dev/blog/what-are-claude-skills",
+    "description": "Your AI Assistant's Secret Superpowers - Introduction to Claude Skills and their core capabilities",
+    "category": "Why Skills Are a Big Deal"
+  },
+  {
+    "title": "The Ultimate Guide to Agent Skills",
+    "url": "https://www.launchvault.dev/blog/ultimate-guide-agent-skills-claude",
+    "description": "Teaching Claude New Tricks - Complete guide to creating and managing Agent Skills",
+    "category": "Why Skills Are a Big Deal"
+  },
+  {
+    "title": "How to Launch a Product",
+    "url": "https://www.launchvault.dev/blog/how-to-launch-product",
+    "description": "Step-by-Step Guide for 2025 - Complete guide to successful product launches",
+    "category": "Why Skills Are a Big Deal"
+  },
+  {
+    "title": "The Ultimate Indie Hacker Tech Stack for 2025",
+    "url": "https://www.launchvault.dev/blog/the-ultimate-indie-hacker-tech-stack-for-2025",
+    "description": "Essential tools for building and launching products",
+    "category": "Why Skills Are a Big Deal"
+  },
+  {
+    "title": "AI SEO Optimization",
+    "url": "https://www.launchvault.dev/blog/ai-seo-optimization-the-future-of-search-rankings",
+    "description": "The Future of Search Rankings - Leverage AI to optimize your marketing",
+    "category": "Why Skills Are a Big Deal"
+  },
+  {
+    "title": "What is Launch Vault",
+    "url": "https://www.launchvault.dev/blog/what-is-launch-vault-complete-guide",
+    "description": "Complete Guide - Learn how Launch Vault can amplify your product launch",
+    "category": "Why Skills Are a Big Deal"
+  },
+  {
+    "title": "Join hundreds of successful makers who've used Launch Vault to launch their AI",
+    "url": "",
+    "description": "powered productivity tools, automation solutions, and workflow enhancers. Build community and achieve your business goals.",
+    "category": "🚀 Launch Your AI-Powered Productivity Tools with Launch Vault"
+  }
+]

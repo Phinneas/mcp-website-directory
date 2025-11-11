@@ -1,6 +1,6 @@
 ---
-// MCP Clients Page
-import clientsData from '../../clients.json';
+// Claude Skills Page
+import skillsData from '../../skills.json';
 ---
 
 <!DOCTYPE html>
@@ -8,9 +8,9 @@ import clientsData from '../../clients.json';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MCP Clients | My MCP Shelf</title>
-    <meta name="description" content="Discover MCP client applications and integrations for connecting to MCP servers">
-    <link rel="canonical" href="https://www.mymcpshelf.com/clients/" />
+    <title>Claude Skills | My MCP Shelf</title>
+    <meta name="description" content="Discover and explore Claude AI skills for enhanced capabilities">
+    <link rel="canonical" href="https://www.mymcpshelf.com/claude-skills/" />
     <meta name="google-site-verification" content="qmL-eYN3ygqiuLXVWHuWWko8vIBJj3hAYizdpo7dDug" />
     <meta name="msvalidate.01" content="8AA5A1EBF656D16B95B78BE654843905" />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔍</text></svg>">
@@ -108,14 +108,43 @@ import clientsData from '../../clients.json';
             background: transparent;
         }
 
-        .clients-grid {
+        .categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            justify-content: center;
+        }
+
+        .category-tag {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 0.6rem 1.2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            font-weight: 500;
+            border: 2px solid transparent;
+        }
+
+        .category-tag:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .category-tag.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        .skills-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 2rem;
             margin-top: 3rem;
         }
 
-        .client-card {
+        .skill-card {
             background: white;
             border-radius: 15px;
             padding: 2rem;
@@ -123,41 +152,41 @@ import clientsData from '../../clients.json';
             transition: all 0.3s ease;
         }
 
-        .client-card:hover {
+        .skill-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 30px rgba(0,0,0,0.15);
         }
 
-        .client-header {
+        .skill-header {
             display: flex;
             align-items: center;
             margin-bottom: 1rem;
         }
 
-        .client-icon {
+        .skill-icon {
             font-size: 2rem;
             margin-right: 1rem;
         }
 
-        .client-title h3 {
+        .skill-title h3 {
             font-size: 1.3rem;
             margin-bottom: 0.3rem;
             color: #333;
         }
 
-        .client-category {
+        .skill-category {
             font-size: 0.85rem;
             color: #667eea;
             font-weight: 600;
         }
 
-        .client-description {
+        .skill-description {
             color: #666;
             line-height: 1.6;
             margin-bottom: 1.5rem;
         }
 
-        .client-meta {
+        .skill-meta {
             display: flex;
             gap: 0.75rem;
             flex-wrap: wrap;
@@ -173,7 +202,7 @@ import clientsData from '../../clients.json';
             font-weight: 500;
         }
 
-        .client-actions {
+        .skill-actions {
             display: flex;
             gap: 0.75rem;
         }
@@ -205,7 +234,7 @@ import clientsData from '../../clients.json';
                 font-size: 2.5rem;
             }
 
-            .clients-grid {
+            .skills-grid {
                 grid-template-columns: 1fr;
             }
 
@@ -218,11 +247,11 @@ import clientsData from '../../clients.json';
 <body>
     <div class="container">
         <div class="header">
-            <h1>MCP Clients</h1>
-            <p>Explore applications and tools that connect to MCP servers</p>
+            <h1>Claude Skills</h1>
+            <p>Discover and explore pre-built Claude skills for enhanced AI capabilities</p>
             <div class="nav-links">
                 <a href="/" class="nav-link">🏠 Shelf</a>
-                <a href="/skills" class="nav-link">⚡ Skills</a>
+                <a href="/mcp-clients" class="nav-link">💻 MCP Clients</a>
                 <a href="/blog" class="nav-link">📝 Blog</a>
             </div>
         </div>
@@ -230,35 +259,30 @@ import clientsData from '../../clients.json';
         <div class="search-section">
             <div class="search-bar">
                 <span class="search-icon">🔍</span>
-                <input type="text" class="search-input" placeholder="Search MCP clients..." id="searchInput">
+                <input type="text" class="search-input" placeholder="Search Claude skills..." id="searchInput">
             </div>
             <div style="text-align: center; color: white; margin-top: 1rem;">
-                <p>{clientsData.length} MCP clients available</p>
+                <p>{skillsData.length} Claude skills available</p>
             </div>
         </div>
 
-        <div class="clients-grid" id="clientsGrid">
-            {clientsData.map((client) => (
-                <div class="client-card">
-                    <div class="client-header">
-                        <div class="client-icon">💻</div>
-                        <div class="client-title">
-                            <h3>{client.title}</h3>
-                            <div class="client-category">MCP Client</div>
+        <div class="skills-grid" id="skillsGrid">
+            {skillsData.map((skill) => (
+                <div class="skill-card">
+                    <div class="skill-header">
+                        <div class="skill-icon">⚡</div>
+                        <div class="skill-title">
+                            <h3>{skill.title}</h3>
+                            <div class="skill-category">{skill.category}</div>
                         </div>
                     </div>
-                    <div class="client-description">
-                        {client.description.length > 150
-                            ? client.description.substring(0, 150) + '...'
-                            : client.description}
+                    <div class="skill-description">
+                        {skill.description.length > 150
+                            ? skill.description.substring(0, 150) + '...'
+                            : skill.description}
                     </div>
-                    {client.stars > 0 && (
-                        <div class="client-meta">
-                            <span class="meta-tag">⭐ {client.stars}</span>
-                        </div>
-                    )}
-                    <div class="client-actions">
-                        <a href={client.url} target="_blank" rel="noopener noreferrer" class="btn btn-primary">View on GitHub</a>
+                    <div class="skill-actions">
+                        <a href={skill.url} target="_blank" rel="noopener noreferrer" class="btn btn-primary">View Skill</a>
                     </div>
                 </div>
             ))}
@@ -268,17 +292,20 @@ import clientsData from '../../clients.json';
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('searchInput');
-            const clientsGrid = document.getElementById('clientsGrid');
+            const skillsGrid = document.getElementById('skillsGrid');
 
-            function filterClients() {
+            function filterSkills() {
                 const searchTerm = searchInput.value.toLowerCase();
-                const cards = clientsGrid.querySelectorAll('.client-card');
+                const cards = skillsGrid.querySelectorAll('.skill-card');
 
                 cards.forEach(card => {
                     const title = card.querySelector('h3').textContent.toLowerCase();
-                    const description = card.querySelector('.client-description').textContent.toLowerCase();
+                    const description = card.querySelector('.skill-description').textContent.toLowerCase();
+                    const category = card.querySelector('.skill-category').textContent.toLowerCase();
 
-                    const matchesSearch = title.includes(searchTerm) || description.includes(searchTerm);
+                    const matchesSearch = title.includes(searchTerm) ||
+                                        description.includes(searchTerm) ||
+                                        category.includes(searchTerm);
 
                     if (matchesSearch) {
                         card.style.display = 'block';
@@ -288,7 +315,7 @@ import clientsData from '../../clients.json';
                 });
             }
 
-            searchInput.addEventListener('input', filterClients);
+            searchInput.addEventListener('input', filterSkills);
         });
     </script>
 </body>
