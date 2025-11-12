@@ -6,6 +6,20 @@
   command = "npm run dev"
   framework = "astro"
 
+# Redirect non-www to www for canonical URL consistency
+[[redirects]]
+  from = "http://mymcpshelf.com/*"
+  to = "https://www.mymcpshelf.com/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "https://mymcpshelf.com/*"
+  to = "https://www.mymcpshelf.com/:splat"
+  status = 301
+  force = true
+
+# SPA fallback (must be last)
 [[redirects]]
   from = "/*"
   to = "/index.html"

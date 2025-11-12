@@ -1,0 +1,3 @@
+# Redirect non-www to www for canonical URL consistency
+http://mymcpshelf.com/* https://www.mymcpshelf.com/:splat 301!
+https://mymcpshelf.com/* https://www.mymcpshelf.com/:splat 301!
