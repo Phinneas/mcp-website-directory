@@ -1,0 +1,56 @@
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Shelf illustration -->
+  <g transform="translate(100, 50)">
+    <!-- Top shelf horizontal -->
+    <rect x="0" y="0" width="600" height="15" fill="#2c4557"/>
+    <!-- Top shelf vertical supports -->
+    <rect x="150" y="0" width="15" height="120" fill="#2c4557"/>
+    <rect x="435" y="0" width="15" height="120" fill="#2c4557"/>
+    
+    <!-- Books and items on top shelf -->
+    <rect x="50" y="-80" width="25" height="80" fill="#4a7ba7"/>
+    <rect x="80" y="-90" width="30" height="90" fill="#2c4557"/>
+    <rect x="115" y="-70" width="20" height="70" fill="#4a7ba7"/>
+    <rect x="200" y="-60" width="40" height="60" fill="#5a8fc7"/>
+    <rect x="245" y="-75" width="35" height="75" fill="#d97676"/>
+    <rect x="285" y="-70" width="25" height="70" fill="#e8a57c"/>
+    <rect x="450" y="-100" width="30" height="100" fill="#2c4557"/>
+    <circle cx="515" cy="-25" r="20" fill="#d97676"/>
+    <rect x="545" y="-40" width="35" height="25" fill="#e8a57c" rx="3"/>
+    
+    <!-- Middle shelf horizontal -->
+    <rect x="0" y="120" width="600" height="15" fill="#2c4557"/>
+    <!-- Middle shelf vertical supports -->
+    <rect x="150" y="120" width="15" height="120" fill="#2c4557"/>
+    <rect x="435" y="120" width="15" height="120" fill="#2c4557"/>
+    
+    <!-- Books and items on middle shelf -->
+    <rect x="30" y="50" width="35" height="70" fill="#e8a57c"/>
+    <rect x="70" y="45" width="28" height="75" fill="#d97676"/>
+    <rect x="103" y="55" width="32" height="65" fill="#e8c9a5"/>
+    <rect x="200" y="55" width="30" height="65" fill="#4a7ba7"/>
+    <rect x="235" y="45" width="35" height="75" fill="#5a8fc7"/>
+    <rect x="275" y="60" width="25" height="60" fill="#d97676"/>
+    <rect x="305" y="50" width="30" height="70" fill="#e8a57c"/>
+    <rect x="470" y="55" width="35" height="65" fill="#d97676"/>
+    <rect x="510" y="45" width="28" height="75" fill="#e8c9a5"/>
+    
+    <!-- Bottom shelf horizontal -->
+    <rect x="0" y="240" width="600" height="15" fill="#2c4557"/>
+    <!-- Bottom shelf vertical supports -->
+    <rect x="150" y="240" width="15" height="120" fill="#2c4557"/>
+    <rect x="435" y="240" width="15" height="120" fill="#2c4557"/>
+    
+    <!-- Books and items on bottom shelf -->
+    <rect x="40" y="180" width="28" height="60" fill="#4a7ba7"/>
+    <rect x="73" y="170" width="35" height="70" fill="#d97676"/>
+    <ellipse cx="240" cy="210" rx="25" ry="35" fill="#2c4557"/>
+    <rect x="280" y="195" width="50" height="45" fill="#5a8fc7"/>
+    <rect x="335" y="195" width="45" height="45" fill="#e8c9a5"/>
+    <circle cx="485" cy="205" r="25" fill="#e8a57c"/>
+    <path d="M 515,210 L 525,195 L 530,210 Z" fill="#4a7ba7"/>
+  </g>
+  
+  <!-- MCP Shelf text -->
+  <text x="400" y="450" font-family="Arial, sans-serif" font-size="90" font-weight="bold" fill="#4a7ba7" text-anchor="middle">MCP Shelf</text>
+</svg>
