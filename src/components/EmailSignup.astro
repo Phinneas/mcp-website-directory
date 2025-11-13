@@ -1,11 +1,12 @@
 ---
-// Email Signup Component - Plunk Integration
+// Email Signup Component - Beehiiv Integration
 ---
 
 <div class="email-signup">
     <div class="signup-container">
+        <div class="newsletter-icon">📬</div>
         <h3>Stay Updated on MCP</h3>
-        <p>Get the latest MCP servers, guides, and AI integration tips delivered to your inbox.</p>
+        <p>Get weekly updates on new MCP servers, integration guides, and AI development tips.</p>
 
         <form class="signup-form" id="emailSignupForm">
             <input
@@ -36,6 +37,21 @@
         max-width: 600px;
         margin: 0 auto;
         text-align: center;
+    }
+
+    .newsletter-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        animation: bounce 2s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-10px);
+        }
     }
 
     .signup-container h3 {

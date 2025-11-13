@@ -12,46 +12,50 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    // Get Plunk API key from environment
-    const plunkApiKey = import.meta.env.PLUNK_API_KEY;
+    // Get Beehiiv credentials from environment
+    const beehiivApiKey = import.meta.env.BEEHIIV_API_KEY;
+    const beehiivPublicationId = import.meta.env.BEEHIIV_PUBLICATION_ID;
 
-    if (!plunkApiKey) {
-      console.error('PLUNK_API_KEY not configured');
+    if (!beehiivApiKey || !beehiivPublicationId) {
+      console.error('BEEHIIV_API_KEY or BEEHIIV_PUBLICATION_ID not configured');
       return new Response(
         JSON.stringify({ error: 'Email service not configured' }),
         { status: 500, headers: { 'Content-Type': 'application/json' } }
       );
     }
 
-    // Subscribe to Plunk
-    const response = await fetch('https://api.useplunk.com/v1/contacts', {
+    // Subscribe to Beehiiv
+    const response = await fetch(`https://api.beehiiv.com/v2/publications/${beehiivPublicationId}/subscriptions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${plunkApiKey}`,
+        'Authorization': `Bearer ${beehiivApiKey}`,
       },
       body: JSON.stringify({
         email,
-        subscribed: true,
+        reactivate_existing: false,
+        send_welcome_email: true,
+        utm_source: 'mymcpshelf.com',
+        utm_medium: 'website',
+        utm_campaign: 'newsletter_signup'
       }),
     });
 
+    const data = await response.json();
+
     if (!response.ok) {
-      const errorData = await response.json();
-      console.error('Plunk API error:', errorData);
+      console.error('Beehiiv API error:', data);
 
       // Handle duplicate email gracefully
-      if (response.status === 400 && errorData.error?.includes('already exists')) {
+      if (response.status === 400 || response.status === 409) {
         return new Response(
           JSON.stringify({ error: 'This email is already subscribed' }),
           { status: 400, headers: { 'Content-Type': 'application/json' } }
         );
       }
 
-      throw new Error('Failed to subscribe');
+      throw new Error(data.message || 'Failed to subscribe');
     }
-
-    const data = await response.json();
 
     return new Response(
       JSON.stringify({ success: true, data }),

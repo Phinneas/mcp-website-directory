@@ -1,5 +1,6 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
+import EmailSignup from '../../components/EmailSignup.astro';
 
 // Generate static paths for all blog posts
 export async function getStaticPaths() {
@@ -303,6 +304,8 @@ const { Content } = await post.render();
                     <Content />
                 </div>
             </article>
+
+            <EmailSignup />
         </main>
     </div>
 

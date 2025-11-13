@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import EmailSignup from '../components/EmailSignup.astro';
 
 // Get all blog posts
 const blogPosts = await getCollection('blog');
@@ -273,6 +274,8 @@ const pageTitle = "My MCP Shelf Blog";
                 <p class="no-posts">No blog posts available yet. Check back soon!</p>
             )}
         </main>
+
+        <EmailSignup />
     </div>
 
     <script>
