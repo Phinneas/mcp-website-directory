@@ -7173,6 +7173,17 @@ function formatStars(stars?: number): string {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Dark mode flash prevention - MUST run first, before any styles or resources -->
+    <script>
+        (function() {
+            const theme = localStorage.getItem('theme');
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark-mode');
+            }
+        })();
+    </script>
+
     <title>My MCP Shelf</title>
     <meta name="description" content="Your curated collection of 165+ premium Model Context Protocol servers for enhanced AI capabilities">
     <link rel="canonical" href="https://www.mymcpshelf.com/" />
@@ -7185,17 +7196,6 @@ function formatStars(stars?: number): string {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Dark mode flash prevention - must run before styles -->
-    <script>
-        (function() {
-            const theme = localStorage.getItem('theme');
-            if (theme === 'dark') {
-                document.documentElement.classList.add('dark-mode');
-                document.body.classList.add('dark-mode');
-            }
-        })();
-    </script>
 
     <!-- Plausible Analytics -->
     <script defer data-domain="mymcpshelf.com" src="https://plausible-analytics-ce-production-7165.up.railway.app/js/script.js"></script>
@@ -7213,7 +7213,7 @@ function formatStars(stars?: number): string {
             --border-color: rgba(255, 255, 255, 0.2);
         }
 
-        body.dark-mode {
+        html.dark-mode {
             --bg-gradient-start: #1a1a2e;
             --bg-gradient-end: #16213e;
             --text-primary: #e0e0e0;
@@ -7322,7 +7322,7 @@ function formatStars(stars?: number): string {
             transition: all 0.3s ease;
         }
 
-        body.dark-mode .search-input {
+        html.dark-mode .search-input {
             background: rgba(255, 255, 255, 0.95);
             color: #333;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
