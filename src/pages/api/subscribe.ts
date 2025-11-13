@@ -59,8 +59,26 @@ export const POST: APIRoute = async ({ request }) => {
       throw new Error(data.message || 'Failed to subscribe');
     }
 
+    // Check subscription status
+    const subscriptionStatus = data.data?.status;
+    console.log('Beehiiv subscription created:', { email, status: subscriptionStatus });
+
+    // Beehiiv returns status: "validating", "active", or "invalid"
+    if (subscriptionStatus === 'invalid') {
+      return new Response(
+        JSON.stringify({ error: 'Invalid email address. Please check and try again.' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
     return new Response(
-      JSON.stringify({ success: true, data }),
+      JSON.stringify({
+        success: true,
+        status: subscriptionStatus,
+        message: subscriptionStatus === 'validating'
+          ? 'Please check your email to confirm your subscription'
+          : 'Successfully subscribed!'
+      }),
       { status: 200, headers: { 'Content-Type': 'application/json' } }
     );
 

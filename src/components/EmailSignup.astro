@@ -213,7 +213,9 @@
 
                 const data = await response.json();
 
-                message.textContent = '✓ Successfully subscribed! Check your email.';
+                // Use message from API response or default
+                const successMessage = data.message || 'Successfully subscribed! Check your email.';
+                message.textContent = `✓ ${successMessage}`;
                 message.classList.add('success');
                 emailInput.value = '';
             } catch (error) {
