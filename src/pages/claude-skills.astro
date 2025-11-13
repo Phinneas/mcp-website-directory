@@ -1,6 +1,7 @@
 ---
 // Claude Skills Page
 import skillsData from '../../skills.json';
+import HeaderNewsletter from '../components/HeaderNewsletter.astro';
 ---
 
 <!DOCTYPE html>
@@ -324,6 +325,9 @@ import skillsData from '../../skills.json';
                 <a href="/" class="nav-link">🏠 Shelf</a>
                 <a href="/mcp-clients" class="nav-link">💻 MCP Clients</a>
                 <a href="/blog" class="nav-link">📝 Blog</a>
+            </div>
+            <div style="margin-top: 2rem; display: flex; justify-content: center;">
+                <HeaderNewsletter />
             </div>
         </div>
 

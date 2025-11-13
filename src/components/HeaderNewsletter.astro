@@ -1,0 +1,202 @@
+---
+// Compact Header Newsletter Signup - Beehiiv Integration
+---
+
+<div class="header-newsletter">
+    <span class="newsletter-label">📬 Get weekly MCP updates:</span>
+    <form class="header-newsletter-form" id="headerNewsletterForm">
+        <input
+            type="email"
+            name="email"
+            placeholder="your@email.com"
+            required
+            class="header-email-input"
+        />
+        <button type="submit" class="header-signup-button">Subscribe</button>
+    </form>
+    <span class="header-message" id="headerMessage"></span>
+</div>
+
+<style>
+    .header-newsletter {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+        padding: 0.75rem 1.5rem;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 50px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .newsletter-label {
+        color: white;
+        font-size: 0.9rem;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .header-newsletter-form {
+        display: flex;
+        gap: 0.5rem;
+        flex: 1;
+        min-width: 300px;
+    }
+
+    .header-email-input {
+        flex: 1;
+        padding: 0.6rem 1rem;
+        border: none;
+        border-radius: 25px;
+        font-size: 0.9rem;
+        outline: none;
+        background: white;
+        min-width: 200px;
+    }
+
+    .header-email-input::placeholder {
+        color: #999;
+    }
+
+    .header-email-input:focus {
+        box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+    }
+
+    .header-signup-button {
+        padding: 0.6rem 1.5rem;
+        background: white;
+        color: #667eea;
+        border: none;
+        border-radius: 25px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+    }
+
+    .header-signup-button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .header-signup-button:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+
+    .header-message {
+        color: white;
+        font-size: 0.85rem;
+        font-weight: 500;
+        min-width: 150px;
+    }
+
+    .header-message.success {
+        color: #4ade80;
+    }
+
+    .header-message.error {
+        color: #fca5a5;
+    }
+
+    @media (max-width: 1024px) {
+        .header-newsletter {
+            padding: 0.5rem 1rem;
+        }
+
+        .newsletter-label {
+            font-size: 0.85rem;
+        }
+
+        .header-newsletter-form {
+            min-width: 250px;
+        }
+
+        .header-email-input {
+            font-size: 0.85rem;
+            min-width: 150px;
+        }
+
+        .header-signup-button {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .header-newsletter {
+            flex-direction: column;
+            align-items: stretch;
+            padding: 1rem;
+            border-radius: 15px;
+        }
+
+        .newsletter-label {
+            text-align: center;
+        }
+
+        .header-newsletter-form {
+            min-width: auto;
+            flex-direction: column;
+        }
+
+        .header-email-input,
+        .header-signup-button {
+            width: 100%;
+        }
+
+        .header-message {
+            text-align: center;
+            min-width: auto;
+        }
+    }
+</style>
+
+<script>
+    const form = document.getElementById('headerNewsletterForm');
+    const message = document.getElementById('headerMessage');
+
+    if (form && message) {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const emailInput = form.querySelector('input[name="email"]') as HTMLInputElement;
+            const email = emailInput.value;
+            const button = form.querySelector('button') as HTMLButtonElement;
+
+            // Disable button during submission
+            button.disabled = true;
+            button.textContent = 'Subscribing...';
+            message.textContent = '';
+            message.className = 'header-message';
+
+            try {
+                const response = await fetch('/api/subscribe', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    message.textContent = '✓ Subscribed!';
+                    message.classList.add('success');
+                    emailInput.value = '';
+                } else {
+                    throw new Error(data.error || 'Subscription failed');
+                }
+            } catch (error) {
+                message.textContent = `✗ ${error instanceof Error ? error.message : 'Try again'}`;
+                message.classList.add('error');
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Subscribe';
+            }
+        });
+    }
+</script>
