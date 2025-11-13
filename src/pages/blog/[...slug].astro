@@ -1,6 +1,8 @@
 ---
-import { getCollection, type CollectionEntry, render } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
 import EmailSignup from '../../components/EmailSignup.astro';
+
+export const prerender = true;
 
 // Generate static paths for all blog posts
 export async function getStaticPaths() {
@@ -14,7 +16,7 @@ export async function getStaticPaths() {
 type Props = CollectionEntry<'blog'>;
 
 const post = Astro.props;
-const { Content } = await render(post);
+const { Content } = await post.render();
 ---
 
 <!DOCTYPE html>
