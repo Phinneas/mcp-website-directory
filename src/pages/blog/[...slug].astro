@@ -27,6 +27,18 @@ const { Content } = await post.render();
     <link rel="canonical" href={`https://www.mymcpshelf.com/blog/${post.slug}/`} />
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="icon" href="/favicon.png" type="image/png">
+
+    <!-- Dark mode flash prevention - must run before styles -->
+    <script>
+        (function() {
+            const theme = localStorage.getItem('theme');
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark-mode');
+                document.body.classList.add('dark-mode');
+            }
+        })();
+    </script>
+
     <style>
         :root {
             --bg-gradient-start: #667eea;

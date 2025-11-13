@@ -7186,6 +7186,17 @@ function formatStars(stars?: number): string {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+    <!-- Dark mode flash prevention - must run before styles -->
+    <script>
+        (function() {
+            const theme = localStorage.getItem('theme');
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark-mode');
+                document.body.classList.add('dark-mode');
+            }
+        })();
+    </script>
+
     <!-- Plausible Analytics -->
     <script defer data-domain="mymcpshelf.com" src="https://plausible-analytics-ce-production-7165.up.railway.app/js/script.js"></script>
     <!-- End Plausible Analytics -->
