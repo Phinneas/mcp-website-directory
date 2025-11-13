@@ -1,0 +1,283 @@
+---
+title: "MCP Server Architecture Diagram – From Spaghetti Integrations to Lego Bricks"
+description: "Deep dive into MCP server architecture with diagrams, real code examples, and production deployment patterns. Learn how to build standardized AI integrations that replace custom API wrappers."
+date: "2025-11-13T00:00:00.000Z"
+author: "Chester Beard"
+image: "/images/mcp-server-architecture-hero.png"
+tags: ["mcp", "architecture", "tutorial", "integration", "python", "deployment"]
+---
+
+# MCP Server Architecture Diagram – From Spaghetti Integrations to Lego Bricks
+
+Ever caught yourself writing the **37th custom Slack-to-LLM glue script**? Same auth dance, same pagination headache, same prompt hacking to explain the schema to the model. You're not alone—and there's a better way.
+
+MCP (Model Context Protocol) turns that spaghetti into **Lego bricks**. One protocol, any data source, swap pieces at will. Instead of writing N custom integrations with N different auth layers and N different schema mappers, you write one standardized MCP server and plug it into any MCP-compatible host.
+
+This guide walks through the architecture that makes it possible, with real code you can run today.
+
+---
+
+## The MCP Server Architecture Diagram Explained
+
+![MCP server architecture diagram showing Host-Client-Server layers with JSON-RPC 2.0 communication over stdio and HTTP/SSE transports](/images/mcp-server-architecture-hero.png)
+
+*Caption: Host app embeds MCP clients; each client speaks JSON-RPC 2.0 over stdio or HTTP/SSE to an isolated MCP server. The LLM only sees tool names, descriptions, and JSON schemas—not implementation details.*
+
+---
+
+## Stack Walk-Through in 90 Words
+
+The architecture has three layers:
+
+1. **Host** (Claude Desktop, Cursor, etc.) holds the LLM and orchestrates conversations.
+2. **MCP Client** lives inside the host—one per server—handles lifecycle, auth retries, and notifications.
+3. **MCP Server** is a tiny service you write; it exposes named **tools** (functions), **resources** (read-only data), and **prompts** (templates).
+
+Transport is pluggable: local **stdio** for zero-config desktop add-ons, **HTTP/SSE** for remote SaaS deployments. The LLM never sees implementation details—just a tool name, description, and JSON-Schema arguments.
+
+---
+
+## Live Example – Grist Integration in 24 Lines
+
+Let's build a working MCP server that fetches records from a Grist database. Save this as `mcp_server.py`:
+
+```python
+from mcp.server import Server
+from mcp.types import Tool
+import asyncio, httpx, os
+
+DOC_ID, TABLE_ID = "myDoc", "myTable"
+GRIST_KEY = os.getenv("GRIST_KEY")
+
+server = Server("mymcpshelf")
+
+@server.list_tools()
+async def list_tools() -> list[Tool]:
+    return [Tool(
+        name="get_grist_records",
+        description="Fetch all records from a Grist table",
+        inputSchema={"type": "object", "properties": {}}
+    )]
+
+@server.call_tool()
+async def call_tool(name: str, args: dict):
+    if name != "get_grist_records":
+        raise ValueError("Unknown tool")
+    async with httpx.AsyncClient() as c:
+        r = await c.get(
+            f"https://docs.getgrist.com/api/docs/{DOC_ID}/tables/{TABLE_ID}/records",
+            headers={"Authorization": f"Bearer {GRIST_KEY}"}
+        )
+        r.raise_for_status()
+        return r.json()  # { "records": [ … ] }
+
+if __name__ == "__main__":
+    asyncio.run(server.run())
+```
+
+Install once:
+
+```bash
+pip install mcp httpx
+export GRIST_KEY="your-api-key-here"
+python mcp_server.py
+```
+
+That's it. Twenty-four lines, and you have a production-ready MCP server.
+
+---
+
+## Wire It to Claude Desktop
+
+Open `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) or `%APPDATA%\Claude\claude_desktop_config.json` (Windows) and add:
+
+```json
+{
+  "mcpServers": {
+    "grist": {
+      "command": "python",
+      "args": ["-m", "mcp_server"],
+      "env": {
+        "GRIST_KEY": "your-api-key-here"
+      }
+    }
+  }
+}
+```
+
+Restart Claude Desktop. You'll instantly see a new tool icon in the interface. Ask *"List my Grist records"* and the model calls your server without any prompt hacking or schema explanation.
+
+---
+
+## MCP Server Architecture Diagram: Sequence Flow
+
+![Step-by-step MCP server architecture diagram showing Grist fetch via stdio transport with 6-step sequence flow](/images/mcp-server-sequence-flow.png)
+
+*Caption: Six-step stdio flow from client initialization to API response.*
+
+Here's what happens under the hood:
+
+1. **Client → MCP Server**: `initialize()` request via stdio
+2. **MCP Server → Client**: `initialized` confirmation
+3. **Client → MCP Server**: `tools/call "get_grist_records"`
+4. **MCP Server → Grist API**: `GET /records` with bearer token
+5. **Grist API → MCP Server**: JSON payload with records
+6. **MCP Server → Client**: `{result: [ … ]}` back through stdio
+
+The beauty of stdio: **no ports, no firewall rules, no network configuration**. The client spawns your Python process, pipes stdin/stdout, and that's the entire transport layer.
+
+---
+
+## HTTP/SSE Pattern (Remote MCP Server)
+
+Stdio works great for local tools, but what if you need **remote** access or want to serve multiple users? Swap stdio for HTTP with Server-Sent Events.
+
+Add this to your `mcp_server.py`:
+
+```python
+from mcp.server.sse import SseServerTransport
+from starlette.applications import Starlette
+from starlette.routing import Route
+
+async def handle_sse(request):
+    async with request.receive():
+        transport = SseServerTransport("/messages")
+        await server.run(transport)
+
+app = Starlette(routes=[Route("/sse", endpoint=handle_sse)])
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8080)
+```
+
+Run it:
+
+```bash
+pip install starlette uvicorn
+uvicorn mcp_server:app --host 0.0.0.0 --port 8080
+```
+
+**Claude Desktop config for HTTP/SSE:**
+
+```json
+{
+  "mcpServers": {
+    "grist-remote": {
+      "url": "https://my-mcp-server.example.com/sse",
+      "transport": "sse"
+    }
+  }
+}
+```
+
+### When to Use HTTP/SSE
+
+- **Multi-tenant SaaS deployments** – One server, many users
+- **OAuth2 flows** – Need browser redirects for authorization
+- **Centralized logging** – Track usage across all clients
+- **Cross-network access** – Dev machine → cloud database
+
+### Real-World HTTP/SSE Examples
+
+- **[Stripe MCP Server](https://www.mymcpshelf.com)** – Handles OAuth2 for payment processing, serves multiple merchants
+- **[Notion MCP Server](https://www.mymcpshelf.com)** – Multi-workspace, multi-user access with centralized rate limiting
+- **[AWS Bedrock Knowledge Bases](https://www.mymcpshelf.com)** – Cloud-native, IAM-secured document retrieval
+
+---
+
+## Multi-Tool vs Single-Purpose Servers
+
+One of the biggest architecture decisions: should your MCP server do one thing or many things?
+
+| Single-Purpose Server | Multi-Tool Server |
+|----------------------|-------------------|
+| `github-issues-server` <br/>(1 tool: `create_issue`) | `github-server` <br/>(8 tools: repos, issues, PRs, releases…) |
+| ✅ Least privilege (narrow token scopes) | ✅ Fewer config entries |
+| ✅ Easy to audit & test | ✅ Share auth tokens & rate-limits |
+| ✅ Swap implementations without breakage | ⚠️ Over-permissioned tokens |
+| ⚠️ Config file bloat (20+ entries) | ⚠️ Tight coupling (tool changes = reboot) |
+
+### The Right Approach
+
+**Start single-purpose.** If you hit 5+ servers for one service (Slack channels, Slack messages, Slack users…), consolidate into a **bounded multi-tool** server.
+
+The key word is *bounded*—all tools should relate to the same service or domain. Don't mix GitHub + Slack + Stripe in one server just because you can.
+
+### Examples from MyMCPShelf
+
+- **Single-purpose done right:** [SQLite MCP](https://www.mymcpshelf.com) – One job: query SQLite databases. No feature creep.
+- **Multi-tool done right:** [GitHub Official MCP](https://www.mymcpshelf.com) – 20+ tools, but all GitHub-scoped (repos, issues, PRs, actions).
+- **Avoid:** "Swiss Army knife" servers that mix unrelated APIs and require dozens of permission scopes.
+
+---
+
+## Production Hardening Checklist
+
+Before you deploy an MCP server beyond your laptop, lock down these eight areas:
+
+1. **One job per tool** – Use action verbs (`create_issue`, `fetch_records`), not nouns. Each tool should do exactly one thing.
+
+2. **Lock the schema** – Use JSON-Schema draft 2020-12 with strict types, enums for allowed values, and `required` arrays. No free-form strings where enums would work.
+
+3. **Idempotency keys** – Same input → same output. Essential for retry logic. Hash the input args and cache responses for 5 minutes.
+
+4. **Validate & sanitize** – Never pass raw user strings into SQL queries or shell commands. Use parameterized queries and escape user input.
+
+5. **Rate-limit & paginate** – Filter at the source, not in the prompt. Return max 100 items, provide pagination tokens for more.
+
+6. **Return human summaries** – The LLM quotes your response. Return structured data *and* a natural language summary to reduce hallucinations.
+
+7. **Observability** – Log every tool call with: timestamp, user ID, tool name, latency, success/failure. Use structured logging (JSON lines).
+
+8. **Least-privilege tokens** – Your Grist bearer token should have read-only access to one table, not admin access to all docs.
+
+### Production Examples
+
+- **Security auditing:** [Semgrep MCP Server](https://www.mymcpshelf.com) scans code for vulnerabilities before execution
+- **Database safety:** [PostgreSQL MCP](https://www.mymcpshelf.com) uses read-only connection strings and parameterized queries
+
+---
+
+## Why This Beats "Yet Another API Wrapper"
+
+| Spaghetti Integration | Lego Brick (MCP) |
+|-----------------------|------------------|
+| N auth layers (Slack OAuth, GitHub token, Stripe key…) | 1 client, pluggable transports |
+| N schema mappers (custom JSON → LLM prompt text) | 1 JSON-Schema per tool |
+| Prompt hacking ("here's the API response format…") | Zero-shot tool use |
+| Tightly coupled (host knows about every API) | Language-agnostic micro-service |
+| Hard to audit (prompts scattered across codebase) | Built-in request/response tracing |
+
+The difference: **separation of concerns**. The LLM host doesn't need to know how to authenticate with Grist, paginate results, or handle rate limits. It just knows there's a tool called `get_grist_records` that returns records.
+
+When Grist changes their API, you update one file (`mcp_server.py`). When you swap Grist for Airtable, you swap one server. The host configuration stays identical.
+
+---
+
+## TL;DR
+
+1. **MCP = USB-C for AI integrations.** One protocol, any data source.
+2. **Three layers:** Host ↔ MCP Client ↔ MCP Server (JSON-RPC 2.0).
+3. **Write 20 lines**, drop it into Claude Desktop, done.
+4. **Swap transports** (stdio ↔ HTTP/SSE) without touching business logic.
+5. **Your 38th integration** is just another Lego brick—no more spaghetti.
+
+---
+
+## Next Steps
+
+Ready to build your own MCP servers or explore what's already available?
+
+1. ⭐ **Star the official [MCP repo](https://github.com/modelcontextprotocol)** to follow protocol updates
+
+2. 🚀 **Submit your server to [awesome-mcp](https://github.com/modelcontextprotocol/awesome-mcp)** once you've built something useful
+
+3. 🔍 **Browse 180+ ready-made servers** organized by category:
+   - **[Database Tools](https://www.mymcpshelf.com)** – SQLite, PostgreSQL, MongoDB, MySQL
+   - **[Communication](https://www.mymcpshelf.com)** – Slack, Discord, Telegram, WhatsApp
+   - **[File Management](https://www.mymcpshelf.com)** – Google Drive, AWS S3, local filesystem
+   - **[Developer Tools](https://www.mymcpshelf.com)** – GitHub, GitLab, Docker, Kubernetes
+   - **[All Servers →](https://www.mymcpshelf.com)**
+
+Happy building—keep stacking bricks, not spaghetti. 🧱
