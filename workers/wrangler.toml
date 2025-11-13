@@ -1,0 +1,13 @@
+name = "github-repo-stats"
+main = "github-repo-stats.js"
+compatibility_date = "2024-11-12"
+
+# KV Namespace for caching GitHub API responses
+[[kv_namespaces]]
+binding = "GITHUB_STATS"
+id = "YOUR_KV_NAMESPACE_ID" # Replace with actual KV namespace ID after creation
+
+# Workers free tier limits:
+# - 100,000 requests/day
+# - 10ms CPU time per request
+# With 6-hour cache, 10k pageviews = ~1,667 API calls (well within limits)

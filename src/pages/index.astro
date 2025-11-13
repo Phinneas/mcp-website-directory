@@ -7426,6 +7426,39 @@ function formatStars(stars?: number): string {
             font-weight: 500;
         }
 
+        .repo-stats {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .repo-stat {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.75rem;
+            color: #666;
+        }
+
+        .repo-stat-fresh {
+            color: #10b981;
+        }
+
+        .repo-stat-stale {
+            color: #f59e0b;
+        }
+
+        .repo-stat-abandoned {
+            color: #ef4444;
+        }
+
+        .repo-stat-loading {
+            color: #999;
+            font-style: italic;
+        }
+
         .server-actions {
             display: flex;
             gap: 0.5rem;
@@ -7593,6 +7626,9 @@ function formatStars(stars?: number): string {
                     {server.fields.author && <span class="meta-tag">{server.fields.author.includes('@') ? 'Official' : 'Community'}</span>}
                     {server.fields.stars && <span class="meta-tag">{formatStars(server.fields.stars)}</span>}
                 </div>
+                <div class="repo-stats" data-github-url={server.fields.github_url}>
+                    <span class="repo-stat repo-stat-loading">Loading...</span>
+                </div>
                 <div class="server-actions">
                     <a 
                         href={server.fields.github_url || '#'} 
@@ -7674,6 +7710,74 @@ function formatStars(stars?: number): string {
                     currentCategory = tag.dataset.category;
                     filterServers();
                 });
+            });
+
+            // GitHub repo stats fetching
+            async function fetchRepoStats(githubUrl, statsElement) {
+                const match = githubUrl?.match(/github\.com\/([^/]+\/[^/]+)/);
+                if (!match) {
+                    statsElement.innerHTML = '';
+                    return;
+                }
+
+                const repo = match[1];
+                // TODO: Replace with your actual Cloudflare Worker URL after deployment
+                const workerUrl = `https://YOUR_WORKER_URL.workers.dev?repo=${encodeURIComponent(repo)}`;
+
+                try {
+                    const response = await fetch(workerUrl);
+                    const data = await response.json();
+
+                    // Calculate days since last commit
+                    const lastCommit = new Date(data.pushedAt);
+                    const now = new Date();
+                    const daysAgo = Math.floor((now - lastCommit) / (1000 * 60 * 60 * 24));
+
+                    // Determine freshness status
+                    let freshnessClass = 'repo-stat-fresh';
+                    let freshnessText = '';
+                    if (daysAgo < 30) {
+                        freshnessClass = 'repo-stat-fresh';
+                        freshnessText = daysAgo === 0 ? 'Today' : daysAgo === 1 ? 'Yesterday' : `${daysAgo}d ago`;
+                    } else if (daysAgo < 90) {
+                        freshnessClass = 'repo-stat-stale';
+                        const monthsAgo = Math.floor(daysAgo / 30);
+                        freshnessText = monthsAgo === 1 ? '1mo ago' : `${monthsAgo}mo ago`;
+                    } else {
+                        freshnessClass = 'repo-stat-abandoned';
+                        const monthsAgo = Math.floor(daysAgo / 30);
+                        freshnessText = monthsAgo === 1 ? '1mo ago' : `${monthsAgo}mo ago`;
+                    }
+
+                    // Display issues count
+                    const issuesClass = data.openIssues > 50 ? 'repo-stat-stale' : 'repo-stat';
+
+                    statsElement.innerHTML = `
+                        <span class="repo-stat ${freshnessClass}">
+                            📅 ${freshnessText}
+                        </span>
+                        <span class="repo-stat ${issuesClass}">
+                            🐛 ${data.openIssues} issues
+                        </span>
+                    `;
+                } catch (error) {
+                    console.error('Failed to fetch repo stats:', error);
+                    statsElement.innerHTML = '';
+                }
+            }
+
+            // Fetch stats for all visible repos
+            const repoStatsElements = document.querySelectorAll('.repo-stats');
+            repoStatsElements.forEach((statsElement, index) => {
+                const githubUrl = statsElement.getAttribute('data-github-url');
+                if (githubUrl) {
+                    // Stagger requests to avoid rate limiting (100ms between each)
+                    setTimeout(() => {
+                        fetchRepoStats(githubUrl, statsElement);
+                    }, index * 100);
+                } else {
+                    statsElement.innerHTML = '';
+                }
             });
 
         // Copy functionality
