@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* Amethyst Haze Theme - Light Mode */
+    --background: 0 0% 100%;
+    --foreground: 270 5% 10%;
+
+    --card: 270 50% 98%;
+    --card-foreground: 270 5% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 270 5% 10%;
+
+    --primary: 269 58% 66%; /* #8B7DD8 - Amethyst */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 280 35% 88%;
+    --secondary-foreground: 270 5% 10%;
+
+    --muted: 270 30% 96%;
+    --muted-foreground: 270 5% 40%;
+
+    --accent: 280 45% 92%;
+    --accent-foreground: 270 5% 10%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 270 20% 88%;
+    --input: 270 20% 88%;
+    --ring: 269 58% 66%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* Amethyst Haze Theme - Dark Mode */
+    --background: 270 30% 8%;
+    --foreground: 270 5% 95%;
+
+    --card: 270 25% 12%;
+    --card-foreground: 270 5% 95%;
+
+    --popover: 270 30% 8%;
+    --popover-foreground: 270 5% 95%;
+
+    --primary: 269 58% 66%; /* #8B7DD8 - Amethyst */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 270 20% 18%;
+    --secondary-foreground: 270 5% 95%;
+
+    --muted: 270 20% 16%;
+    --muted-foreground: 270 5% 60%;
+
+    --accent: 280 30% 20%;
+    --accent-foreground: 270 5% 95%;
+
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 270 20% 20%;
+    --input: 270 20% 20%;
+    --ring: 269 58% 66%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Cabin', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+}

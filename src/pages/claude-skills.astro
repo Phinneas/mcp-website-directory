@@ -2,6 +2,7 @@
 // Claude Skills Page
 import skillsData from '../../skills.json';
 import HeaderNewsletter from '../components/HeaderNewsletter.astro';
+import '../styles/global.css';
 ---
 
 <!DOCTYPE html>
@@ -16,6 +17,11 @@ import HeaderNewsletter from '../components/HeaderNewsletter.astro';
     <meta name="msvalidate.01" content="8AA5A1EBF656D16B95B78BE654843905" />
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="icon" href="/favicon.png" type="image/png">
+
+    <!-- Google Fonts - Cabin & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Plausible Analytics -->
     <script defer data-domain="mymcpshelf.com" src="https://plausible-analytics-ce-production-7165.up.railway.app/js/script.js"></script>
@@ -50,11 +56,15 @@ import HeaderNewsletter from '../components/HeaderNewsletter.astro';
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             min-height: 100vh;
             background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
             color: var(--text-primary);
             transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Cabin', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
         .theme-toggle {
@@ -140,13 +150,18 @@ import HeaderNewsletter from '../components/HeaderNewsletter.astro';
         }
 
         .search-bar {
-            background: white;
+            background: rgba(255, 255, 255, 0.95);
             border-radius: 50px;
             padding: 1rem 2rem;
             display: flex;
             align-items: center;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             margin-bottom: 2rem;
+        }
+
+        body.dark-mode .search-bar {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
         .search-icon {
@@ -160,6 +175,15 @@ import HeaderNewsletter from '../components/HeaderNewsletter.astro';
             outline: none;
             font-size: 1.1rem;
             background: transparent;
+            color: #333;
+        }
+
+        body.dark-mode .search-input {
+            color: #333;
+        }
+
+        .search-input::placeholder {
+            color: #999;
         }
 
         .categories {

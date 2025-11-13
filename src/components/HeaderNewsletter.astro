@@ -154,11 +154,16 @@
     }
 </style>
 
-<script>
-    const form = document.getElementById('headerNewsletterForm');
-    const message = document.getElementById('headerMessage');
+<script is:inline>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('headerNewsletterForm');
+        const message = document.getElementById('headerMessage');
 
-    if (form && message) {
+        if (!form || !message) {
+            console.error('HeaderNewsletter: Form or message element not found');
+            return;
+        }
+
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -181,15 +186,24 @@
                     body: JSON.stringify({ email }),
                 });
 
+                // Check if response is ok before parsing
+                if (!response.ok) {
+                    const text = await response.text();
+                    let errorData;
+                    try {
+                        errorData = JSON.parse(text);
+                    } catch (e) {
+                        console.error('Failed to parse error response:', text);
+                        throw new Error('Server returned an error');
+                    }
+                    throw new Error(errorData.error || 'Subscription failed');
+                }
+
                 const data = await response.json();
 
-                if (response.ok) {
-                    message.textContent = '✓ Subscribed!';
-                    message.classList.add('success');
-                    emailInput.value = '';
-                } else {
-                    throw new Error(data.error || 'Subscription failed');
-                }
+                message.textContent = '✓ Subscribed!';
+                message.classList.add('success');
+                emailInput.value = '';
             } catch (error) {
                 message.textContent = `✗ ${error instanceof Error ? error.message : 'Try again'}`;
                 message.classList.add('error');
@@ -198,5 +212,5 @@
                 button.textContent = 'Subscribe';
             }
         });
-    }
+    });
 </script>

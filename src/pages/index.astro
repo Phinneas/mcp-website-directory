@@ -2,6 +2,7 @@
 import { fetchAllMCPServers, transformPulseMCPData } from '../utils/pulsemcpApi.js';
 import EmailSignup from '../components/EmailSignup.astro';
 import HeaderNewsletter from '../components/HeaderNewsletter.astro';
+import '../styles/global.css';
 
 // Define interface for MCP server data
 interface MCPServer {
@@ -7302,12 +7303,22 @@ function formatStars(stars?: number): string {
             padding: 1rem 1rem 1rem 3rem;
             border: none;
             border-radius: 1rem;
-            background: var(--card-bg);
-            color: var(--card-text);
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
             backdrop-filter: blur(10px);
             font-size: 1rem;
-            box-shadow: 0 8px 32px var(--card-shadow);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
+        }
+
+        body.dark-mode .search-input {
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .search-input::placeholder {
+            color: #999;
         }
 
         .search-input:focus {

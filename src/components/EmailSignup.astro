@@ -166,11 +166,16 @@
     }
 </style>
 
-<script>
-    const form = document.getElementById('emailSignupForm');
-    const message = document.getElementById('signupMessage');
+<script is:inline>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('emailSignupForm');
+        const message = document.getElementById('signupMessage');
 
-    if (form && message) {
+        if (!form || !message) {
+            console.error('EmailSignup: Form or message element not found');
+            return;
+        }
+
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -193,15 +198,24 @@
                     body: JSON.stringify({ email }),
                 });
 
+                // Check if response is ok before parsing
+                if (!response.ok) {
+                    const text = await response.text();
+                    let errorData;
+                    try {
+                        errorData = JSON.parse(text);
+                    } catch (e) {
+                        console.error('Failed to parse error response:', text);
+                        throw new Error('Server returned an error');
+                    }
+                    throw new Error(errorData.error || 'Subscription failed');
+                }
+
                 const data = await response.json();
 
-                if (response.ok) {
-                    message.textContent = '✓ Successfully subscribed! Check your email.';
-                    message.classList.add('success');
-                    emailInput.value = '';
-                } else {
-                    throw new Error(data.error || 'Subscription failed');
-                }
+                message.textContent = '✓ Successfully subscribed! Check your email.';
+                message.classList.add('success');
+                emailInput.value = '';
             } catch (error) {
                 message.textContent = `✗ ${error instanceof Error ? error.message : 'Something went wrong. Please try again.'}`;
                 message.classList.add('error');
@@ -210,5 +224,5 @@
                 button.textContent = 'Subscribe';
             }
         });
-    }
+    });
 </script>
