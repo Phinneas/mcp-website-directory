@@ -1,3 +1,25 @@
+---
+title: "Building a Production Notion MCP Gateway: Complete Technical Guide"
+description: "Build a production Notion MCP gateway in Python. Handle >25 relations, add custom retry logic, deploy to Docker. Complete code + config included."
+pubDate: 2025-01-15
+author: "Buzz"
+category: "Implementation Guides"
+tags: ["notion", "mcp", "python", "production", "integration"]
+slug: "notion-mcp-gateway"
+draft: false
+---
+```
+
+**Delete these lines completely:**
+```
+image: "/blog/notion-mcp-gateway.png"
+wordCount: 3100
+readingTime: "14-16 minutes"
+featured: true
+---
+
+import { Callout, CodeBlock, ComparisonTable, InternalLink } from '@components/blog';
+
 Notion mcp gateway blog post · MDCopyBuilding a Production Notion MCP Gateway: Complete Technical Guide
 In Part 1, we showed why RAG fails for Notion's structured data and how MCP provides real-time context. But here's the reality: Notion's official MCP server handles 80% of use cases with zero setup. If you need the remaining 20%—cross-page joins, custom retry logic, semantic search, fine-grained RBAC—you'll build a custom gateway. This guide shows you exactly how.
 What You'll Learn
