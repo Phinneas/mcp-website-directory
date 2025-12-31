@@ -7408,6 +7408,34 @@ function formatStars(stars?: number): string {
             opacity: 1 !important;
             height: auto !important;
             width: auto !important;
+            transform: none !important;
+            clip: auto !important;
+            clip-path: none !important;
+            overflow: visible !important;
+            position: static !important;
+            left: auto !important;
+            top: auto !important;
+            right: auto !important;
+            bottom: auto !important;
+        }
+
+        /* Prevent any parent from hiding tags */
+        .categories .category-tag,
+        .search-section .category-tag {
+            display: inline-block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+
+        /* Ensure tags are visible on all states */
+        .category-tag,
+        .category-tag:hover,
+        .category-tag:focus,
+        .category-tag:active,
+        .category-tag:visited {
+            display: inline-block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
         }
 
         .servers-grid {
