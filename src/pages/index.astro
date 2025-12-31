@@ -7306,6 +7306,7 @@ function formatStars(stars?: number): string {
             padding: 2rem 1rem;
             max-width: 1200px;
             margin: 0 auto;
+            overflow: visible;
         }
 
         .search-bar {
@@ -7357,6 +7358,9 @@ function formatStars(stars?: number): string {
             justify-content: center;
             flex-wrap: wrap;
             margin-bottom: 2rem;
+            width: 100%;
+            overflow: visible;
+            min-height: 50px;
         }
 
         .category-tag {
@@ -7370,6 +7374,10 @@ function formatStars(stars?: number): string {
             font-size: 0.9rem;
             transition: all 0.3s ease;
             cursor: pointer;
+            display: inline-block;
+            visibility: visible;
+            opacity: 1;
+            margin: 0;
         }
 
         .category-tag:hover,
