@@ -2,46 +2,131 @@
 // FAQ Page - Full FAQ with all questions
 import '../styles/global.css';
 
-const faqs = [
+const faqSections = [
     {
-        question: "What is MCP?",
-        answer: "Model Context Protocol is an open standard that lets AI assistants securely connect to external data and tools. It's like USB-C for AI applications—a universal interface that lets your AI assistant interact with databases, APIs, file systems, and more. MCP creates a standardized way for AI models to access real-world systems without custom integrations for every service."
+        title: "About MCP",
+        items: [
+            {
+                question: "What is Model Context Protocol (MCP)?",
+                answer: "Model Context Protocol is an open standard developed by Anthropic that lets AI assistants securely connect to external data sources, tools, and services. It replaces custom integrations with a standardized protocol, creating a universal interface that enables AI models to interact with databases, APIs, file systems, and more without requiring bespoke integrations for every service."
+            },
+            {
+                question: "How does MCP work?",
+                answer: "MCP uses a client-server architecture. MCP clients (like Claude Desktop, Cursor, etc.) connect to MCP servers. Servers expose tools, resources, and prompts that clients can use. This creates secure, sandboxed access to external systems. The protocol handles authentication, permissions, and data exchange between AI assistants and external services."
+            },
+            {
+                question: "Why should I care about MCP?",
+                answer: "MCP standardizes how AI assistants access tools and data. Instead of integrating each tool individually with custom code, MCP creates a universal connection layer. This reduces development time, improves security through standardized authentication, and allows you to switch between different AI clients while maintaining the same tool access. It's like USB-C for AI applications."
+            },
+            {
+                question: "What can MCP servers do?",
+                answer: "MCP servers can expose databases, APIs, file systems, knowledge bases, cloud services, development tools, communication platforms, and virtually any external service. They provide both tools (callable actions that perform operations) and resources (readable data that can be accessed). This enables AI assistants to perform real actions like querying databases, sending messages, managing files, and interacting with APIs."
+            },
+            {
+                question: "What's the difference between MCP and regular APIs?",
+                answer: "Traditional APIs are point-to-point connections between applications. MCP adds a standardization layer specifically designed for AI assistants. Your production applications use REST APIs directly, while your AI assistant uses MCP servers to access those same services through a universal protocol. They're complementary—MCP servers often wrap existing APIs to make them accessible to AI in a secure, standardized way."
+            }
+        ]
     },
     {
-        question: "How do you verify servers?",
-        answer: "We evaluate GitHub activity, star count (real adoption), and maintenance status. If it has active development and community usage, it qualifies. We also check for proper documentation, security practices, and working examples. Servers must have at least 10+ GitHub stars, commits within the last 6 months, and clear setup instructions."
+        title: "About MyMCPShelf",
+        items: [
+            {
+                question: "What is MyMCPShelf?",
+                answer: "MyMCPShelf is a curated directory of the MCP ecosystem. We help you discover, understand, and implement the best MCP servers, clients, and skills for your AI workflow. We provide verified listings, detailed information, and educational resources to help you make informed decisions about which MCP tools to use."
+            },
+            {
+                question: "How is MyMCPShelf different from mcp.so?",
+                answer: "mcp.so lists 17,000+ servers with minimal curation, including abandoned projects and low-effort forks. We curate 600+ verified servers based on GitHub activity, community adoption, and maintenance status. Our approach prioritizes quality over quantity—we skip unmaintained projects and focus on servers that are actively used and well-documented, saving you research time."
+            },
+            {
+                question: "Why only 600 servers?",
+                answer: "We intentionally skip abandoned projects, low-effort forks, and inactive codebases. Our 600+ servers are actively maintained, have real adoption evidenced by GitHub stars and usage, and solve real problems. This curatorial approach saves you from wasting time on projects that don't work, lack documentation, or are no longer supported. Quality directories help you find what you need faster."
+            },
+            {
+                question: "How do you verify servers?",
+                answer: "We evaluate multiple criteria: GitHub star count (indicates real usage and adoption), commit activity (shows active maintenance), maintenance status (is the project alive and responding to issues?), community adoption (are people actually using this?), documentation quality, and security practices. We also check that servers have working examples and clear setup instructions. If a server meets these criteria, it qualifies for MyMCPShelf."
+            },
+            {
+                question: "How often do you update the directory?",
+                answer: "We update the directory weekly. We continuously monitor for new quality servers that meet our criteria and add them to the directory. We also regularly review existing listings and flag or remove servers that have become unmaintained. GitHub statistics like star counts and activity metrics are refreshed to ensure all information is current."
+            },
+            {
+                question: "Can I submit my server?",
+                answer: "Yes! We welcome submissions of high-quality MCP servers. To be considered, your server should have at least 10+ GitHub stars, active maintenance (recent commits), proper documentation, working examples, and clear setup instructions. Click the 'Submit Your Server' button on the homepage or visit our GitHub repository to open an issue with your server details, including repository URL, description, and category."
+            },
+            {
+                question: "Do you accept community contributions?",
+                answer: "Absolutely! We welcome community contributions in several forms: suggesting new servers that meet our quality standards, reporting outdated or unmaintained listings, improving descriptions or categorizations, and suggesting new features. See our CONTRIBUTING.md file on GitHub for detailed guidelines on how to contribute effectively to the directory."
+            }
+        ]
     },
     {
-        question: "Why 600 servers instead of 17,000?",
-        answer: "Quality over quantity. We skip abandoned projects and low-effort forks so you can find what actually works. Every server in our directory has been verified for active maintenance, community adoption, and proper documentation. Other directories include everything ever created—we curate only what's worth using."
+        title: "Using MyMCPShelf",
+        items: [
+            {
+                question: "How do I find the right MCP server for my use case?",
+                answer: "Use our category filters (Databases, Web Services, File Systems, Cloud Platforms, etc.) to narrow down by functionality, or search by keyword to find specific tools. Each server listing includes detailed descriptions, GitHub statistics, and usage information. For detailed recommendations by use case, read our blog post 'MCP Tools: The Complete Guide to Finding & Using Tools in 2025' which provides specific suggestions for common scenarios."
+            },
+            {
+                question: "How do I choose between 250+ MCP clients?",
+                answer: "Start with our 'MCP Client Comparison' blog post which breaks down the key differences. For developers, popular choices include Cursor (IDE integration), Cline (terminal-based), and Claude Desktop (official reference). For general users, Claude Desktop is simplest. Consider factors like your operating system, whether you need local or cloud access, IDE integration needs, and whether you need to connect to multiple servers simultaneously."
+            },
+            {
+                question: "What's the difference between MCP Servers, Clients, and Skills?",
+                answer: "MCP Servers (600+): Tools and data sources that expose specific functionality through the MCP protocol—these are what you connect TO. MCP Clients (250+): Applications that connect TO servers (like Claude Desktop, Cursor, Cline)—these are how you access servers. Claude Skills (68): Pre-built capabilities that enhance Claude's native abilities, sometimes leveraging MCP servers to perform complex tasks. Servers provide tools, clients access them, and skills enhance the AI's ability to use them effectively."
+            },
+            {
+                question: "Can I use multiple MCP servers at once?",
+                answer: "Yes! Most MCP clients support multiple concurrent MCP server connections. You can connect to a database server, a file system server, and a web API server simultaneously, allowing your AI assistant to perform complex operations that span multiple systems. This is one of MCP's key strengths—the ability to orchestrate multiple tools through a single interface."
+            }
+        ]
     },
     {
-        question: "Can I use Claude Skills with MCP Servers?",
-        answer: "Yes! Skills enhance Claude's capabilities, while MCP servers give Claude access to external tools and data. They work together seamlessly—skills can leverage MCP servers to perform complex tasks. Think of skills as Claude's abilities and MCP servers as the tools those abilities can access."
+        title: "Blog & Learning",
+        items: [
+            {
+                question: "Where can I learn about MCP?",
+                answer: "Check our blog at /blog for comprehensive guides and tutorials. We cover: 'What is MCP?' (introductory guide), 'How to build MCP servers' (tutorial series), 'Production deployment' (advanced topics), 'Security best practices' (essential reading), and implementation patterns. The blog is updated weekly with new content for all skill levels."
+            },
+            {
+                question: "Do you have tutorials?",
+                answer: "Yes! Our most popular tutorials include: 'How to Build Your Own MCP Server: A Complete Developer's Guide' (beginner-friendly, step-by-step), 'Building a Production Notion MCP Gateway: Complete Technical Guide' (intermediate, covers real-world deployment), and 'Deploying MCP Servers in Production' (advanced, focuses on scaling and security). Each tutorial includes code examples and practical implementation details."
+            },
+            {
+                question: "How often do you publish new content?",
+                answer: "We publish weekly articles covering MCP topics, security best practices, performance optimization, implementation patterns, and ecosystem updates. Our content ranges from beginner-friendly introductions to advanced technical guides, ensuring there's something for every skill level. Subscribe to our newsletter to get notified of new posts."
+            },
+            {
+                question: "Can I suggest a blog topic?",
+                answer: "Yes! We welcome topic suggestions from the community. If you have an MCP-related topic you'd like us to cover, email us at chester@mymcpshelf.com or open a GitHub issue with your suggestion. We're particularly interested in topics related to real-world implementation challenges, specific use cases, or emerging MCP patterns."
+            }
+        ]
     },
     {
-        question: "How do I choose between 250+ MCP clients?",
-        answer: "Check our 'MCP Client Selection Guide' blog post, or browse by use case (coding, automation, general chat, etc.). Consider factors like your IDE, operating system, and whether you need local or remote access. For developers, Cursor and Cline are popular. For general use, Claude Desktop is the reference implementation."
-    },
-    {
-        question: "How often is the directory updated?",
-        answer: "We update the directory weekly. New servers are added as they meet our quality criteria, and unmaintained servers are flagged or removed. We also refresh GitHub statistics to ensure star counts and activity status are current."
-    },
-    {
-        question: "Can I submit my MCP server to the directory?",
-        answer: "Yes! We welcome submissions that meet our quality standards: 10+ GitHub stars, active maintenance, proper documentation, and working examples. Contact us through our GitHub repository or newsletter to suggest additions."
-    },
-    {
-        question: "What's the difference between MCP and regular APIs?",
-        answer: "Traditional APIs are point-to-point connections between applications. MCP adds a standardization layer specifically for AI assistants. Your production application uses REST APIs directly. Your AI assistant uses MCP servers to access those same services through a universal protocol. They're complementary, not competing."
-    },
-    {
-        question: "Is MCP secure?",
-        answer: "MCP was designed with security in mind. It establishes clear permission boundaries—you control exactly which operations an AI can perform. The MCP server acts as a guardian, validating requests against permission rules before allowing any operation. Credentials are managed by servers, never exposed to the AI directly."
-    },
-    {
-        question: "Which AI models support MCP?",
-        answer: "Claude has native MCP support built in. Other models like GPT-4 can use MCP through adapters and bridges. Many clients support multiple LLM providers. As adoption grows, more AI platforms are adding native MCP support."
+        title: "Technical Questions",
+        items: [
+            {
+                question: "Is MCP secure?",
+                answer: "Yes. Security is built into the MCP protocol design. Each server manages its own authentication and access control, and no API keys or credentials are shared with LLM providers. MCP establishes clear permission boundaries—you control exactly which operations an AI can perform. The protocol includes request validation, permission checks, and secure credential management. See our blog post 'MCP Security Best Practices' for detailed implementation guidance."
+            },
+            {
+                question: "Can I self-host MCP servers?",
+                answer: "Yes, absolutely. Most MCP servers can be self-hosted locally on your machine or on your own infrastructure. Many servers are available as Docker containers, npm packages, or Python packages that you can run yourself. Self-hosting gives you complete control over security, data privacy, and customization. Check individual server documentation for self-hosting instructions."
+            },
+            {
+                question: "What programming languages support MCP?",
+                answer: "MCP has official SDKs and community support for multiple languages including Python, JavaScript/TypeScript, Java, Go, C#, and Rust. Python and TypeScript have the most mature ecosystems with extensive libraries and examples. Check our blog for language-specific implementation guides and best practices for each supported language."
+            },
+            {
+                question: "Can I build my own MCP server?",
+                answer: "Yes! Building MCP servers is straightforward. We have a complete guide 'How to Build Your Own MCP Server: A Complete Developer's Guide' in our blog that walks through the entire process. You'll need to implement the MCP protocol, define the tools and resources your server exposes, and handle authentication. Most developers can build a basic server in a few hours using existing SDKs."
+            },
+            {
+                question: "How do I debug MCP issues?",
+                answer: "See our comprehensive 'Troubleshooting MCP' guide in the blog. Common debugging steps include: checking server logs for connection errors, verifying authentication credentials, confirming network connectivity, using the MCP Inspector tool (official debugging tool), and testing with the reference Claude Desktop client. The guide covers connection issues, authentication problems, tool execution failures, and performance optimization."
+            }
+        ]
     }
 ];
 ---
@@ -148,7 +233,7 @@ const faqs = [
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
             padding: 2rem;
         }
@@ -159,7 +244,7 @@ const faqs = [
             background: var(--hero-bg);
             color: var(--hero-text);
             border-radius: 16px;
-            margin-bottom: 2rem;
+            margin-bottom: 3rem;
         }
 
         .header h1 {
@@ -173,7 +258,7 @@ const faqs = [
             font-size: 1.2rem;
             color: var(--hero-subtext);
             max-width: 600px;
-            margin: 0 auto;
+            margin: 0 auto 1.5rem;
         }
 
         .nav-links {
@@ -199,6 +284,19 @@ const faqs = [
             transform: translateY(-2px);
         }
 
+        .faq-section {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--card-text);
+            margin-bottom: 2rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 3px solid var(--cta-primary);
+        }
+
         .faq-list {
             display: flex;
             flex-direction: column;
@@ -210,6 +308,12 @@ const faqs = [
             border-radius: 12px;
             padding: 1.5rem 2rem;
             box-shadow: 0 4px 20px var(--card-shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .faq-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px var(--card-shadow);
         }
 
         .faq-question {
@@ -226,6 +330,7 @@ const faqs = [
             color: var(--cta-primary);
             font-size: 1.2rem;
             flex-shrink: 0;
+            font-weight: 700;
         }
 
         .faq-answer {
@@ -239,16 +344,85 @@ const faqs = [
             color: #9ca3af;
         }
 
-        .back-link {
-            display: inline-block;
-            margin-top: 2rem;
+        .newsletter-section {
+            background: var(--hero-bg);
+            color: var(--hero-text);
+            padding: 3rem 2rem;
+            border-radius: 16px;
+            text-align: center;
+            margin: 3rem 0;
+        }
+
+        .newsletter-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--hero-text);
+        }
+
+        .newsletter-subtitle {
+            font-size: 1.1rem;
+            color: var(--hero-subtext);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .email-form {
+            display: flex;
+            gap: 1rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .email-input {
+            flex: 1;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .email-input::placeholder {
+            color: rgba(255,255,255,0.6);
+        }
+
+        .subscribe-btn {
+            background: var(--cta-primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .subscribe-btn:hover {
+            background: #d97706;
+            transform: translateY(-2px);
+        }
+
+        .footer-links {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .footer-links a {
             color: var(--cta-primary);
             text-decoration: none;
             font-weight: 600;
+            margin: 0 1rem;
             transition: color 0.3s ease;
         }
 
-        .back-link:hover {
+        .footer-links a:hover {
             color: #d97706;
         }
 
@@ -261,12 +435,25 @@ const faqs = [
                 padding: 1rem;
             }
 
+            .section-title {
+                font-size: 1.5rem;
+            }
+
             .faq-item {
                 padding: 1.25rem 1.5rem;
             }
 
             .faq-question {
                 font-size: 1.1rem;
+            }
+
+            .email-form {
+                flex-direction: column;
+            }
+
+            .footer-links a {
+                display: block;
+                margin: 0.5rem 0;
             }
         }
     </style>
@@ -293,28 +480,56 @@ const faqs = [
     <div class="container">
         <div class="header">
             <h1>❓ Frequently Asked Questions</h1>
-            <p>Everything you need to know about MCP and My MCP Shelf</p>
+            <p>Everything you need to know about Model Context Protocol and My MCP Shelf</p>
             <div class="nav-links">
                 <a href="/" class="nav-link">🏠 Shelf</a>
                 <a href="/claude-skills" class="nav-link">⚡ Claude Skills</a>
                 <a href="/mcp-clients" class="nav-link">💻 MCP Clients</a>
                 <a href="/blog" class="nav-link">📝 Blog</a>
+                <a href="/faq" class="nav-link">❓ FAQ</a>
             </div>
         </div>
 
-        <div class="faq-list">
-            {faqs.map((faq) => (
-                <div class="faq-item">
-                    <h3 class="faq-question">
-                        <span class="question-icon">Q:</span>
-                        <span>{faq.question}</span>
-                    </h3>
-                    <p class="faq-answer">{faq.answer}</p>
+        {faqSections.map((section) => (
+            <div class="faq-section">
+                <h2 class="section-title">{section.title}</h2>
+                <div class="faq-list">
+                    {section.items.map((faq) => (
+                        <div class="faq-item">
+                            <h3 class="faq-question">
+                                <span class="question-icon">Q:</span>
+                                <span>{faq.question}</span>
+                            </h3>
+                            <p class="faq-answer">{faq.answer}</p>
+                        </div>
+                    ))}
                 </div>
-            ))}
+            </div>
+        ))}
+
+        <div class="newsletter-section">
+            <h2 class="newsletter-title">Stay Updated</h2>
+            <p class="newsletter-subtitle">
+                Get the latest MCP servers, blog posts, and best practices delivered to your inbox
+            </p>
+            <form class="email-form" onsubmit="handleSubscribe(event)">
+                <input 
+                    type="email" 
+                    class="email-input" 
+                    placeholder="Enter your email address"
+                    required
+                    id="emailInput"
+                />
+                <button type="submit" class="subscribe-btn">Subscribe</button>
+            </form>
         </div>
 
-        <a href="/" class="back-link">← Back to MCP Shelf</a>
+        <div class="footer-links">
+            <a href="/">🏠 Back to MCP Shelf</a>
+            <a href="/blog">📝 View Blog</a>
+            <a href="/claude-skills">⚡ Browse Skills</a>
+            <a href="/mcp-clients">💻 Browse Clients</a>
+        </div>
     </div>
 
     <script>
@@ -341,6 +556,28 @@ const faqs = [
                 localStorage.setItem('theme', 'light');
                 sunIcon.style.display = 'block';
                 moonIcon.style.display = 'none';
+            }
+        });
+
+        // Newsletter form handler
+        function handleSubscribe(event) {
+            event.preventDefault();
+            const email = document.getElementById('emailInput').value;
+            
+            // In a real implementation, this would send to your email service
+            alert(`Thank you for subscribing! We'll send MCP updates to: ${email}`);
+            document.getElementById('emailInput').value = '';
+            
+            // Track subscription in analytics
+            if (typeof plausible !== 'undefined') {
+                plausible('Newsletter Subscribe', { props: { location: 'faq' } });
+            }
+        }
+
+        // Track FAQ page view
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof plausible !== 'undefined') {
+                plausible('Pageview', { props: { page: 'faq' } });
             }
         });
     </script>
