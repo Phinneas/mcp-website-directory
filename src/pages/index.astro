@@ -7307,6 +7307,9 @@ function formatStars(stars?: number): string {
             max-width: 1200px;
             margin: 0 auto;
             overflow: visible;
+            position: relative;
+            z-index: 5;
+            background: rgba(255, 255, 255, 0.95);
         }
 
         .search-bar {
@@ -7360,7 +7363,10 @@ function formatStars(stars?: number): string {
             margin-bottom: 2rem;
             width: 100%;
             overflow: visible;
-            min-height: 50px;
+            min-height: 80px;
+            padding: 1rem 0;
+            position: relative;
+            z-index: 10;
         }
 
         .category-tag {
@@ -7375,9 +7381,13 @@ function formatStars(stars?: number): string {
             transition: all 0.3s ease;
             cursor: pointer;
             display: inline-block;
-            visibility: visible;
-            opacity: 1;
-            margin: 0;
+            visibility: visible !important;
+            opacity: 1 !important;
+            margin: 0.25rem 0;
+            white-space: nowrap;
+            position: relative;
+            z-index: 1;
+            min-width: fit-content;
         }
 
         .category-tag:hover,
