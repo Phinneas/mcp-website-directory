@@ -69,6 +69,7 @@
 @layer base {
   body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--background) !important;
   }
 
   h1, h2, h3, h4, h5, h6 {
