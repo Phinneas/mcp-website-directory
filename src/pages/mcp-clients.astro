@@ -2,6 +2,7 @@
 // MCP Clients Page
 import clientsData from '../../clients.json';
 import HeaderNewsletter from '../components/HeaderNewsletter.astro';
+import { SearchIcon, ComputerIcon, FolderIcon, ToolboxIcon, VintageIcon } from '../components/VintageIcon';
 import '../styles/global.css';
 ---
 
@@ -372,10 +373,10 @@ import '../styles/global.css';
             <h1>MCP Clients</h1>
             <p>Explore applications and tools that connect to MCP servers</p>
             <div class="nav-links">
-                <a href="/" class="nav-link">🏠 Shelf</a>
-                <a href="/claude-skills" class="nav-link">⚡ Claude Skills</a>
-                <a href="/blog" class="nav-link">📝 Blog</a>
-                <a href="/faq" class="nav-link">❓ FAQ</a>
+                <a href="/" class="nav-link"><FolderIcon client:load size={18} /> Shelf</a>
+                <a href="/claude-skills" class="nav-link"><ToolboxIcon client:load size={18} /> Claude Skills</a>
+                <a href="/blog" class="nav-link"><VintageIcon client:load name="Windows95TextFile" size={18} /> Blog</a>
+                <a href="/faq" class="nav-link"><VintageIcon client:load name="Windows95Help" size={18} /> FAQ</a>
             </div>
             <div style="margin-top: 2rem; display: flex; justify-content: center;">
                 <HeaderNewsletter />
@@ -384,7 +385,7 @@ import '../styles/global.css';
 
         <div class="search-section">
             <div class="search-bar">
-                <span class="search-icon">🔍</span>
+                <span class="search-icon"><SearchIcon client:load size={20} /></span>
                 <input type="text" class="search-input" placeholder="Search MCP clients..." id="searchInput">
             </div>
             <div style="text-align: center; color: white; margin-top: 1rem;">
@@ -396,7 +397,7 @@ import '../styles/global.css';
             {clientsData.map((client) => (
                 <div class="client-card">
                     <div class="client-header">
-                        <div class="client-icon">💻</div>
+                        <div class="client-icon"><ComputerIcon client:load size={32} /></div>
                         <div class="client-title">
                             <h3>{client.title}</h3>
                             <div class="client-category">MCP Client</div>

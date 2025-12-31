@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import EmailSignup from '../components/EmailSignup.astro';
+import { FolderIcon, ToolboxIcon, ComputerIcon, VintageIcon } from '../components/VintageIcon';
 
 // Get all blog posts
 const blogPosts = await getCollection('blog');
@@ -255,10 +256,10 @@ const pageTitle = "My MCP Shelf Blog";
             <h1>{pageTitle}</h1>
             <p class="subtitle">Insights, updates, and guides for the MCP ecosystem</p>
             <div class="nav">
-                <a href="/">🏠 Shelf</a>
-                <a href="/claude-skills">⚡ Claude Skills</a>
-                <a href="/mcp-clients">💻 MCP Clients</a>
-                <a href="/faq">❓ FAQ</a>
+                <a href="/"><FolderIcon client:load size={18} /> Shelf</a>
+                <a href="/claude-skills"><ToolboxIcon client:load size={18} /> Claude Skills</a>
+                <a href="/mcp-clients"><ComputerIcon client:load size={18} /> MCP Clients</a>
+                <a href="/faq"><VintageIcon client:load name="Windows95Help" size={18} /> FAQ</a>
             </div>
         </header>
 

@@ -1,5 +1,7 @@
 ---
 // HeroSection.astro - Hero section with directory cards
+import { DatabaseIcon, ToolboxIcon, ComputerIcon } from './VintageIcon';
+
 interface Props {
     serverCount?: number;
     skillsCount?: number;
@@ -23,7 +25,7 @@ const { serverCount = 600, skillsCount = 68, clientsCount = 250 } = Astro.props;
         <!-- Three-card grid -->
         <div class="directory-cards">
             <a href="/" class="directory-card">
-                <div class="card-icon">🔧</div>
+                <div class="card-icon"><DatabaseIcon client:load size={40} /></div>
                 <h3 class="card-title">MCP Servers</h3>
                 <div class="card-count">{serverCount} Verified</div>
                 <div class="card-subtitle">Updated weekly</div>
@@ -31,7 +33,7 @@ const { serverCount = 600, skillsCount = 68, clientsCount = 250 } = Astro.props;
             </a>
             
             <a href="/claude-skills" class="directory-card">
-                <div class="card-icon">⚡</div>
+                <div class="card-icon"><ToolboxIcon client:load size={40} /></div>
                 <h3 class="card-title">Claude Skills</h3>
                 <div class="card-count">{skillsCount} Pre-built</div>
                 <div class="card-subtitle">Ready to use</div>
@@ -39,7 +41,7 @@ const { serverCount = 600, skillsCount = 68, clientsCount = 250 } = Astro.props;
             </a>
             
             <a href="/mcp-clients" class="directory-card">
-                <div class="card-icon">💻</div>
+                <div class="card-icon"><ComputerIcon client:load size={40} /></div>
                 <h3 class="card-title">MCP Clients</h3>
                 <div class="card-count">{clientsCount}+ Apps</div>
                 <div class="card-subtitle">For your workflow</div>
@@ -118,6 +120,10 @@ const { serverCount = 600, skillsCount = 68, clientsCount = 250 } = Astro.props;
     .card-icon {
         font-size: 2.5rem;
         margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #667eea;
     }
     
     .card-title {

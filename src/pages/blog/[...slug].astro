@@ -1,6 +1,7 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
 import EmailSignup from '../../components/EmailSignup.astro';
+import { FolderIcon, ToolboxIcon, ComputerIcon, VintageIcon } from '../../components/VintageIcon';
 
 export const prerender = true;
 
@@ -316,10 +317,10 @@ const { Content } = await post.render();
     <div class="container">
         <header>
             <div class="nav">
-                <a href="/">🏠 Shelf</a>
-                <a href="/claude-skills">⚡ Claude Skills</a>
-                <a href="/mcp-clients">💻 MCP Clients</a>
-                <a href="/blog">📝 Blog</a>
+                <a href="/"><FolderIcon client:load size={18} /> Shelf</a>
+                <a href="/claude-skills"><ToolboxIcon client:load size={18} /> Claude Skills</a>
+                <a href="/mcp-clients"><ComputerIcon client:load size={18} /> MCP Clients</a>
+                <a href="/blog"><VintageIcon client:load name="Windows95TextFile" size={18} /> Blog</a>
             </div>
         </header>
 

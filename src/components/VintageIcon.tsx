@@ -20,25 +20,25 @@ export const VintageIcon: React.FC<VintageIconProps> = ({ name, size = 24, class
 
 // Export some commonly used icons for easy access
 export const FolderIcon = (props: Omit<VintageIconProps, 'name'>) =>
-  <VintageIcon name="Win95Folder" {...props} />;
+  <VintageIcon name="WindowsFolder" {...props} />;
 
 export const ComputerIcon = (props: Omit<VintageIconProps, 'name'>) =>
-  <VintageIcon name="Win95Computer" {...props} />;
+  <VintageIcon name="Windows95MyComputer" {...props} />;
 
 export const GlobeIcon = (props: Omit<VintageIconProps, 'name'>) =>
-  <VintageIcon name="Win95Globe" {...props} />;
+  <VintageIcon name="NetscapeGlobe" {...props} />;
 
 export const ToolboxIcon = (props: Omit<VintageIconProps, 'name'>) =>
-  <VintageIcon name="Win95Wrench" {...props} />;
+  <VintageIcon name="VisualStudioWRENCH" {...props} />;
 
 export const DatabaseIcon = (props: Omit<VintageIconProps, 'name'>) =>
-  <VintageIcon name="Win95Database" {...props} />;
+  <VintageIcon name="VisualStudioGraph" {...props} />;
 
 export const CloudIcon = (props: Omit<VintageIconProps, 'name'>) =>
-  <VintageIcon name="Win95Cloud" {...props} />;
+  <VintageIcon name="VisualStudioCloud" {...props} />;
 
 export const SecurityIcon = (props: Omit<VintageIconProps, 'name'>) =>
-  <VintageIcon name="Win95Lock" {...props} />;
+  <VintageIcon name="SecurityEssentials" {...props} />;
 
 export const SearchIcon = (props: Omit<VintageIconProps, 'name'>) =>
-  <VintageIcon name="Win95Search" {...props} />;
+  <VintageIcon name="Windows95SavedSearch" {...props} />;

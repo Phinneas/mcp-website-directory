@@ -1,6 +1,7 @@
 ---
 // FAQ Page - Full FAQ with all questions
 import '../styles/global.css';
+import { FolderIcon, ToolboxIcon, ComputerIcon, VintageIcon } from '../components/VintageIcon';
 
 const faqSections = [
     {
@@ -482,11 +483,11 @@ const faqSections = [
             <h1>❓ Frequently Asked Questions</h1>
             <p>Everything you need to know about Model Context Protocol and My MCP Shelf</p>
             <div class="nav-links">
-                <a href="/" class="nav-link">🏠 Shelf</a>
-                <a href="/claude-skills" class="nav-link">⚡ Claude Skills</a>
-                <a href="/mcp-clients" class="nav-link">💻 MCP Clients</a>
-                <a href="/blog" class="nav-link">📝 Blog</a>
-                <a href="/faq" class="nav-link">❓ FAQ</a>
+                <a href="/" class="nav-link"><FolderIcon client:load size={18} /> Shelf</a>
+                <a href="/claude-skills" class="nav-link"><ToolboxIcon client:load size={18} /> Claude Skills</a>
+                <a href="/mcp-clients" class="nav-link"><ComputerIcon client:load size={18} /> MCP Clients</a>
+                <a href="/blog" class="nav-link"><VintageIcon client:load name="Windows95TextFile" size={18} /> Blog</a>
+                <a href="/faq" class="nav-link"><VintageIcon client:load name="Windows95Help" size={18} /> FAQ</a>
             </div>
         </div>
 
@@ -525,10 +526,10 @@ const faqSections = [
         </div>
 
         <div class="footer-links">
-            <a href="/">🏠 Back to MCP Shelf</a>
-            <a href="/blog">📝 View Blog</a>
-            <a href="/claude-skills">⚡ Browse Skills</a>
-            <a href="/mcp-clients">💻 Browse Clients</a>
+            <a href="/"><FolderIcon client:load size={16} /> Back to MCP Shelf</a>
+            <a href="/blog"><VintageIcon client:load name="Windows95TextFile" size={16} /> View Blog</a>
+            <a href="/claude-skills"><ToolboxIcon client:load size={16} /> Browse Skills</a>
+            <a href="/mcp-clients"><ComputerIcon client:load size={16} /> Browse Clients</a>
         </div>
     </div>
 

@@ -1,6 +1,7 @@
 ---
 // FeaturedArticles.astro - Featured blog articles section
 import { getCollection } from 'astro:content';
+import { VintageIcon } from './VintageIcon';
 
 // Get all blog posts and sort by date
 const allPosts = await getCollection('blog');
@@ -30,7 +31,7 @@ function getReadTime(content: string): number {
             {featuredPosts.map((post) => (
                 <a href={`/blog/${post.slug}`} class="article-card">
                     <div class="article-image-placeholder">
-                        <span class="article-icon">📝</span>
+                        <VintageIcon client:load name="Windows95TextFile" size={48} />
                     </div>
                     <div class="article-content">
                         <h3 class="article-title">{post.data.title}</h3>

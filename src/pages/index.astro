@@ -6,6 +6,7 @@ import HeroSection from '../components/HeroSection.astro';
 import TrustSection from '../components/TrustSection.astro';
 import FeaturedArticles from '../components/FeaturedArticles.astro';
 import FAQSection from '../components/FAQSection.astro';
+import { SearchIcon } from '../components/VintageIcon';
 import '../styles/global.css';
 
 // Define interface for MCP server data
@@ -7746,7 +7747,7 @@ function formatStars(stars?: number): string {
     <div class="search-section">
         <h2 class="search-section-heading">Explore {mcpServers.length || 600} Verified Servers</h2>
         <div class="search-bar">
-            <span class="search-icon">🔍</span>
+            <span class="search-icon"><SearchIcon client:load size={20} /></span>
             <input type="text" class="search-input" placeholder="Search MCP servers..." id="searchInput">
         </div>
 
