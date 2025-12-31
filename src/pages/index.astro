@@ -7401,8 +7401,8 @@ function formatStars(stars?: number): string {
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
         }
 
-        /* Ensure non-active tags are always visible */
-        .category-tag:not(.active) {
+        /* ALL category tags always visible - this is the core fix */
+        .category-tag {
             display: inline-block !important;
             visibility: visible !important;
             opacity: 1 !important;
@@ -7417,25 +7417,27 @@ function formatStars(stars?: number): string {
             top: auto !important;
             right: auto !important;
             bottom: auto !important;
+            margin: 0.25rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.2) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3) !important;
+            color: white !important;
         }
 
-        /* Prevent any parent from hiding tags */
-        .categories .category-tag,
-        .search-section .category-tag {
-            display: inline-block !important;
-            visibility: visible !important;
-            opacity: 1 !important;
+        /* Active tag gets amber highlight from hero section */
+        .category-tag.active {
+            background: var(--cta-primary) !important;
+            color: white !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 16px rgba(245, 158, 11, 0.3) !important;
+            border-color: var(--cta-primary) !important;
         }
 
-        /* Ensure tags are visible on all states */
-        .category-tag,
-        .category-tag:hover,
-        .category-tag:focus,
-        .category-tag:active,
-        .category-tag:visited {
-            display: inline-block !important;
-            visibility: visible !important;
-            opacity: 1 !important;
+        /* Hover effect - subtle amber glow */
+        .category-tag:hover:not(.active) {
+            background: rgba(245, 158, 11, 0.2) !important;
+            border-color: rgba(245, 158, 11, 0.4) !important;
+            transform: translateY(-1px) !important;
         }
 
         .servers-grid {
