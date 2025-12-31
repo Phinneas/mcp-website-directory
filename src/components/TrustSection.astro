@@ -1,0 +1,109 @@
+---
+// TrustSection.astro - Trust building section with three columns
+---
+
+<section class="trust-section">
+    <div class="trust-container">
+        <div class="trust-column">
+            <div class="trust-icon">✓</div>
+            <h3 class="trust-title">Curated Servers</h3>
+            <p class="trust-description">
+                We verify based on GitHub activity, community adoption, and active maintenance. 
+                No abandoned projects. 600 verified vs competitors' 17k+ unverified.
+            </p>
+            <a href="/blog/understanding-mcp-quality-standards" class="trust-cta">Our verification process →</a>
+        </div>
+        
+        <div class="trust-column">
+            <div class="trust-icon">🌐</div>
+            <h3 class="trust-title">Complete Ecosystem</h3>
+            <p class="trust-description">
+                Discover not just servers, but the clients to run them, the skills to enhance them, 
+                and the knowledge to implement them.
+            </p>
+        </div>
+        
+        <div class="trust-column">
+            <div class="trust-icon">📈</div>
+            <h3 class="trust-title">Updated Weekly</h3>
+            <p class="trust-description">
+                New servers added, unmaintained ones removed. Your source for the living MCP ecosystem, 
+                not static lists.
+            </p>
+        </div>
+    </div>
+</section>
+
+<style>
+    .trust-section {
+        background: #f9fafb;
+        padding: 4rem 1rem;
+    }
+    
+    .trust-container {
+        max-width: 1100px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2.5rem;
+    }
+    
+    .trust-column {
+        text-align: center;
+        padding: 1.5rem;
+    }
+    
+    .trust-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: #f59e0b;
+    }
+    
+    .trust-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 0.75rem;
+    }
+    
+    .trust-description {
+        font-size: 1rem;
+        color: #6b7280;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+    }
+    
+    .trust-cta {
+        color: #f59e0b;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.9rem;
+        transition: color 0.3s ease;
+    }
+    
+    .trust-cta:hover {
+        color: #d97706;
+        text-decoration: underline;
+    }
+    
+    @media (max-width: 768px) {
+        .trust-container {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+        
+        .trust-column {
+            padding: 1rem;
+        }
+    }
+    
+    @media (max-width: 1024px) and (min-width: 769px) {
+        .trust-container {
+            gap: 1.5rem;
+        }
+        
+        .trust-column {
+            padding: 1rem;
+        }
+    }
+</style>

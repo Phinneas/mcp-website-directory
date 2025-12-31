@@ -1,0 +1,211 @@
+---
+// FeaturedArticles.astro - Featured blog articles section
+import { getCollection } from 'astro:content';
+
+// Get all blog posts and sort by date
+const allPosts = await getCollection('blog');
+const sortedPosts = allPosts.sort((a, b) => 
+    new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+);
+
+// Get the 3 most recent posts
+const featuredPosts = sortedPosts.slice(0, 3);
+
+// Helper function to estimate read time
+function getReadTime(content: string): number {
+    const wordsPerMinute = 200;
+    const words = content.split(/\s+/).length;
+    return Math.ceil(words / wordsPerMinute);
+}
+---
+
+<section class="featured-section">
+    <div class="featured-container">
+        <h2 class="featured-heading">Learn as you explore</h2>
+        <p class="featured-subheading">
+            Explore the blog to understand MCP, best practices, and implementation patterns
+        </p>
+        
+        <div class="articles-grid">
+            {featuredPosts.map((post) => (
+                <a href={`/blog/${post.slug}`} class="article-card">
+                    <div class="article-image-placeholder">
+                        <span class="article-icon">📝</span>
+                    </div>
+                    <div class="article-content">
+                        <h3 class="article-title">{post.data.title}</h3>
+                        <p class="article-excerpt">
+                            {post.data.description.length > 120 
+                                ? post.data.description.substring(0, 120) + '...' 
+                                : post.data.description}
+                        </p>
+                        <div class="article-meta">
+                            <span class="meta-item">5 min read</span>
+                            <span class="meta-divider">•</span>
+                            <span class="meta-item">{post.data.author}</span>
+                        </div>
+                        <span class="article-cta">Read Full Article →</span>
+                    </div>
+                </a>
+            ))}
+        </div>
+        
+        <div class="view-all-wrapper">
+            <a href="/blog" class="view-all-btn">View All Articles →</a>
+        </div>
+    </div>
+</section>
+
+<style>
+    .featured-section {
+        background: #ffffff;
+        padding: 4rem 1rem;
+    }
+    
+    .featured-container {
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+    
+    .featured-heading {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1f2937;
+        text-align: center;
+        margin-bottom: 0.5rem;
+    }
+    
+    .featured-subheading {
+        font-size: 1.1rem;
+        color: #6b7280;
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+    
+    .articles-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .article-card {
+        background: #ffffff;
+        border-radius: 12px;
+        overflow: hidden;
+        text-decoration: none;
+        color: inherit;
+        border: 1px solid #e5e7eb;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .article-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .article-image-placeholder {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        height: 140px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .article-icon {
+        font-size: 3rem;
+    }
+    
+    .article-content {
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+    
+    .article-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 0.75rem;
+        line-height: 1.4;
+    }
+    
+    .article-excerpt {
+        font-size: 0.9rem;
+        color: #6b7280;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+        flex: 1;
+    }
+    
+    .article-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.8rem;
+        color: #9ca3af;
+        margin-bottom: 1rem;
+    }
+    
+    .meta-divider {
+        color: #d1d5db;
+    }
+    
+    .article-cta {
+        color: #f59e0b;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: color 0.3s ease;
+    }
+    
+    .article-card:hover .article-cta {
+        color: #d97706;
+    }
+    
+    .view-all-wrapper {
+        text-align: center;
+        margin-top: 1rem;
+    }
+    
+    .view-all-btn {
+        display: inline-block;
+        background: #f59e0b;
+        color: white;
+        padding: 0.75rem 2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .view-all-btn:hover {
+        background: #d97706;
+        transform: translateY(-2px);
+    }
+    
+    @media (max-width: 768px) {
+        .articles-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        
+        .featured-heading {
+            font-size: 1.75rem;
+        }
+    }
+    
+    @media (max-width: 1024px) and (min-width: 769px) {
+        .articles-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .articles-grid .article-card:last-child {
+            grid-column: span 2;
+            max-width: 50%;
+            margin: 0 auto;
+        }
+    }
+</style>

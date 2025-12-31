@@ -2,6 +2,10 @@
 import { fetchAllMCPServers, transformPulseMCPData } from '../utils/pulsemcpApi.js';
 import EmailSignup from '../components/EmailSignup.astro';
 import HeaderNewsletter from '../components/HeaderNewsletter.astro';
+import HeroSection from '../components/HeroSection.astro';
+import TrustSection from '../components/TrustSection.astro';
+import FeaturedArticles from '../components/FeaturedArticles.astro';
+import FAQSection from '../components/FAQSection.astro';
 import '../styles/global.css';
 
 // Define interface for MCP server data
@@ -7303,13 +7307,25 @@ function formatStars(stars?: number): string {
         }
 
         .search-section {
-            padding: 2rem 1rem;
+            padding: 2rem 1rem 3rem;
             max-width: 1200px;
             margin: 0 auto;
             overflow: visible;
             position: relative;
             z-index: 5;
             background: rgba(255, 255, 255, 0.95);
+        }
+        
+        .search-section-heading {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 2rem;
+        }
+        
+        html.dark-mode .search-section-heading {
+            color: #e0e0e0;
         }
 
         .search-bar {
@@ -7717,135 +7733,18 @@ function formatStars(stars?: number): string {
         </svg>
     </button>
 
-    <!-- Hero Section with Deep Slate Background -->
-    <div class="hero-section" style="
-        background: var(--hero-bg);
-        color: var(--hero-text);
-        padding: 4rem 1rem 3rem;
-        text-align: center;
-        min-height: 70vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-    ">
-        <!-- Main Headline -->
-        <h1 style="
-            font-size: 3.5rem;
-            font-weight: 800;
-            color: var(--hero-text);
-            margin-bottom: 1rem;
-            line-height: 1.1;
-            max-width: 800px;
-        ">
-            Find the right MCP server for your project—quality over quantity.
-        </h1>
-        
-        <!-- Subheadline -->
-        <p style="
-            font-size: 1.2rem;
-            color: var(--hero-subtext);
-            max-width: 600px;
-            margin: 0 auto 2rem;
-            line-height: 1.6;
-            font-weight: 500;
-        ">
-            600 verified MCP servers curated by GitHub stars and community adoption. Skip the noise, find what actually works.
-        </p>
-        
+    <!-- Hero Section -->
+    <HeroSection serverCount={mcpServers.length || 600} skillsCount={68} clientsCount={250} />
+    
+    <!-- Trust Section -->
+    <TrustSection />
+    
+    <!-- Featured Articles -->
+    <FeaturedArticles />
 
-        
-        <!-- Action Buttons -->
-        <div style="
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin: 2rem 0;
-        ">
-            <a href="/mcp-clients" style="
-                background: rgba(245, 158, 11, 0.1);
-                color: var(--cta-primary);
-                padding: 0.8rem 1.5rem;
-                font-size: 1rem;
-                font-weight: 600;
-                border-radius: 8px;
-                text-decoration: none;
-                display: inline-block;
-                transition: all 0.3s ease;
-                border: 1px solid rgba(245, 158, 11, 0.2);
-            " onmouseover="this.style.background='var(--cta-primary)'; this.style.color='white'" 
-               onmouseout="this.style.background='rgba(245, 158, 11, 0.1)'; this.style.color='var(--cta-primary)'">
-                Browse by Category
-            </a>
-            <a href="/mcp-clients" style="
-                background: rgba(245, 158, 11, 0.1);
-                color: var(--cta-primary);
-                padding: 0.8rem 1.5rem;
-                font-size: 1rem;
-                font-weight: 600;
-                border-radius: 8px;
-                text-decoration: none;
-                display: inline-block;
-                transition: all 0.3s ease;
-                border: 1px solid rgba(245, 158, 11, 0.2);
-            " onmouseover="this.style.background='var(--cta-primary)'; this.style.color='white'" 
-               onmouseout="this.style.background='rgba(245, 158, 11, 0.1)'; this.style.color='var(--cta-primary)'">
-                Search Servers
-            </a>
-            <a href="/blog" style="
-                background: rgba(245, 158, 11, 0.1);
-                color: var(--cta-primary);
-                padding: 0.8rem 1.5rem;
-                font-size: 1rem;
-                font-weight: 600;
-                border-radius: 8px;
-                text-decoration: none;
-                display: inline-block;
-                transition: all 0.3s ease;
-                border: 1px solid rgba(245, 158, 11, 0.2);
-            " onmouseover="this.style.background='var(--cta-primary)'; this.style.color='white'" 
-               onmouseout="this.style.background='rgba(245, 158, 11, 0.1)'; this.style.color='var(--cta-primary)'">
-                How We Verify
-            </a>
-        </div>
-        
-        <!-- Why MyMCPShelf Section -->
-        <div style="
-            width: 100%;
-            max-width: 800px;
-            margin: 3rem auto 0;
-            padding: 2rem;
-            background: rgba(30, 41, 59, 0.3);
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-        ">
-            <h2 style="
-                font-size: 1.8rem;
-                color: var(--hero-text);
-                margin-bottom: 1rem;
-                font-weight: 700;
-            ">
-                Why MyMCPShelf?
-            </h2>
-            <p style="
-                font-size: 1.05rem;
-                color: var(--hero-subtext);
-                line-height: 1.7;
-                opacity: 0.9;
-            ">
-                We don't list every server that exists. We curate based on GitHub stars, community adoption, and maintenance status. No abandoned projects. No low-effort forks. Just servers that actually work and have real usage behind them. Plus implementation guides for the ones that matter.
-            </p>
-        </div>
-        
-        <!-- Newsletter Signup -->
-        <div style="margin-top: 2rem; display: flex; justify-content: center;">
-            <HeaderNewsletter />
-        </div>
-    </div>
-
+    <!-- Search Section -->
     <div class="search-section">
+        <h2 class="search-section-heading">Explore {mcpServers.length || 600} Verified Servers</h2>
         <div class="search-bar">
             <span class="search-icon">🔍</span>
             <input type="text" class="search-input" placeholder="Search MCP servers..." id="searchInput">
@@ -7907,26 +7806,8 @@ function formatStars(stars?: number): string {
         ))}
     </div>
 
-    <div class="stats-section">
-        <div class="stats-grid">
-            <div class="stat-item">
-                <div class="stat-number">140+</div>
-                <div class="stat-label">MCP Servers</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">16</div>
-                <div class="stat-label">Categories</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">100%</div>
-                <div class="stat-label">Quality Verified</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">200k+</div>
-                <div class="stat-label">GitHub Stars</div>
-            </div>
-        </div>
-    </div>
+    <!-- FAQ Section -->
+    <FAQSection />
 
     <EmailSignup />
 

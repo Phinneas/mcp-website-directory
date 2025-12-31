@@ -1,0 +1,348 @@
+---
+// FAQ Page - Full FAQ with all questions
+import '../styles/global.css';
+
+const faqs = [
+    {
+        question: "What is MCP?",
+        answer: "Model Context Protocol is an open standard that lets AI assistants securely connect to external data and tools. It's like USB-C for AI applications—a universal interface that lets your AI assistant interact with databases, APIs, file systems, and more. MCP creates a standardized way for AI models to access real-world systems without custom integrations for every service."
+    },
+    {
+        question: "How do you verify servers?",
+        answer: "We evaluate GitHub activity, star count (real adoption), and maintenance status. If it has active development and community usage, it qualifies. We also check for proper documentation, security practices, and working examples. Servers must have at least 10+ GitHub stars, commits within the last 6 months, and clear setup instructions."
+    },
+    {
+        question: "Why 600 servers instead of 17,000?",
+        answer: "Quality over quantity. We skip abandoned projects and low-effort forks so you can find what actually works. Every server in our directory has been verified for active maintenance, community adoption, and proper documentation. Other directories include everything ever created—we curate only what's worth using."
+    },
+    {
+        question: "Can I use Claude Skills with MCP Servers?",
+        answer: "Yes! Skills enhance Claude's capabilities, while MCP servers give Claude access to external tools and data. They work together seamlessly—skills can leverage MCP servers to perform complex tasks. Think of skills as Claude's abilities and MCP servers as the tools those abilities can access."
+    },
+    {
+        question: "How do I choose between 250+ MCP clients?",
+        answer: "Check our 'MCP Client Selection Guide' blog post, or browse by use case (coding, automation, general chat, etc.). Consider factors like your IDE, operating system, and whether you need local or remote access. For developers, Cursor and Cline are popular. For general use, Claude Desktop is the reference implementation."
+    },
+    {
+        question: "How often is the directory updated?",
+        answer: "We update the directory weekly. New servers are added as they meet our quality criteria, and unmaintained servers are flagged or removed. We also refresh GitHub statistics to ensure star counts and activity status are current."
+    },
+    {
+        question: "Can I submit my MCP server to the directory?",
+        answer: "Yes! We welcome submissions that meet our quality standards: 10+ GitHub stars, active maintenance, proper documentation, and working examples. Contact us through our GitHub repository or newsletter to suggest additions."
+    },
+    {
+        question: "What's the difference between MCP and regular APIs?",
+        answer: "Traditional APIs are point-to-point connections between applications. MCP adds a standardization layer specifically for AI assistants. Your production application uses REST APIs directly. Your AI assistant uses MCP servers to access those same services through a universal protocol. They're complementary, not competing."
+    },
+    {
+        question: "Is MCP secure?",
+        answer: "MCP was designed with security in mind. It establishes clear permission boundaries—you control exactly which operations an AI can perform. The MCP server acts as a guardian, validating requests against permission rules before allowing any operation. Credentials are managed by servers, never exposed to the AI directly."
+    },
+    {
+        question: "Which AI models support MCP?",
+        answer: "Claude has native MCP support built in. Other models like GPT-4 can use MCP through adapters and bridges. Many clients support multiple LLM providers. As adoption grows, more AI platforms are adding native MCP support."
+    }
+];
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ | My MCP Shelf</title>
+    <meta name="description" content="Frequently asked questions about Model Context Protocol, MCP servers, and how to use My MCP Shelf">
+    <link rel="canonical" href="https://www.mymcpshelf.com/faq/" />
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.png" type="image/png">
+
+    <!-- Google Fonts - Cabin & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Dark mode flash prevention -->
+    <script>
+        (function() {
+            const theme = localStorage.getItem('theme');
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark-mode');
+            }
+        })();
+    </script>
+
+    <!-- Plausible Analytics -->
+    <script defer data-domain="mymcpshelf.com" src="https://plausible-analytics-ce-production-7165.up.railway.app/js/script.js"></script>
+
+    <style>
+        :root {
+            --bg-gradient-start: #f9f7f5;
+            --bg-gradient-end: #f9f7f5;
+            --text-primary: #333;
+            --card-bg: rgba(255, 255, 255, 1);
+            --card-text: #333;
+            --card-shadow: rgba(0, 0, 0, 0.1);
+            --border-color: rgba(255, 255, 255, 0.2);
+            --hero-bg: #0f172a;
+            --hero-text: #ffffff;
+            --hero-subtext: #cbd5e1;
+            --cta-primary: #f59e0b;
+        }
+
+        html.dark-mode {
+            --bg-gradient-start: #1a1a2e;
+            --bg-gradient-end: #16213e;
+            --text-primary: #e0e0e0;
+            --card-bg: rgba(30, 30, 46, 1);
+            --card-text: #e0e0e0;
+            --card-shadow: rgba(0, 0, 0, 0.3);
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-gradient-start);
+            min-height: 100vh;
+            color: var(--text-primary);
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Cabin', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px var(--card-shadow);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px var(--card-shadow);
+        }
+
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--card-text);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: var(--hero-bg);
+            color: var(--hero-text);
+            border-radius: 16px;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            color: var(--hero-text);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: var(--hero-subtext);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .nav-links {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+            background: rgba(255,255,255,0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        .faq-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .faq-item {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 4px 20px var(--card-shadow);
+        }
+
+        .faq-question {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--card-text);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .question-icon {
+            color: var(--cta-primary);
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .faq-answer {
+            color: #6b7280;
+            line-height: 1.7;
+            font-size: 1rem;
+            padding-left: 1.95rem;
+        }
+
+        html.dark-mode .faq-answer {
+            color: #9ca3af;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 2rem;
+            color: var(--cta-primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #d97706;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .faq-item {
+                padding: 1.25rem 1.5rem;
+            }
+
+            .faq-question {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Dark Mode Toggle -->
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+        <svg id="sunIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3" stroke="currentColor" stroke-width="2"/>
+            <line x1="12" y1="21" x2="12" y2="23" stroke="currentColor" stroke-width="2"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="currentColor" stroke-width="2"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="currentColor" stroke-width="2"/>
+            <line x1="1" y1="12" x2="3" y2="12" stroke="currentColor" stroke-width="2"/>
+            <line x1="21" y1="12" x2="23" y2="12" stroke="currentColor" stroke-width="2"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="currentColor" stroke-width="2"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="display: none;">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+    </button>
+
+    <div class="container">
+        <div class="header">
+            <h1>❓ Frequently Asked Questions</h1>
+            <p>Everything you need to know about MCP and My MCP Shelf</p>
+            <div class="nav-links">
+                <a href="/" class="nav-link">🏠 Shelf</a>
+                <a href="/claude-skills" class="nav-link">⚡ Claude Skills</a>
+                <a href="/mcp-clients" class="nav-link">💻 MCP Clients</a>
+                <a href="/blog" class="nav-link">📝 Blog</a>
+            </div>
+        </div>
+
+        <div class="faq-list">
+            {faqs.map((faq) => (
+                <div class="faq-item">
+                    <h3 class="faq-question">
+                        <span class="question-icon">Q:</span>
+                        <span>{faq.question}</span>
+                    </h3>
+                    <p class="faq-answer">{faq.answer}</p>
+                </div>
+            ))}
+        </div>
+
+        <a href="/" class="back-link">← Back to MCP Shelf</a>
+    </div>
+
+    <script>
+        // Dark mode toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const sunIcon = document.getElementById('sunIcon');
+        const moonIcon = document.getElementById('moonIcon');
+        const html = document.documentElement;
+
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        if (currentTheme === 'dark') {
+            html.classList.add('dark-mode');
+            sunIcon.style.display = 'none';
+            moonIcon.style.display = 'block';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            html.classList.toggle('dark-mode');
+            if (html.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+                sunIcon.style.display = 'none';
+                moonIcon.style.display = 'block';
+            } else {
+                localStorage.setItem('theme', 'light');
+                sunIcon.style.display = 'block';
+                moonIcon.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
