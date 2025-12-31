@@ -7401,7 +7401,7 @@ function formatStars(stars?: number): string {
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
         }
 
-        /* ALL category tags always visible - this is the core fix */
+        /* COMPREHENSIVE FIX: ALL category tags always visible */
         .category-tag {
             display: inline-block !important;
             visibility: visible !important;
@@ -7422,6 +7422,10 @@ function formatStars(stars?: number): string {
             background: rgba(255, 255, 255, 0.2) !important;
             border: 1px solid rgba(255, 255, 255, 0.3) !important;
             color: white !important;
+            font-size: 0.9rem !important;
+            border-radius: 2rem !important;
+            cursor: pointer !important;
+            transition: all 0.3s ease !important;
         }
 
         /* Active tag gets amber highlight from hero section */
@@ -7431,6 +7435,7 @@ function formatStars(stars?: number): string {
             transform: translateY(-2px) !important;
             box-shadow: 0 4px 16px rgba(245, 158, 11, 0.3) !important;
             border-color: var(--cta-primary) !important;
+            font-weight: 600 !important;
         }
 
         /* Hover effect - subtle amber glow */
@@ -7438,6 +7443,31 @@ function formatStars(stars?: number): string {
             background: rgba(245, 158, 11, 0.2) !important;
             border-color: rgba(245, 158, 11, 0.4) !important;
             transform: translateY(-1px) !important;
+        }
+
+        /* CRITICAL: Ensure categories container shows all tags */
+        .categories {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            justify-content: center !important;
+            gap: 0.5rem !important;
+            width: 100% !important;
+            min-height: 100px !important;
+            padding: 1rem 0 !important;
+            overflow: visible !important;
+            position: relative !important;
+            z-index: 10 !important;
+        }
+
+        /* Prevent any parent element from hiding tags */
+        .search-section .categories,
+        .search-section .category-tag,
+        body .categories,
+        body .category-tag {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            flex-wrap: wrap !important;
         }
 
         .servers-grid {
