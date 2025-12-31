@@ -7401,7 +7401,7 @@ function formatStars(stars?: number): string {
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
         }
 
-        /* COMPREHENSIVE FIX: ALL category tags always visible */
+        /* FINAL FIX: ALL category tags always visible - no hiding */
         .category-tag {
             display: inline-block !important;
             visibility: visible !important;
@@ -7426,11 +7426,14 @@ function formatStars(stars?: number): string {
             border-radius: 2rem !important;
             cursor: pointer !important;
             transition: all 0.3s ease !important;
+            /* Prevent any hiding */
+            content-visibility: visible !important;
+            contain: none !important;
         }
 
-        /* Active tag gets amber highlight from hero section */
+        /* Active tag gets bright amber highlight (#f59e0b) */
         .category-tag.active {
-            background: var(--cta-primary) !important;
+            background: var(--cta-primary) !important; /* #f59e0b */
             color: white !important;
             transform: translateY(-2px) !important;
             box-shadow: 0 4px 16px rgba(245, 158, 11, 0.3) !important;
@@ -7438,14 +7441,21 @@ function formatStars(stars?: number): string {
             font-weight: 600 !important;
         }
 
+        /* Inactive tags get light gray background */
+        .category-tag:not(.active) {
+            background: rgba(255, 255, 255, 0.2) !important;
+            border-color: rgba(255, 255, 255, 0.3) !important;
+            color: white !important;
+        }
+
         /* Hover effect - subtle amber glow */
         .category-tag:hover:not(.active) {
             background: rgba(245, 158, 11, 0.2) !important;
-            border-color: rgba(245, 158, 11, 0.4) !important;
+            border-color: rgba(255, 158, 11, 0.4) !important;
             transform: translateY(-1px) !important;
         }
 
-        /* CRITICAL: Ensure categories container shows all tags */
+        /* Categories container - ensure all tags show in horizontal row */
         .categories {
             display: flex !important;
             flex-wrap: wrap !important;
@@ -7457,17 +7467,28 @@ function formatStars(stars?: number): string {
             overflow: visible !important;
             position: relative !important;
             z-index: 10 !important;
+            /* Prevent container from hiding tags */
+            align-items: center !important;
+            align-content: center !important;
         }
 
-        /* Prevent any parent element from hiding tags */
+        /* ABSOLUTE PROTECTION: Prevent any hiding at any level */
         .search-section .categories,
         .search-section .category-tag,
         body .categories,
-        body .category-tag {
-            display: flex !important;
+        body .category-tag,
+        html .categories,
+        html .category-tag,
+        .search-section .category-tag:not(.active),
+        body .category-tag:not(.active) {
+            display: inline-block !important;
             visibility: visible !important;
             opacity: 1 !important;
-            flex-wrap: wrap !important;
+            position: static !important;
+            height: auto !important;
+            width: auto !important;
+            overflow: visible !important;
+            flex-shrink: 0 !important;
         }
 
         .servers-grid {
