@@ -7371,11 +7371,11 @@ function formatStars(stars?: number): string {
 
         .category-tag {
             padding: 0.5rem 1rem;
-            background: rgba(255, 255, 255, 0.2);
+            background: #f3f4f6; /* Light gray */
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border: 1px solid #d1d5db; /* Gray border */
             border-radius: 2rem;
-            color: white;
+            color: #374151; /* Dark gray text */
             text-decoration: none;
             font-size: 0.9rem;
             transition: all 0.3s ease;
@@ -7395,13 +7395,13 @@ function formatStars(stars?: number): string {
 
         .category-tag:hover,
         .category-tag.active {
-            background: rgba(255, 255, 255, 0.9);
-            color: #333;
+            background: #f59e0b; /* Amber */
+            color: white;
             transform: translateY(-2px);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 16px rgba(245, 158, 11, 0.3);
         }
 
-        /* FINAL FIX: ALL category tags always visible - no hiding */
+        /* FINAL FIX: ALL category tags always visible with proper contrast */
         .category-tag {
             display: inline-block !important;
             visibility: visible !important;
@@ -7419,9 +7419,9 @@ function formatStars(stars?: number): string {
             bottom: auto !important;
             margin: 0.25rem;
             padding: 0.5rem 1rem;
-            background: rgba(255, 255, 255, 0.2) !important;
-            border: 1px solid rgba(255, 255, 255, 0.3) !important;
-            color: white !important;
+            background: #f3f4f6 !important; /* Light gray background */
+            border: 1px solid #d1d5db !important; /* Gray border */
+            color: #374151 !important; /* Dark gray text for contrast */
             font-size: 0.9rem !important;
             border-radius: 2rem !important;
             cursor: pointer !important;
@@ -7433,25 +7433,26 @@ function formatStars(stars?: number): string {
 
         /* Active tag gets bright amber highlight (#f59e0b) */
         .category-tag.active {
-            background: var(--cta-primary) !important; /* #f59e0b */
+            background: #f59e0b !important; /* Amber */
             color: white !important;
             transform: translateY(-2px) !important;
             box-shadow: 0 4px 16px rgba(245, 158, 11, 0.3) !important;
-            border-color: var(--cta-primary) !important;
+            border-color: #f59e0b !important;
             font-weight: 600 !important;
         }
 
-        /* Inactive tags get light gray background */
+        /* Inactive tags get light gray background with dark text */
         .category-tag:not(.active) {
-            background: rgba(255, 255, 255, 0.2) !important;
-            border-color: rgba(255, 255, 255, 0.3) !important;
-            color: white !important;
+            background: #f3f4f6 !important; /* Light gray */
+            border-color: #d1d5db !important; /* Gray border */
+            color: #374151 !important; /* Dark gray text */
         }
 
         /* Hover effect - subtle amber glow */
         .category-tag:hover:not(.active) {
-            background: rgba(245, 158, 11, 0.2) !important;
-            border-color: rgba(255, 158, 11, 0.4) !important;
+            background: #fef3c7 !important; /* Light amber */
+            border-color: #f59e0b !important;
+            color: #92400e !important; /* Dark amber text */
             transform: translateY(-1px) !important;
         }
 
