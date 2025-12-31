@@ -7380,7 +7380,7 @@ function formatStars(stars?: number): string {
             font-size: 0.9rem;
             transition: all 0.3s ease;
             cursor: pointer;
-            display: inline-block;
+            display: inline-block !important;
             visibility: visible !important;
             opacity: 1 !important;
             margin: 0.25rem 0;
@@ -7388,6 +7388,9 @@ function formatStars(stars?: number): string {
             position: relative;
             z-index: 1;
             min-width: fit-content;
+            height: auto !important;
+            width: auto !important;
+            overflow: visible !important;
         }
 
         .category-tag:hover,
@@ -7396,6 +7399,15 @@ function formatStars(stars?: number): string {
             color: #333;
             transform: translateY(-2px);
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Ensure non-active tags are always visible */
+        .category-tag:not(.active) {
+            display: inline-block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            height: auto !important;
+            width: auto !important;
         }
 
         .servers-grid {
