@@ -1,6 +1,6 @@
 ---
 // HeroSection.astro - Hero section with directory cards
-import { DatabaseIcon, ToolboxIcon, ComputerIcon } from './VintageIcon';
+import { DatabaseIcon, ToolboxIcon, ComputerIcon, HelpIcon } from './VintageIcon';
 
 interface Props {
     serverCount?: number;
@@ -46,6 +46,14 @@ const { serverCount = 600, skillsCount = 68, clientsCount = 250 } = Astro.props;
                 <div class="card-count">{clientsCount}+ Apps</div>
                 <div class="card-subtitle">For your workflow</div>
                 <span class="card-cta">Explore Clients →</span>
+            </a>
+            
+            <a href="/faq" class="directory-card">
+                <div class="card-icon"><HelpIcon client:load size={40} /></div>
+                <h3 class="card-title">FAQ & Help</h3>
+                <div class="card-count">26+ Answers</div>
+                <div class="card-subtitle">Get your questions answered</div>
+                <span class="card-cta">View FAQ →</span>
             </a>
         </div>
         
@@ -93,9 +101,9 @@ const { serverCount = 600, skillsCount = 68, clientsCount = 250 } = Astro.props;
     
     .directory-cards {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(4, 1fr);
         gap: 1.5rem;
-        max-width: 900px;
+        max-width: 1200px;
         margin: 0 auto 2.5rem;
     }
     
@@ -198,7 +206,7 @@ const { serverCount = 600, skillsCount = 68, clientsCount = 250 } = Astro.props;
         }
         
         .directory-cards {
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(2, 1fr);
             gap: 1rem;
         }
         
@@ -214,7 +222,7 @@ const { serverCount = 600, skillsCount = 68, clientsCount = 250 } = Astro.props;
     
     @media (max-width: 1024px) and (min-width: 769px) {
         .directory-cards {
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 1rem;
         }
         

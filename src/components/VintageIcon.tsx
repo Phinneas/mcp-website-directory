@@ -42,3 +42,6 @@ export const SecurityIcon = (props: Omit<VintageIconProps, 'name'>) =>
 
 export const SearchIcon = (props: Omit<VintageIconProps, 'name'>) =>
   <VintageIcon name="Windows95SavedSearch" {...props} />;
+
+export const HelpIcon = (props: Omit<VintageIconProps, 'name'>) =>
+  <VintageIcon name="Windows95Help" {...props} />;
