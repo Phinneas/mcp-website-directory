@@ -1,6 +1,6 @@
 ---
 // HeroSection.astro - Hero section with directory cards
-import { DatabaseIcon, ToolboxIcon, ComputerIcon, HelpIcon } from './VintageIcon';
+import { ToolboxIcon, ComputerIcon, HelpIcon } from './VintageIcon';
 
 interface Props {
     serverCount?: number;
@@ -24,14 +24,6 @@ const { serverCount = 600, skillsCount = 68, clientsCount = 250 } = Astro.props;
         
         <!-- Three-card grid -->
         <div class="directory-cards">
-            <a href="/" class="directory-card">
-                <div class="card-icon"><DatabaseIcon client:load size={40} /></div>
-                <h3 class="card-title">MCP Servers</h3>
-                <div class="card-count">{serverCount} Verified</div>
-                <div class="card-subtitle">Updated weekly</div>
-                <span class="card-cta">Explore Servers →</span>
-            </a>
-            
             <a href="/claude-skills" class="directory-card">
                 <div class="card-icon"><ToolboxIcon client:load size={40} /></div>
                 <h3 class="card-title">Claude Skills</h3>
@@ -101,9 +93,9 @@ const { serverCount = 600, skillsCount = 68, clientsCount = 250 } = Astro.props;
     
     .directory-cards {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(3, 1fr);
         gap: 1.5rem;
-        max-width: 1200px;
+        max-width: 900px;
         margin: 0 auto 2.5rem;
     }
     
@@ -206,7 +198,7 @@ const { serverCount = 600, skillsCount = 68, clientsCount = 250 } = Astro.props;
         }
         
         .directory-cards {
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: 1fr;
             gap: 1rem;
         }
         
@@ -222,7 +214,7 @@ const { serverCount = 600, skillsCount = 68, clientsCount = 250 } = Astro.props;
     
     @media (max-width: 1024px) and (min-width: 769px) {
         .directory-cards {
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 1rem;
         }
         
