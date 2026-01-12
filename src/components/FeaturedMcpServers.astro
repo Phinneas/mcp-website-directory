@@ -63,38 +63,46 @@ featuredServers = featuredServers.slice(0, 6);
     </p>
     
     <div class="servers-grid">
-      {featuredServers.map((server) => (
-        <a 
-          href={server.fields.github_url || '#'} 
-          class="server-card"
-          target="_blank"
-          rel="noopener noreferrer"
-          data-category={server.fields.category || 'other'}
-        >
-          <div class="server-header">
-            <div class="server-icon">{getServerIcon(server.fields.name)}</div>
-            <div class="server-title">
-              <h3>{server.fields.name}</h3>
-              <div class="server-author">{server.fields.author || ''}</div>
+      {featuredServers.map((server) => {
+        // Special case for MCP Operator - link to blog post
+        const isMcpOperator = server.id === 'mcp-operator';
+        const href = isMcpOperator ? '/blog/mcp-operator-kubernetes-native-deployment' : server.fields.github_url;
+        const target = isMcpOperator ? '_self' : '_blank';
+        const rel = isMcpOperator ? '' : 'noopener noreferrer';
+        
+        return (
+          <a 
+            href={href || '#'} 
+            class="server-card"
+            target={target}
+            rel={rel}
+            data-category={server.fields.category || 'other'}
+          >
+            <div class="server-header">
+              <div class="server-icon">{getServerIcon(server.fields.name)}</div>
+              <div class="server-title">
+                <h3>{server.fields.name}</h3>
+                <div class="server-author">{server.fields.author || ''}</div>
+              </div>
             </div>
-          </div>
-          <div class="server-description">
-            {server.fields.description.length > 140 
-              ? server.fields.description.substring(0, 140) + '...' 
-              : server.fields.description}
-          </div>
-          <div class="server-meta">
-            {server.fields.language && <span class="meta-tag">{server.fields.language}</span>}
-            {server.fields.author && <span class="meta-tag">{server.fields.author.includes('@') ? 'Official' : 'Community'}</span>}
-            {server.fields.category && <span class="meta-tag">{server.fields.category}</span>}
-          </div>
-          {server.fields.stars && (
-            <div class="repo-stats">
-              <span class="repo-stat stargazers">{formatStars(server.fields.stars)}</span>
+            <div class="server-description">
+              {server.fields.description.length > 140 
+                ? server.fields.description.substring(0, 140) + '...' 
+                : server.fields.description}
             </div>
-          )}
-        </a>
-      ))}
+            <div class="server-meta">
+              {server.fields.language && <span class="meta-tag">{server.fields.language}</span>}
+              {server.fields.author && <span class="meta-tag">{server.fields.author.includes('@') ? 'Official' : 'Community'}</span>}
+              {server.fields.category && <span class="meta-tag">{server.fields.category}</span>}
+            </div>
+            {server.fields.stars && (
+              <div class="repo-stats">
+                <span class="repo-stat stargazers">{formatStars(server.fields.stars)}</span>
+              </div>
+            )}
+          </a>
+        );
+      })}
     </div>
     
     <div class="view-all-wrapper">

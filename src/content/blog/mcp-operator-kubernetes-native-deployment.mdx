@@ -1,0 +1,610 @@
+---
+title: "MCP Operator: Kubernetes-Native MCP Server Deployment & Validation"
+description: "Deploy MCP servers to Kubernetes with automatic protocol validation, scaling, and monitoring. MCP Operator brings production-grade infrastructure to AI tooling."
+date: "2026-01-12"
+author: "MyMCPShelf Team"
+category: "Shelf Spotlight"
+tags: ["kubernetes", "devops", "mcp-operator", "infrastructure", "monitoring", "orchestration"]
+featured: true
+image: "/images/blog/mcp-operator-featured.png"
+---
+
+# MCP Operator: Kubernetes-Native MCP Server Deployment & Validation
+
+What if deploying an MCP server was as simple as writing five lines of YAML?
+
+MCP servers are rapidly becoming the backbone of AI agent ecosystems. They're the bridge between large language models and the real world—connecting Claude, GPT, and other AI assistants to databases, APIs, file systems, and enterprise tools. But here's the uncomfortable truth: running MCP servers in production is a mess.
+
+Most teams cobble together custom Docker configurations, write ad-hoc scaling scripts, and discover protocol compliance issues only after their AI agents start failing mysteriously. The gap between "it works on my laptop" and "it runs reliably at enterprise scale" remains painfully wide.
+
+**MCP Operator** changes this equation entirely. It's the first Kubernetes-native solution purpose-built for MCP server lifecycle management—handling deployment, scaling, monitoring, and crucially, protocol validation automatically.
+
+> "Deploy your MCP servers on Kubernetes with automatic protocol validation, horizontal scaling, and built-in observability."
+
+Before we dive deep, one important note: MCP Operator is currently in alpha. It's fantastic for experimentation, prototyping, and providing feedback to shape the project's direction. Production deployments should wait for a stable release. That said, if you're planning MCP infrastructure strategy for 2026, this is absolutely one to watch.
+
+## The Problem MCP Operator Solves
+
+Running a single MCP server locally is straightforward. Running a fleet of them in production? That's where things get complicated fast.
+
+### Manual Deployment Chaos
+
+Every MCP server ends up with its own bespoke deployment setup. Custom Dockerfiles multiply across repositories. Port configurations vary between environments. Health check patterns differ from server to server. Configuration drift creeps in silently until something breaks.
+
+Platform teams spend hours debugging issues that stem from inconsistent deployment practices. The "works on my machine" problem, already a pain for traditional applications, becomes acute when you're dealing with protocol-specific servers that AI agents depend on for tool access.
+
+### The Protocol Validation Gap
+
+Here's a scenario that plays out regularly: a team deploys an MCP server, connects it to their AI agent fleet, and everything seems fine—until agents start reporting tool failures in production. The root cause? The server wasn't actually implementing the MCP protocol correctly.
+
+There's no built-in way to verify MCP compliance before serving traffic. Servers can claim to support certain capabilities while implementing them incorrectly. Protocol version mismatches cause subtle failures. Teams discover these issues through frustrated users, not automated checks.
+
+### Operational Overhead That Scales Poorly
+
+Managing one MCP server is manageable. Managing ten becomes a full-time job. Managing fifty across multiple environments becomes a dedicated team's responsibility.
+
+Each server needs secrets management, health monitoring, update procedures, and scaling policies. Without standardization, every team reinvents these operational patterns. Knowledge stays siloed. Best practices don't propagate. The operational burden grows linearly with the number of servers.
+
+### Observability Blind Spots
+
+Traditional application metrics don't capture what matters for MCP servers. You need to know: What protocol version is running? What capabilities does this server actually expose? When was compliance last validated? Is the server responding to MCP-specific health probes?
+
+Most monitoring setups treat MCP servers as generic HTTP services, missing the protocol-level insights that actually matter for debugging agent integration issues.
+
+## Who Feels This Pain?
+
+**Platform engineering teams** building shared MCP infrastructure need standardized deployment patterns that work across the organization.
+
+**DevOps engineers** managing multi-tenant AI environments need consistent operational practices that don't require deep MCP protocol knowledge for every team member.
+
+**Enterprise development teams** with dozens of MCP servers need a way to maintain consistency without manual coordination overhead.
+
+**Managed service providers** offering AI tooling need production-grade infrastructure that scales with customer demand.
+
+If you recognize yourself in any of these descriptions, MCP Operator deserves your attention.
+
+## Key Features That Matter
+
+MCP Operator isn't trying to be everything to everyone. It focuses on runtime operations—taking your existing MCP server images and running them reliably in Kubernetes. Let's examine what it actually does.
+
+### Auto-Detection and Protocol Validation
+
+This is the headline feature, and it's genuinely novel. When you deploy an MCP server through the operator, it doesn't just start the container and hope for the best. It actively probes the server to understand what you've deployed.
+
+The operator automatically detects your transport type—whether you're using legacy SSE (Server-Sent Events) or modern Streamable HTTP. It validates protocol compliance, checking that the server actually implements the MCP specification correctly. It enumerates capabilities, discovering whether your server provides tools, resources, prompts, or some combination.
+
+All of this happens automatically, and the results appear in your MCPServer resource's status:
+
+```
+NAME              PHASE     REPLICAS   READY   PROTOCOL   VALIDATION   CAPABILITIES                      AGE
+customer-data-mcp Running   1          1       sse        Validated    ["tools","resources","prompts"]   109s
+```
+
+At a glance, you know the server is running, validated, and what it can do. No guessing, no manual verification.
+
+For environments where compliance is non-negotiable, strict mode fails deployments that don't pass validation:
+
+```yaml
+spec:
+  validation:
+    strictMode: true
+```
+
+With strict mode enabled, a misconfigured server never reaches the "Running" state. You catch protocol issues at deployment time, not when an agent fails to access a critical tool.
+
+### Horizontal Pod Autoscaling Built In
+
+MCP servers often experience bursty traffic patterns. An AI agent fleet might make thousands of tool calls in minutes, then go quiet for hours. Static replica counts either waste resources during quiet periods or fail under sudden load.
+
+MCP Operator includes native HPA (Horizontal Pod Autoscaler) configuration:
+
+```yaml
+spec:
+  hpa:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+```
+
+This isn't revolutionary—Kubernetes has had HPA for years. What's valuable is that it's integrated into the MCPServer CRD, so scaling configuration lives alongside your server definition. One manifest controls everything.
+
+The operator creates and manages the HPA resource automatically. You don't need to remember to create a separate HPA, ensure the naming matches, or keep configurations synchronized. The MCPServer resource becomes the single source of truth.
+
+### Production Hardening by Default
+
+Security configurations are easy to forget and tedious to apply consistently. MCP Operator encourages production-ready defaults:
+
+```yaml
+spec:
+  security:
+    runAsUser: 1000
+    runAsGroup: 1000
+    runAsNonRoot: true
+  
+  resources:
+    requests:
+      cpu: "200m"
+      memory: "256Mi"
+    limits:
+      cpu: "1000m"
+      memory: "1Gi"
+```
+
+Pod security standards compliance, health check configuration, and resource limits come standard. You can override anything, but the defaults steer you toward secure configurations.
+
+For teams subject to compliance requirements or security audits, having these patterns built into the operator simplifies demonstrating that MCP infrastructure follows organizational security policies.
+
+### Observability That Understands MCP
+
+Generic application monitoring misses what matters for MCP servers. MCP Operator provides Prometheus metrics and pre-built Grafana dashboards designed specifically for MCP workloads.
+
+Enable monitoring during installation:
+
+```bash
+helm install mcp-operator oci://ghcr.io/vitorbari/mcp-operator \
+  --version ${VERSION} \
+  --namespace mcp-operator-system \
+  --create-namespace \
+  --set prometheus.enable=true \
+  --set grafana.enabled=true
+```
+
+The included dashboards show validation state across your server fleet, protocol type distribution, server health and readiness trends, and capability breakdowns. When an AI agent reports tool failures, you can quickly identify which MCP servers are having issues and what state they're in.
+
+This requires Prometheus Operator to be installed in your cluster—a reasonable assumption for teams serious about Kubernetes observability.
+
+### Declarative Configuration Through CRDs
+
+The operator pattern means your MCP server deployment is fully declarative. Define what you want in a YAML manifest, apply it, and the operator reconciles actual state to match desired state.
+
+A minimal configuration is genuinely minimal:
+
+```yaml
+apiVersion: mcp.mcp-operator.io/v1
+kind: MCPServer
+metadata:
+  name: customer-data-mcp
+spec:
+  image: "your-registry.company.com/customer-data-mcp:v1.2.0"
+```
+
+From this, the operator creates a Deployment with appropriate health checks, a Service for cluster-internal access, and kicks off validation to verify protocol compliance.
+
+A production configuration adds more detail but remains readable:
+
+```yaml
+apiVersion: mcp.mcp-operator.io/v1
+kind: MCPServer
+metadata:
+  name: my-mcp-server
+spec:
+  image: "tzolov/mcp-everything-server:v3"
+  command: ["node", "dist/index.js", "sse"]
+
+  transport:
+    type: http
+    protocol: auto
+    config:
+      http:
+        port: 3001
+        path: "/sse"
+        sessionManagement: true
+
+  hpa:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 70
+
+  security:
+    runAsUser: 1000
+    runAsGroup: 1000
+    runAsNonRoot: true
+
+  resources:
+    requests:
+      cpu: "200m"
+      memory: "256Mi"
+    limits:
+      cpu: "1000m"
+      memory: "1Gi"
+```
+
+Everything needed to run a production MCP server lives in one manifest. GitOps workflows apply naturally—store your MCPServer manifests in Git, deploy through ArgoCD or Flux, and maintain version-controlled infrastructure.
+
+## Getting Started: Your First MCP Server in Five Minutes
+
+Theory is useful, but let's actually deploy something. This walkthrough assumes you have kubectl installed and access to a Kubernetes cluster. Kind or Minikube work perfectly for experimentation.
+
+### Setting Up a Local Cluster
+
+If you don't have a cluster handy, Kind provides the fastest path:
+
+```bash
+# Install Kind (macOS)
+brew install kind
+
+# Create a cluster
+kind create cluster --name mcp-demo
+```
+
+Minikube works equally well:
+
+```bash
+# Install Minikube (macOS)
+brew install minikube
+
+# Start a cluster
+minikube start
+```
+
+### Installing the Operator
+
+Helm is the recommended installation method, offering easier configuration and upgrades:
+
+```bash
+# Get the latest version
+VERSION=$(curl -s https://api.github.com/repos/vitorbari/mcp-operator/releases | jq -r '.[0].tag_name' | sed 's/^v//')
+
+# Install
+helm install mcp-operator oci://ghcr.io/vitorbari/mcp-operator \
+  --version ${VERSION} \
+  --namespace mcp-operator-system \
+  --create-namespace
+```
+
+Alternatively, kubectl applies the manifests directly:
+
+```bash
+VERSION=$(curl -s https://api.github.com/repos/vitorbari/mcp-operator/releases | jq -r '.[0].tag_name')
+
+kubectl apply -f https://github.com/vitorbari/mcp-operator/releases/download/${VERSION}/install.yaml
+```
+
+Wait for the operator to become ready:
+
+```bash
+kubectl wait --for=condition=available --timeout=300s \
+  deployment/mcp-operator-controller-manager \
+  -n mcp-operator-system
+```
+
+Verify the installation:
+
+```bash
+kubectl get pods -n mcp-operator-system
+```
+
+You should see output like:
+
+```
+NAME                                               READY   STATUS    RESTARTS   AGE
+mcp-operator-controller-manager-xxxxxxxxxx-xxxxx   2/2     Running   0          30s
+```
+
+The operator is now watching for MCPServer resources across your cluster.
+
+### Deploying the Wikipedia MCP Server
+
+Let's deploy a real MCP server. The Wikipedia server provides search and article retrieval capabilities—a good test case.
+
+Create a file named `wikipedia.yaml`:
+
+```yaml
+apiVersion: mcp.mcp-operator.io/v1
+kind: MCPServer
+metadata:
+  name: wikipedia
+spec:
+  image: "mcp/wikipedia-mcp:latest"
+  args: ["--transport", "sse", "--port", "3001", "--host", "0.0.0.0"]
+  transport:
+    type: http
+    protocol: auto
+    config:
+      http:
+        port: 3001
+        path: "/sse"
+```
+
+Apply it:
+
+```bash
+kubectl apply -f wikipedia.yaml
+```
+
+Watch the deployment progress in real-time:
+
+```bash
+kubectl get mcpservers -w
+```
+
+You'll see the server move through phases:
+
+```
+NAME        PHASE      REPLICAS   READY   PROTOCOL   VALIDATION   CAPABILITIES                      AGE
+wikipedia   Creating   0          0                   Pending                                        2s
+wikipedia   Creating   1          0                   Pending                                        5s
+wikipedia   Running    1          1                   Validating                                     15s
+wikipedia   Running    1          1       sse        Validated    ["tools","resources","prompts"]   25s
+```
+
+The progression tells the story: Kubernetes starts the pod, the operator detects the container is ready, validation runs, and finally the server is confirmed as protocol-compliant with its capabilities enumerated.
+
+Press Ctrl+C to stop watching.
+
+### Verifying the Deployment
+
+Get detailed validation information:
+
+```bash
+kubectl get mcpserver wikipedia -o jsonpath='{.status.validation}' | jq
+```
+
+The output reveals everything the operator discovered:
+
+```json
+{
+  "state": "Validated",
+  "compliant": true,
+  "protocol": "sse",
+  "protocolVersion": "2024-11-05",
+  "endpoint": "http://wikipedia.default.svc:3001/sse",
+  "requiresAuth": false,
+  "capabilities": ["tools", "resources", "prompts"],
+  "lastValidated": "2026-01-12T10:30:00Z",
+  "validatedGeneration": 1
+}
+```
+
+### Accessing Your Server
+
+The operator created a Kubernetes Service automatically. Access it via port-forward:
+
+```bash
+kubectl port-forward service/wikipedia 3001:3001
+```
+
+Your MCP server is now accessible at `http://localhost:3001/sse`.
+
+Test it with the MCP Inspector:
+
+```bash
+npx @modelcontextprotocol/inspector http://localhost:3001/sse
+```
+
+This opens a web interface where you can explore the server's tools, send test requests, and verify everything works as expected.
+
+### Cleaning Up
+
+When you're done experimenting:
+
+```bash
+# Remove the MCP server
+kubectl delete mcpserver wikipedia
+
+# Uninstall the operator (Helm)
+helm uninstall mcp-operator --namespace mcp-operator-system
+
+# Delete the local cluster
+kind delete cluster --name mcp-demo
+```
+
+## Technical Architecture
+
+Understanding how MCP Operator works under the hood helps you troubleshoot issues and make informed configuration decisions.
+
+### The Operator Pattern
+
+Kubernetes operators extend the platform by defining custom resources and controllers that manage them. MCP Operator follows this pattern precisely.
+
+The **MCPServer Custom Resource Definition (CRD)** defines a new Kubernetes resource type. When you apply an MCPServer manifest, Kubernetes stores it in etcd like any other resource. The MCPServer becomes the single source of truth for your deployment configuration.
+
+The **Controller Manager** runs in the mcp-operator-system namespace, watching for MCPServer resources across the cluster. When you create, update, or delete an MCPServer, the controller receives an event and reconciles the actual cluster state to match your declared desired state.
+
+This reconciliation loop is the heart of the operator pattern. If a pod crashes, the controller notices the discrepancy and recreates it. If you update the image tag, the controller updates the underlying Deployment. The system is self-healing by design.
+
+### What Gets Created
+
+When you apply an MCPServer manifest, the operator creates several child resources:
+
+**Deployment**: Manages the MCP server pods with appropriate health checks, resource limits, and security contexts derived from your MCPServer spec.
+
+**Service**: Exposes the MCP server within the cluster, enabling other services and ingress controllers to route traffic to it.
+
+**HorizontalPodAutoscaler** (if enabled): Scales the Deployment based on CPU or memory utilization according to your HPA configuration.
+
+**Validation Job**: Runs protocol validation against the server, updating the MCPServer status with results.
+
+All these resources are owned by the MCPServer resource. Delete the MCPServer, and Kubernetes garbage-collects the children automatically.
+
+### Transport and Protocol Handling
+
+MCP supports multiple transport mechanisms. The operator handles this complexity through its transport configuration:
+
+```yaml
+transport:
+  type: http
+  protocol: auto  # or 'sse' or 'streamable-http'
+  config:
+    http:
+      port: 3001
+      path: "/sse"
+```
+
+With `protocol: auto`, the operator probes the server to determine whether it's using legacy SSE or modern Streamable HTTP. This auto-detection saves you from needing to know implementation details of every MCP server image you deploy.
+
+For servers that don't fit the HTTP pattern—stdio-based MCP servers, for instance—the operator includes a sidecar proxy that bridges between HTTP and stdio, presenting a consistent interface to the validation system.
+
+### Validation Mechanics
+
+Validation isn't a one-time check. The operator validates servers at deployment, revalidates after updates, and tracks the validated generation to detect drift.
+
+The validation process connects to the server, negotiates the protocol, and queries for capabilities. It checks that the server responds according to the MCP specification, noting the protocol version and which features (tools, resources, prompts) are available.
+
+Results flow into the MCPServer's status subresource, visible through kubectl and available for monitoring systems to scrape. This creates an auditable record of each server's compliance state.
+
+## How MCP Operator Compares
+
+MCP Operator isn't the only option for running MCP servers in Kubernetes. Understanding where it fits helps you choose the right tool.
+
+### Versus Manual Deployment
+
+The baseline comparison is doing everything yourself: writing Dockerfiles, creating Deployment manifests, configuring Services, setting up HPAs, and building monitoring dashboards.
+
+| Aspect | Manual Approach | MCP Operator |
+|--------|-----------------|--------------|
+| **Configuration** | Custom manifests per server | Single CRD per server |
+| **Validation** | None (discover issues in production) | Automatic protocol compliance checking |
+| **Scaling** | Separate HPA resources to manage | Built-in HPA configuration |
+| **Monitoring** | Custom Prometheus rules and dashboards | Pre-built MCP-specific dashboards |
+| **Recovery** | Manual intervention for drift | Self-healing via operator pattern |
+| **Consistency** | Varies by team and project | Standardized across all servers |
+
+For teams running more than a handful of MCP servers, the operational savings justify the slight learning curve of adopting the operator.
+
+### Versus kmcp (kagent-dev)
+
+[kmcp](https://github.com/kagent-dev/kmcp) is a more established project (401 stars versus MCP Operator's 16) with a broader scope. It provides CLI tooling for scaffolding new MCP projects, building container images, and deploying servers.
+
+| Aspect | MCP Operator | kmcp |
+|--------|--------------|------|
+| **Primary Focus** | Runtime operations | Full development lifecycle |
+| **CLI Tool** | None | Yes (kmcp CLI) |
+| **Project Scaffolding** | No | FastMCP and Go SDK templates |
+| **Transport Adapter** | Native in operator | Separate component |
+| **Protocol Validation** | Built-in, automatic | Not the primary focus |
+| **Maturity** | Alpha | More established |
+
+**Choose MCP Operator when** you have existing MCP server images and need production-quality runtime management with strong protocol validation.
+
+**Choose kmcp when** you're starting from scratch, want end-to-end tooling from project creation through deployment, and prefer CLI-driven workflows.
+
+These tools could potentially complement each other: use kmcp to scaffold and build your MCP servers, then deploy them using MCP Operator for its validation and monitoring capabilities. As both projects mature, integration possibilities may emerge.
+
+### Versus General-Purpose Kubernetes Tools
+
+You could deploy MCP servers using generic tools: Helm charts, Kustomize overlays, or operator frameworks like Crossplane. These work, but they lack MCP-specific awareness.
+
+MCP Operator provides value that generic tools can't:
+
+**Protocol validation** ensures servers actually implement MCP correctly before serving traffic. No generic operator checks this.
+
+**Transport auto-detection** handles the complexity of different MCP protocol variants automatically.
+
+**Purpose-built status fields** expose protocol version, capabilities, and compliance state through Kubernetes-native interfaces.
+
+**Health check patterns** specific to MCP servers work out of the box.
+
+If you're already deeply invested in a generic deployment toolchain, you can certainly make it work for MCP. But purpose-built tooling reduces the operational knowledge required and catches issues that generic approaches miss.
+
+## Real-World Use Cases
+
+MCP Operator's design addresses specific scenarios that emerge as organizations scale their MCP infrastructure.
+
+### Enterprise AI Platforms
+
+Large organizations increasingly centralize AI infrastructure. Platform teams provide shared MCP servers that application teams consume, similar to how they provide shared databases or message queues.
+
+MCP Operator enables this pattern by standardizing deployment configurations, ensuring consistent security policies, and providing visibility into server health across the fleet. Application teams request new MCP servers through standard processes; platform teams deploy them knowing the operator handles operational complexity.
+
+### Managed Service Providers
+
+Companies offering AI tooling as a service need multi-tenant infrastructure that scales with customer demand. Each customer might need isolated MCP servers with usage-based billing.
+
+Kubernetes namespaces provide natural isolation boundaries. Deploy each customer's MCP servers in dedicated namespaces, with HPA configurations tuned to their usage patterns. The operator's observability features enable per-customer monitoring and capacity planning.
+
+### Development Teams at Scale
+
+Even within a single organization, development teams may run dozens of MCP servers for different purposes: one for CRM integration, another for code analysis, others for various internal tools.
+
+Without standardization, each server becomes a unique snowflake requiring specialized knowledge to operate. With MCP Operator, teams apply a consistent pattern regardless of what the underlying MCP server does. Onboarding new team members becomes easier when every deployment follows the same structure.
+
+### AI Agent Infrastructure
+
+Autonomous AI agents making tool calls represent the most demanding MCP workload pattern. Agents may call tools thousands of times per minute, require strict latency bounds, and expect high availability.
+
+Self-healing through the operator pattern ensures that pod failures don't cause extended agent downtime. Auto-scaling responds to traffic spikes. Protocol validation catches integration issues before they affect agent behavior.
+
+## Current Limitations
+
+Alpha software comes with caveats. Being honest about limitations helps you make informed decisions about adoption timing.
+
+### API Stability
+
+The MCPServer CRD's schema may change between releases. Fields might be renamed, restructured, or removed. If you're writing automation that depends on specific field paths, expect to update it as the project evolves.
+
+For production environments, this instability is a non-starter. For development, testing, and proof-of-concept work, it's acceptable with appropriate expectations.
+
+### Feature Gaps
+
+Advanced networking policies aren't yet available. If you need fine-grained control over which services can access your MCP servers, you'll need to implement this with standard Kubernetes NetworkPolicies outside the operator.
+
+Multi-cluster support doesn't exist. Each cluster needs its own operator installation, and there's no built-in way to manage MCP servers across cluster boundaries.
+
+mTLS for secure MCP communication isn't integrated yet. You can work around this with service mesh solutions, but native support would reduce complexity.
+
+### Ecosystem Integration
+
+GitOps tooling like ArgoCD and Flux works with any Kubernetes resources, including MCPServers. However, the operator doesn't provide specific integration features like progressive delivery or canary deployments.
+
+Webhook validation for MCPServer resources isn't implemented. Malformed manifests are rejected by Kubernetes CRD validation, but semantic validation (like checking that referenced images exist) happens at reconciliation time rather than admission time.
+
+### What's on the Roadmap
+
+The project is actively developed. GitHub issues and discussions indicate community interest in stable API finalization, enterprise security features, enhanced monitoring capabilities, and broader transport protocol support.
+
+Given the project's early stage and active development, the path to production readiness seems plausible within 2026, though specific timelines depend on maintainer capacity and community contributions.
+
+## Getting Involved
+
+Open source projects thrive on community participation. If MCP Operator's approach resonates with you, several contribution paths exist.
+
+**Testing and feedback** matters enormously at this stage. Deploy the operator in non-production environments, exercise its features, and report what works and what doesn't. Alpha projects need real-world usage data to prioritize improvements.
+
+**Bug reports** with reproduction steps help maintainers fix issues efficiently. The GitHub issue tracker is the right place for these.
+
+**Feature requests** shape the roadmap. If you need capabilities that don't exist yet, open a discussion explaining your use case. The maintainer explicitly requests feedback on prioritization.
+
+**Documentation improvements** lower the barrier for future adopters. If something confused you during setup, a pull request clarifying the documentation helps everyone who follows.
+
+**Code contributions** are welcome following the project's contribution guidelines. The codebase is Go, following standard Kubernetes operator patterns.
+
+## Resources for Going Deeper
+
+**Official Documentation**
+- [Getting Started Guide](https://github.com/vitorbari/mcp-operator/blob/main/GETTING_STARTED.md) — Complete walkthrough for first-time users
+- [API Reference](https://github.com/vitorbari/mcp-operator/blob/main/docs/api-reference.md) — Every CRD field explained
+- [Validation Behavior](https://github.com/vitorbari/mcp-operator/blob/main/docs/validation-behavior.md) — Deep dive into protocol validation
+- [Monitoring Guide](https://github.com/vitorbari/mcp-operator/blob/main/docs/monitoring.md) — Prometheus and Grafana setup
+
+**Configuration Examples**
+- [wikipedia-http.yaml](https://github.com/vitorbari/mcp-operator/blob/main/config/samples/wikipedia-http.yaml) — Simple deployment
+- [mcp-basic-example.yaml](https://github.com/vitorbari/mcp-operator/blob/main/config/samples/mcp-basic-example.yaml) — Production configuration with HPA
+- [mcp-complete-example.yaml](https://github.com/vitorbari/mcp-operator/blob/main/config/samples/mcp-complete-example.yaml) — All available options
+
+**Community**
+- [GitHub Repository](https://github.com/vitorbari/mcp-operator) — Source code and issues
+- [GitHub Discussions](https://github.com/vitorbari/mcp-operator/discussions) — Questions and ideas
+- [Awesome MCP DevTools](https://github.com/punkpeye/awesome-mcp-devtools) — Curated list featuring MCP Operator
+
+## The Bottom Line
+
+MCP Operator represents a thoughtful approach to a real problem: running MCP servers reliably in Kubernetes environments. Its protocol validation feature addresses a genuine gap—catching compliance issues before they cause agent failures. The operator pattern provides self-healing and declarative configuration. Built-in observability surfaces MCP-specific metrics that generic monitoring misses.
+
+The alpha status means production adoption should wait. But for platform teams planning MCP infrastructure, DevOps engineers tired of manual server management, and early adopters who want to influence the project's direction, now is the time to experiment.
+
+Try the quick start with a local Kind cluster. Deploy a few test servers. Experience the workflow. Provide feedback. The project's future direction depends on input from users like you.
+
+---
+
+**Explore More MCP Infrastructure Tools**
+
+Looking for other ways to enhance your MCP setup? Browse our [DevOps & Orchestration](https://mymcpshelf.com/categories/development) category for deployment tools, or check out Monitoring servers for observability options.
+
+Ready to find the perfect MCP server for your use case? Explore our [complete directory of 600+ verified MCP servers](https://mymcpshelf.com/).
+
+---
+
+*MCP Operator is open source under the Apache 2.0 license. Star the [GitHub repository](https://github.com/vitorbari/mcp-operator) to follow development.*
