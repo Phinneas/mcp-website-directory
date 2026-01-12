@@ -39,9 +39,20 @@ function formatStars(stars?: number): string {
 const { servers } = Astro.props;
 
 // Get featured servers - top 6 with highest star counts
-const featuredServers = [...servers]
-  .sort((a, b) => (b.fields.stars || 0) - (a.fields.stars || 0))
-  .slice(0, 6);
+// But always include mcp-operator if it's in the list
+let featuredServers = [...servers]
+  .sort((a, b) => (b.fields.stars || 0) - (a.fields.stars || 0));
+
+// Check if mcp-operator exists and is not in top 6
+const mcpOperatorIndex = featuredServers.findIndex(s => s.id === 'mcp-operator');
+if (mcpOperatorIndex > 5) {
+  // Remove it from its current position
+  const mcpOperator = featuredServers.splice(mcpOperatorIndex, 1)[0];
+  // Add it at position 5 (keeping the top 5)
+  featuredServers.splice(5, 0, mcpOperator);
+}
+
+featuredServers = featuredServers.slice(0, 6);
 ---
 
 <section class="featured-mcp-section">
