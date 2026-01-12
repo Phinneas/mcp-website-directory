@@ -1,0 +1,285 @@
+---
+// FeaturedMcpServers.astro - Featured MCP servers section
+interface MCPServer {
+  id: string;
+  fields: {
+    name: string;
+    description: string;
+    version?: string;
+    status?: string;
+    author?: string;
+    category?: string;
+    language?: string;
+    stars?: number;
+    github_url?: string;
+    npm_package?: string;
+    downloads?: number;
+    updated?: string;
+  };
+}
+
+interface Props {
+  servers: MCPServer[];
+}
+
+// Helper to get server icon (first letter of name)
+function getServerIcon(name: string): string {
+  return name.charAt(0).toUpperCase();
+}
+
+// Helper to format stars
+function formatStars(stars?: number): string {
+  if (!stars) return '';
+  if (stars >= 1000) {
+    return `★ ${(stars / 1000).toFixed(1)}k`;
+  }
+  return `★ ${stars}`;
+}
+
+const { servers } = Astro.props;
+
+// Get featured servers - top 6 with highest star counts
+const featuredServers = [...servers]
+  .sort((a, b) => (b.fields.stars || 0) - (a.fields.stars || 0))
+  .slice(0, 6);
+---
+
+<section class="featured-mcp-section">
+  <div class="featured-container">
+    <h2 class="featured-heading">Featured MCP Servers</h2>
+    <p class="featured-subheading">
+      Discover the most popular and powerful MCP servers, hand-picked based on community adoption and GitHub stars
+    </p>
+    
+    <div class="servers-grid">
+      {featuredServers.map((server) => (
+        <a 
+          href={server.fields.github_url || '#'} 
+          class="server-card"
+          target="_blank"
+          rel="noopener noreferrer"
+          data-category={server.fields.category || 'other'}
+        >
+          <div class="server-header">
+            <div class="server-icon">{getServerIcon(server.fields.name)}</div>
+            <div class="server-title">
+              <h3>{server.fields.name}</h3>
+              <div class="server-author">{server.fields.author || ''}</div>
+            </div>
+          </div>
+          <div class="server-description">
+            {server.fields.description.length > 140 
+              ? server.fields.description.substring(0, 140) + '...' 
+              : server.fields.description}
+          </div>
+          <div class="server-meta">
+            {server.fields.language && <span class="meta-tag">{server.fields.language}</span>}
+            {server.fields.author && <span class="meta-tag">{server.fields.author.includes('@') ? 'Official' : 'Community'}</span>}
+            {server.fields.category && <span class="meta-tag">{server.fields.category}</span>}
+          </div>
+          {server.fields.stars && (
+            <div class="repo-stats">
+              <span class="repo-stat stargazers">{formatStars(server.fields.stars)}</span>
+            </div>
+          )}
+        </a>
+      ))}
+    </div>
+    
+    <div class="view-all-wrapper">
+      <a href="#serversGrid" class="view-all-btn">View All Servers →</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .featured-mcp-section {
+    background: #ffffff;
+    padding: 4rem 1rem;
+  }
+  
+  .featured-container {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  
+  .featured-heading {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1f2937;
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+  
+  .featured-subheading {
+    font-size: 1.1rem;
+    color: #6b7280;
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+  
+  .servers-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .server-card {
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    border: 1px solid #e5e7eb;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+  }
+  
+  .server-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border-color: #f59e0b;
+  }
+  
+  .server-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding: 1.5rem 1.5rem 0;
+  }
+  
+  .server-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+  
+  .server-title {
+    flex: 1;
+  }
+  
+  .server-title h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 0.25rem;
+  }
+  
+  .server-author {
+    color: #6b7280;
+    font-size: 0.85rem;
+  }
+  
+  .server-description {
+    color: #6b7280;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    flex: 1;
+    padding: 0 1.5rem;
+  }
+  
+  .server-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0 1.5rem 1rem;
+  }
+  
+  .meta-tag {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border: 1px solid rgba(245, 158, 11, 0.2);
+  }
+  
+  .repo-stats {
+    display: flex;
+    gap: 0.75rem;
+    padding: 0 1.5rem 1.5rem;
+  }
+  
+  .repo-stat {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: #374151;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+  
+  .repo-stat::before {
+    content: '★';
+    color: #f59e0b;
+    font-size: 0.9rem;
+  }
+  
+  .view-all-wrapper {
+    text-align: center;
+    margin-top: 1rem;
+  }
+  
+  .view-all-btn {
+    display: inline-block;
+    background: #f59e0b;
+    color: white;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+  
+  .view-all-btn:hover {
+    background: #d97706;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  @media (max-width: 768px) {
+    .servers-grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+    
+    .featured-heading {
+      font-size: 1.75rem;
+    }
+    
+    .server-header {
+      padding: 1rem 1rem 0;
+    }
+    
+    .server-description {
+      padding: 0 1rem;
+    }
+    
+    .server-meta {
+      padding: 0 1rem 1rem;
+    }
+    
+    .repo-stats {
+      padding: 0 1rem 1rem;
+    }
+  }
+  
+  @media (max-width: 1024px) and (min-width: 769px) {
+    .servers-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>

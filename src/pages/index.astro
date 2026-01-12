@@ -5,6 +5,7 @@ import HeaderNewsletter from '../components/HeaderNewsletter.astro';
 import HeroSection from '../components/HeroSection.astro';
 import TrustSection from '../components/TrustSection.astro';
 import FeaturedArticles from '../components/FeaturedArticles.astro';
+import FeaturedMcpServers from '../components/FeaturedMcpServers.astro';
 import FAQSection from '../components/FAQSection.astro';
 import { SearchIcon } from '../components/VintageIcon';
 import '../styles/global.css';
@@ -7742,6 +7743,9 @@ function formatStars(stars?: number): string {
     
     <!-- Featured Articles -->
     <FeaturedArticles />
+
+    <!-- Featured MCP Servers -->
+    <FeaturedMcpServers servers={mcpServers} />
 
     <!-- Search Section -->
     <div class="search-section">
