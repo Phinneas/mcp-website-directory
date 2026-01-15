@@ -1,0 +1,159 @@
+---
+title: "Shelf Spotlight: Jetski — The Missing Operations Layer for MCP Servers"
+description: "Discover how Jetski adds authentication, analytics, and real-time visibility to your MCP servers with zero code changes. Part of the HyprMCP platform."
+date: "2026-01-14T00:00:00.000Z"
+author: "Buzz"
+tags: ["shelf-spotlight", "mcp-tools", "authentication", "analytics", "open-source"]
+image: "/images/blog/jetski-spotlight.png"
+featured: true
+---
+
+You've built an MCP server. It works beautifully in development. Your tools respond correctly, your prompts fire as expected, and everything connects to Claude or Cursor without a hitch.
+
+Then you ship it to users.
+
+Suddenly, you're fielding support requests from people who can't figure out how to configure their MCP client. You have no idea which tools are actually being used or why certain requests fail. And when someone asks you to add user-specific functionality, you realize authentication was never part of the MCP spec's original design.
+
+This is the operational reality of MCP servers in production—and it's exactly the problem **Jetski** was built to solve.
+
+## What Is Jetski?
+
+[Jetski](https://github.com/hyprmcp/jetski) is an open-source MCP Analytics and Authentication Platform, part of the broader HyprMCP ecosystem. It acts as a gateway that sits between MCP clients and your server, handling everything your server shouldn't have to worry about: authentication, logging, analytics, and user onboarding.
+
+The key selling point? **Zero code changes to your existing server.** Jetski works as a proxy layer, intercepting requests before they hit your server and capturing response data after. Your MCP server runs unchanged—you just point clients at Jetski instead of your server directly.
+
+## The Three Problems Jetski Solves
+
+The HyprMCP team identified three critical pain points that cause MCP server deployments to fail:
+
+### 1. Setup Friction Kills Adoption
+
+Most users never make it past installation. They search for setup instructions, find nothing specific to their MCP client, try opening your server's URL in a browser (which obviously doesn't work), and give up.
+
+Jetski auto-generates client-specific installation guides for Claude Desktop, Cursor, VS Code, Claude Code, and other MCP clients. When someone visits your Jetski-powered endpoint in a browser, they see step-by-step instructions tailored to their environment instead of a connection error.
+
+### 2. Authentication Is Surprisingly Hard
+
+The MCP specification doesn't prescribe how to identify users. If you want to personalize tool responses, implement access controls, or simply know who's using your server, you're on your own—building OAuth flows, managing tokens, and handling session state.
+
+Jetski implements OAuth 2.1 with Dynamic Client Registration (DCR) out of the box. Users authenticate once, and your server receives identity information with every request. No auth code to write, no token management to maintain.
+
+### 3. Production Servers Are Black Boxes
+
+Once deployed, most MCP servers offer zero visibility. You don't know which prompts trigger which tools, why certain requests fail, or how users actually interact with your server. Debugging production issues means adding logging code, redeploying, and hoping to catch the problem.
+
+Jetski captures comprehensive analytics and real-time logs for every interaction:
+
+- Which prompts triggered which tools
+- Request/response payloads
+- Error traces and failure patterns
+- Client distribution (Claude vs. Cursor vs. others)
+- Usage patterns over time
+
+## How the Architecture Works
+
+Jetski's design is elegantly simple:
+
+```
+MCP Client → Jetski Gateway → Your MCP Server
+     ↑              |
+     |              ↓
+     └──── Jetski Dashboard
+```
+
+1. **MCP clients** (Claude Desktop, Cursor, etc.) connect to Jetski instead of your server directly
+2. **Jetski Gateway** authenticates the request, validates permissions, and forwards it to your server
+3. **Your MCP server** processes the request normally and returns a response
+4. **Jetski captures** the interaction data and streams it to the dashboard
+5. **The dashboard** provides real-time visibility into all operations
+
+The platform uses Kubernetes for orchestration, with the Jetski backend managing gateway instances automatically. For simpler deployments, Docker Compose works out of the box.
+
+## Core Features in Detail
+
+### Prompt Analytics
+
+The analytics dashboard shows you exactly how your MCP server is being used. For each interaction, you can see:
+
+- The original prompt that triggered the tool call
+- Which tool was invoked and with what parameters
+- The response your server returned
+- Timing data and any errors
+- Which client made the request
+
+This isn't just logging—it's structured data you can filter, search, and aggregate to understand usage patterns.
+
+### Auto-Generated Setup Instructions
+
+When you configure a server in Jetski, it automatically generates installation instructions for every supported MCP client. Users visit your endpoint URL in a browser and see a clean, client-specific guide walking them through configuration.
+
+No more writing documentation that gets outdated. No more support tickets about setup. The instructions stay current with your server configuration automatically.
+
+### Zero-Code Authentication
+
+Jetski handles the entire OAuth 2.1 flow:
+
+- Dynamic Client Registration for new connections
+- Token issuance and refresh
+- Session management
+- Identity propagation to your server
+
+Your server receives authenticated requests with user identity attached. You can use this for personalization, access control, audit logging—whatever your use case requires.
+
+### Real-Time Debug Logs
+
+The live log stream shows every request and response as it happens. When something breaks in production, you can watch the actual interactions, see the error traces, and understand what went wrong without adding debug code or redeploying.
+
+## Who Should Use Jetski?
+
+Jetski makes the most sense for:
+
+**MCP server developers deploying to real users.** If your server is leaving localhost, you need visibility into how it's being used and a way for users to actually connect.
+
+**Teams requiring authentication.** If you need to identify users, implement per-user functionality, or control access, Jetski handles the auth layer so you don't have to.
+
+**Production environments needing observability.** If you're running MCP servers at scale, you need logging, analytics, and debugging capabilities that match what you'd expect from any production service.
+
+**Enterprise deployments with compliance requirements.** The comprehensive audit trail of all MCP interactions can help satisfy security and compliance requirements.
+
+## Getting Started
+
+You have two deployment options:
+
+**HyprMCP Cloud** at [app.hyprmcp.com](https://app.hyprmcp.com) offers a managed service with a free tier. Sign up, configure your server, and you're running in minutes.
+
+**Self-hosted** deployment uses Docker Compose for basic setups or Kubernetes with Minikube for full orchestration. The [GitHub repository](https://github.com/hyprmcp/jetski) includes complete setup instructions.
+
+## Technical Details
+
+For those who care about the stack:
+
+- **Backend**: Go (34.6% of codebase)
+- **Frontend**: Angular/TypeScript (61.5%)
+- **Database**: PostgreSQL
+- **Orchestration**: Kubernetes with Metacontroller
+- **License**: MIT (fully open source)
+- **Current Version**: 0.4.4 (actively developed, 384 commits)
+
+The project has 200 GitHub stars and is maintained by the Glasskube team, who also contribute to the broader Kubernetes ecosystem.
+
+## Why This Matters for the MCP Ecosystem
+
+The Model Context Protocol is still young. Most servers are proof-of-concepts running locally, not production services with real users. As MCP matures and more teams build production-grade servers, the operational challenges Jetski addresses will become universal.
+
+Having an open-source solution for authentication, analytics, and observability lowers the barrier for teams to deploy real MCP servers. You can focus on building useful tools instead of reinventing operational infrastructure.
+
+## The Bottom Line
+
+Jetski fills a critical gap in the MCP ecosystem. If you're building an MCP server that will serve actual users, you're going to need authentication, you're going to need visibility, and you're going to need a way for people to connect. You can build all of that yourself, or you can point your server at Jetski and get it for free.
+
+The zero-code-changes approach is particularly compelling. Your existing server keeps working exactly as it does today—Jetski just wraps it with the operational layer that production deployments require.
+
+**Explore Jetski:**
+- [GitHub Repository](https://github.com/hyprmcp/jetski)
+- [Documentation](https://hyprmcp.com/docs/getting-started/)
+- [HyprMCP Cloud](https://app.hyprmcp.com)
+
+---
+
+*Shelf Spotlight features notable MCP servers and tools from the ecosystem. Have a project you'd like us to cover? [Get in touch](/contact).*

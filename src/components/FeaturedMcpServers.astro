@@ -39,7 +39,7 @@ function formatStars(stars?: number): string {
 const { servers } = Astro.props;
 
 // Get featured servers - top 6 with highest star counts
-// But always include mcp-operator if it's in the list
+// But always include mcp-operator and jetski if they're in the list
 let featuredServers = [...servers]
   .sort((a, b) => (b.fields.stars || 0) - (a.fields.stars || 0));
 
@@ -50,6 +50,15 @@ if (mcpOperatorIndex > 5) {
   const mcpOperator = featuredServers.splice(mcpOperatorIndex, 1)[0];
   // Add it at position 5 (keeping the top 5)
   featuredServers.splice(5, 0, mcpOperator);
+}
+
+// Check if jetski exists and is not in top 6
+const jetskiIndex = featuredServers.findIndex(s => s.id === 'jetski');
+if (jetskiIndex > 5) {
+  // Remove it from its current position
+  const jetski = featuredServers.splice(jetskiIndex, 1)[0];
+  // Add it at position 4 (keeping the top 4)
+  featuredServers.splice(4, 0, jetski);
 }
 
 featuredServers = featuredServers.slice(0, 6);
@@ -64,11 +73,16 @@ featuredServers = featuredServers.slice(0, 6);
     
     <div class="servers-grid">
       {featuredServers.map((server) => {
-        // Special case for MCP Operator - link to blog post
+        // Special case for MCP Operator and Jetski - link to blog post
         const isMcpOperator = server.id === 'mcp-operator';
-        const href = isMcpOperator ? '/blog/mcp-operator-kubernetes-native-deployment' : server.fields.github_url;
-        const target = isMcpOperator ? '_self' : '_blank';
-        const rel = isMcpOperator ? '' : 'noopener noreferrer';
+        const isJetski = server.id === 'jetski';
+        const href = isMcpOperator 
+          ? '/blog/mcp-operator-kubernetes-native-deployment' 
+          : isJetski 
+          ? '/blog/jetski-spotlight'
+          : server.fields.github_url;
+        const target = (isMcpOperator || isJetski) ? '_self' : '_blank';
+        const rel = (isMcpOperator || isJetski) ? '' : 'noopener noreferrer';
         
         return (
           <a 
