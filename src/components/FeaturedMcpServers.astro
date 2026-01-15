@@ -38,30 +38,35 @@ function formatStars(stars?: number): string {
 
 const { servers } = Astro.props;
 
-// Get featured servers - top 6 with highest star counts
-// But always include mcp-operator and jetski if they're in the list
-let featuredServers = [...servers]
-  .sort((a, b) => (b.fields.stars || 0) - (a.fields.stars || 0));
+// Featured servers that should always be included
+const ALWAYS_FEATURED = ['jetski', 'mcp-operator'];
 
-// Check if mcp-operator exists and is not in top 6
-const mcpOperatorIndex = featuredServers.findIndex(s => s.id === 'mcp-operator');
-if (mcpOperatorIndex > 5) {
-  // Remove it from its current position
-  const mcpOperator = featuredServers.splice(mcpOperatorIndex, 1)[0];
-  // Add it at position 5 (keeping the top 5)
-  featuredServers.splice(5, 0, mcpOperator);
+// Separate featured and non-featured servers
+const featuredServersMap = new Map();
+const nonFeaturedServers: MCPServer[] = [];
+
+for (const server of servers) {
+  if (ALWAYS_FEATURED.includes(server.id)) {
+    featuredServersMap.set(server.id, server);
+  } else {
+    nonFeaturedServers.push(server);
+  }
 }
 
-// Check if jetski exists and is not in top 6
-const jetskiIndex = featuredServers.findIndex(s => s.id === 'jetski');
-if (jetskiIndex > 5) {
-  // Remove it from its current position
-  const jetski = featuredServers.splice(jetskiIndex, 1)[0];
-  // Add it at position 4 (keeping the top 4)
-  featuredServers.splice(4, 0, jetski);
-}
+// Sort non-featured servers by stars and take top 4 to fill remaining slots
+const topServers = nonFeaturedServers
+  .sort((a, b) => (b.fields.stars || 0) - (a.fields.stars || 0))
+  .slice(0, 4);
 
-featuredServers = featuredServers.slice(0, 6);
+// Build final featured list: always-featured first, then top servers
+let featuredServers: MCPServer[] = [];
+for (const id of ALWAYS_FEATURED) {
+  const server = featuredServersMap.get(id);
+  if (server) {
+    featuredServers.push(server);
+  }
+}
+featuredServers = featuredServers.concat(topServers);
 ---
 
 <section class="featured-mcp-section">
