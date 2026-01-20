@@ -40,6 +40,21 @@
       "source": "/blog/:slug$",
       "destination": "/blog/:slug/",
       "permanent": true
+    },
+    {
+      "source": "/skills",
+      "destination": "/claude-skills",
+      "permanent": true
+    },
+    {
+      "source": "/category/:category",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/blog/mcp-client-comparison",
+      "destination": "/blog/mcp-client-complete-guide",
+      "permanent": true
     }
   ],
   "trailingSlash": true
