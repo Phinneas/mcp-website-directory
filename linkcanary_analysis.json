@@ -1,0 +1,2848 @@
+{
+  "summary": {
+    "total_issues": 208,
+    "by_issue_type": {
+      "redirect_chain": {
+        "critical": 1,
+        "high": 4
+      },
+      "broken": {
+        "high": 25,
+        "low": 98
+      },
+      "canonical_redirect": {
+        "medium": 20
+      },
+      "redirect": {
+        "low": 59
+      },
+      "error": {
+        "low": 1
+      }
+    }
+  },
+  "internal_404s": [
+    "https://www.mymcpshelf.com/claude-skills/lead-research-assistant/",
+    "https://www.mymcpshelf.com/claude-skills/changelog-generator/",
+    "https://www.mymcpshelf.com/claude-skills/content-research-writer/",
+    "https://www.mymcpshelf.com/category/development-tools",
+    "https://www.mymcpshelf.com/claude-skills/video-downloader/",
+    "https://www.mymcpshelf.com/claude-skills/invoice-organizer/",
+    "https://www.mymcpshelf.com/claude-skills/skill-creator/",
+    "https://www.mymcpshelf.com/claude-skills/image-enhancer/",
+    "https://www.mymcpshelf.com/claude-skills/meeting-insights-analyzer/",
+    "https://www.mymcpshelf.com/category/database-tools",
+    "https://www.mymcpshelf.com/claude-skills/webapp-testing/",
+    "https://www.mymcpshelf.com/servers",
+    "https://www.mymcpshelf.com/claude-skills/raffle-winner-picker/",
+    "https://www.mymcpshelf.com/claude-skills/slack-gif-creator/",
+    "https://www.mymcpshelf.com/claude-skills/competitive-ads-extractor/",
+    "https://www.mymcpshelf.com/blog/mcp-client-comparison",
+    "https://www.mymcpshelf.com/claude-skills/internal-comms/",
+    "https://www.mymcpshelf.com/contact",
+    "https://www.mymcpshelf.com/claude-skills/domain-name-brainstormer/",
+    "https://www.mymcpshelf.com/claude-skills/file-organizer/",
+    "https://www.mymcpshelf.com/claude-skills/brand-guidelines/",
+    "https://mymcpshelf.com/categories/development",
+    "https://www.mymcpshelf.com/claude-skills/mcp-builder/",
+    "https://www.mymcpshelf.com/claude-skills/canvas-design/",
+    "https://www.mymcpshelf.com/claude-skills/theme-factory/",
+    "https://www.mymcpshelf.com/category/productivity"
+  ],
+  "github_urls_to_update": {
+    "https://github.com/pulumi/mcp-server": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/ubie-oss/discord-mcp-server": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/telegram-mcp/server": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/hangye/chrome-mcp": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/notte/mcp-server": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/mongodb/mcp-server": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/supabase/mcp-server": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/google/database-toolbox-mcp": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/docker/mcp-servers": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/vscode-mcp/server": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/idosalomon/gitmcp": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/google-drive-mcp/server": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/crypto-mcp/binance-server": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/tavily-ai/mcp-server": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/stripe/mcp-server": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/jeomon/windows-desktop-mcp": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/aws/bedrock-mcp-server": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/aws/aws-docs-mcp": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/aws-labs/mcp-aws-secrets-manager": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/mheob/mcp-server-todo-txt": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/vespaiach/pandoc_mcp_server": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/dylsteck/farcaster-mcp": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/parthpatel6347/rubygems-mcp": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/MindscapeHQ/raygun-mcp": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/eniehack/gitlab-mcp-server": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/apacholik/docker-mcp-server": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/ianho/tmux-mcp-server": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/exa-labs/filesystem-tree-mcp": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/cloudnative/k8s-mcp-server": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/Homebrew/homebrew-mcp": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/jenkinsci/mcp-plugin": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/hashicorp/terraform-mcp": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/firebase/firebase-mcp": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/redis/redis-mcp": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/elastic/elasticsearch-mcp": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/supabase/supabase-mcp": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/vercel/vercel-mcp": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/mongodb/mongodb-mcp": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/appliedrelevance/frappe_mcp_server": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/"
+      ]
+    },
+    "https://github.com/vitorbari/mcp-operator/discussions": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/blog/mcp-operator-kubernetes-native-deployment/"
+      ]
+    },
+    "https://github.com/modelcontextprotocol/awesome-mcp": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/blog/mcp-server-architecture-diagram/"
+      ]
+    },
+    "https://github.com/anthropics/skills/tree/main/artifacts-builder": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/claude-skills/"
+      ]
+    },
+    "https://github.com/obra/superpowers/tree/main/skills/root-cause-tracing": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/claude-skills/"
+      ]
+    },
+    "https://github.com/mhattingpete/claude-skills-marketplace/tree/main/computer-forensics-skills/skills/computer-forensics": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/claude-skills/"
+      ]
+    },
+    "https://github.com/mhattingpete/claude-skills-marketplace/tree/main/computer-forensics-skills/skills/file-deletion": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/claude-skills/"
+      ]
+    },
+    "https://github.com/mhattingpete/claude-skills-marketplace/tree/main/computer-forensics-skills/skills/metadata-extraction": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/claude-skills/"
+      ]
+    },
+    "https://github.com/jthack/threat-hunting-with-sigma-rules-skill": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/claude-skills/"
+      ]
+    },
+    "https://github.com/Codeium/Windsurf": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/EGOIST/ChatWise": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/ThinkInAI/deepchat": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/lutra/Lutra": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/chatmcp/mcp-playground": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/Dustin Schau/Postman MCP client": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/dev-mahfuj80/MCP_CLIENT": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/SealinGp/Video Extraction": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/YinZhengFei/AI Coding": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/thinkany/ThinkAny": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/TeamSpark, LLC/teamspark-ai-workbench": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/Runebook/Tome": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/cgoing/mcp-client-chatbot": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/Daniel Nguyen/BoltAI": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/Charlie Garrison/beyond-better": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/r-huijts/rijksmuseum-mcp-client": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/spring.razer@gmail.com/ChatFrame": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/Aman Rusia/chat.md": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/Anthropic/claude-ai": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/Kiln AI/kiln-ai": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/alvinveroy/aider-mcp-client": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/Chorus/chorus": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/jayjeo/obsidian-milvus-FastMCP": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/dd/f": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/Alex/undatasio": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/GitBook/gitbook": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/AiPy/aipy-pro": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/Writingmate/writingmate.ai": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/NitroRCr/ai-as-workspace": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/11/\u00e5\u00bc\u00a0\u00e6\u0099\u0093\u00e8\u008e\u00b9": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/Eugene Pyvovarov/mcp-bundler-for-macos": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/Lingma/lingma": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/Simtheory/simtheory": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/SWIS/php-mcp-client": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/kamath/chat": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/Sekora/sekora-gitlab-mcp": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/netixc/speech-mcp": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/TimeCyber Ltd/mcp-x": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/Andrew Sky/zentrun---build-your-ai-team-with-vibe-coding-&-mcps": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/Snoopy AI/snoopy-mcp-ai": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/\u00e6\u00b7\u00b1\u00e5\u009c\u00b3\u00e5\u00b8\u0082\u00e5\u008e\u009f\u00e7\u0082\u00b9\u00e5\u008f\u0082\u00e6\u0095\u00b0\u00e4\u00bf\u00a1\u00e6\u0081\u00af\u00e6\u008a\u0080\u00e6\u009c\u00af\u00e6\u009c\u0089\u00e9\u0099\u0090\u00e5\u0085\u00ac\u00e5\u008f\u00b8/\u00e4\u00b8\u008a\u00e5\u00b8\u0082\u00e5\u0085\u00ac\u00e5\u008f\u00b8\u00e8\u00b4\u00a2\u00e6\u008a\u00a5\u00e6\u0095\u00b0\u00e6\u008d\u00ae\u00e7\u00b2\u00be\u00e7\u0081\u00b5": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    },
+    "https://github.com/Razertory/chatframe-desktop": {
+      "status_code": "404",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement",
+      "source_pages": [
+        "https://www.mymcpshelf.com/mcp-clients/"
+      ]
+    }
+  },
+  "all_issues": [
+    {
+      "source_page": "https://www.mymcpshelf.com/blog/best-github-alternatives/",
+      "link_url": "https://www.terraform.io/language/settings/backends",
+      "link_text": "https://www.terraform.io/language/settings/backends",
+      "status_code": "200",
+      "issue_type": "redirect_chain",
+      "priority": "critical",
+      "final_url": "https://developer.hashicorp.com/terraform/language/backend",
+      "recommended_fix": "High priority: Update to https://developer.hashicorp.com/terraform/language/backend to eliminate 4 redirect hops"
+    },
+    {
+      "source_page": "multiple",
+      "link_url": "https://www.mymcpshelf.com/contact",
+      "link_text": "Get in touch",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "high",
+      "final_url": "https://www.mymcpshelf.com/contact/",
+      "recommended_fix": "Remove link or update to valid page"
+    },
+    {
+      "source_page": "multiple",
+      "link_url": "https://www.mymcpshelf.com/servers",
+      "link_text": "MCP server directory",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "high",
+      "final_url": "https://www.mymcpshelf.com/servers/",
+      "recommended_fix": "Remove link or update to valid page"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://www.mymcpshelf.com/blog/mcp-client-comparison",
+      "link_text": "MCP Client Selection Guide",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "high",
+      "final_url": "https://www.mymcpshelf.com/blog/mcp-client-comparison/",
+      "recommended_fix": "Remove link or update to valid page"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/blog/notion-mcp-gateway/",
+      "link_url": "https://www.mymcpshelf.com/category/database-tools",
+      "link_text": "Database MCP Servers",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "high",
+      "final_url": "https://www.mymcpshelf.com/category/database-tools/",
+      "recommended_fix": "Remove link or update to valid page"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/blog/notion-mcp-gateway/",
+      "link_url": "https://www.mymcpshelf.com/category/development-tools",
+      "link_text": "API Gateway and Development Tools",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "high",
+      "final_url": "https://www.mymcpshelf.com/category/development-tools/",
+      "recommended_fix": "Remove link or update to valid page"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/blog/what-is-mcp-server-complete-guide/",
+      "link_url": "https://www.mymcpshelf.com/category/productivity",
+      "link_text": "Productivity category",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "high",
+      "final_url": "https://www.mymcpshelf.com/category/productivity/",
+      "recommended_fix": "Remove link or update to valid page"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/claude-skills/",
+      "link_url": "https://www.mymcpshelf.com/claude-skills/changelog-generator/",
+      "link_text": "View Skill",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "high",
+      "final_url": "",
+      "recommended_fix": "Remove link or update to valid page"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/claude-skills/",
+      "link_url": "https://www.mymcpshelf.com/claude-skills/mcp-builder/",
+      "link_text": "View Skill",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "high",
+      "final_url": "",
+      "recommended_fix": "Remove link or update to valid page"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/claude-skills/",
+      "link_url": "https://www.mymcpshelf.com/claude-skills/skill-creator/",
+      "link_text": "View Skill",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "high",
+      "final_url": "",
+      "recommended_fix": "Remove link or update to valid page"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/claude-skills/",
+      "link_url": "https://www.mymcpshelf.com/claude-skills/webapp-testing/",
+      "link_text": "View Skill",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "high",
+      "final_url": "",
+      "recommended_fix": "Remove link or update to valid page"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/claude-skills/",
+      "link_url": "https://www.mymcpshelf.com/claude-skills/brand-guidelines/",
+      "link_text": "View Skill",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "high",
+      "final_url": "",
+      "recommended_fix": "Remove link or update to valid page"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/claude-skills/",
+      "link_url": "https://www.mymcpshelf.com/claude-skills/competitive-ads-extractor/",
+      "link_text": "View Skill",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "high",
+      "final_url": "",
+      "recommended_fix": "Remove link or update to valid page"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/claude-skills/",
+      "link_url": "https://www.mymcpshelf.com/claude-skills/domain-name-brainstormer/",
+      "link_text": "View Skill",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "high",
+      "final_url": "",
+      "recommended_fix": "Remove link or update to valid page"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/claude-skills/",
+      "link_url": "https://www.mymcpshelf.com/claude-skills/internal-comms/",
+      "link_text": "View Skill",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "high",
+      "final_url": "",
+      "recommended_fix": "Remove link or update to valid page"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/claude-skills/",
+      "link_url": "https://www.mymcpshelf.com/claude-skills/lead-research-assistant/",
+      "link_text": "View Skill",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "high",
+      "final_url": "",
+      "recommended_fix": "Remove link or update to valid page"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/claude-skills/",
+      "link_url": "https://www.mymcpshelf.com/claude-skills/content-research-writer/",
+      "link_text": "View Skill",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "high",
+      "final_url": "",
+      "recommended_fix": "Remove link or update to valid page"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/claude-skills/",
+      "link_url": "https://www.mymcpshelf.com/claude-skills/meeting-insights-analyzer/",
+      "link_text": "View Skill",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "high",
+      "final_url": "",
+      "recommended_fix": "Remove link or update to valid page"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/claude-skills/",
+      "link_url": "https://www.mymcpshelf.com/claude-skills/canvas-design/",
+      "link_text": "View Skill",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "high",
+      "final_url": "",
+      "recommended_fix": "Remove link or update to valid page"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/claude-skills/",
+      "link_url": "https://www.mymcpshelf.com/claude-skills/image-enhancer/",
+      "link_text": "View Skill",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "high",
+      "final_url": "",
+      "recommended_fix": "Remove link or update to valid page"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/claude-skills/",
+      "link_url": "https://www.mymcpshelf.com/claude-skills/slack-gif-creator/",
+      "link_text": "View Skill",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "high",
+      "final_url": "",
+      "recommended_fix": "Remove link or update to valid page"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/claude-skills/",
+      "link_url": "https://www.mymcpshelf.com/claude-skills/theme-factory/",
+      "link_text": "View Skill",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "high",
+      "final_url": "",
+      "recommended_fix": "Remove link or update to valid page"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/claude-skills/",
+      "link_url": "https://www.mymcpshelf.com/claude-skills/video-downloader/",
+      "link_text": "View Skill",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "high",
+      "final_url": "",
+      "recommended_fix": "Remove link or update to valid page"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/claude-skills/",
+      "link_url": "https://www.mymcpshelf.com/claude-skills/file-organizer/",
+      "link_text": "View Skill",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "high",
+      "final_url": "",
+      "recommended_fix": "Remove link or update to valid page"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/claude-skills/",
+      "link_url": "https://www.mymcpshelf.com/claude-skills/invoice-organizer/",
+      "link_text": "View Skill",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "high",
+      "final_url": "",
+      "recommended_fix": "Remove link or update to valid page"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/claude-skills/",
+      "link_url": "https://www.mymcpshelf.com/claude-skills/raffle-winner-picker/",
+      "link_text": "View Skill",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "high",
+      "final_url": "",
+      "recommended_fix": "Remove link or update to valid page"
+    },
+    {
+      "source_page": "multiple",
+      "link_url": "https://docs.gitea.io",
+      "link_text": "https://docs.gitea.io",
+      "status_code": "200",
+      "issue_type": "redirect_chain",
+      "priority": "high",
+      "final_url": "https://docs.gitea.com/",
+      "recommended_fix": "High priority: Update to https://docs.gitea.com/ to eliminate 2 redirect hops"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/blog/best-github-alternatives/",
+      "link_url": "https://api.slack.com/messaging/webhooks",
+      "link_text": "https://api.slack.com/messaging/webhooks",
+      "status_code": "200",
+      "issue_type": "redirect_chain",
+      "priority": "high",
+      "final_url": "https://docs.slack.dev/messaging/sending-messages-using-incoming-webhooks/",
+      "recommended_fix": "High priority: Update to https://docs.slack.dev/messaging/sending-messages-using-incoming-webhooks/ to eliminate 2 redirect hops"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/blog/best-github-alternatives/",
+      "link_url": "https://docs.gitlab.com/ee/ci/pipelines/pipeline_efficiency.html",
+      "link_text": "https://docs.gitlab.com/ee/ci/pipelines/pipeline_efficiency.html",
+      "status_code": "200",
+      "issue_type": "redirect_chain",
+      "priority": "high",
+      "final_url": "https://docs.gitlab.com/ci/pipelines/pipeline_efficiency/",
+      "recommended_fix": "High priority: Update to https://docs.gitlab.com/ci/pipelines/pipeline_efficiency/ to eliminate 2 redirect hops"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/claude-skills/",
+      "link_url": "https://docs.claude.com/en/api/skills-guide",
+      "link_text": "View Skill",
+      "status_code": "200",
+      "issue_type": "redirect_chain",
+      "priority": "high",
+      "final_url": "https://platform.claude.com/docs/en/build-with-claude/skills-guide",
+      "recommended_fix": "High priority: Update to https://platform.claude.com/docs/en/build-with-claude/skills-guide to eliminate 2 redirect hops"
+    },
+    {
+      "source_page": "multiple",
+      "link_url": "https://www.mymcpshelf.com/claude-skills",
+      "link_text": "Claude Skills68 Pre-builtReady to useExplore Skills \u00e2\u0086\u0092",
+      "status_code": "200",
+      "issue_type": "canonical_redirect",
+      "priority": "medium",
+      "final_url": "https://www.mymcpshelf.com/claude-skills/",
+      "recommended_fix": "Update to canonical form: https://www.mymcpshelf.com/claude-skills/ (trailing slash/case)"
+    },
+    {
+      "source_page": "multiple",
+      "link_url": "https://www.mymcpshelf.com/mcp-clients",
+      "link_text": "MCP Clients250+ AppsFor your workflowExplore Clients \u00e2\u0086\u0092",
+      "status_code": "200",
+      "issue_type": "canonical_redirect",
+      "priority": "medium",
+      "final_url": "https://www.mymcpshelf.com/mcp-clients/",
+      "recommended_fix": "Update to canonical form: https://www.mymcpshelf.com/mcp-clients/ (trailing slash/case)"
+    },
+    {
+      "source_page": "multiple",
+      "link_url": "https://www.mymcpshelf.com/blog",
+      "link_text": "View All Articles \u00e2\u0086\u0092",
+      "status_code": "200",
+      "issue_type": "canonical_redirect",
+      "priority": "medium",
+      "final_url": "https://www.mymcpshelf.com/blog/",
+      "recommended_fix": "Update to canonical form: https://www.mymcpshelf.com/blog/ (trailing slash/case)"
+    },
+    {
+      "source_page": "multiple",
+      "link_url": "https://www.mymcpshelf.com/faq",
+      "link_text": "FAQ & Help26+ AnswersGet your questions answeredView FAQ \u00e2\u0086\u0092",
+      "status_code": "200",
+      "issue_type": "canonical_redirect",
+      "priority": "medium",
+      "final_url": "https://www.mymcpshelf.com/faq/",
+      "recommended_fix": "Update to canonical form: https://www.mymcpshelf.com/faq/ (trailing slash/case)"
+    },
+    {
+      "source_page": "multiple",
+      "link_url": "https://www.mymcpshelf.com/blog/understanding-mcp-quality-standards",
+      "link_text": "How We Verify?",
+      "status_code": "200",
+      "issue_type": "canonical_redirect",
+      "priority": "medium",
+      "final_url": "https://www.mymcpshelf.com/blog/understanding-mcp-quality-standards/",
+      "recommended_fix": "Update to canonical form: https://www.mymcpshelf.com/blog/understanding-mcp-quality-standards/ (trailing slash/case)"
+    },
+    {
+      "source_page": "multiple",
+      "link_url": "https://www.mymcpshelf.com/blog/jetski-spotlight",
+      "link_text": "Shelf Spotlight: Jetski \u00e2\u0080\u0094 The Missing Operations Layer for MCP ServersDiscover how Jetski adds authentication, analytics, and real-time visibility to your MCP servers with zero code changes....5 min",
+      "status_code": "200",
+      "issue_type": "canonical_redirect",
+      "priority": "medium",
+      "final_url": "https://www.mymcpshelf.com/blog/jetski-spotlight/",
+      "recommended_fix": "Update to canonical form: https://www.mymcpshelf.com/blog/jetski-spotlight/ (trailing slash/case)"
+    },
+    {
+      "source_page": "multiple",
+      "link_url": "https://www.mymcpshelf.com/blog/mcp-operator-kubernetes-native-deployment",
+      "link_text": "MCP Operator: Kubernetes-Native MCP Server Deployment & ValidationDeploy MCP servers to Kubernetes with automatic protocol validation, scaling, and monitoring. MCP Operator brings produc...5 min read\u00e2",
+      "status_code": "200",
+      "issue_type": "canonical_redirect",
+      "priority": "medium",
+      "final_url": "https://www.mymcpshelf.com/blog/mcp-operator-kubernetes-native-deployment/",
+      "recommended_fix": "Update to canonical form: https://www.mymcpshelf.com/blog/mcp-operator-kubernetes-native-deployment/ (trailing slash/case)"
+    },
+    {
+      "source_page": "multiple",
+      "link_url": "https://www.mymcpshelf.com/blog/what-is-mcp-server-complete-guide",
+      "link_text": "What is an MCP Server? The Complete Guide to Model Context ProtocolLearn what MCP servers are, how they work, and why they're transforming AI integrations. Comprehensive guide covering ar...5 min read",
+      "status_code": "200",
+      "issue_type": "canonical_redirect",
+      "priority": "medium",
+      "final_url": "https://www.mymcpshelf.com/blog/what-is-mcp-server-complete-guide/",
+      "recommended_fix": "Update to canonical form: https://www.mymcpshelf.com/blog/what-is-mcp-server-complete-guide/ (trailing slash/case)"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/blog/",
+      "link_url": "https://www.mymcpshelf.com/blog/mcp-tools-complete-guide-2025",
+      "link_text": "MCP Tools: The Complete Guide to Finding & Using Tools in 2025",
+      "status_code": "200",
+      "issue_type": "canonical_redirect",
+      "priority": "medium",
+      "final_url": "https://www.mymcpshelf.com/blog/mcp-tools-complete-guide-2025/",
+      "recommended_fix": "Update to canonical form: https://www.mymcpshelf.com/blog/mcp-tools-complete-guide-2025/ (trailing slash/case)"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/blog/",
+      "link_url": "https://www.mymcpshelf.com/blog/mcp-client-complete-guide",
+      "link_text": "MCP Client: What It Is, How to Choose One, and Getting Started",
+      "status_code": "200",
+      "issue_type": "canonical_redirect",
+      "priority": "medium",
+      "final_url": "https://www.mymcpshelf.com/blog/mcp-client-complete-guide/",
+      "recommended_fix": "Update to canonical form: https://www.mymcpshelf.com/blog/mcp-client-complete-guide/ (trailing slash/case)"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/blog/",
+      "link_url": "https://www.mymcpshelf.com/blog/notion-mcp-gateway",
+      "link_text": "Building a Production Notion MCP Gateway: Complete Technical Guide",
+      "status_code": "200",
+      "issue_type": "canonical_redirect",
+      "priority": "medium",
+      "final_url": "https://www.mymcpshelf.com/blog/notion-mcp-gateway/",
+      "recommended_fix": "Update to canonical form: https://www.mymcpshelf.com/blog/notion-mcp-gateway/ (trailing slash/case)"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/blog/",
+      "link_url": "https://www.mymcpshelf.com/blog/solving-notion-25-reference-limit-mcp",
+      "link_text": "Solving the Notion 25-Reference Limit in MCP: Complete Field Research Report",
+      "status_code": "200",
+      "issue_type": "canonical_redirect",
+      "priority": "medium",
+      "final_url": "https://www.mymcpshelf.com/blog/solving-notion-25-reference-limit-mcp/",
+      "recommended_fix": "Update to canonical form: https://www.mymcpshelf.com/blog/solving-notion-25-reference-limit-mcp/ (trailing slash/case)"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/blog/",
+      "link_url": "https://www.mymcpshelf.com/blog/what-is-model-context-protocol-complete-guide-2025",
+      "link_text": "What is Model Context Protocol? Complete Guide for 2025",
+      "status_code": "200",
+      "issue_type": "canonical_redirect",
+      "priority": "medium",
+      "final_url": "https://www.mymcpshelf.com/blog/what-is-model-context-protocol-complete-guide-2025/",
+      "recommended_fix": "Update to canonical form: https://www.mymcpshelf.com/blog/what-is-model-context-protocol-complete-guide-2025/ (trailing slash/case)"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/blog/",
+      "link_url": "https://www.mymcpshelf.com/blog/mcp-server-architecture-diagram",
+      "link_text": "MCP Server Architecture Diagram \u00e2\u0080\u0093 From Spaghetti Integrations to Lego Bricks",
+      "status_code": "200",
+      "issue_type": "canonical_redirect",
+      "priority": "medium",
+      "final_url": "https://www.mymcpshelf.com/blog/mcp-server-architecture-diagram/",
+      "recommended_fix": "Update to canonical form: https://www.mymcpshelf.com/blog/mcp-server-architecture-diagram/ (trailing slash/case)"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/blog/",
+      "link_url": "https://www.mymcpshelf.com/blog/deploying-mcp-servers-production-security-guide",
+      "link_text": "Deploying MCP Servers in Production: A Security-First Guide",
+      "status_code": "200",
+      "issue_type": "canonical_redirect",
+      "priority": "medium",
+      "final_url": "https://www.mymcpshelf.com/blog/deploying-mcp-servers-production-security-guide/",
+      "recommended_fix": "Update to canonical form: https://www.mymcpshelf.com/blog/deploying-mcp-servers-production-security-guide/ (trailing slash/case)"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/blog/",
+      "link_url": "https://www.mymcpshelf.com/blog/how-to-build-your-own-mcp-server",
+      "link_text": "How to Build Your Own MCP Server: A Complete Developer's Guide",
+      "status_code": "200",
+      "issue_type": "canonical_redirect",
+      "priority": "medium",
+      "final_url": "https://www.mymcpshelf.com/blog/how-to-build-your-own-mcp-server/",
+      "recommended_fix": "Update to canonical form: https://www.mymcpshelf.com/blog/how-to-build-your-own-mcp-server/ (trailing slash/case)"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/blog/",
+      "link_url": "https://www.mymcpshelf.com/blog/what-is-mcp-in-ai-complete-guide",
+      "link_text": "What is MCP in AI? A Complete Guide to Model Context Protocol",
+      "status_code": "200",
+      "issue_type": "canonical_redirect",
+      "priority": "medium",
+      "final_url": "https://www.mymcpshelf.com/blog/what-is-mcp-in-ai-complete-guide/",
+      "recommended_fix": "Update to canonical form: https://www.mymcpshelf.com/blog/what-is-mcp-in-ai-complete-guide/ (trailing slash/case)"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/blog/",
+      "link_url": "https://www.mymcpshelf.com/blog/best-github-alternatives",
+      "link_text": "Best GitHub Alternative Open Source Platforms: The Complete 2025 Guide",
+      "status_code": "200",
+      "issue_type": "canonical_redirect",
+      "priority": "medium",
+      "final_url": "https://www.mymcpshelf.com/blog/best-github-alternatives/",
+      "recommended_fix": "Update to canonical form: https://www.mymcpshelf.com/blog/best-github-alternatives/ (trailing slash/case)"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/blog/",
+      "link_url": "https://www.mymcpshelf.com/blog/welcome-to-mcp-directory",
+      "link_text": "Welcome to My MCP Shelf",
+      "status_code": "200",
+      "issue_type": "canonical_redirect",
+      "priority": "medium",
+      "final_url": "https://www.mymcpshelf.com/blog/welcome-to-mcp-directory/",
+      "recommended_fix": "Update to canonical form: https://www.mymcpshelf.com/blog/welcome-to-mcp-directory/ (trailing slash/case)"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/blog/",
+      "link_url": "https://www.mymcpshelf.com/blog/mcp-protocol-guide",
+      "link_text": "MCP Protocol Explained: The Complete Technical Guide to Model Context Protocol",
+      "status_code": "200",
+      "issue_type": "canonical_redirect",
+      "priority": "medium",
+      "final_url": "https://www.mymcpshelf.com/blog/mcp-protocol-guide/",
+      "recommended_fix": "Update to canonical form: https://www.mymcpshelf.com/blog/mcp-protocol-guide/ (trailing slash/case)"
+    },
+    {
+      "source_page": "multiple",
+      "link_url": "https://github.com/anthropics/skills/tree/main/document-skills/docx",
+      "link_text": "View Skill",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "multiple",
+      "link_url": "https://github.com/anthropics/skills/tree/main/document-skills/pdf",
+      "link_text": "View Skill",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "multiple",
+      "link_url": "https://github.com/anthropics/skills/tree/main/document-skills/pptx",
+      "link_text": "View Skill",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "multiple",
+      "link_url": "https://github.com/anthropics/skills/tree/main/document-skills/xlsx",
+      "link_text": "View Skill",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "multiple",
+      "link_url": "https://github.com/eechat/eechat",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/pulumi/mcp-server",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/ubie-oss/discord-mcp-server",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/telegram-mcp/server",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/hangye/chrome-mcp",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/notte/mcp-server",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/mongodb/mcp-server",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/supabase/mcp-server",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/google/database-toolbox-mcp",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/docker/mcp-servers",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/vscode-mcp/server",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/idosalomon/gitmcp",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/google-drive-mcp/server",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/crypto-mcp/binance-server",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/tavily-ai/mcp-server",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/stripe/mcp-server",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/jeomon/windows-desktop-mcp",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/aws/bedrock-mcp-server",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/aws/aws-docs-mcp",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/aws-labs/mcp-aws-secrets-manager",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/mheob/mcp-server-todo-txt",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/vespaiach/pandoc_mcp_server",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/dylsteck/farcaster-mcp",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/parthpatel6347/rubygems-mcp",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/MindscapeHQ/raygun-mcp",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/eniehack/gitlab-mcp-server",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/apacholik/docker-mcp-server",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/ianho/tmux-mcp-server",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/exa-labs/filesystem-tree-mcp",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/cloudnative/k8s-mcp-server",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/Homebrew/homebrew-mcp",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/jenkinsci/mcp-plugin",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/hashicorp/terraform-mcp",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/firebase/firebase-mcp",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/redis/redis-mcp",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/elastic/elasticsearch-mcp",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/supabase/supabase-mcp",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/vercel/vercel-mcp",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/mongodb/mongodb-mcp",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/appliedrelevance/frappe_mcp_server",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/blog/best-github-alternatives/",
+      "link_url": "https://gogs.io/docs",
+      "link_text": "https://gogs.io/docs",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/blog/best-github-alternatives/",
+      "link_url": "https://docs.gitlab.com/ee/raketasks/backup_restore.html",
+      "link_text": "https://docs.gitlab.com/ee/raketasks/backup_restore.html",
+      "status_code": "403",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "https://gitlab.com/users/sign_in",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/blog/mcp-operator-kubernetes-native-deployment/",
+      "link_url": "https://github.com/vitorbari/mcp-operator/discussions",
+      "link_text": "GitHub Discussions",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/blog/mcp-operator-kubernetes-native-deployment/",
+      "link_url": "https://mymcpshelf.com/categories/development",
+      "link_text": "DevOps & Orchestration",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "https://www.mymcpshelf.com/categories/development/",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/blog/mcp-server-architecture-diagram/",
+      "link_url": "https://github.com/modelcontextprotocol/awesome-mcp",
+      "link_text": "awesome-mcp",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/blog/notion-mcp-gateway/",
+      "link_url": "https://notion.so/status",
+      "link_text": "https://notion.so/status",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "https://www.notion.so/status",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/claude-skills/",
+      "link_url": "https://github.com/anthropics/skills/tree/main/artifacts-builder",
+      "link_text": "View Skill",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/claude-skills/",
+      "link_url": "https://github.com/obra/superpowers/tree/main/skills/root-cause-tracing",
+      "link_text": "View Skill",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/claude-skills/",
+      "link_url": "https://github.com/mhattingpete/claude-skills-marketplace/tree/main/computer-forensics-skills/skills/computer-forensics",
+      "link_text": "View Skill",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/claude-skills/",
+      "link_url": "https://github.com/mhattingpete/claude-skills-marketplace/tree/main/computer-forensics-skills/skills/file-deletion",
+      "link_text": "View Skill",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/claude-skills/",
+      "link_url": "https://github.com/mhattingpete/claude-skills-marketplace/tree/main/computer-forensics-skills/skills/metadata-extraction",
+      "link_text": "View Skill",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/claude-skills/",
+      "link_url": "https://github.com/jthack/threat-hunting-with-sigma-rules-skill",
+      "link_text": "View Skill",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/Codeium/Windsurf",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/EGOIST/ChatWise",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/ThinkInAI/deepchat",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/lutra/Lutra",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/chatmcp/mcp-playground",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/Dustin Schau/Postman MCP client",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/dev-mahfuj80/MCP_CLIENT",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/SealinGp/Video Extraction",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/YinZhengFei/AI Coding",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/thinkany/ThinkAny",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/TeamSpark, LLC/teamspark-ai-workbench",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/Runebook/Tome",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/cgoing/mcp-client-chatbot",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/Daniel Nguyen/BoltAI",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/Charlie Garrison/beyond-better",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/r-huijts/rijksmuseum-mcp-client",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/spring.razer@gmail.com/ChatFrame",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/Aman Rusia/chat.md",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/Anthropic/claude-ai",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/Kiln AI/kiln-ai",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/alvinveroy/aider-mcp-client",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/Chorus/chorus",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/jayjeo/obsidian-milvus-FastMCP",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/dd/f",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/Alex/undatasio",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/GitBook/gitbook",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/AiPy/aipy-pro",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/Writingmate/writingmate.ai",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/NitroRCr/ai-as-workspace",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/11/\u00e5\u00bc\u00a0\u00e6\u0099\u0093\u00e8\u008e\u00b9",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/Eugene Pyvovarov/mcp-bundler-for-macos",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/Lingma/lingma",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/Simtheory/simtheory",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/SWIS/php-mcp-client",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/kamath/chat",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/Sekora/sekora-gitlab-mcp",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/netixc/speech-mcp",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/TimeCyber Ltd/mcp-x",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/Andrew Sky/zentrun---build-your-ai-team-with-vibe-coding-&-mcps",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/Snoopy AI/snoopy-mcp-ai",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/\u00e6\u00b7\u00b1\u00e5\u009c\u00b3\u00e5\u00b8\u0082\u00e5\u008e\u009f\u00e7\u0082\u00b9\u00e5\u008f\u0082\u00e6\u0095\u00b0\u00e4\u00bf\u00a1\u00e6\u0081\u00af\u00e6\u008a\u0080\u00e6\u009c\u00af\u00e6\u009c\u0089\u00e9\u0099\u0090\u00e5\u0085\u00ac\u00e5\u008f\u00b8/\u00e4\u00b8\u008a\u00e5\u00b8\u0082\u00e5\u0085\u00ac\u00e5\u008f\u00b8\u00e8\u00b4\u00a2\u00e6\u008a\u00a5\u00e6\u0095\u00b0\u00e6\u008d\u00ae\u00e7\u00b2\u00be\u00e7\u0081\u00b5",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/Razertory/chatframe-desktop",
+      "link_text": "View on GitHub",
+      "status_code": "404",
+      "issue_type": "broken",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Remove link or find replacement"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/claude-skills/",
+      "link_url": "https://community.anthropic.com",
+      "link_text": "View Skill",
+      "status_code": "0",
+      "issue_type": "error",
+      "priority": "low",
+      "final_url": "",
+      "recommended_fix": "Check link manually - request failed"
+    },
+    {
+      "source_page": "multiple",
+      "link_url": "https://github.com/Abiorh001/mcp_omni_connect",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/omnirexflora-labs/omnicoreagent",
+      "recommended_fix": "Update link to: https://github.com/omnirexflora-labs/omnicoreagent"
+    },
+    {
+      "source_page": "multiple",
+      "link_url": "https://docs.gitlab.com/ee/user/project/import/",
+      "link_text": "GitLab Import Documentation",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://docs.gitlab.com/user/project/import/",
+      "recommended_fix": "Update link to: https://docs.gitlab.com/user/project/import/"
+    },
+    {
+      "source_page": "multiple",
+      "link_url": "https://modelcontextprotocol.io",
+      "link_text": "MCP documentation",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://modelcontextprotocol.io/docs/getting-started/intro",
+      "recommended_fix": "Update link to: https://modelcontextprotocol.io/docs/getting-started/intro"
+    },
+    {
+      "source_page": "multiple",
+      "link_url": "https://github.com/techspawn/MCP-TurboClient",
+      "link_text": "View on GitHub",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/techspawn/Turbo-MCP-Client",
+      "recommended_fix": "Update link to: https://github.com/techspawn/Turbo-MCP-Client"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/duaraghav8/MCPJungle",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/mcpjungle/MCPJungle",
+      "recommended_fix": "Update link to: https://github.com/mcpjungle/MCPJungle"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/metatool-ai/metatool-app",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/metatool-ai/metamcp",
+      "recommended_fix": "Update link to: https://github.com/metatool-ai/metamcp"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/BeehiveInnovations/zen-mcp-server",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/BeehiveInnovations/pal-mcp-server",
+      "recommended_fix": "Update link to: https://github.com/BeehiveInnovations/pal-mcp-server"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/manusa/kubernetes-mcp-server",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/containers/kubernetes-mcp-server",
+      "recommended_fix": "Update link to: https://github.com/containers/kubernetes-mcp-server"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/johnneerdael/netskope-mcp",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/johnneerdael/ns-private-access-mcp",
+      "recommended_fix": "Update link to: https://github.com/johnneerdael/ns-private-access-mcp"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/FradSer/mcp-server-apple-reminders",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/FradSer/mcp-server-apple-events",
+      "recommended_fix": "Update link to: https://github.com/FradSer/mcp-server-apple-events"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/mendableai/firecrawl-mcp-server",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/firecrawl/firecrawl-mcp-server",
+      "recommended_fix": "Update link to: https://github.com/firecrawl/firecrawl-mcp-server"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/calclavia/mcp-obsidian",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/smithery-ai/mcp-obsidian",
+      "recommended_fix": "Update link to: https://github.com/smithery-ai/mcp-obsidian"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/Automata-Labs-team/MCP-Server-Playwright",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/VikashLoomba/MCP-Server-Playwright",
+      "recommended_fix": "Update link to: https://github.com/VikashLoomba/MCP-Server-Playwright"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/TuanKiri/weather-mcp-server",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/ezh0v/weather-mcp-server",
+      "recommended_fix": "Update link to: https://github.com/ezh0v/weather-mcp-server"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/sylphxltd/pdf-reader-mcp",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/SylphxAI/pdf-reader-mcp",
+      "recommended_fix": "Update link to: https://github.com/SylphxAI/pdf-reader-mcp"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/akuity/argocd-mcp",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/argoproj-labs/mcp-for-argocd",
+      "recommended_fix": "Update link to: https://github.com/argoproj-labs/mcp-for-argocd"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/azure-ai-foundry/mcp-foundry",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/microsoft-foundry/mcp-foundry",
+      "recommended_fix": "Update link to: https://github.com/microsoft-foundry/mcp-foundry"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/omarbenhamid/django-mcp-server",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/gts360/django-mcp-server",
+      "recommended_fix": "Update link to: https://github.com/gts360/django-mcp-server"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/toolsdk-ai/awesome-mcp-registry",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/toolsdk-ai/toolsdk-mcp-registry",
+      "recommended_fix": "Update link to: https://github.com/toolsdk-ai/toolsdk-mcp-registry"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/PipedreamHQ/mcp",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/PipedreamHQ/mcp-chat",
+      "recommended_fix": "Update link to: https://github.com/PipedreamHQ/mcp-chat"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/TwillHQ/summon-app",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/TwillAI/summon-app",
+      "recommended_fix": "Update link to: https://github.com/TwillAI/summon-app"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/devexpert-io/play-store-mcp",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/antoniolg/play-store-mcp",
+      "recommended_fix": "Update link to: https://github.com/antoniolg/play-store-mcp"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/ergut/mcp-logseq-server",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/ergut/mcp-logseq",
+      "recommended_fix": "Update link to: https://github.com/ergut/mcp-logseq"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/Matmax-Worldwide/payloadcmsmcp",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/disruption-hub/payloadcmsmcp",
+      "recommended_fix": "Update link to: https://github.com/disruption-hub/payloadcmsmcp"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/minipuft/claude-prompts-mcp",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/minipuft/claude-prompts",
+      "recommended_fix": "Update link to: https://github.com/minipuft/claude-prompts"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/fcakyon/claude-settings",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/fcakyon/claude-codex-settings",
+      "recommended_fix": "Update link to: https://github.com/fcakyon/claude-codex-settings"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/NineSunsInc/mighty-security",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/TryMightyAI/mighty-security",
+      "recommended_fix": "Update link to: https://github.com/TryMightyAI/mighty-security"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/",
+      "link_url": "https://github.com/ccbikai/github-stars",
+      "link_text": "\u00f0\u009f\u0094\u0097 View Details",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/miantiao-me/github-stars",
+      "recommended_fix": "Update link to: https://github.com/miantiao-me/github-stars"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/blog/best-github-alternatives/",
+      "link_url": "https://docs.gitlab.com/ee/administration/reference_architectures/",
+      "link_text": "https://docs.gitlab.com/ee/administration/reference_architectures/",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://docs.gitlab.com/administration/reference_architectures/",
+      "recommended_fix": "Update link to: https://docs.gitlab.com/administration/reference_architectures/"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/blog/best-github-alternatives/",
+      "link_url": "https://aquasecurity.github.io/trivy/",
+      "link_text": "https://aquasecurity.github.io/trivy/",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "http://trivy.dev/",
+      "recommended_fix": "Update link to: http://trivy.dev/"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/blog/best-github-alternatives/",
+      "link_url": "https://docs.github.com/en/actions/hosting-your-own-runners",
+      "link_text": "https://docs.github.com/en/actions/hosting-your-own-runners",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://docs.github.com/en/actions/concepts/runners/self-hosted-runners",
+      "recommended_fix": "Update link to: https://docs.github.com/en/actions/concepts/runners/self-hosted-runners"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/blog/best-github-alternatives/",
+      "link_url": "https://www.atlassian.com/software/jira/integrations",
+      "link_text": "https://www.atlassian.com/software/jira/integrations",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://www.atlassian.com/software/jira/features/integrations",
+      "recommended_fix": "Update link to: https://www.atlassian.com/software/jira/features/integrations"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/blog/best-github-alternatives/",
+      "link_url": "https://docs.gitlab.com/ee/ci/",
+      "link_text": "https://docs.gitlab.com/ee/ci/",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://docs.gitlab.com/ci/",
+      "recommended_fix": "Update link to: https://docs.gitlab.com/ci/"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/blog/best-github-alternatives/",
+      "link_url": "https://semantic-release.gitbook.io/",
+      "link_text": "https://semantic-release.gitbook.io/",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://semantic-release.gitbook.io/semantic-release/",
+      "recommended_fix": "Update link to: https://semantic-release.gitbook.io/semantic-release/"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/blog/best-github-alternatives/",
+      "link_url": "https://mariadb.com/kb/en/optimization-and-tuning/",
+      "link_text": "https://mariadb.com/kb/en/optimization-and-tuning/",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://mariadb.com/docs/server/ha-and-performance/optimization-and-tuning",
+      "recommended_fix": "Update link to: https://mariadb.com/docs/server/ha-and-performance/optimization-and-tuning"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/blog/mcp-operator-kubernetes-native-deployment/",
+      "link_url": "https://mymcpshelf.com/",
+      "link_text": "complete directory of 600+ verified MCP servers",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://www.mymcpshelf.com/",
+      "recommended_fix": "Update link to: https://www.mymcpshelf.com/"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/blog/mcp-tools-complete-guide-2025/",
+      "link_url": "https://www.anthropic.com/blog",
+      "link_text": "Anthropic blog",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://www.anthropic.com/news",
+      "recommended_fix": "Update link to: https://www.anthropic.com/news"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/blog/what-is-mcp-server-complete-guide/",
+      "link_url": "https://claude.ai/download",
+      "link_text": "claude.ai",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://claude.com/download",
+      "recommended_fix": "Update link to: https://claude.com/download"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/claude-skills/",
+      "link_url": "https://github.com/obra/superpowers/blob/main/skills/using-git-worktrees/",
+      "link_text": "View Skill",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/obra/superpowers/tree/main/skills/using-git-worktrees",
+      "recommended_fix": "Update link to: https://github.com/obra/superpowers/tree/main/skills/using-git-worktrees"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/claude-skills/",
+      "link_url": "https://www.anthropic.com/news/skills",
+      "link_text": "View Skill",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://claude.com/blog/skills",
+      "recommended_fix": "Update link to: https://claude.com/blog/skills"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/claude-skills/",
+      "link_url": "https://support.claude.com/en/articles/12512198-creating-custom-skills",
+      "link_text": "View Skill",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://support.claude.com/en/articles/12512198-how-to-create-custom-skills",
+      "recommended_fix": "Update link to: https://support.claude.com/en/articles/12512198-how-to-create-custom-skills"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/claude-skills/",
+      "link_url": "https://anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills",
+      "link_text": "View Skill",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills",
+      "recommended_fix": "Update link to: https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/RooVetGit/Roo-Code",
+      "link_text": "View on GitHub",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/RooCodeInc/Roo-Code",
+      "recommended_fix": "Update link to: https://github.com/RooCodeInc/Roo-Code"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/itisaevalex/mistral-mcp-client",
+      "link_text": "View on GitHub",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/itisaevalex/mistr-agent",
+      "recommended_fix": "Update link to: https://github.com/itisaevalex/mistr-agent"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/slavashvets/mcp-http-clilent-example",
+      "link_text": "View on GitHub",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/slavashvets/mcp-http-client-example",
+      "recommended_fix": "Update link to: https://github.com/slavashvets/mcp-http-client-example"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/kabrony/claude-agent-mcp",
+      "link_text": "View on GitHub",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/MCPVOT/claude-agent-mcp",
+      "recommended_fix": "Update link to: https://github.com/MCPVOT/claude-agent-mcp"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/dynamiclu/Mcp-ChatBI",
+      "link_text": "View on GitHub",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/dynamiclu/CeCeData-Agent",
+      "recommended_fix": "Update link to: https://github.com/dynamiclu/CeCeData-Agent"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/truffle-ai/saiki",
+      "link_text": "View on GitHub",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/truffle-ai/dexto",
+      "recommended_fix": "Update link to: https://github.com/truffle-ai/dexto"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/web-mcp/online-mcp-inspector",
+      "link_text": "View on GitHub",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/web-mcp/mcp-inspector-online",
+      "recommended_fix": "Update link to: https://github.com/web-mcp/mcp-inspector-online"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/pietrozullo/mcp-use",
+      "link_text": "View on GitHub",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/mcp-use/mcp-use",
+      "recommended_fix": "Update link to: https://github.com/mcp-use/mcp-use"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/jmand626/473-MCPProject",
+      "link_text": "View on GitHub",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/jmand626/NASA-AI",
+      "recommended_fix": "Update link to: https://github.com/jmand626/NASA-AI"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/MrNiebit/hot-topic-mcp",
+      "link_text": "View on GitHub",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/umuo/hot-topic-mcp",
+      "recommended_fix": "Update link to: https://github.com/umuo/hot-topic-mcp"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/Dhravya/install-mcp",
+      "link_text": "View on GitHub",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/supermemoryai/install-mcp",
+      "recommended_fix": "Update link to: https://github.com/supermemoryai/install-mcp"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/Gulp-AI/Osmosis-MCP-4B-demo",
+      "link_text": "View on GitHub",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/Osmosis-AI/Osmosis-MCP-4B-demo",
+      "recommended_fix": "Update link to: https://github.com/Osmosis-AI/Osmosis-MCP-4B-demo"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/wxhzhwxhzh/DrssionPageMCP",
+      "link_text": "View on GitHub",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/wxhzhwxhzh/DrissionPageMCP",
+      "recommended_fix": "Update link to: https://github.com/wxhzhwxhzh/DrissionPageMCP"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/TeamSparkAI/teamspark-workbench",
+      "link_text": "View on GitHub",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/TeamSparkAI/tsagent",
+      "recommended_fix": "Update link to: https://github.com/TeamSparkAI/tsagent"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/cgoinglove/mcp-client-chatbot",
+      "link_text": "View on GitHub",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/cgoinglove/better-chatbot",
+      "recommended_fix": "Update link to: https://github.com/cgoinglove/better-chatbot"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/GH05TCREW/ghostcrew",
+      "link_text": "View on GitHub",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/GH05TCREW/pentestagent",
+      "recommended_fix": "Update link to: https://github.com/GH05TCREW/pentestagent"
+    },
+    {
+      "source_page": "https://www.mymcpshelf.com/mcp-clients/",
+      "link_url": "https://github.com/vrknetha/langchainjs-mcp-adapters",
+      "link_text": "View on GitHub",
+      "status_code": "200",
+      "issue_type": "redirect",
+      "priority": "low",
+      "final_url": "https://github.com/langchain-ai/langchainjs-mcp-adapters",
+      "recommended_fix": "Update link to: https://github.com/langchain-ai/langchainjs-mcp-adapters"
+    }
+  ]
+}

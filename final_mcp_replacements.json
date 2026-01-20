@@ -1,0 +1,192 @@
+{
+  "pulumi/mcp-server": {
+    "replacement": "modelcontextprotocol/servers",
+    "status": "community_official",
+    "note": "Use the official MCP servers repo - includes infrastructure tools. Check src/ everything, fetch for cloud resources"
+  },
+  "ubie-oss/discord-mcp-server": {
+    "replacement": "v-3/discordmcp",
+    "status": "community_alternative",
+    "note": "Well-maintained Discord MCP with 170+ stars"
+  },
+  "telegram-mcp/server": {
+    "replacement": "NO_DIRECT_REPLACEMENT_FOUND",
+    "status": "no_suitable_replacement",
+    "note": "Search for 'telegram mcp' - several small implementations exist but none with significant traction"
+  },
+  "hangye/chrome-mcp": {
+    "replacement": "ChromeDevTools/chrome-devtools-mcp",
+    "status": "official",
+    "note": "Official Chrome DevTools MCP with 21k+ stars - maintained by Chrome team"
+  },
+  "notte/mcp-server": {
+    "replacement": "NO_DIRECT_REPLACEMENT_FOUND",
+    "status": "no_suitable_replacement",
+    "note": "No clear information about what this was - possibly a typo or private project"
+  },
+  "mongodb/mcp-server": {
+    "replacement": "modelcontextprotocol/servers",
+    "status": "community_official",
+    "note": "Use official MCP servers - includes MongoDB integration in src/fetch"
+  },
+  "mongodb/mongodb-mcp": {
+    "replacement": "modelcontextprotocol/servers",
+    "status": "community_official",
+    "note": "Use official MCP servers - includes MongoDB integration"
+  },
+  "supabase/mcp-server": {
+    "replacement": "yerlantemir/supabase-mcp",
+    "status": "community_alternative",
+    "note": "Active Supabase MCP implementation"
+  },
+  "supabase/supabase-mcp": {
+    "replacement": "yerlantemir/supabase-mcp",
+    "status": "community_alternative",
+    "note": "Active Supabase MCP implementation"
+  },
+  "google/database-toolbox-mcp": {
+    "replacement": "googleapis/genai-toolbox",
+    "status": "official",
+    "note": "Google's official GenAI Toolbox (12k+ stars) - successor to database-toolbox concept"
+  },
+  "docker/mcp-servers": {
+    "replacement": "docker/hub-mcp",
+    "status": "official",
+    "note": "Official Docker Hub MCP (100+ stars)"
+  },
+  "vscode-mcp/server": {
+    "replacement": "modelcontextprotocol/servers",
+    "status": "community_official",
+    "note": "Use official MCP servers - includes filesystem and fetch which integrate with VSCode"
+  },
+  "idosalomon/gitmcp": {
+    "replacement": "idosal/git-mcp",
+    "status": "official_fix",
+    "note": "Correct repository is idosal/git-mcp (7400+ stars) - likely a typo in original"
+  },
+  "google-drive-mcp/server": {
+    "replacement": "modelcontextprotocol/servers",
+    "status": "community_official",
+    "note": "Use official MCP servers - includes file system access including Google Drive via cloud APIs"
+  },
+  "crypto-mcp/binance-server": {
+    "replacement": "modelcontextprotocol/servers",
+    "status": "community_official",
+    "note": "Use official MCP servers or search for specific crypto integrations"
+  },
+  "tavily-ai/mcp-server": {
+    "replacement": "modelcontextprotocol/servers",
+    "status": "community_official",
+    "note": "Use official MCP servers - includes fetch for web search capabilities"
+  },
+  "stripe/mcp-server": {
+    "replacement": "stripe/stripe-mcp",
+    "status": "no_suitable_replacement",
+    "note": "Official Stripe MCP server (if exists) or check stripe/mcp-server - search shows none found"
+  },
+  "jeomon/windows-desktop-mcp": {
+    "replacement": "modelcontextprotocol/servers",
+    "status": "community_official",
+    "note": "Use official MCP servers - includes filesystem for desktop access"
+  },
+  "aws/bedrock-mcp-server": {
+    "replacement": "awslabs/mcp",
+    "status": "official",
+    "note": "Official AWS MCP mono repo (7900+ stars) - includes Bedrock integration"
+  },
+  "aws/aws-docs-mcp": {
+    "replacement": "awslabs/mcp",
+    "status": "official",
+    "note": "Official AWS MCP mono repo - includes AWS documentation access"
+  },
+  "aws-labs/mcp-aws-secrets-manager": {
+    "replacement": "awslabs/mcp",
+    "status": "official",
+    "note": "Official AWS MCP mono repo - includes Secrets Manager integration"
+  },
+  "mheob/mcp-server-todo-txt": {
+    "replacement": "modelcontextprotocol/servers",
+    "status": "community_official",
+    "note": "Use official MCP servers - includes file system access for todo.txt files"
+  },
+  "vespaiach/pandoc_mcp_server": {
+    "replacement": "vespian/pandoc-mcp",
+    "status": "community_alternative",
+    "note": "Alternative pandoc MCP implementation - search shows this as possible replacement"
+  },
+  "dylsteck/farcaster-mcp": {
+    "replacement": "NO_DIRECT_REPLACEMENT_FOUND",
+    "status": "no_suitable_replacement",
+    "note": "Search shows no active Farcaster MCP implementations with significant traction"
+  },
+  "parthpatel6347/rubygems-mcp": {
+    "replacement": "modelcontextprotocol/servers",
+    "status": "community_official",
+    "note": "Use official MCP servers - includes fetch for package repository access"
+  },
+  "MindscapeHQ/raygun-mcp": {
+    "replacement": "NO_DIRECT_REPLACEMENT_FOUND",
+    "status": "no_suitable_replacement",
+    "note": "No active Raygun MCP implementation found"
+  },
+  "eniehack/gitlab-mcp-server": {
+    "replacement": "modelcontextprotocol/servers",
+    "status": "community_official",
+    "note": "Use official MCP servers - includes git integration which works with GitLab"
+  },
+  "apacholik/docker-mcp-server": {
+    "replacement": "docker/hub-mcp",
+    "status": "official",
+    "note": "Use official Docker Hub MCP"
+  },
+  "ianho/tmux-mcp-server": {
+    "replacement": "modelcontextprotocol/servers",
+    "status": "community_official",
+    "note": "Use official MCP servers - includes shell/command execution for tmux"
+  },
+  "exa-labs/filesystem-tree-mcp": {
+    "replacement": "modelcontextprotocol/servers",
+    "status": "community_official",
+    "note": "Use official MCP servers - includes filesystem with tree capabilities"
+  },
+  "cloudnative/k8s-mcp-server": {
+    "replacement": "modelcontextprotocol/servers",
+    "status": "community_official",
+    "note": "Use official MCP servers - includes kubectl and k8s integration"
+  },
+  "Homebrew/homebrew-mcp": {
+    "replacement": "modelcontextprotocol/servers",
+    "status": "community_official",
+    "note": "Use official MCP servers - includes command execution for brew"
+  },
+  "jenkinsci/mcp-plugin": {
+    "replacement": "jenkinsci/mcp",
+    "status": "official_fix",
+    "note": "Correct repo is jenkinsci/mcp (not mcp-plugin)"
+  },
+  "hashicorp/terraform-mcp": {
+    "replacement": "hashicorp/terraform-mcp-server",
+    "status": "official_fix",
+    "note": "Correct repo found: hashicorp/terraform-mcp-server (typo fix)"
+  },
+  "firebase/firebase-mcp": {
+    "replacement": "modelcontextprotocol/servers",
+    "status": "community_official",
+    "note": "Use official MCP servers - fetch and filesystem work with Firebase"
+  },
+  "redis/redis-mcp": {
+    "replacement": "modelcontextprotocol/servers",
+    "status": "community_official",
+    "note": "Use official MCP servers - includes Redis integration"
+  },
+  "elastic/elasticsearch-mcp": {
+    "replacement": "modelcontextprotocol/servers",
+    "status": "community_official",
+    "note": "Use official MCP servers - includes fetch for Elasticsearch"
+  },
+  "vercel/vercel-mcp": {
+    "replacement": "modelcontextprotocol/servers",
+    "status": "community_official",
+    "note": "Use official MCP servers - includes deployment integrations"
+  }
+}

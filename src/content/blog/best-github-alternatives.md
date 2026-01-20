@@ -369,7 +369,7 @@ Forgejo is a fork of Gitea focused on community governance. Gitea has a company-
 - You need ultra-minimal footprint (Gogs is smaller)
 - You require advanced project management features
 
-**Documentation:** [https://docs.gitea.io](https://docs.gitea.io)
+**Documentation:** [https://docs.gitea.com/](https://docs.gitea.com/)
 
 ---
 
@@ -664,7 +664,7 @@ Codeberg (powered by Gitea) includes migration tools from GitHub, GitLab, and Go
 **Winner for Advanced Features:** GitLab CE (most sophisticated permission models and automation)  
 **Winner for Simplicity:** Gogs (basic protection, easy to understand)
 
-**Sources:** [GitLab Docs](https://docs.gitlab.com), [Gitea Docs](https://docs.gitea.io), [SourceHut Man Pages](https://man.sr.ht)
+**Sources:** [GitLab Docs](https://docs.gitlab.com), [Gitea Docs](https://docs.gitea.com/), [SourceHut Man Pages](https://man.sr.ht)
 
 ---
 
@@ -682,7 +682,7 @@ Instead of PRs, SourceHut uses mailing lists. Contributors send patches via `git
 **Winner for Team Collaboration:** GitLab CE (approval rules, pipeline integration)  
 **Winner for Individual Control:** SourceHut (email-based, no web dependency)
 
-**Sources:** [GitLab MR Docs](https://docs.gitlab.com), [Gitea PR Docs](https://docs.gitea.io), [SourceHut Mailing List Guide](https://man.sr.ht)
+**Sources:** [GitLab MR Docs](https://docs.gitlab.com), [Gitea PR Docs](https://docs.gitea.com/), [SourceHut Mailing List Guide](https://man.sr.ht)
 
 ---
 
@@ -700,7 +700,7 @@ SourceHut's todo.sr.ht provides issue tracking via email and web UI. It's lightw
 **Winner for Project Management:** GitLab CE (most sophisticated boards and workflows)  
 **Winner for Simplicity:** Gogs or SourceHut (minimal overhead)
 
-**Sources:** [GitLab Issue Boards](https://docs.gitlab.com), [Gitea Projects](https://docs.gitea.io), [SourceHut Todo](https://man.sr.ht)
+**Sources:** [GitLab Issue Boards](https://docs.gitlab.com), [Gitea Projects](https://docs.gitea.com/), [SourceHut Todo](https://man.sr.ht)
 
 ---
 
@@ -722,7 +722,7 @@ SourceHut builds.sr.ht runs builds in isolated VMs based on YAML manifests. You 
 **Winner for Flexibility:** SourceHut (full VM access, any OS)  
 **Winner for Compatibility:** Gitea Actions (GitHub Actions compatible)
 
-**Sources:** [GitLab CI/CD Docs](https://docs.gitlab.com), [Gitea Actions](https://docs.gitea.io), [SourceHut Builds](https://man.sr.ht)
+**Sources:** [GitLab CI/CD Docs](https://docs.gitlab.com), [Gitea Actions](https://docs.gitea.com/), [SourceHut Builds](https://man.sr.ht)
 
 ---
 
@@ -740,7 +740,7 @@ Gogs and SourceHut don't include package registries—use external hosting like 
 **Winner for Built-In Support:** GitLab CE (most formats, best integration)  
 **Winner for Lightweight Hosting:** Gitea (good format support without heavy footprint)
 
-**Sources:** [GitLab Package Registry Docs](https://docs.gitlab.com), [Gitea Packages](https://docs.gitea.io)
+**Sources:** [GitLab Package Registry Docs](https://docs.gitlab.com), [Gitea Packages](https://docs.gitea.com/)
 
 ---
 
@@ -921,7 +921,7 @@ Backups are worthless if you can't restore from them. Schedule quarterly restore
 - **Distributed CI runners:** Multiple runners across availability zones
 
 **GitLab HA Reference Architecture:**  
-GitLab publishes reference architectures for 1,000, 3,000, 5,000, and 10,000+ user deployments with detailed component specifications and configuration examples. See: [https://docs.gitlab.com/ee/administration/reference_architectures/](https://docs.gitlab.com/ee/administration/reference_architectures/)
+GitLab publishes reference architectures for 1,000, 3,000, 5,000, and 10,000+ user deployments with detailed component specifications and configuration examples. See: [https://docs.gitlab.com/administration/reference_architectures/](https://docs.gitlab.com/administration/reference_architectures/)
 
 **Testing HA:**
 - Simulate node failures and verify automatic failover
@@ -1406,7 +1406,7 @@ Re-upload to target platform manually or via API.
 **Sources:**  
 - Git LFS Migration: [https://github.com/git-lfs/git-lfs/wiki/Tutorial](https://github.com/git-lfs/git-lfs/wiki/Tutorial)
 - GitLab Import: [https://docs.gitlab.com/ee/user/project/import/](https://docs.gitlab.com/ee/user/project/import/)
-- Gitea Import: [https://docs.gitea.io/en-us/migrations-interfaces/](https://docs.gitea.io/en-us/migrations-interfaces/)
+- Gitea Import: [https://docs.gitea.com//en-us/migrations-interfaces/](https://docs.gitea.com//en-us/migrations-interfaces/)
 
 ---
 
@@ -1591,7 +1591,7 @@ Keep team informed throughout:
 
 **Sources:**  
 - GitHub Migration Tools: [https://docs.github.com/en/migrations](https://docs.github.com/en/migrations)
-- GitLab Backup and Restore: [https://docs.gitlab.com/ee/raketasks/backup_restore.html](https://docs.gitlab.com/ee/raketasks/backup_restore.html)
+- GitLab Backup and Restore: [https://docs.gitlab.com/raketasks/backup_restore/](https://docs.gitlab.com/raketasks/backup_restore/)
 
 ---
 
@@ -1848,9 +1848,9 @@ Never store Terraform secrets in Git:
 - Use cloud provider secret managers (AWS Secrets Manager, Azure Key Vault)
 
 **Sources:**  
-- Slack API Docs: [https://api.slack.com/messaging/webhooks](https://api.slack.com/messaging/webhooks)
+- Slack API Docs: [https://docs.slack.dev/messaging/sending-messages-using-incoming-webhooks/](https://docs.slack.dev/messaging/sending-messages-using-incoming-webhooks/)
 - Atlassian Jira Integrations: [https://www.atlassian.com/software/jira/integrations](https://www.atlassian.com/software/jira/integrations)
-- Terraform Backend Configuration: [https://www.terraform.io/language/settings/backends](https://www.terraform.io/language/settings/backends)
+- Terraform Backend Configuration: [https://developer.hashicorp.com/terraform/language/backend](https://developer.hashicorp.com/terraform/language/backend)
 
 ---
 
@@ -1910,7 +1910,7 @@ Some organizations require air-gapped CI/CD (no external SaaS):
 - Dedicated CI infrastructure in secure networks
 
 **Sources:**  
-- GitLab CI Docs: [https://docs.gitlab.com/ee/ci/](https://docs.gitlab.com/ee/ci/)
+- GitLab CI Docs: [https://docs.gitlab.com/ci/](https://docs.gitlab.com/ci/)
 - Jenkins Documentation: [https://www.jenkins.io/doc/](https://www.jenkins.io/doc/)
 - Buildkite Docs: [https://buildkite.com/docs](https://buildkite.com/docs)
 
@@ -2041,7 +2041,7 @@ npx semantic-release
 This reads commit messages (e.g., `feat:`, `fix:`) and auto-bumps versions, generates changelogs, and creates releases.
 
 **Sources:**  
-- GitLab CI/CD Best Practices: [https://docs.gitlab.com/ee/ci/pipelines/pipeline_efficiency.html](https://docs.gitlab.com/ee/ci/pipelines/pipeline_efficiency.html)
+- GitLab CI/CD Best Practices: [https://docs.gitlab.com/ci/pipelines/pipeline_efficiency/](https://docs.gitlab.com/ci/pipelines/pipeline_efficiency/)
 - Semantic Release: [https://semantic-release.gitbook.io/](https://semantic-release.gitbook.io/)
 
 ---
