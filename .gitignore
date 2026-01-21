@@ -23,3 +23,24 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# Temporary/helper files
+*.backup
+*.log
+analyze_*.py
+analyze_*.js
+check_*.py
+check_*.js
+comprehensive_*.py
+create_*.py
+fix_*.js
+fix_*.sh
+final_*.py
+remove_*.js
+research_*.py
+search_*.sh
+mcp_*.json
+linkcanary_*.json
+MCP_REPLACEMENTS_SUMMARY.md
+github_*.log
+github_*.json
