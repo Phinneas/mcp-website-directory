@@ -1,0 +1,210 @@
+---
+/**
+ * ServerInstallation Component - Installation instructions with tabs
+ */
+import CodeBlock from './CodeBlock.astro';
+import { getInstallationCommands } from '../utils/serverData.js';
+
+interface Props {
+  server: {
+    fields: {
+      name?: string;
+      npm_package?: string;
+      installation_command?: string;
+      github_url?: string;
+    };
+  };
+}
+
+const { server } = Astro.props;
+const commands = getInstallationCommands(server);
+
+// Determine available installation methods
+const methods = [];
+if (commands.npx) methods.push({ id: 'npx', label: 'npx (Recommended)', command: commands.npx });
+if (commands.npm) methods.push({ id: 'npm', label: 'npm', command: commands.npm });
+if (commands.manual) methods.push({ id: 'manual', label: 'Manual', command: commands.manual });
+
+// If no methods available, show a placeholder
+const hasInstallation = methods.length > 0;
+---
+
+<section class="installation-section">
+  <h2 class="section-title">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+      <polyline points="7 10 12 15 17 10"></polyline>
+      <line x1="12" y1="15" x2="12" y2="3"></line>
+    </svg>
+    Installation
+  </h2>
+
+  {hasInstallation ? (
+    <div class="installation-tabs">
+      <div class="tab-buttons" role="tablist">
+        {methods.map((method, index) => (
+          <button 
+            class={`tab-button ${index === 0 ? 'active' : ''}`}
+            role="tab"
+            aria-selected={index === 0 ? 'true' : 'false'}
+            aria-controls={`panel-${method.id}`}
+            data-tab={method.id}
+          >
+            {method.label}
+          </button>
+        ))}
+      </div>
+      
+      <div class="tab-panels">
+        {methods.map((method, index) => (
+          <div 
+            class={`tab-panel ${index === 0 ? 'active' : ''}`}
+            role="tabpanel"
+            id={`panel-${method.id}`}
+            data-panel={method.id}
+          >
+            <CodeBlock code={method.command} language="bash" />
+          </div>
+        ))}
+      </div>
+    </div>
+  ) : (
+    <div class="no-installation">
+      <p>No automated installation available. Please refer to the <a href={server.fields.github_url} target="_blank" rel="noopener noreferrer">GitHub repository</a> for installation instructions.</p>
+    </div>
+  )}
+</section>
+
+<style>
+  .installation-section {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid #e5e7eb;
+  }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0 0 1.25rem 0;
+  }
+
+  .section-title svg {
+    color: #6b7280;
+  }
+
+  .installation-tabs {
+    /* Container for tabs */
+  }
+
+  .tab-buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 0.5rem;
+  }
+
+  .tab-button {
+    padding: 0.5rem 1rem;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    color: #6b7280;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .tab-button:hover {
+    color: #374151;
+    background: #f3f4f6;
+  }
+
+  .tab-button.active {
+    color: #f59e0b;
+    background: rgba(245, 158, 11, 0.1);
+    border-color: rgba(245, 158, 11, 0.3);
+  }
+
+  .tab-panels {
+    /* Container for tab panels */
+  }
+
+  .tab-panel {
+    display: none;
+  }
+
+  .tab-panel.active {
+    display: block;
+  }
+
+  .no-installation {
+    padding: 1rem;
+    background: #f9fafb;
+    border-radius: 8px;
+    color: #6b7280;
+  }
+
+  .no-installation a {
+    color: #f59e0b;
+    text-decoration: none;
+  }
+
+  .no-installation a:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 768px) {
+    .installation-section {
+      padding: 1rem;
+    }
+
+    .tab-buttons {
+      flex-wrap: wrap;
+    }
+
+    .tab-button {
+      padding: 0.4rem 0.75rem;
+      font-size: 0.85rem;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const tabButtons = document.querySelectorAll('.tab-button');
+    
+    tabButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const tabId = button.getAttribute('data-tab');
+        const tabContainer = button.closest('.installation-tabs');
+        
+        if (!tabContainer || !tabId) return;
+        
+        // Update button states
+        tabContainer.querySelectorAll('.tab-button').forEach(btn => {
+          btn.classList.remove('active');
+          btn.setAttribute('aria-selected', 'false');
+        });
+        button.classList.add('active');
+        button.setAttribute('aria-selected', 'true');
+        
+        // Update panel states
+        tabContainer.querySelectorAll('.tab-panel').forEach(panel => {
+          panel.classList.remove('active');
+        });
+        const activePanel = tabContainer.querySelector(`[data-panel="${tabId}"]`);
+        if (activePanel) {
+          activePanel.classList.add('active');
+        }
+      });
+    });
+  });
+</script>

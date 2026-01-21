@@ -1,0 +1,270 @@
+---
+/**
+ * CodeBlock Component - Syntax highlighted code with copy button
+ */
+interface Props {
+  code: string;
+  language?: string;
+  filename?: string;
+  showLineNumbers?: boolean;
+}
+
+const { code, language = 'bash', filename, showLineNumbers = false } = Astro.props;
+const codeId = `code-${Math.random().toString(36).substring(7)}`;
+---
+
+<div class="code-block">
+  {filename && (
+    <div class="code-header">
+      <span class="code-filename">{filename}</span>
+    </div>
+  )}
+  <div class="code-container">
+    <pre class={`language-${language}`}><code id={codeId} class={showLineNumbers ? 'line-numbers' : ''}>{code}</code></pre>
+    <button 
+      class="copy-button" 
+      data-code-id={codeId}
+      aria-label="Copy code to clipboard"
+      title="Copy to clipboard"
+    >
+      <svg class="copy-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+      </svg>
+      <svg class="check-icon" style="display: none;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+      <span class="copy-text">Copy</span>
+    </button>
+  </div>
+</div>
+
+<style>
+  .code-block {
+    position: relative;
+    margin: 1rem 0;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #1e1e2e;
+  }
+
+  .code-header {
+    background: #313244;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid #45475a;
+  }
+
+  .code-filename {
+    color: #cdd6f4;
+    font-size: 0.85rem;
+    font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+  }
+
+  .code-container {
+    position: relative;
+  }
+
+  pre {
+    margin: 0;
+    padding: 1rem;
+    overflow-x: auto;
+    background: #1e1e2e;
+  }
+
+  code {
+    font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #cdd6f4;
+    white-space: pre;
+    display: block;
+  }
+
+  code.line-numbers {
+    counter-reset: line;
+  }
+
+  code.line-numbers::before {
+    counter-increment: line;
+    content: counter(line);
+    display: inline-block;
+    margin-right: 1rem;
+    color: #6c7086;
+    min-width: 2rem;
+    text-align: right;
+  }
+
+  .copy-button {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.4rem 0.75rem;
+    background: #313244;
+    border: 1px solid #45475a;
+    border-radius: 6px;
+    color: #cdd6f4;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    opacity: 0;
+  }
+
+  .code-block:hover .copy-button {
+    opacity: 1;
+  }
+
+  .copy-button:hover {
+    background: #45475a;
+    border-color: #585b70;
+  }
+
+  .copy-button:active {
+    transform: scale(0.95);
+  }
+
+  .copy-button.copied {
+    background: #a6e3a1;
+    border-color: #a6e3a1;
+    color: #1e1e2e;
+  }
+
+  .copy-icon, .check-icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  .copy-text {
+    font-family: inherit;
+  }
+
+  /* Syntax highlighting colors (Catppuccin Mocha theme) */
+  :global(.token.comment),
+  :global(.token.prolog),
+  :global(.token.doctype),
+  :global(.token.cdata) {
+    color: #6c7086;
+  }
+
+  :global(.token.punctuation) {
+    color: #cdd6f4;
+  }
+
+  :global(.token.property),
+  :global(.token.tag),
+  :global(.token.constant),
+  :global(.token.symbol),
+  :global(.token.deleted) {
+    color: #f38ba8;
+  }
+
+  :global(.token.boolean),
+  :global(.token.number) {
+    color: #fab387;
+  }
+
+  :global(.token.selector),
+  :global(.token.attr-name),
+  :global(.token.string),
+  :global(.token.char),
+  :global(.token.builtin),
+  :global(.token.inserted) {
+    color: #a6e3a1;
+  }
+
+  :global(.token.operator),
+  :global(.token.entity),
+  :global(.token.url),
+  :global(.language-css .token.string),
+  :global(.style .token.string),
+  :global(.token.variable) {
+    color: #94e2d5;
+  }
+
+  :global(.token.atrule),
+  :global(.token.attr-value),
+  :global(.token.function),
+  :global(.token.class-name) {
+    color: #89b4fa;
+  }
+
+  :global(.token.keyword) {
+    color: #cba6f7;
+  }
+
+  :global(.token.regex),
+  :global(.token.important) {
+    color: #f9e2af;
+  }
+
+  @media (max-width: 768px) {
+    .copy-button {
+      opacity: 1;
+      padding: 0.35rem 0.5rem;
+    }
+
+    .copy-text {
+      display: none;
+    }
+
+    pre {
+      padding: 0.75rem;
+    }
+
+    code {
+      font-size: 0.85rem;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const copyButtons = document.querySelectorAll('.copy-button');
+    
+    copyButtons.forEach(button => {
+      button.addEventListener('click', async () => {
+        const codeId = button.getAttribute('data-code-id');
+        const codeElement = document.getElementById(codeId);
+        
+        if (!codeElement) return;
+        
+        const code = codeElement.textContent || '';
+        
+        try {
+          await navigator.clipboard.writeText(code);
+          
+          // Show success state
+          const copyIcon = button.querySelector('.copy-icon');
+          const checkIcon = button.querySelector('.check-icon');
+          const copyText = button.querySelector('.copy-text');
+          
+          if (copyIcon) copyIcon.style.display = 'none';
+          if (checkIcon) checkIcon.style.display = 'block';
+          if (copyText) copyText.textContent = 'Copied!';
+          button.classList.add('copied');
+          
+          // Reset after 2 seconds
+          setTimeout(() => {
+            if (copyIcon) copyIcon.style.display = 'block';
+            if (checkIcon) checkIcon.style.display = 'none';
+            if (copyText) copyText.textContent = 'Copy';
+            button.classList.remove('copied');
+          }, 2000);
+        } catch (err) {
+          console.error('Failed to copy code:', err);
+          // Fallback for older browsers
+          const textArea = document.createElement('textarea');
+          textArea.value = code;
+          textArea.style.position = 'fixed';
+          textArea.style.left = '-9999px';
+          document.body.appendChild(textArea);
+          textArea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textArea);
+        }
+      });
+    });
+  });
+</script>

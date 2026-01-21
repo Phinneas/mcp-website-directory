@@ -1,0 +1,952 @@
+---
+title: "MCP Tutorial: Build Your First Server in 15 Minutes [2026 Guide]"
+description: "Most MCP tutorials start with architecture diagrams and protocol specs. By the time you understand what you're building, you've lost interest. This guide is different. In 15 minutes, you'll have a working MCP server."
+date: "2026-01-20T00:00:00.000Z"
+author: "Chester Beard"
+image: "/images/mcp-server-architecture-hero.png"
+tags: ["mcp", "tutorial", "beginner", "python", "fastmcp", "development"]
+---
+
+# MCP Tutorial: Build Your First Server in 15 Minutes [2026 Guide]
+
+Most MCP tutorials start with architecture diagrams and protocol specs. By the time you understand what you're building, you've lost interest.
+
+This guide is different. In 15 minutes, you'll have a working MCP server. Then we'll explain what you built, show you production servers to learn from, and give you a framework for building your own.
+
+**What you'll build:** A simple file reader that lets Claude access local files.
+
+**What you'll need:** Python 3.10+ and 15 minutes.
+
+---
+
+## Quick Start: Your First MCP Server
+
+Let's skip the theory and build something. You can understand how it works after you see it working.
+
+### Step 1: Set Up Your Environment
+
+First, create a project folder and set up a virtual environment:
+
+```bash
+mkdir my-first-mcp-server
+cd my-first-mcp-server
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+### Step 2: Install FastMCP
+
+FastMCP is the fastest way to build MCP servers in Python. One dependency, minimal boilerplate, and you're building instead of configuring.
+
+```bash
+pip install fastmcp
+```
+
+Why FastMCP over the raw MCP SDK? FastMCP handles the protocol boilerplate—transport setup, JSON-RPC formatting, schema generation—so you focus on your tools. For production servers, you might want the flexibility of the raw SDK, but for learning and rapid prototyping, FastMCP is unbeatable.
+
+### Step 3: Create Your Server
+
+Create a file called `my_server.py`:
+
+```python
+from fastmcp import FastMCP
+
+# Initialize server
+mcp = FastMCP("my-file-reader")
+
+@mcp.tool()
+def read_file(path: str) -> str:
+    """Read the contents of a file at the given path."""
+    with open(path, 'r') as f:
+        return f.read()
+
+@mcp.tool()
+def list_files(directory: str) -> list[str]:
+    """List all files in a directory."""
+    import os
+    return os.listdir(directory)
+
+if __name__ == "__main__":
+    mcp.run()
+```
+
+That's 15 lines. You just built an MCP server.
+
+Let's break down what each part does:
+
+- **`FastMCP("my-file-reader")`** — Creates a server with a unique name. This name appears in the client's server list.
+- **`@mcp.tool()`** — Registers a function as an MCP tool. The LLM can discover and call this.
+- **Docstrings** — Critical for MCP. The LLM reads these to understand when to use each tool.
+- **Type hints** — FastMCP uses these to generate JSON schemas that validate inputs.
+- **`mcp.run()`** — Starts the server using stdio transport (the default for local servers).
+
+### Step 4: Connect to Claude Desktop
+
+Now we need to tell Claude Desktop about your server. Open the config file:
+
+**macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+**Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
+
+If the file doesn't exist, create it. Add this configuration:
+
+```json
+{
+  "mcpServers": {
+    "my-file-reader": {
+      "command": "python",
+      "args": ["/full/path/to/my_server.py"]
+    }
+  }
+}
+```
+
+**Important:** Replace `/full/path/to/my_server.py` with the actual absolute path to your server file. Relative paths don't work reliably.
+
+To find your Python path if you're using a virtual environment:
+
+```bash
+# macOS/Linux
+which python
+
+# Windows
+where python
+```
+
+A complete config using a virtual environment might look like:
+
+```json
+{
+  "mcpServers": {
+    "my-file-reader": {
+      "command": "/Users/yourname/my-first-mcp-server/venv/bin/python",
+      "args": ["/Users/yourname/my-first-mcp-server/my_server.py"]
+    }
+  }
+}
+```
+
+### Step 5: Test It
+
+Restart Claude Desktop completely (quit and reopen—just closing the window isn't enough). You should see your server listed in Claude's tools menu.
+
+Now ask Claude:
+
+> "Use the file reader to show me what's in my Downloads folder"
+
+Claude will use your `list_files` tool, then offer to read specific files with `read_file`.
+
+**What just happened:**
+
+1. Claude Desktop started your Python script as a subprocess
+2. Your server announced its available tools via JSON-RPC
+3. Claude's LLM saw your tool descriptions and decided to use `list_files`
+4. Your tool executed and returned results
+5. Claude presented the results and offered next steps
+
+**Congratulations.** You just gave Claude access to your local filesystem through a protocol that works the same way across every MCP-compatible client—Claude Desktop, Cursor, Windsurf, and more.
+
+### Checkpoint: What You've Accomplished
+
+In about 10 minutes, you've:
+
+- Created a working MCP server with two tools
+- Connected it to Claude Desktop
+- Verified the LLM can discover and use your tools
+
+Everything else in this tutorial builds on this foundation. The patterns get more sophisticated, but the core concept—define tools, let the LLM call them—stays the same.
+
+---
+
+## Understanding What You Built
+
+Now that you've seen it work, let's understand the pieces.
+
+### The Three-Layer Architecture
+
+```
+┌─────────────────────────────┐
+│         HOST APP            │  Claude Desktop, Cursor, etc.
+│  ┌───────────────────────┐  │
+│  │     MCP CLIENT        │◄─┼──┐  JSON-RPC 2.0
+│  └───────────┬───────────┘  │  │  (stdio or HTTP/SSE)
+└──────────────┼──────────────┘  │
+               │                  │
+┌──────────────┼──────────────┐  │
+│  MCP SERVER  │  Your Code   │──┘
+└─────────────────────────────┘
+```
+
+**Host App:** The application users interact with (Claude Desktop, Cursor, VS Code).
+
+**MCP Client:** Built into the host. Handles protocol communication.
+
+**MCP Server:** Your code. Exposes tools, resources, or prompts that the LLM can use.
+
+### What Makes MCP Different from APIs
+
+| Traditional API | MCP Server |
+|----------------|------------|
+| You write integration code | LLM decides when to call tools |
+| Fixed request/response | Dynamic tool discovery |
+| One app at a time | Works with any MCP client |
+| Auth per integration | Auth handled once at server |
+
+The key insight: MCP servers are **discovered, not hardcoded**. The LLM reads your tool descriptions and decides when to use them.
+
+### The Tool Anatomy
+
+```python
+@mcp.tool()
+def read_file(path: str) -> str:
+    """Read the contents of a file at the given path."""
+    with open(path, 'r') as f:
+        return f.read()
+```
+
+Three parts matter:
+
+1. **Function name** (`read_file`) — The LLM sees this when listing available tools
+2. **Docstring** — Critical. The LLM uses this to decide when to call your tool
+3. **Type hints** — Generate the JSON schema that validates inputs
+
+Bad docstrings = confused LLM = tools that never get called.
+
+---
+
+## Learn from Production Servers
+
+The fastest path to MCP mastery is studying battle-tested implementations. These servers from the [MyMCPShelf directory](https://mymcpshelf.com) demonstrate patterns you can adapt.
+
+### Pattern 1: Filesystem Access
+
+**Featured:** [File System MCP Server](https://github.com/calebmwelsh/file-system-mcp-server) by @calebmwelsh
+
+This FastMCP server shows proper file operation structure with safety checks and metadata:
+
+```python
+@mcp.tool()
+def get_file_info(path: str) -> dict:
+    """Get detailed information about a file."""
+    import os
+    stat = os.stat(path)
+    return {
+        "name": os.path.basename(path),
+        "size": stat.st_size,
+        "modified": stat.st_mtime,
+        "is_file": os.path.isfile(path)
+    }
+```
+
+**Key patterns:**
+- Return metadata, not just content
+- Use descriptive docstrings
+- Single responsibility per tool
+
+**Explore more:** [File System MCP Servers →](/?category=file-systems)
+
+---
+
+### Pattern 2: Database Integration
+
+**Featured:** [Postgres MCP Pro](https://github.com/crystaldba/postgres-mcp) by Crystal DBA (1.9k ⭐)
+
+Production databases need access controls. This server demonstrates the restricted/unrestricted pattern:
+
+```python
+class AccessMode(Enum):
+    UNRESTRICTED = "unrestricted"  # Full read/write
+    RESTRICTED = "restricted"       # Read-only, resource limits
+
+@mcp.tool()
+async def execute_sql(query: str) -> dict:
+    """Execute SQL query with access mode enforcement."""
+    if config.access_mode == AccessMode.RESTRICTED:
+        if not is_read_only_query(query):
+            raise ValueError("Write operations not permitted")
+    
+    result = await conn.execute(query)
+    return {"rows": result.fetchall(), "count": result.rowcount}
+```
+
+**Key patterns:**
+- Access mode configuration for dev vs prod
+- Query validation before execution
+- Async operations for database I/O
+
+**Explore more:** [Database MCP Servers →](/?category=databases)
+
+---
+
+### Pattern 3: API Wrapper
+
+**Featured:** [Google Workspace MCP](https://github.com/MarkusPfundstein/mcp-gsuite) by @MarkusPfundstein (290 ⭐)
+
+API wrappers simplify complex authentication and pagination:
+
+```python
+@mcp.tool()
+async def search_gmail(query: str, max_results: int = 10) -> list[dict]:
+    """Search Gmail messages matching query."""
+    service = build('gmail', 'v1', credentials=get_credentials())
+    
+    results = service.users().messages().list(
+        userId='me', q=query, maxResults=max_results
+    ).execute()
+    
+    return [
+        {"id": m['id'], "subject": get_header(m, 'Subject')}
+        for m in results.get('messages', [])
+    ]
+```
+
+**Key patterns:**
+- Abstract away authentication
+- Sensible defaults for optional params
+- Simplified response format (not raw API)
+
+**Explore more:** [Web Services MCP Servers →](/?category=web-services)
+
+---
+
+### Pattern 4: Web Automation
+
+**Featured:** [Playwright MCP](https://github.com/microsoft/playwright-mcp) by Microsoft (16.7k ⭐)
+
+Browser automation requires state management across tool calls:
+
+```python
+class BrowserManager:
+    def __init__(self):
+        self.browser = None
+        self.page = None
+    
+    async def ensure_browser(self):
+        if not self.browser:
+            self.browser = await chromium.launch(headless=True)
+            self.page = await self.browser.new_page()
+        return self.page
+
+    @mcp.tool()
+    async def navigate(self, url: str) -> str:
+        """Navigate to a URL."""
+        page = await self.ensure_browser()
+        await page.goto(url, wait_until='networkidle')
+        return f"Navigated to {url}"
+```
+
+**Key patterns:**
+- Lazy initialization of expensive resources
+- State persistence across calls
+- Wait strategies for async operations
+
+**Explore more:** [Browser Automation MCP Servers →](/?category=browser-automation)
+
+---
+
+## Decision Framework: What Should You Build?
+
+Not sure which pattern fits? Use this:
+
+| If you need to... | Pattern | Example Servers |
+|-------------------|---------|-----------------|
+| Read/write local files | Filesystem | File System MCP, Desktop Commander |
+| Query databases | Database | Postgres MCP Pro, SQLite MCP |
+| Connect to external APIs | API Wrapper | Google Workspace, GitHub MCP |
+| Control browsers | Web Automation | Playwright MCP, Puppeteer MCP |
+
+### FastMCP vs TypeScript SDK
+
+| Choose FastMCP (Python) if... | Choose TypeScript SDK if... |
+|------------------------------|----------------------------|
+| Rapid prototyping | Type safety is critical |
+| Data science/ML integration | Frontend/Node ecosystem |
+| You know Python better | You know TypeScript better |
+
+Both produce identical MCP servers. The protocol doesn't care what language you use.
+
+### stdio vs HTTP Transport
+
+| stdio | HTTP/SSE |
+|-------|----------|
+| Local processes | Remote servers |
+| Claude Desktop, Cursor | Web apps, multi-user |
+| Simpler setup | Scales horizontally |
+
+Start with stdio. Switch to HTTP when you need remote access or multiple clients.
+
+---
+
+## Production Patterns
+
+Before deploying your server beyond local testing, apply these patterns from production codebases. These aren't theoretical best practices—they're extracted from the most-starred MCP servers in the ecosystem.
+
+### 1. Input Validation and Path Safety
+
+Never trust LLM-generated inputs. The LLM might hallucinate paths, misunderstand user intent, or be manipulated by prompt injection:
+
+```python
+from pathlib import Path
+
+ALLOWED_DIRS = [Path.home() / "Documents", Path.home() / "Downloads"]
+
+@mcp.tool()
+def read_file(path: str) -> str:
+    """Read file contents (Documents and Downloads only)."""
+    file_path = Path(path).resolve()
+    
+    # Prevent path traversal attacks
+    if not any(file_path.is_relative_to(d) for d in ALLOWED_DIRS):
+        raise ValueError(f"Access denied: {path} is outside allowed directories")
+    
+    if not file_path.exists():
+        raise FileNotFoundError(f"File not found: {path}")
+    
+    if not file_path.is_file():
+        raise ValueError(f"Not a file: {path}")
+    
+    return file_path.read_text()
+```
+
+**Why this matters:** Without path validation, a confused or manipulated LLM could read `/etc/passwd`, your SSH keys, or other sensitive files. Always allowlist, never blocklist.
+
+### 2. Error Messages That Help the LLM
+
+The LLM reads your error messages and uses them to recover. Vague errors lead to confused retries:
+
+```python
+# Bad - LLM doesn't know what went wrong
+raise ValueError("Invalid input")
+
+# Good - LLM can suggest alternatives
+raise ValueError(
+    f"File '{path}' not found. "
+    f"Available files in {parent}: {', '.join(list_directory(parent))}"
+)
+
+# Bad - No context for recovery
+raise ConnectionError("Database error")
+
+# Good - Actionable information
+raise ConnectionError(
+    f"Cannot connect to database at {db_host}. "
+    f"Check if the database is running and credentials are correct."
+)
+```
+
+**Pattern:** Include what failed, why it failed, and what the user (or LLM) can do about it.
+
+### 3. Idempotent Operations
+
+Tools may be called multiple times—the LLM might retry on perceived failures, or the user might ask for the same thing twice. Design for repeated calls:
+
+```python
+@mcp.tool()
+def create_folder(path: str) -> str:
+    """Create a folder (safe to call multiple times)."""
+    folder = Path(path)
+    folder.mkdir(parents=True, exist_ok=True)  # No error if exists
+    return f"Folder ready: {path}"
+
+@mcp.tool()
+def save_note(title: str, content: str) -> str:
+    """Save a note, updating if it already exists."""
+    note_path = NOTES_DIR / f"{slugify(title)}.md"
+    note_path.write_text(content)  # Overwrites if exists
+    return f"Note saved: {note_path}"
+```
+
+**Pattern:** Operations should produce the same result whether called once or ten times.
+
+### 4. Rate Limiting for External APIs
+
+External APIs have rate limits. LLMs can be chatty. Protect your quotas:
+
+```python
+import time
+from functools import lru_cache
+
+@lru_cache(maxsize=100)
+def cached_search(query: str, cache_key: int) -> dict:
+    """Cache search results for 60 seconds."""
+    return external_api.search(query)
+
+@mcp.tool()
+def search(query: str) -> dict:
+    """Search with automatic rate limiting and caching."""
+    # Round timestamp to 60-second intervals for cache key
+    cache_key = int(time.time() / 60)
+    return cached_search(query, cache_key)
+```
+
+For more sophisticated rate limiting:
+
+```python
+from datetime import datetime, timedelta
+
+class RateLimiter:
+    def __init__(self, calls_per_minute: int = 10):
+        self.calls_per_minute = calls_per_minute
+        self.calls = []
+    
+    def check(self):
+        now = datetime.now()
+        # Remove calls older than 1 minute
+        self.calls = [c for c in self.calls if now - c < timedelta(minutes=1)]
+        
+        if len(self.calls) >= self.calls_per_minute:
+            wait_time = 60 - (now - self.calls[0]).seconds
+            raise ValueError(f"Rate limit exceeded. Try again in {wait_time} seconds.")
+        
+        self.calls.append(now)
+
+rate_limiter = RateLimiter(calls_per_minute=10)
+
+@mcp.tool()
+def api_call(query: str) -> dict:
+    """Make an API call with rate limiting."""
+    rate_limiter.check()
+    return external_api.call(query)
+```
+
+### 5. Structured Logging
+
+When something goes wrong in production, you need visibility:
+
+```python
+import logging
+from datetime import datetime
+
+logging.basicConfig(
+    filename='mcp_server.log',
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+
+@mcp.tool()
+def process_document(path: str) -> dict:
+    """Process a document with logging."""
+    logging.info(f"Processing document: {path}")
+    
+    try:
+        result = do_processing(path)
+        logging.info(f"Successfully processed: {path}")
+        return result
+    except Exception as e:
+        logging.error(f"Failed to process {path}: {e}")
+        raise
+```
+
+### 6. Graceful Degradation
+
+When dependencies fail, provide useful partial results:
+
+```python
+@mcp.tool()
+def get_file_info(path: str) -> dict:
+    """Get file information with graceful degradation."""
+    file_path = Path(path)
+    
+    info = {
+        "name": file_path.name,
+        "exists": file_path.exists()
+    }
+    
+    if file_path.exists():
+        try:
+            stat = file_path.stat()
+            info["size"] = stat.st_size
+            info["modified"] = datetime.fromtimestamp(stat.st_mtime).isoformat()
+        except PermissionError:
+            info["size"] = "Permission denied"
+            info["modified"] = "Permission denied"
+        
+        try:
+            info["preview"] = file_path.read_text()[:500]
+        except UnicodeDecodeError:
+            info["preview"] = "(Binary file - cannot preview)"
+    
+    return info
+```
+
+---
+
+## Troubleshooting
+
+Even simple MCP servers can fail to connect. Here's how to diagnose and fix the most common issues.
+
+### Server won't connect to Claude Desktop
+
+**Symptom:** Server doesn't appear in Claude's tools list after restart.
+
+**Check 1: Verify your config file syntax**
+
+JSON is unforgiving. A single trailing comma breaks everything:
+
+```json
+// WRONG - trailing comma after args array
+{
+  "mcpServers": {
+    "my-server": {
+      "command": "python",
+      "args": ["/path/to/server.py"],  // ← This comma breaks it
+    }
+  }
+}
+
+// CORRECT
+{
+  "mcpServers": {
+    "my-server": {
+      "command": "python",
+      "args": ["/path/to/server.py"]
+    }
+  }
+}
+```
+
+Use a JSON validator or your IDE's JSON mode to catch syntax errors.
+
+**Check 2: Use absolute paths**
+
+Relative paths are resolved from Claude Desktop's working directory, not your project folder:
+
+```json
+// WRONG - relative path
+"args": ["./my_server.py"]
+
+// CORRECT - absolute path
+"args": ["/Users/yourname/projects/my-mcp-server/my_server.py"]
+```
+
+**Check 3: Verify Python can run your script**
+
+Test manually before blaming MCP:
+
+```bash
+python /full/path/to/my_server.py
+```
+
+If this fails, fix the Python error first.
+
+**Check 4: Check Claude Desktop logs**
+
+Logs reveal startup errors:
+
+```bash
+# macOS
+tail -f ~/Library/Logs/Claude/mcp*.log
+
+# Windows
+type %APPDATA%\Claude\logs\mcp*.log
+```
+
+Look for errors like "module not found" (missing dependencies) or "permission denied" (path issues).
+
+### Tools not appearing in Claude
+
+**Symptom:** Server connects but tools don't show up.
+
+**Check 1: Docstrings are required**
+
+Tools without docstrings are invisible:
+
+```python
+# WRONG - no docstring, tool won't appear
+@mcp.tool()
+def my_tool(x: str) -> str:
+    return x
+
+# CORRECT - docstring required
+@mcp.tool()
+def my_tool(x: str) -> str:
+    """Process the input string."""
+    return x
+```
+
+**Check 2: Type hints are required**
+
+FastMCP uses type hints to generate JSON schemas. Missing hints = broken schema = invisible tool:
+
+```python
+# WRONG - missing type hints
+@mcp.tool()
+def search(query):
+    """Search for something."""
+    return results
+
+# CORRECT - all parameters and return typed
+@mcp.tool()
+def search(query: str) -> list[dict]:
+    """Search for something."""
+    return results
+```
+
+**Check 3: Restart Claude Desktop completely**
+
+Closing the window isn't enough. Quit the app (Cmd+Q on Mac, right-click taskbar icon → Close on Windows) and reopen.
+
+### LLM not using your tools
+
+**Symptom:** Tools appear but Claude never calls them.
+
+**Issue 1: Vague docstrings**
+
+The LLM uses docstrings to decide when to use tools. Be specific:
+
+```python
+# WRONG - too vague
+@mcp.tool()
+def process(data: str) -> str:
+    """Process the data."""
+    pass
+
+# CORRECT - specific about when to use
+@mcp.tool()
+def convert_csv_to_json(csv_content: str) -> str:
+    """Convert CSV-formatted text to JSON. Use this when the user has CSV data they want in JSON format."""
+    pass
+```
+
+**Issue 2: Too many tools**
+
+If you have 20+ tools, the LLM may struggle to pick the right one. Consider:
+
+- Splitting into multiple specialized servers
+- Combining related tools (e.g., `file_read` and `file_write` → `file_operation`)
+- More specific docstrings to differentiate similar tools
+
+**Issue 3: Confusing tool names**
+
+Names matter for LLM tool selection:
+
+```python
+# WRONG - cryptic abbreviations
+@mcp.tool()
+def sf(q: str) -> list: ...
+
+@mcp.tool()
+def gd(p: str) -> dict: ...
+
+# CORRECT - clear, descriptive names
+@mcp.tool()
+def search_files(query: str) -> list: ...
+
+@mcp.tool()
+def get_document(path: str) -> dict: ...
+```
+
+### Tools fail with errors
+
+**Symptom:** Tool is called but returns an error.
+
+**Debug step 1: Add logging**
+
+```python
+import logging
+logging.basicConfig(level=logging.DEBUG, filename='debug.log')
+
+@mcp.tool()
+def my_tool(input: str) -> str:
+    """Do something."""
+    logging.debug(f"my_tool called with: {input}")
+    try:
+        result = do_something(input)
+        logging.debug(f"my_tool result: {result}")
+        return result
+    except Exception as e:
+        logging.error(f"my_tool error: {e}")
+        raise
+```
+
+**Debug step 2: Test tools directly**
+
+Create a test script to call your tools without MCP:
+
+```python
+# test_tools.py
+from my_server import read_file, list_files
+
+# Test directly
+print(list_files("/Users/yourname/Downloads"))
+print(read_file("/Users/yourname/Downloads/test.txt"))
+```
+
+**Debug step 3: Check for async issues**
+
+If you're mixing async and sync code incorrectly:
+
+```python
+# WRONG - calling async function without await
+@mcp.tool()
+def get_data() -> dict:
+    return fetch_data_async()  # Returns coroutine, not data
+
+# CORRECT - properly async
+@mcp.tool()
+async def get_data() -> dict:
+    return await fetch_data_async()
+```
+
+---
+
+## FAQ
+
+### What is MCP?
+
+Model Context Protocol (MCP) is an open standard created by Anthropic for connecting AI assistants to external tools and data sources. Instead of building custom integrations for each AI application, you build one MCP server that works with any MCP-compatible client.
+
+Think of it like USB for AI: before USB, every device needed a different cable. MCP provides a universal connection protocol so your tools work with Claude Desktop, Cursor, Windsurf, and any future MCP client.
+
+### How is MCP different from function calling?
+
+Function calling is the *capability*—the ability for an LLM to invoke external functions. MCP is the *protocol* that standardizes how that capability works across different applications.
+
+With traditional function calling:
+- You define functions in each application separately
+- Each app has different syntax and requirements
+- Tools aren't portable between applications
+
+With MCP:
+- You define tools once in an MCP server
+- Any MCP client can discover and use your tools
+- Same server works across all compatible applications
+
+### Is MCP secure?
+
+MCP itself is just a protocol—security depends on your implementation.
+
+**By default, MCP servers run locally** via stdio transport. Your tools execute on your machine, and data never leaves your computer. The LLM sees tool inputs and outputs, but the underlying data stays local.
+
+**For remote servers** (HTTP transport), you control authentication, encryption, and access policies. The protocol doesn't mandate security—your implementation does.
+
+**Key security practices:**
+- Validate all inputs (LLMs can hallucinate or be manipulated)
+- Use allowlists for file/directory access
+- Apply rate limiting for external API calls
+- Log tool invocations for audit trails
+- Use restricted access modes for production databases
+
+### Can I use MCP with ChatGPT, Gemini, or other LLMs?
+
+MCP is currently supported by:
+- Claude Desktop (Anthropic)
+- Cursor (AI code editor)
+- Windsurf (Codeium)
+- Continue (VS Code extension)
+- Various open-source projects
+
+OpenAI and Google haven't adopted MCP yet, but the protocol is open—any client can implement it. The same server you build today will work with future clients that add MCP support.
+
+### What's the difference between tools, resources, and prompts?
+
+MCP defines three primitive types:
+
+**Tools** are functions the LLM can call. This is what most servers implement:
+```python
+@mcp.tool()
+def search(query: str) -> list[dict]:
+    """Search for documents matching the query."""
+    return search_index(query)
+```
+
+**Resources** are data the LLM can read, like files or database records:
+```python
+@mcp.resource("file://{path}")
+def read_file(path: str) -> str:
+    return Path(path).read_text()
+```
+
+**Prompts** are reusable prompt templates:
+```python
+@mcp.prompt()
+def code_review_prompt(code: str) -> str:
+    return f"Review this code for bugs and improvements:\n\n{code}"
+```
+
+For most use cases, **tools are sufficient**. Resources and prompts are useful for specific patterns but aren't required.
+
+### FastMCP vs TypeScript SDK vs raw Python SDK—which should I use?
+
+**Use FastMCP (Python) if:**
+- You want the fastest path to a working server
+- You're prototyping or building simple tools
+- You're more comfortable with Python
+- You don't need fine-grained protocol control
+
+**Use TypeScript SDK if:**
+- You're building for the Node.js ecosystem
+- Type safety is critical for your use case
+- You're integrating with existing TypeScript projects
+- You prefer TypeScript's developer experience
+
+**Use raw Python MCP SDK if:**
+- You need maximum control over the protocol
+- You're building complex resource/prompt patterns
+- You need features FastMCP doesn't expose
+- You're contributing to the MCP ecosystem
+
+All three produce identical MCP servers at the protocol level. The LLM and client don't know or care which you used.
+
+### How do I handle authentication?
+
+MCP doesn't prescribe authentication—it's up to your implementation.
+
+**For local servers (stdio):** Authentication is often unnecessary since the server runs as the user's process with their permissions.
+
+**For remote servers (HTTP):** Common patterns include:
+- Bearer tokens in headers
+- OAuth2 flows
+- API keys
+- Client certificates
+
+Example with bearer token validation:
+
+```python
+from fastmcp import FastMCP
+
+mcp = FastMCP("authenticated-server")
+
+def verify_token(token: str) -> bool:
+    return token == os.environ.get("API_TOKEN")
+
+@mcp.tool()
+def protected_action(auth_token: str, data: str) -> dict:
+    """Perform an action that requires authentication."""
+    if not verify_token(auth_token):
+        raise ValueError("Invalid authentication token")
+    return do_protected_thing(data)
+```
+
+### Can one server connect to multiple clients?
+
+**With stdio transport:** No. Each client spawns its own server process. This is actually a feature—it provides isolation between clients.
+
+**With HTTP transport:** Yes. Multiple clients can connect to a single server. This is useful for:
+- Shared team servers
+- Centralized tool deployments
+- Resource-constrained environments
+
+### How do I debug MCP servers?
+
+1. **Add logging** to your server (see Production Patterns section)
+2. **Check Claude Desktop logs** at `~/Library/Logs/Claude/mcp*.log`
+3. **Test tools directly** by importing and calling functions
+4. **Use the MCP Inspector** tool for protocol-level debugging
+
+---
+
+## Next Steps
+
+You've built your first MCP server. Here's where to go next:
+
+1. **Explore production servers** — Browse 600+ verified servers at [MyMCPShelf](https://mymcpshelf.com) to see real implementations
+
+2. **Pick a pattern** — Choose filesystem, database, API, or automation based on what you're building
+
+3. **Study the code** — Every server in the directory links to GitHub. Read the source.
+
+4. **Ship something** — The best way to learn MCP is to build something you'll actually use
+
+---
+
+*Looking for a specific type of server? Browse by category: [Databases](/?category=databases) · [File Systems](/?category=file-systems) · [Web Services](/?category=web-services) · [Browser Automation](/?category=browser-automation) · [All Categories](/)*

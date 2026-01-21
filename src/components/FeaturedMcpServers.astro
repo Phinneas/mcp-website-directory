@@ -1,5 +1,7 @@
 ---
 // FeaturedMcpServers.astro - Featured MCP servers section
+import { slugify } from '../utils/slugify.js';
+
 interface MCPServer {
   id: string;
   fields: {
@@ -34,6 +36,12 @@ function formatStars(stars?: number): string {
     return `★ ${(stars / 1000).toFixed(1)}k`;
   }
   return `★ ${stars}`;
+}
+
+// Helper to get server detail page URL
+function getServerUrl(server: MCPServer): string {
+  const slug = slugify(server.fields.name);
+  return `/server/${slug}`;
 }
 
 const { servers } = Astro.props;
@@ -78,23 +86,20 @@ featuredServers = featuredServers.concat(topServers);
     
     <div class="servers-grid">
       {featuredServers.map((server) => {
-        // Special case for MCP Operator and Jetski - link to blog post
+        // Special case for MCP Operator and Jetski - link to blog post first, then server page
         const isMcpOperator = server.id === 'mcp-operator';
         const isJetski = server.id === 'jetski';
+        // Default to server detail page, but keep blog links for special servers
         const href = isMcpOperator 
           ? '/blog/mcp-operator-kubernetes-native-deployment' 
           : isJetski 
           ? '/blog/jetski-spotlight'
-          : server.fields.github_url;
-        const target = (isMcpOperator || isJetski) ? '_self' : '_blank';
-        const rel = (isMcpOperator || isJetski) ? '' : 'noopener noreferrer';
+          : getServerUrl(server);
         
         return (
           <a 
             href={href || '#'} 
             class="server-card"
-            target={target}
-            rel={rel}
             data-category={server.fields.category || 'other'}
           >
             <div class="server-header">

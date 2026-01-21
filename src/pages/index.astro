@@ -1,5 +1,6 @@
 ---
 import { fetchAllMCPServers, transformPulseMCPData } from '../utils/pulsemcpApi.js';
+import { slugify } from '../utils/slugify.js';
 import EmailSignup from '../components/EmailSignup.astro';
 import HeaderNewsletter from '../components/HeaderNewsletter.astro';
 import HeroSection from '../components/HeroSection.astro';
@@ -7505,6 +7506,16 @@ function formatStars(stars?: number): string {
             box-shadow: 0 16px 64px rgba(0, 0, 0, 0.15);
         }
 
+        .server-card-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .server-card-link:hover {
+            text-decoration: none;
+        }
+
         .server-header {
             display: flex;
             align-items: flex-start;
@@ -7747,32 +7758,34 @@ function formatStars(stars?: number): string {
     </div>
 
     <div class="servers-grid" id="serversGrid">
-        {mcpServers.map((server) => (
+        {mcpServers.map((server) => {
+            const serverSlug = slugify(server.fields.name);
+            return (
             <div class="server-card" data-category={server.fields.category || 'other'}>
-                <div class="server-header">
-                    <div class="server-icon">{getServerIcon(server.fields.name)}</div>
-                    <div class="server-title">
-                        <h3>{server.fields.name}</h3>
-                        <div class="server-author">{server.fields.author || ''}</div>
+                <a href={`/server/${serverSlug}`} class="server-card-link">
+                    <div class="server-header">
+                        <div class="server-icon">{getServerIcon(server.fields.name)}</div>
+                        <div class="server-title">
+                            <h3>{server.fields.name}</h3>
+                            <div class="server-author">{server.fields.author || ''}</div>
+                        </div>
                     </div>
-                </div>
-                <div class="server-description">
-                    {server.fields.description}
-                </div>
-                <div class="server-meta">
-                    {server.fields.language && <span class="meta-tag">{server.fields.language}</span>}
-                    {server.fields.author && <span class="meta-tag">{server.fields.author.includes('@') ? 'Official' : 'Community'}</span>}
-                    {server.fields.stars && <span class="meta-tag">{formatStars(server.fields.stars)}</span>}
-                </div>
+                    <div class="server-description">
+                        {server.fields.description}
+                    </div>
+                    <div class="server-meta">
+                        {server.fields.language && <span class="meta-tag">{server.fields.language}</span>}
+                        {server.fields.author && <span class="meta-tag">{server.fields.author.includes('@') ? 'Official' : 'Community'}</span>}
+                        {server.fields.stars && <span class="meta-tag">{formatStars(server.fields.stars)}</span>}
+                    </div>
+                </a>
                 <div class="repo-stats" data-github-url={server.fields.github_url}>
                     <span class="repo-stat repo-stat-loading">Loading...</span>
                 </div>
                 <div class="server-actions">
                     <a 
-                        href={server.fields.github_url || '#'} 
+                        href={`/server/${serverSlug}`}
                         class="btn btn-primary"
-                        target={server.fields.github_url ? '_blank' : '_self'}
-                        rel={server.fields.github_url ? 'noopener noreferrer' : ''}
                     >
                         🔗 View Details
                     </a>
@@ -7781,7 +7794,8 @@ function formatStars(stars?: number): string {
                     </button>
                 </div>
             </div>
-        ))}
+            );
+        })}
     </div>
 
     <!-- FAQ Section -->

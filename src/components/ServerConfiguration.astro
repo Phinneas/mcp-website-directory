@@ -1,0 +1,271 @@
+---
+/**
+ * ServerConfiguration Component - Claude Desktop configuration examples
+ */
+import CodeBlock from './CodeBlock.astro';
+import { generateClaudeConfig } from '../utils/serverData.js';
+
+interface Props {
+  server: {
+    id: string;
+    fields: {
+      name?: string;
+      npm_package?: string;
+      environment_variables?: Array<{
+        name: string;
+        description: string;
+        required: boolean;
+        default?: string;
+      }>;
+    };
+  };
+}
+
+const { server } = Astro.props;
+const config = generateClaudeConfig(server);
+const configJson = JSON.stringify(config, null, 2);
+
+// OS-specific config file paths
+const configPaths = {
+  macos: '~/Library/Application Support/Claude/claude_desktop_config.json',
+  windows: '%APPDATA%\\Claude\\claude_desktop_config.json',
+  linux: '~/.config/Claude/claude_desktop_config.json'
+};
+---
+
+<section class="configuration-section">
+  <h2 class="section-title">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3"></circle>
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+    </svg>
+    Claude Desktop Configuration
+  </h2>
+
+  <p class="config-intro">
+    Add this configuration to your Claude Desktop config file to enable this MCP server:
+  </p>
+
+  <div class="os-tabs">
+    <div class="os-tab-buttons" role="tablist">
+      <button class="os-tab-button active" role="tab" aria-selected="true" data-os="macos">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+        </svg>
+        macOS
+      </button>
+      <button class="os-tab-button" role="tab" aria-selected="false" data-os="windows">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/>
+        </svg>
+        Windows
+      </button>
+      <button class="os-tab-button" role="tab" aria-selected="false" data-os="linux">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12.504 0c-.155 0-.315.008-.48.021-4.226.333-3.105 4.807-3.17 6.298-.076 1.092-.3 1.953-1.05 3.02-.885 1.051-2.127 2.75-2.716 4.521-.278.832-.41 1.684-.287 2.489a.424.424 0 00-.11.135c-.26.268-.45.6-.663.839-.199.199-.485.267-.797.4-.313.136-.658.269-.864.68-.09.189-.136.394-.132.602 0 .199.027.4.055.536.058.399.116.728.04.97-.249.68-.28 1.145-.106 1.484.174.334.535.47.94.601.81.2 1.91.135 2.774.6.926.466 1.866.67 2.616.47.526-.116.97-.464 1.208-.946.587-.003 1.23-.269 2.26-.334.699-.058 1.574.267 2.577.2.025.134.063.198.114.333l.003.003c.391.778 1.113 1.132 1.884 1.071.771-.06 1.592-.536 2.257-1.306.631-.765 1.683-1.084 2.378-1.503.348-.199.629-.469.649-.853.023-.4-.2-.811-.714-1.376v-.097l-.003-.003c-.17-.2-.25-.535-.338-.926-.085-.401-.182-.786-.492-1.046h-.003c-.059-.054-.123-.067-.188-.135a.357.357 0 00-.19-.064c.431-1.278.264-2.55-.173-3.694-.533-1.41-1.465-2.638-2.175-3.483-.796-1.005-1.576-1.957-1.56-3.368.026-2.152.236-6.133-3.544-6.139zm.529 3.405h.013c.213 0 .396.062.584.198.19.135.33.332.438.533.105.259.158.459.166.724 0-.02.006-.04.006-.06v.105a.086.086 0 01-.004-.021l-.004-.024a1.807 1.807 0 01-.15.706.953.953 0 01-.213.335.71.71 0 00-.088-.042c-.104-.045-.198-.064-.284-.133a1.312 1.312 0 00-.22-.066c.05-.06.146-.133.183-.198.053-.128.082-.264.088-.402v-.02a1.21 1.21 0 00-.061-.4c-.045-.134-.101-.2-.183-.333-.084-.066-.167-.132-.267-.132h-.016c-.093 0-.176.03-.262.132a.8.8 0 00-.205.334 1.18 1.18 0 00-.09.468v.018c.016.264.086.398.173.53.047.066.1.066.15.132v.003c-.02.016-.04.03-.057.043a1.238 1.238 0 01-.186.083.85.85 0 01-.227-.332 1.798 1.798 0 01-.136-.728v-.024c0-.066.004-.135.01-.202a1.52 1.52 0 01.165-.67c.1-.2.234-.397.432-.534a1.17 1.17 0 01.59-.2zM7.906 7.932c.002 0 .003 0 0 0zm.023.002a.727.727 0 01.213.002.426.426 0 01.148.066l.009.006c.048.034.093.073.137.115a.96.96 0 01.18.259c.088.165.163.333.22.531.09.299.124.6.143.899 0 .106.003.212.013.319a.727.727 0 01-.002.124.717.717 0 01-.155.404.706.706 0 01-.318.234.57.57 0 01-.105.032.558.558 0 01-.105.009.428.428 0 01-.222-.062l-.007-.005a.47.47 0 01-.118-.103.96.96 0 01-.103-.168 2.65 2.65 0 01-.19-.612 3.27 3.27 0 01-.052-.733c.004-.193.021-.384.05-.572.028-.189.07-.376.128-.559.067-.198.15-.39.25-.572a.903.903 0 01.135-.194.563.563 0 01.197-.148c.033-.014.09-.028.135-.032zm7.258.196h.02c.12.006.24.064.348.137a.89.89 0 01.18.193c.102.132.19.332.253.535a3.394 3.394 0 01.155.597c.03.191.046.385.046.582 0 .197-.013.396-.046.597a2.604 2.604 0 01-.155.597c-.055.198-.135.397-.25.535a.9.9 0 01-.18.193.567.567 0 01-.236.102.428.428 0 01-.105.009.557.557 0 01-.222-.062l-.007-.005a.47.47 0 01-.118-.103.96.96 0 01-.103-.168 2.65 2.65 0 01-.19-.612 3.27 3.27 0 01-.052-.733c.004-.193.021-.384.05-.572.028-.189.07-.376.128-.559.067-.198.15-.39.25-.572a.903.903 0 01.135-.194.563.563 0 01.197-.148.43.43 0 01.135-.032zM7.9 8.532a.42.42 0 01-.022.199.614.614 0 01-.047.1l-.01.017c-.024.035-.045.037-.069.036-.134-.004-.27-.036-.421-.075-.073-.02-.149-.04-.227-.064l.012.005a.266.266 0 01.025.012l.003.002c.081.052.157.107.237.168a.82.82 0 01.122.14c.08.11.12.244.12.376a.427.427 0 01-.014.105c-.015.08-.053.15-.103.212a.706.706 0 01-.366.243.558.558 0 01-.105.032.558.558 0 01-.105.009.426.426 0 01-.148-.022l-.008-.003a.727.727 0 01-.126-.06.96.96 0 01-.11-.077l-.008-.006a2.65 2.65 0 01-.328-.355 3.27 3.27 0 01-.254-.427l-.014-.03a.54.54 0 01-.046-.1c-.015-.04-.028-.083-.038-.124a.827.827 0 01-.022-.123 2.6 2.6 0 01.023-.348c.014-.117.036-.232.065-.344.035-.134.081-.266.138-.392a1.47 1.47 0 01.083-.164.87.87 0 01.119-.162.567.567 0 01.236-.148.428.428 0 01.105-.032h.063c.048 0 .096.01.142.032a.57.57 0 01.118.066.82.82 0 01.105.093c.047.047.088.099.122.155a.96.96 0 01.09.18c.022.064.04.13.054.197.012.056.02.112.025.169a.727.727 0 01.003.091zm6.44.002c0 .03-.002.06-.005.089a1.37 1.37 0 01-.015.108.96.96 0 01-.033.133l-.014.046a2.65 2.65 0 01-.2.467c-.06.118-.127.233-.201.344l-.014.02a3.27 3.27 0 01-.245.301l-.024.025a.727.727 0 01-.091.074c-.034.025-.068.048-.104.068a.426.426 0 01-.148.053l-.016.002a.558.558 0 01-.212-.04.706.706 0 01-.238-.165.427.427 0 01-.058-.067.64.64 0 01-.07-.174.427.427 0 01-.014-.105c0-.132.04-.266.12-.376a.82.82 0 01.122-.14c.08-.06.156-.116.237-.168l.003-.002a.266.266 0 01.025-.012l.012-.005a2.05 2.05 0 00-.227.064c-.151.04-.287.071-.421.075-.024.001-.045-.001-.069-.036l-.01-.016a.614.614 0 01-.047-.1.42.42 0 01-.022-.2c0-.03.002-.06.005-.09.005-.057.013-.113.025-.169.014-.067.032-.133.054-.197a.96.96 0 01.09-.18.82.82 0 01.122-.155.57.57 0 01.105-.093.567.567 0 01.118-.066.428.428 0 01.142-.032h.063c.036.004.07.013.105.032a.567.567 0 01.236.148.87.87 0 01.119.162c.032.053.06.107.083.164.057.126.103.258.138.392.029.112.051.227.065.344.014.116.02.232.023.348z"/>
+        </svg>
+        Linux
+      </button>
+    </div>
+    
+    <div class="os-tab-panels">
+      <div class="os-tab-panel active" data-os-panel="macos">
+        <p class="config-path">
+          <strong>Config file location:</strong>
+          <code>{configPaths.macos}</code>
+        </p>
+      </div>
+      <div class="os-tab-panel" data-os-panel="windows">
+        <p class="config-path">
+          <strong>Config file location:</strong>
+          <code>{configPaths.windows}</code>
+        </p>
+      </div>
+      <div class="os-tab-panel" data-os-panel="linux">
+        <p class="config-path">
+          <strong>Config file location:</strong>
+          <code>{configPaths.linux}</code>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <CodeBlock code={configJson} language="json" filename="claude_desktop_config.json" />
+
+  {server.fields.environment_variables && server.fields.environment_variables.length > 0 && (
+    <div class="env-note">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="16" x2="12" y2="12"></line>
+        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+      </svg>
+      <span>Replace placeholder values (e.g., <code>&lt;YOUR_API_KEY&gt;</code>) with your actual credentials.</span>
+    </div>
+  )}
+</section>
+
+<style>
+  .configuration-section {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid #e5e7eb;
+  }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0 0 1rem 0;
+  }
+
+  .section-title svg {
+    color: #6b7280;
+  }
+
+  .config-intro {
+    color: #6b7280;
+    margin-bottom: 1.25rem;
+    line-height: 1.6;
+  }
+
+  .os-tabs {
+    margin-bottom: 1rem;
+  }
+
+  .os-tab-buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .os-tab-button {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.75rem;
+    background: transparent;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    color: #6b7280;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .os-tab-button:hover {
+    background: #f3f4f6;
+    color: #374151;
+  }
+
+  .os-tab-button.active {
+    background: #f3f4f6;
+    color: #1f2937;
+    border-color: #d1d5db;
+  }
+
+  .os-tab-panel {
+    display: none;
+  }
+
+  .os-tab-panel.active {
+    display: block;
+  }
+
+  .config-path {
+    color: #6b7280;
+    font-size: 0.9rem;
+    margin: 0;
+  }
+
+  .config-path code {
+    background: #f3f4f6;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+    font-size: 0.85rem;
+    color: #374151;
+    word-break: break-all;
+  }
+
+  .env-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: rgba(245, 158, 11, 0.1);
+    border-radius: 8px;
+    margin-top: 1rem;
+    color: #92400e;
+    font-size: 0.9rem;
+  }
+
+  .env-note svg {
+    flex-shrink: 0;
+    color: #f59e0b;
+    margin-top: 0.1rem;
+  }
+
+  .env-note code {
+    background: rgba(245, 158, 11, 0.2);
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+    font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+    font-size: 0.85em;
+  }
+
+  @media (max-width: 768px) {
+    .configuration-section {
+      padding: 1rem;
+    }
+
+    .os-tab-buttons {
+      flex-wrap: wrap;
+    }
+
+    .os-tab-button {
+      padding: 0.35rem 0.5rem;
+      font-size: 0.8rem;
+    }
+
+    .config-path {
+      font-size: 0.85rem;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const osTabButtons = document.querySelectorAll('.os-tab-button');
+    
+    osTabButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const os = button.getAttribute('data-os');
+        const tabContainer = button.closest('.os-tabs');
+        
+        if (!tabContainer || !os) return;
+        
+        // Update button states
+        tabContainer.querySelectorAll('.os-tab-button').forEach(btn => {
+          btn.classList.remove('active');
+          btn.setAttribute('aria-selected', 'false');
+        });
+        button.classList.add('active');
+        button.setAttribute('aria-selected', 'true');
+        
+        // Update panel states
+        tabContainer.querySelectorAll('.os-tab-panel').forEach(panel => {
+          panel.classList.remove('active');
+        });
+        const activePanel = tabContainer.querySelector(`[data-os-panel="${os}"]`);
+        if (activePanel) {
+          activePanel.classList.add('active');
+        }
+      });
+    });
+  });
+</script>

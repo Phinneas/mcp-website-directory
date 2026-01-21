@@ -1,0 +1,225 @@
+---
+/**
+ * ServerHeader Component - Header section for server detail pages
+ * Displays server name, status badge, author, stars, and last updated
+ */
+import { formatStars, formatDate, getStatusBadge } from '../utils/serverData.js';
+
+interface Props {
+  name: string;
+  author?: string;
+  stars?: number;
+  updated?: string;
+  status?: 'official' | 'community' | 'beta' | 'deprecated';
+  githubUrl?: string;
+}
+
+const { name, author, stars, updated, status = 'community', githubUrl } = Astro.props;
+
+// Get first letter for icon
+const iconLetter = name.charAt(0).toUpperCase();
+
+// Format author display
+const authorDisplay = author?.startsWith('@') ? author : author ? `@${author}` : '';
+const authorUrl = author ? `https://github.com/${author.replace('@', '')}` : null;
+
+// Get status badge styling
+const badge = getStatusBadge(status);
+const badgeColors = {
+  blue: { bg: 'rgba(59, 130, 246, 0.1)', border: 'rgba(59, 130, 246, 0.3)', text: '#3b82f6' },
+  green: { bg: 'rgba(34, 197, 94, 0.1)', border: 'rgba(34, 197, 94, 0.3)', text: '#22c55e' },
+  yellow: { bg: 'rgba(234, 179, 8, 0.1)', border: 'rgba(234, 179, 8, 0.3)', text: '#eab308' },
+  red: { bg: 'rgba(239, 68, 68, 0.1)', border: 'rgba(239, 68, 68, 0.3)', text: '#ef4444' }
+};
+const badgeStyle = badgeColors[badge.color];
+---
+
+<header class="server-header">
+  <div class="header-content">
+    <div class="icon-wrapper">
+      <div class="server-icon">{iconLetter}</div>
+    </div>
+    
+    <div class="header-info">
+      <div class="title-row">
+        <h1 class="server-name">{name}</h1>
+        <span 
+          class="status-badge"
+          style={`background: ${badgeStyle.bg}; border-color: ${badgeStyle.border}; color: ${badgeStyle.text};`}
+        >
+          {badge.label}
+        </span>
+      </div>
+      
+      <div class="meta-row">
+        {authorDisplay && (
+          <a href={authorUrl} class="author-link" target="_blank" rel="noopener noreferrer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+            </svg>
+            {authorDisplay}
+          </a>
+        )}
+        
+        {stars !== undefined && stars > 0 && (
+          <span class="stars">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+            {formatStars(stars)}
+          </span>
+        )}
+        
+        {updated && (
+          <span class="updated">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            Updated {formatDate(updated)}
+          </span>
+        )}
+      </div>
+    </div>
+  </div>
+</header>
+
+<style>
+  .server-header {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    padding: 2.5rem 2rem;
+    border-radius: 16px;
+    margin-bottom: 2rem;
+  }
+
+  .header-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    max-width: 900px;
+  }
+
+  .icon-wrapper {
+    flex-shrink: 0;
+  }
+
+  .server-icon {
+    width: 72px;
+    height: 72px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 2rem;
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+  }
+
+  .header-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .title-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.75rem;
+  }
+
+  .server-name {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: 1px solid;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+  }
+
+  .meta-row {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    color: #94a3b8;
+  }
+
+  .meta-row > * {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.95rem;
+  }
+
+  .author-link {
+    color: #94a3b8;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .author-link:hover {
+    color: #f59e0b;
+  }
+
+  .stars {
+    color: #f59e0b;
+    font-weight: 500;
+  }
+
+  .stars svg {
+    color: #f59e0b;
+  }
+
+  .updated svg {
+    opacity: 0.7;
+  }
+
+  @media (max-width: 768px) {
+    .server-header {
+      padding: 1.5rem 1rem;
+    }
+
+    .header-content {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .server-icon {
+      width: 56px;
+      height: 56px;
+      font-size: 1.5rem;
+      border-radius: 12px;
+    }
+
+    .server-name {
+      font-size: 1.5rem;
+    }
+
+    .title-row {
+      gap: 0.75rem;
+    }
+
+    .meta-row {
+      gap: 1rem;
+    }
+
+    .meta-row > * {
+      font-size: 0.85rem;
+    }
+  }
+</style>
