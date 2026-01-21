@@ -14,7 +14,8 @@ import { FolderIcon, ToolboxIcon, ComputerIcon, VintageIcon } from '../../compon
 import { getAllServers, getServerBySlug, getRelatedServers, getCategoryDisplayName } from '../../utils/serverData.js';
 import { slugify } from '../../utils/slugify.js';
 
-// Import static servers from index as fallback
+// Import static servers from shared data file
+import { staticServers as sharedStaticServers } from '../../data/staticServers.js';
 import { fetchAllMCPServers, transformPulseMCPData } from '../../utils/pulsemcpApi.js';
 
 // Define the MCPServer interface
@@ -53,87 +54,8 @@ interface MCPServer {
   };
 }
 
-// Static fallback servers (same as index.astro)
-const staticServers: MCPServer[] = [
-  {
-    id: 'github-mcp',
-    fields: {
-      name: 'GitHub MCP Server',
-      description: 'Access GitHub repositories, issues, and pull requests directly through MCP. Perfect for AI assistants that need to interact with code repositories.',
-      author: '@github',
-      category: 'development',
-      language: 'TypeScript',
-      stars: 1200,
-      github_url: 'https://github.com/github/github-mcp-server',
-      npm_package: '@modelcontextprotocol/server-github'
-    }
-  },
-  {
-    id: 'filesystem-mcp',
-    fields: {
-      name: 'File System MCP',
-      description: 'Cross-platform file system operations with comprehensive file management tools including copy, move, delete, read, write, search, and system information retrieval.',
-      author: '@calebmwelsh',
-      category: 'file-systems',
-      language: 'Python',
-      stars: 240,
-      github_url: 'https://github.com/calebmwelsh/file-system-mcp-server',
-      npm_package: 'file-system-mcp-server'
-    }
-  },
-  {
-    id: 'puppeteer-mcp',
-    fields: {
-      name: 'Puppeteer MCP Server',
-      description: 'Browser automation and web scraping using Puppeteer with screenshot capture, JavaScript execution, form filling, and smart Chrome management.',
-      author: '@merajmehrabi',
-      category: 'browser-automation',
-      language: 'TypeScript',
-      stars: 360,
-      github_url: 'https://github.com/merajmehrabi/puppeteer-mcp-server',
-      npm_package: 'puppeteer-mcp-server'
-    }
-  },
-  {
-    id: 'postgres-mcp',
-    fields: {
-      name: 'PostgreSQL MCP Server',
-      description: 'Advanced PostgreSQL MCP server with performance analysis, index tuning, query optimization, database health monitoring, and safe SQL execution modes.',
-      author: '@crystaldba',
-      category: 'databases',
-      language: 'Python',
-      stars: 520,
-      github_url: 'https://github.com/crystaldba/postgres-mcp',
-      npm_package: 'postgres-mcp'
-    }
-  },
-  {
-    id: 'sqlite-mcp',
-    fields: {
-      name: 'SQLite MCP Server',
-      description: 'Comprehensive SQLite database interaction with full CRUD operations, schema introspection, custom SQL query execution, and database exploration tools.',
-      author: '@jparkerweb',
-      category: 'databases',
-      language: 'JavaScript',
-      stars: 320,
-      github_url: 'https://github.com/jparkerweb/mcp-sqlite',
-      npm_package: 'mcp-sqlite'
-    }
-  },
-  {
-    id: 'brave-search-mcp',
-    fields: {
-      name: 'Brave Search MCP',
-      description: 'Official Anthropic server to retrieve web pages, news, and local business results via Brave Search API.',
-      author: '@modelcontextprotocol',
-      category: 'search',
-      language: 'TypeScript',
-      stars: 567,
-      github_url: 'https://github.com/modelcontextprotocol/servers',
-      npm_package: '@modelcontextprotocol/server-brave-search'
-    }
-  }
-];
+// Use the shared static servers data
+const staticServers = sharedStaticServers as MCPServer[];
 
 // Get slug from URL
 const { slug } = Astro.params;
