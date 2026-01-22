@@ -1,6 +1,7 @@
 ---
 // FeaturedMcpServers.astro - Featured MCP servers section
 import { slugify } from '../utils/slugify.js';
+import { enrichServersWithLogos } from '../utils/logoResolver.js';
 
 interface MCPServer {
   id: string;
@@ -83,6 +84,13 @@ for (const id of ALWAYS_FEATURED) {
   }
 }
 featuredServers = featuredServers.concat(topServers);
+
+// Enrich the featured servers with logos (only the ones we're displaying)
+try {
+  featuredServers = await enrichServersWithLogos(featuredServers, 10);
+} catch (error) {
+  console.error('Error enriching featured servers with logos:', error);
+}
 ---
 
 <section class="featured-mcp-section">

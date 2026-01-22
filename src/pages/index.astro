@@ -2,7 +2,6 @@
 import { fetchAllMCPServers, transformPulseMCPData } from '../utils/pulsemcpApi.js';
 import { slugify } from '../utils/slugify.js';
 import { staticServers as importedStaticServers } from '../data/staticServers.js';
-import { enrichServersWithLogos } from '../utils/logoResolver.js';
 import EmailSignup from '../components/EmailSignup.astro';
 import HeaderNewsletter from '../components/HeaderNewsletter.astro';
 import HeroSection from '../components/HeroSection.astro';
@@ -7135,15 +7134,6 @@ try {
 } catch (error) {
   console.error('Error with PulseMCP API, using static fallback:', error);
   mcpServers = staticServers;
-}
-
-// Enrich featured servers with GitHub organization logos (Phase 1)
-// Limit to 20 servers to avoid GitHub API rate limiting during build
-try {
-  mcpServers = await enrichServersWithLogos(mcpServers, 20);
-} catch (error) {
-  console.error('Error enriching servers with logos:', error);
-  // Continue without logos - fallback to gradient icons
 }
 
 // Helper function to get the first letter of server name for icon
