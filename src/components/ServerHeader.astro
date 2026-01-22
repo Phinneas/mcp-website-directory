@@ -12,9 +12,10 @@ interface Props {
   updated?: string;
   status?: 'official' | 'community' | 'beta' | 'deprecated';
   githubUrl?: string;
+  logoUrl?: string;
 }
 
-const { name, author, stars, updated, status = 'community', githubUrl } = Astro.props;
+const { name, author, stars, updated, status = 'community', githubUrl, logoUrl } = Astro.props;
 
 // Get first letter for icon
 const iconLetter = name.charAt(0).toUpperCase();
@@ -37,7 +38,17 @@ const badgeStyle = badgeColors[badge.color];
 <header class="server-header">
   <div class="header-content">
     <div class="icon-wrapper">
-      <div class="server-icon">{iconLetter}</div>
+      {logoUrl ? (
+        <img 
+          src={logoUrl} 
+          alt={`${name} logo`}
+          class="server-logo"
+          width="72"
+          height="72"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        />
+      ) : null}
+      <div class="server-icon" style={logoUrl ? 'display:none;' : ''}>{iconLetter}</div>
     </div>
     
     <div class="header-info">
@@ -101,6 +112,17 @@ const badgeStyle = badgeColors[badge.color];
 
   .icon-wrapper {
     flex-shrink: 0;
+    position: relative;
+  }
+
+  .server-logo {
+    width: 72px;
+    height: 72px;
+    border-radius: 16px;
+    object-fit: cover;
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: 2px solid rgba(255, 255, 255, 0.1);
   }
 
   .server-icon {

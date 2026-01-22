@@ -17,6 +17,7 @@ import { slugify } from '../../utils/slugify.js';
 // Import static servers from shared data file
 import { staticServers as sharedStaticServers } from '../../data/staticServers.js';
 import { fetchAllMCPServers, transformPulseMCPData } from '../../utils/pulsemcpApi.js';
+import { resolveServerLogo } from '../../utils/logoResolver.js';
 
 // Define the MCPServer interface
 interface MCPServer {
@@ -75,11 +76,31 @@ try {
 }
 
 // Find server by slug
-const server = getServerBySlug(slug!, allServers);
+let server = getServerBySlug(slug!, allServers);
 
 // Handle 404 if server not found
 if (!server) {
   return Astro.redirect('/404');
+}
+
+// Enrich current server with logo if not already present
+if (!server.fields?.logoUrl && server.fields?.github_url) {
+  try {
+    const logoData = await resolveServerLogo(server);
+    if (logoData.url) {
+      server = {
+        ...server,
+        fields: {
+          ...server.fields,
+          logoUrl: logoData.url,
+          logoSource: logoData.source,
+          logoCachedAt: logoData.cachedAt
+        }
+      };
+    }
+  } catch (error) {
+    console.error('Error resolving logo for server:', error);
+  }
 }
 
 // Get related servers
@@ -551,6 +572,7 @@ const structuredData = {
       updated={server.fields.updated}
       status={server.fields.status as 'official' | 'community' | 'beta' | 'deprecated' || 'community'}
       githubUrl={server.fields.github_url}
+      logoUrl={server.fields.logoUrl}
     />
 
     <!-- Main Content Layout -->
