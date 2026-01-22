@@ -96,7 +96,10 @@ export function transformPulseMCPData(apiServers) {
         github_url: server.github_url || server.repository || server.url || '#',
         npm_package: server.npm_package || server.package || generateNpmPackage(server.name),
         downloads: server.downloads || 0,
-        updated: server.updated_at || server.last_updated || new Date().toISOString()
+        updated: server.updated_at || server.last_updated || new Date().toISOString(),
+        logoUrl: server.logoUrl || null,
+        logoSource: server.logoSource || null,
+        logoCachedAt: server.logoCachedAt || null
       }
     };
   });

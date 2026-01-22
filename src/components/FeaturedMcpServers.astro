@@ -17,6 +17,9 @@ interface MCPServer {
     npm_package?: string;
     downloads?: number;
     updated?: string;
+    logoUrl?: string;
+    logoSource?: string;
+    logoCachedAt?: string;
   };
 }
 
@@ -27,6 +30,11 @@ interface Props {
 // Helper to get server icon (first letter of name)
 function getServerIcon(name: string): string {
   return name.charAt(0).toUpperCase();
+}
+
+// Helper to get server logo URL
+function getServerLogo(server: MCPServer): string | null {
+  return server.fields?.logoUrl || null;
 }
 
 // Helper to format stars
@@ -103,7 +111,25 @@ featuredServers = featuredServers.concat(topServers);
             data-category={server.fields.category || 'other'}
           >
             <div class="server-header">
-              <div class="server-icon">{getServerIcon(server.fields.name)}</div>
+              <div class="icon-wrapper">
+                {getServerLogo(server) ? (
+                  <img
+                    src={getServerLogo(server)}
+                    alt={`${server.fields.name} logo`}
+                    class="server-logo"
+                    loading="lazy"
+                    width="48"
+                    height="48"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                  />
+                ) : null}
+                <div
+                  class="gradient-icon"
+                  style={getServerLogo(server) ? 'display:none;' : ''}
+                >
+                  {getServerIcon(server.fields.name)}
+                </div>
+              </div>
               <div class="server-title">
                 <h3>{server.fields.name}</h3>
                 <div class="server-author">{server.fields.author || ''}</div>
@@ -193,6 +219,37 @@ featuredServers = featuredServers.concat(topServers);
     gap: 1rem;
     margin-bottom: 1rem;
     padding: 1.5rem 1.5rem 0;
+  }
+  
+  .icon-wrapper {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+  }
+
+  .server-logo {
+    width: 48px;
+    height: 48px;
+    border-radius: 0.75rem;
+    object-fit: cover;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    display: block;
+  }
+
+  .gradient-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 1.2rem;
+    flex-shrink: 0;
   }
   
   .server-icon {

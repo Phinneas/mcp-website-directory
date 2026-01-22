@@ -38,6 +38,7 @@ export default {
         headers: {
           'User-Agent': 'MCP-Directory-Stats',
           'Accept': 'application/vnd.github.v3+json',
+          ...(env.GITHUB_TOKEN && { 'Authorization': `token ${env.GITHUB_TOKEN}` }),
         },
       });
 
@@ -50,11 +51,18 @@ export default {
 
       const data = await githubResponse.json();
 
+      // Extract logo URL from owner avatar
+      const logoUrl = data.owner?.avatar_url 
+        ? `${data.owner.avatar_url}&s=128`
+        : null;
+
       const result = {
         pushedAt: data.pushed_at,
         openIssues: data.open_issues_count,
         stars: data.stargazers_count,
         updatedAt: new Date().toISOString(),
+        logoUrl: logoUrl,
+        logoSource: logoUrl ? 'github' : null,
       };
 
       // Cache for 6 hours (21600 seconds)
