@@ -2,6 +2,7 @@
 import { fetchAllMCPServers, transformPulseMCPData } from '../utils/pulsemcpApi.js';
 import { slugify } from '../utils/slugify.js';
 import { staticServers as importedStaticServers } from '../data/staticServers.js';
+import { enrichServersWithLogos } from '../utils/logoResolver.js';
 import EmailSignup from '../components/EmailSignup.astro';
 import HeaderNewsletter from '../components/HeaderNewsletter.astro';
 import HeroSection from '../components/HeroSection.astro';
@@ -7136,6 +7137,15 @@ try {
   mcpServers = staticServers;
 }
 
+// Enrich all servers with GitHub organization logos
+// This fetches logos for all servers during build time
+try {
+  mcpServers = await enrichServersWithLogos(mcpServers, mcpServers.length);
+} catch (error) {
+  console.error('Error enriching servers with logos:', error);
+  // Continue without logos - fallback to gradient icons
+}
+
 // Helper function to get the first letter of server name for icon
 function getServerIcon(name: string): string {
   return name.charAt(0).toUpperCase();
@@ -7528,6 +7538,23 @@ function formatStars(stars?: number): string {
             margin-bottom: 1rem;
         }
 
+        .icon-wrapper {
+            position: relative;
+            width: 48px;
+            height: 48px;
+            flex-shrink: 0;
+        }
+
+        .server-logo {
+            width: 48px;
+            height: 48px;
+            border-radius: 0.75rem;
+            object-fit: cover;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            display: block;
+        }
+
         .server-icon {
             width: 48px;
             height: 48px;
@@ -7765,11 +7792,25 @@ function formatStars(stars?: number): string {
     <div class="servers-grid" id="serversGrid">
         {mcpServers.map((server) => {
             const serverSlug = slugify(server.fields.name);
+            const logoUrl = server.fields?.logoUrl || null;
             return (
             <div class="server-card" data-category={server.fields.category || 'other'}>
                 <a href={`/server/${serverSlug}`} class="server-card-link">
                     <div class="server-header">
-                        <div class="server-icon">{getServerIcon(server.fields.name)}</div>
+                        <div class="icon-wrapper">
+                            {logoUrl ? (
+                                <img 
+                                    src={logoUrl} 
+                                    alt={`${server.fields.name} logo`}
+                                    class="server-logo"
+                                    loading="lazy"
+                                    width="48"
+                                    height="48"
+                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                                />
+                            ) : null}
+                            <div class="server-icon" style={logoUrl ? 'display:none;' : ''}>{getServerIcon(server.fields.name)}</div>
+                        </div>
                         <div class="server-title">
                             <h3>{server.fields.name}</h3>
                             <div class="server-author">{server.fields.author || ''}</div>
