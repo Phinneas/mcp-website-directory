@@ -1,0 +1,8 @@
+# Smartcommit handles the commit - abort the normal commit
+# and let smartcommit take over
+if [ -z "$SMARTCOMMIT_RUNNING" ]; then
+    export SMARTCOMMIT_RUNNING=1
+    echo "Launching smartcommit..."
+    ~/go/bin/smartcommit
+    exit 1  # Abort the original commit since smartcommit made one
+fi

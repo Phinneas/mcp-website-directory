@@ -10,7 +10,8 @@
     "astro": "astro",
     "tina:dev": "tinacms dev -c \"npm run dev\"",
     "tina:build": "tinacms build",
-    "tina:init": "tinacms init"
+    "tina:init": "tinacms init",
+    "prepare": "husky"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.6",
@@ -34,5 +35,8 @@
     "tailwind-merge": "^3.4.0",
     "tailwindcss": "^4.1.17",
     "tinacms": "^2.8.2"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7"
   }
 }
