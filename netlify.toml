@@ -19,6 +19,32 @@
   status = 301
   force = true
 
+# Redirect old/removed pages
+[[redirects]]
+  from = "/skills"
+  to = "/claude-skills/"
+  status = 301
+
+[[redirects]]
+  from = "/skills/"
+  to = "/claude-skills/"
+  status = 301
+
+[[redirects]]
+  from = "/category/*"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/mcp-client-comparison"
+  to = "/blog/mcp-client-complete-guide/"
+  status = 301
+
+[[redirects]]
+  from = "/blog/mcp-client-comparison/"
+  to = "/blog/mcp-client-complete-guide/"
+  status = 301
+
 # SPA fallback (must be last)
 [[redirects]]
   from = "/*"
