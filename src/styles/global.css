@@ -2,7 +2,7 @@
 
 @layer base {
   :root {
-    /* Amethyst Haze Theme - Light Mode */
+    /* Warm Earth Theme - Light Mode */
     --background: 30 25% 97%;
     --foreground: 270 5% 10%;
 
@@ -12,30 +12,33 @@
     --popover: 0 0% 100%;
     --popover-foreground: 270 5% 10%;
 
-    --primary: 269 58% 66%; /* #8B7DD8 - Amethyst */
+    --primary: 25 75% 58%; /* #EE7B30 - Warm Orange */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 280 35% 88%;
+    --secondary: 35 35% 78%; /* #D1B490 - Warm Beige */
     --secondary-foreground: 270 5% 10%;
 
     --muted: 270 30% 96%;
     --muted-foreground: 270 5% 40%;
 
-    --accent: 280 45% 92%;
+    --accent: 170 20% 60%; /* #8AA8A1 - Muted Teal */
     --accent-foreground: 270 5% 10%;
+
+    --tertiary: 230 25% 82%; /* #CBCBD4 - Cool Lavender-Gray */
+    --tertiary-foreground: 270 5% 10%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
     --border: 270 20% 88%;
     --input: 270 20% 88%;
-    --ring: 269 58% 66%;
+    --ring: 25 75% 58%;
 
     --radius: 0.5rem;
   }
 
   .dark {
-    /* Amethyst Haze Theme - Dark Mode */
+    /* Warm Earth Theme - Dark Mode */
     --background: 270 30% 8%;
     --foreground: 270 5% 95%;
 
@@ -45,24 +48,27 @@
     --popover: 270 30% 8%;
     --popover-foreground: 270 5% 95%;
 
-    --primary: 269 58% 66%; /* #8B7DD8 - Amethyst */
+    --primary: 25 75% 58%; /* #EE7B30 - Warm Orange */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 270 20% 18%;
+    --secondary: 35 35% 78%; /* #D1B490 - Warm Beige */
     --secondary-foreground: 270 5% 95%;
 
     --muted: 270 20% 16%;
     --muted-foreground: 270 5% 60%;
 
-    --accent: 280 30% 20%;
+    --accent: 170 20% 60%; /* #8AA8A1 - Muted Teal */
     --accent-foreground: 270 5% 95%;
+
+    --tertiary: 230 25% 82%; /* #CBCBD4 - Cool Lavender-Gray */
+    --tertiary-foreground: 270 5% 95%;
 
     --destructive: 0 62% 50%;
     --destructive-foreground: 0 0% 98%;
 
     --border: 270 20% 20%;
     --input: 270 20% 20%;
-    --ring: 269 58% 66%;
+    --ring: 25 75% 58%;
   }
 }
 

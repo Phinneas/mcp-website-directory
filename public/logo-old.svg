@@ -1,14 +1,14 @@
 <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-  <!-- Purple gradient background circle -->
+  <!-- Warm Earth gradient background circle -->
   <defs>
-    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    <linearGradient id="warmEarthGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#EE7B30;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#D1B490;stop-opacity:1" />
     </linearGradient>
   </defs>
 
   <!-- Background circle -->
-  <circle cx="100" cy="100" r="95" fill="url(#purpleGrad)"/>
+  <circle cx="100" cy="100" r="95" fill="url(#warmEarthGrad)"/>
 
   <!-- Magnifying glass handle -->
   <line x1="130" y1="130" x2="165" y2="165" stroke="white" stroke-width="12" stroke-linecap="round"/>
