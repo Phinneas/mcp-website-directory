@@ -13,6 +13,7 @@
     --popover-foreground: 270 5% 10%;
 
     --primary: 25 75% 58%; /* #EE7B30 - Warm Orange */
+    --primary-rgb: 238, 123, 48; /* RGB equivalent of #EE7B30 */
     --primary-foreground: 0 0% 100%;
 
     --secondary: 35 35% 78%; /* #D1B490 - Warm Beige */
@@ -49,6 +50,7 @@
     --popover-foreground: 270 5% 95%;
 
     --primary: 25 75% 58%; /* #EE7B30 - Warm Orange */
+    --primary-rgb: 238, 123, 48; /* RGB equivalent of #EE7B30 */
     --primary-foreground: 0 0% 100%;
 
     --secondary: 35 35% 78%; /* #D1B490 - Warm Beige */

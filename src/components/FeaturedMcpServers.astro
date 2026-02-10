@@ -218,7 +218,7 @@ try {
   .server-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    border-color: #f59e0b;
+    border-color: hsl(var(--primary));
   }
   
   .server-header {
@@ -241,7 +241,7 @@ try {
     height: 48px;
     border-radius: 0.75rem;
     object-fit: cover;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
     border: 2px solid rgba(255, 255, 255, 0.1);
     display: block;
   }
@@ -249,7 +249,7 @@ try {
   .gradient-icon {
     width: 48px;
     height: 48px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
     border-radius: 0.75rem;
     display: flex;
     align-items: center;
@@ -263,7 +263,7 @@ try {
   .server-icon {
     width: 48px;
     height: 48px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
     border-radius: 0.75rem;
     display: flex;
     align-items: center;
@@ -306,13 +306,13 @@ try {
   }
   
   .meta-tag {
-    background: rgba(245, 158, 11, 0.1);
-    color: #f59e0b;
+    background: rgba(var(--primary-rgb), 0.1);
+    color: hsl(var(--primary));
     padding: 0.25rem 0.5rem;
     border-radius: 0.5rem;
     font-size: 0.75rem;
     font-weight: 500;
-    border: 1px solid rgba(245, 158, 11, 0.2);
+    border: 1px solid rgba(var(--primary-rgb), 0.2);
   }
   
   .repo-stats {
@@ -332,7 +332,7 @@ try {
   
   .repo-stat::before {
     content: '★';
-    color: #f59e0b;
+    color: hsl(var(--primary));
     font-size: 0.9rem;
   }
   
@@ -343,7 +343,7 @@ try {
   
   .view-all-btn {
     display: inline-block;
-    background: #f59e0b;
+    background: hsl(var(--primary));
     color: white;
     padding: 0.75rem 2rem;
     border-radius: 8px;
