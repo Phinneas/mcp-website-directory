@@ -123,7 +123,7 @@ const { serverCount = 600, skillsCount = 68, clientsCount = 250 } = Astro.props;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #667eea;
+        color: hsl(var(--primary));
     }
     
     .card-title {
@@ -147,7 +147,7 @@ const { serverCount = 600, skillsCount = 68, clientsCount = 250 } = Astro.props;
     }
     
     .card-cta {
-        background: #f59e0b;
+        background: hsl(var(--primary));
         color: white;
         padding: 0.5rem 1.25rem;
         border-radius: 8px;
@@ -155,9 +155,9 @@ const { serverCount = 600, skillsCount = 68, clientsCount = 250 } = Astro.props;
         font-weight: 600;
         transition: all 0.3s ease;
     }
-    
+     
     .directory-card:hover .card-cta {
-        background: #d97706;
+        background: hsl(var(--primary) / 90%);
     }
     
     .trust-row {
@@ -179,13 +179,13 @@ const { serverCount = 600, skillsCount = 68, clientsCount = 250 } = Astro.props;
     }
     
     .trust-link {
-        color: #f59e0b;
+        color: hsl(var(--primary));
         text-decoration: underline;
         transition: color 0.3s ease;
     }
-    
+     
     .trust-link:hover {
-        color: #fbbf24;
+        color: hsl(var(--primary) / 80%);
     }
     
     @media (max-width: 768px) {
