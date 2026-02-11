@@ -45,11 +45,14 @@ const pageTitle = "My MCP Shelf Blog";
             --card-text: hsl(var(--card-foreground));
             --card-shadow: hsla(0, 0%, 0%, 0.1);
             --border-color: hsla(var(--border), 0.2);
-            --hero-bg: hsl(220, 40%, 12%);
+            --content-text: hsl(var(--foreground));
+            --content-heading: hsl(var(--foreground));
+            --hero-bg: hsl(var(--primary));
             --hero-text: hsl(var(--tertiary));
             --hero-subtext: hsl(var(--muted-foreground));
             --cta-primary: hsl(var(--primary));
             --cta-hover: hsl(var(--primary) / 90%);
+            --nav-bg: hsl(var(--secondary));
         }
 
         body.dark-mode {
@@ -111,18 +114,18 @@ const pageTitle = "My MCP Shelf Blog";
         }
 
         .nav a {
-            color: white;
+            color: hsl(var(--secondary-foreground));
             text-decoration: none;
-            background: rgba(255,255,255,0.2);
+            background: hsl(var(--secondary));
             padding: 0.5rem 1rem;
             border-radius: 25px;
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.3);
+            border: 1px solid hsla(var(--border), 0.5);
             transition: all 0.3s ease;
         }
 
         .nav a:hover {
-            background: rgba(255,255,255,0.3);
+            background: hsl(var(--secondary) / 0.8);
             transform: translateY(-2px);
         }
 
