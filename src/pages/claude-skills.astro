@@ -40,30 +40,30 @@ import '../styles/global.css';
 
     <style>
         :root {
-            --bg-gradient-start: #f9f7f5;
-            --bg-gradient-end: #f9f7f5;
-            --text-primary: #333;
-            --text-light: rgba(255, 255, 255, 0.9);
-            --card-bg: rgba(255, 255, 255, 1);
-            --card-text: #333;
-            --card-shadow: rgba(0, 0, 0, 0.1);
-            --border-color: rgba(255, 255, 255, 0.2);
-            --hero-bg: #0f172a;
-            --hero-text: #ffffff;
-            --hero-subtext: #cbd5e1;
-            --cta-primary: #f59e0b;
-            --cta-hover: #d97706;
+            --bg-gradient-start: hsl(var(--background));
+            --bg-gradient-end: hsl(var(--background));
+            --text-primary: hsl(var(--foreground));
+            --text-light: hsl(var(--foreground) / 0.9);
+            --card-bg: hsla(var(--card), 1);
+            --card-text: hsl(var(--card-foreground));
+            --card-shadow: hsla(0, 0%, 0%, 0.1);
+            --border-color: hsla(var(--border), 0.2);
+            --hero-bg: hsl(220, 40%, 12%);
+            --hero-text: hsl(var(--primary-foreground));
+            --hero-subtext: hsl(var(--muted-foreground));
+            --cta-primary: hsl(var(--primary));
+            --cta-hover: hsl(var(--primary) / 90%);
         }
 
         body.dark-mode {
-            --bg-gradient-start: #1a1a2e;
-            --bg-gradient-end: #16213e;
-            --text-primary: #e0e0e0;
-            --text-light: rgba(255, 255, 255, 0.95);
-            --card-bg: rgba(30, 30, 46, 1);
-            --card-text: #e0e0e0;
-            --card-shadow: rgba(0, 0, 0, 0.3);
-            --border-color: rgba(255, 255, 255, 0.1);
+            --bg-gradient-start: hsl(var(--background));
+            --bg-gradient-end: hsl(var(--background));
+            --text-primary: hsl(var(--foreground));
+            --text-light: hsl(var(--foreground) / 0.95);
+            --card-bg: hsla(var(--card), 1);
+            --card-text: hsl(var(--card-foreground));
+            --card-shadow: hsla(0, 0%, 0%, 0.3);
+            --border-color: hsla(var(--border), 0.1);
         }
 
         * {
@@ -151,17 +151,17 @@ import '../styles/global.css';
         }
 
         .nav-link {
-            color: rgba(255,255,255,0.9);
+            color: hsla(var(--foreground), 0.9);
             text-decoration: none;
-            background: rgba(255,255,255,0.1);
+            background: hsla(var(--card), 0.2);
             padding: 0.5rem 1rem;
             border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid hsla(var(--border), 0.2);
             transition: all 0.3s ease;
         }
 
         .nav-link:hover {
-            background: rgba(255,255,255,0.2);
+            background: hsla(var(--card), 0.3);
             transform: translateY(-2px);
         }
 
@@ -196,15 +196,15 @@ import '../styles/global.css';
             outline: none;
             font-size: 1.1rem;
             background: transparent;
-            color: #333;
+            color: hsl(var(--foreground));
         }
 
         body.dark-mode .search-input {
-            color: #333;
+            color: hsl(var(--foreground));
         }
 
         .search-input::placeholder {
-            color: #999;
+            color: hsl(var(--muted-foreground));
         }
 
         .categories {
@@ -231,7 +231,7 @@ import '../styles/global.css';
         }
 
         .category-tag.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
             color: white;
             border-color: rgba(255,255,255,0.3);
         }
@@ -275,14 +275,15 @@ import '../styles/global.css';
 
         .skill-category {
             font-size: 0.85rem;
-            color: #667eea;
+            color: hsl(var(--primary));
             font-weight: 600;
         }
 
         .skill-description {
-            color: #666;
+            color: hsl(var(--foreground));
             line-height: 1.6;
             margin-bottom: 1.5rem;
+            opacity: 0.9;
         }
 
         .skill-meta {
@@ -293,8 +294,8 @@ import '../styles/global.css';
         }
 
         .meta-tag {
-            background: #f0f2ff;
-            color: #667eea;
+            background: hsl(var(--accent) / 0.15);
+            color: hsl(var(--primary));
             padding: 0.3rem 0.8rem;
             border-radius: 12px;
             font-size: 0.85rem;
@@ -319,13 +320,13 @@ import '../styles/global.css';
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
             color: white;
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.4);
         }
 
         @media (max-width: 768px) {

@@ -17,15 +17,18 @@
     --primary-foreground: 0 0% 100%;
 
     --secondary: 35 35% 78%; /* #D1B490 - Warm Beige */
+    --secondary-rgb: 209, 180, 144; /* RGB equivalent of #D1B490 */
     --secondary-foreground: 270 5% 10%;
 
     --muted: 270 30% 96%;
     --muted-foreground: 270 5% 40%;
 
     --accent: 170 20% 60%; /* #8AA8A1 - Muted Teal */
+    --accent-rgb: 138, 168, 161; /* RGB equivalent of #8AA8A1 */
     --accent-foreground: 270 5% 10%;
 
     --tertiary: 230 25% 82%; /* #CBCBD4 - Cool Lavender-Gray */
+    --tertiary-rgb: 203, 203, 212; /* RGB equivalent of #CBCBD4 */
     --tertiary-foreground: 270 5% 10%;
 
     --destructive: 0 84% 60%;
@@ -36,6 +39,14 @@
     --ring: 25 75% 58%;
 
     --radius: 0.5rem;
+
+    /* Semantic variables */
+    --hero-bg-light: 30 25% 97%;
+    --hero-bg-dark: 270 30% 8%;
+    --card-bg-light: 270 50% 98%;
+    --card-bg-dark: 270 25% 12%;
+    --text-primary-light: 270 5% 10%;
+    --text-primary-dark: 270 5% 95%;
   }
 
   .dark {
@@ -54,15 +65,18 @@
     --primary-foreground: 0 0% 100%;
 
     --secondary: 35 35% 78%; /* #D1B490 - Warm Beige */
+    --secondary-rgb: 209, 180, 144; /* RGB equivalent of #D1B490 */
     --secondary-foreground: 270 5% 95%;
 
     --muted: 270 20% 16%;
     --muted-foreground: 270 5% 60%;
 
     --accent: 170 20% 60%; /* #8AA8A1 - Muted Teal */
+    --accent-rgb: 138, 168, 161; /* RGB equivalent of #8AA8A1 */
     --accent-foreground: 270 5% 95%;
 
     --tertiary: 230 25% 82%; /* #CBCBD4 - Cool Lavender-Gray */
+    --tertiary-rgb: 203, 203, 212; /* RGB equivalent of #CBCBD4 */
     --tertiary-foreground: 270 5% 95%;
 
     --destructive: 0 62% 50%;
@@ -71,6 +85,16 @@
     --border: 270 20% 20%;
     --input: 270 20% 20%;
     --ring: 25 75% 58%;
+
+    --radius: 0.5rem;
+
+    /* Semantic variables */
+    --hero-bg-light: 30 25% 97%;
+    --hero-bg-dark: 270 30% 8%;
+    --card-bg-light: 270 50% 98%;
+    --card-bg-dark: 270 25% 12%;
+    --text-primary-light: 270 5% 10%;
+    --text-primary-dark: 270 5% 95%;
   }
 }
 

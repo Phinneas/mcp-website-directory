@@ -44,34 +44,34 @@ const { Content } = await post.render();
 
     <style>
         :root {
-            --bg-gradient-start: #f9f7f5;
-            --bg-gradient-end: #f9f7f5;
-            --text-primary: #333;
-            --text-light: rgba(255, 255, 255, 0.9);
-            --card-bg: rgba(255, 255, 255, 1);
-            --card-text: #333;
-            --card-shadow: rgba(0, 0, 0, 0.1);
-            --border-color: rgba(255, 255, 255, 0.2);
-            --content-text: #444;
-            --content-heading: #333;
-            --hero-bg: #0f172a;
-            --hero-text: #ffffff;
-            --hero-subtext: #cbd5e1;
-            --cta-primary: #f59e0b;
-            --cta-hover: #d97706;
+            --bg-gradient-start: hsl(var(--background));
+            --bg-gradient-end: hsl(var(--background));
+            --text-primary: hsl(var(--foreground));
+            --text-light: hsl(var(--foreground) / 0.9);
+            --card-bg: hsla(var(--card), 1);
+            --card-text: hsl(var(--card-foreground));
+            --card-shadow: hsla(0, 0%, 0%, 0.1);
+            --border-color: hsla(var(--border), 0.2);
+            --content-text: hsl(var(--foreground));
+            --content-heading: hsl(var(--foreground));
+            --hero-bg: hsl(220, 40%, 12%);
+            --hero-text: hsl(var(--primary-foreground));
+            --hero-subtext: hsl(var(--muted-foreground));
+            --cta-primary: hsl(var(--primary));
+            --cta-hover: hsl(var(--primary) / 90%);
         }
 
         body.dark-mode {
-            --bg-gradient-start: #1a1a2e;
-            --bg-gradient-end: #16213e;
-            --text-primary: #e0e0e0;
-            --text-light: rgba(255, 255, 255, 0.95);
-            --card-bg: rgba(30, 30, 46, 1);
-            --card-text: #e0e0e0;
-            --card-shadow: rgba(0, 0, 0, 0.3);
-            --border-color: rgba(255, 255, 255, 0.1);
-            --content-text: #d0d0d0;
-            --content-heading: #e0e0e0;
+            --bg-gradient-start: hsl(var(--background));
+            --bg-gradient-end: hsl(var(--background));
+            --text-primary: hsl(var(--foreground));
+            --text-light: hsl(var(--foreground) / 0.95);
+            --card-bg: hsla(var(--card), 1);
+            --card-text: hsl(var(--card-foreground));
+            --card-shadow: hsla(0, 0%, 0%, 0.3);
+            --border-color: hsla(var(--border), 0.1);
+            --content-text: hsl(var(--foreground));
+            --content-heading: hsl(var(--foreground));
         }
 
         * {
@@ -170,10 +170,10 @@ const { Content } = await post.render();
         }
 
         .article-meta {
-            color: #666;
+            color: hsl(var(--muted-foreground));
             margin-bottom: 2rem;
             padding-bottom: 1rem;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid hsl(var(--border));
         }
 
         .article-tags {
@@ -184,8 +184,8 @@ const { Content } = await post.render();
         }
 
         .tag {
-            background: #f0f2ff;
-            color: #667eea;
+            background: hsl(var(--accent) / 0.15);
+            color: hsl(var(--primary));
             padding: 0.25rem 0.75rem;
             border-radius: 15px;
             font-size: 0.8rem;
@@ -219,27 +219,29 @@ const { Content } = await post.render();
         }
 
         .content blockquote {
-            border-left: 4px solid #667eea;
+            border-left: 4px solid hsl(var(--primary));
             padding-left: 1.5rem;
             margin: 1.5rem 0;
             font-style: italic;
-            color: #555;
+            color: hsl(var(--foreground));
         }
 
         .content code {
-            background: #f8f9fa;
+            background: hsl(var(--muted));
             padding: 0.2rem 0.4rem;
             border-radius: 4px;
             font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
             font-size: 0.9em;
+            color: hsl(var(--foreground));
         }
 
         .content pre {
-            background: #f8f9fa;
+            background: hsl(var(--muted));
             padding: 1.5rem;
             border-radius: 8px;
             overflow-x: auto;
             margin: 1.5rem 0;
+            color: hsl(var(--foreground));
         }
 
         .content pre code {
@@ -248,12 +250,12 @@ const { Content } = await post.render();
         }
 
         .content a {
-            color: #667eea;
+            color: hsl(var(--primary));
             text-decoration: underline;
         }
 
         .content a:hover {
-            color: #5a67d8;
+            color: hsl(var(--primary) / 80%);
         }
 
         .content img {

@@ -163,27 +163,27 @@ const faqSections = [
 
     <style>
         :root {
-            --bg-gradient-start: #f9f7f5;
-            --bg-gradient-end: #f9f7f5;
-            --text-primary: #333;
-            --card-bg: rgba(255, 255, 255, 1);
-            --card-text: #333;
-            --card-shadow: rgba(0, 0, 0, 0.1);
-            --border-color: rgba(255, 255, 255, 0.2);
-            --hero-bg: #0f172a;
-            --hero-text: #ffffff;
-            --hero-subtext: #cbd5e1;
-            --cta-primary: #f59e0b;
+            --bg-gradient-start: hsl(var(--background));
+            --bg-gradient-end: hsl(var(--background));
+            --text-primary: hsl(var(--foreground));
+            --card-bg: hsla(var(--card), 1);
+            --card-text: hsl(var(--card-foreground));
+            --card-shadow: hsla(0, 0%, 0%, 0.1);
+            --border-color: hsla(var(--border), 0.2);
+            --hero-bg: hsl(220, 40%, 12%);
+            --hero-text: hsl(var(--primary-foreground));
+            --hero-subtext: hsl(var(--muted-foreground));
+            --cta-primary: hsl(var(--primary));
         }
 
         html.dark-mode {
-            --bg-gradient-start: #1a1a2e;
-            --bg-gradient-end: #16213e;
-            --text-primary: #e0e0e0;
-            --card-bg: rgba(30, 30, 46, 1);
-            --card-text: #e0e0e0;
-            --card-shadow: rgba(0, 0, 0, 0.3);
-            --border-color: rgba(255, 255, 255, 0.1);
+            --bg-gradient-start: hsl(var(--background));
+            --bg-gradient-end: hsl(var(--background));
+            --text-primary: hsl(var(--foreground));
+            --card-bg: hsla(var(--card), 1);
+            --card-text: hsl(var(--card-foreground));
+            --card-shadow: hsla(0, 0%, 0%, 0.3);
+            --border-color: hsla(var(--border), 0.1);
         }
 
         * {
@@ -271,17 +271,17 @@ const faqSections = [
         }
 
         .nav-link {
-            color: rgba(255,255,255,0.9);
+            color: hsl(var(--foreground) / 0.9);
             text-decoration: none;
-            background: rgba(255,255,255,0.1);
+            background: hsl(var(--muted) / 0.2);
             padding: 0.5rem 1rem;
             border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid hsl(var(--border));
             transition: all 0.3s ease;
         }
 
         .nav-link:hover {
-            background: rgba(255,255,255,0.2);
+            background: hsl(var(--muted) / 0.3);
             transform: translateY(-2px);
         }
 
@@ -335,14 +335,14 @@ const faqSections = [
         }
 
         .faq-answer {
-            color: #6b7280;
+            color: hsl(var(--muted-foreground));
             line-height: 1.7;
             font-size: 1rem;
             padding-left: 1.95rem;
         }
 
         html.dark-mode .faq-answer {
-            color: #9ca3af;
+            color: hsl(var(--muted-foreground));
         }
 
         .newsletter-section {
