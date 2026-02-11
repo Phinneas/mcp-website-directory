@@ -98,34 +98,41 @@ const pageTitle = "My MCP Shelf Blog";
 
         h1 {
             color: var(--hero-text);
-            font-size: 3rem;
+            font-size: 3.5rem;
             margin-bottom: 1rem;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            font-weight: 700;
+            text-shadow: none;
         }
 
         .subtitle {
             color: var(--hero-subtext);
             font-size: 1.2rem;
             margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        .nav {
-            margin-bottom: 2rem;
+        .nav-links {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
-        .nav a {
-            color: hsl(var(--secondary-foreground));
+        .nav-link {
+            color: hsla(var(--foreground), 0.9);
             text-decoration: none;
-            background: rgba(255, 255, 255, 0.2);
+            background: hsla(var(--card), 0.2);
             padding: 0.5rem 1rem;
-            border-radius: 25px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255,255,0.3);
+            border-radius: 20px;
+            border: 1px solid hsla(var(--border), 0.2);
             transition: all 0.3s ease;
         }
 
-        .nav a:hover {
-            background: rgba(255,255,255,0.3);
+        .nav-link:hover {
+            background: hsla(var(--card), 0.3);
             transform: translateY(-2px);
         }
 
@@ -258,11 +265,11 @@ const pageTitle = "My MCP Shelf Blog";
         <header>
             <h1>{pageTitle}</h1>
             <p class="subtitle">Insights, updates, and guides for the MCP ecosystem</p>
-            <div class="nav">
-                <a href="/"><FolderIcon client:load size={18} /> Shelf</a>
-                <a href="/claude-skills"><ToolboxIcon client:load size={18} /> Claude Skills</a>
-                <a href="/mcp-clients"><ComputerIcon client:load size={18} /> MCP Clients</a>
-                <a href="/faq"><VintageIcon client:load name="Windows95Help" size={18} /> FAQ</a>
+            <div class="nav-links">
+                <a href="/" class="nav-link"><FolderIcon client:load size={18} /> Shelf</a>
+                <a href="/claude-skills" class="nav-link"><ToolboxIcon client:load size={18} /> Claude Skills</a>
+                <a href="/mcp-clients" class="nav-link"><ComputerIcon client:load size={18} /> MCP Clients</a>
+                <a href="/faq" class="nav-link"><VintageIcon client:load name="Windows95Help" size={18} /> FAQ</a>
             </div>
         </header>
 

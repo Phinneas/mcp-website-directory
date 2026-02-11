@@ -106,24 +106,26 @@ const { Content } = await post.render();
             border-radius: 16px;
         }
 
-        .nav {
-            margin-bottom: 2rem;
+        .nav-links {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
-        .nav a {
-            color: hsl(var(--secondary-foreground));
+        .nav-link {
+            color: hsla(var(--foreground), 0.9);
             text-decoration: none;
-            background: hsl(var(--secondary));
+            background: hsla(var(--card), 0.2);
             padding: 0.5rem 1rem;
-            border-radius: 25px;
-            backdrop-filter: blur(10px);
-            border: 1px solid hsla(var(--border), 0.5);
+            border-radius: 20px;
+            border: 1px solid hsla(var(--border), 0.2);
             transition: all 0.3s ease;
-            margin-right: 1rem;
         }
 
-        .nav a:hover {
-            background: hsl(var(--secondary) / 0.8);
+        .nav-link:hover {
+            background: hsla(var(--card), 0.3);
             transform: translateY(-2px);
         }
 
@@ -320,11 +322,11 @@ const { Content } = await post.render();
 
     <div class="container">
         <header>
-            <div class="nav">
-                <a href="/"><FolderIcon client:load size={18} /> Shelf</a>
-                <a href="/claude-skills"><ToolboxIcon client:load size={18} /> Claude Skills</a>
-                <a href="/mcp-clients"><ComputerIcon client:load size={18} /> MCP Clients</a>
-                <a href="/blog"><VintageIcon client:load name="Windows95TextFile" size={18} /> Blog</a>
+            <div class="nav-links">
+                <a href="/" class="nav-link"><FolderIcon client:load size={18} /> Shelf</a>
+                <a href="/claude-skills" class="nav-link"><ToolboxIcon client:load size={18} /> Claude Skills</a>
+                <a href="/mcp-clients" class="nav-link"><ComputerIcon client:load size={18} /> MCP Clients</a>
+                <a href="/blog" class="nav-link"><VintageIcon client:load name="Windows95TextFile" size={18} /> Blog</a>
             </div>
         </header>
 
