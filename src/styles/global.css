@@ -95,6 +95,8 @@
     --card-bg-dark: 270 25% 12%;
     --text-primary-light: 270 5% 10%;
     --text-primary-dark: 270 5% 95%;
+
+    --hero-text: hsl(var(--tertiary));
   }
 }
 
