@@ -97,7 +97,7 @@ const badgeStyle = badgeColors[badge.color];
 
 <style>
   .server-header {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    background: linear-gradient(135deg, hsl(220, 40%, 12%) 0%, hsl(215, 30%, 18%) 100%);
     padding: 2.5rem 2rem;
     border-radius: 16px;
     margin-bottom: 2rem;
@@ -120,15 +120,15 @@ const badgeStyle = badgeColors[badge.color];
     height: 72px;
     border-radius: 16px;
     object-fit: cover;
-    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border: 2px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(var(--primary-rgb), 0.3);
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
+    border: 2px solid hsla(255, 255, 255, 0.1);
   }
 
   .server-icon {
     width: 72px;
     height: 72px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
     border-radius: 16px;
     display: flex;
     align-items: center;
@@ -136,7 +136,7 @@ const badgeStyle = badgeColors[badge.color];
     color: white;
     font-weight: bold;
     font-size: 2rem;
-    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 8px 32px rgba(var(--primary-rgb), 0.3);
   }
 
   .header-info {
@@ -177,7 +177,7 @@ const badgeStyle = badgeColors[badge.color];
     align-items: center;
     gap: 1.5rem;
     flex-wrap: wrap;
-    color: #94a3b8;
+    color: hsl(var(--muted-foreground));
   }
 
   .meta-row > * {
@@ -188,22 +188,22 @@ const badgeStyle = badgeColors[badge.color];
   }
 
   .author-link {
-    color: #94a3b8;
+    color: hsl(var(--muted-foreground));
     text-decoration: none;
     transition: color 0.2s ease;
   }
 
   .author-link:hover {
-    color: #f59e0b;
+    color: hsl(var(--primary));
   }
 
   .stars {
-    color: #f59e0b;
+    color: hsl(var(--primary));
     font-weight: 500;
   }
 
   .stars svg {
-    color: #f59e0b;
+    color: hsl(var(--primary));
   }
 
   .updated svg {

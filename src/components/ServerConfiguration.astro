@@ -106,11 +106,11 @@ const configPaths = {
 
 <style>
   .configuration-section {
-    background: #ffffff;
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
     border-radius: 12px;
     padding: 1.5rem;
     margin-bottom: 1.5rem;
-    border: 1px solid #e5e7eb;
   }
 
   .section-title {
@@ -119,16 +119,16 @@ const configPaths = {
     gap: 0.75rem;
     font-size: 1.25rem;
     font-weight: 600;
-    color: #1f2937;
+    color: hsl(var(--card-foreground));
     margin: 0 0 1rem 0;
   }
 
   .section-title svg {
-    color: #6b7280;
+    color: hsl(var(--muted-foreground));
   }
 
   .config-intro {
-    color: #6b7280;
+    color: hsl(var(--muted-foreground));
     margin-bottom: 1.25rem;
     line-height: 1.6;
   }
@@ -149,23 +149,23 @@ const configPaths = {
     gap: 0.4rem;
     padding: 0.4rem 0.75rem;
     background: transparent;
-    border: 1px solid #e5e7eb;
+    border: 1px solid hsl(var(--border));
     border-radius: 6px;
-    color: #6b7280;
+    color: hsl(var(--muted-foreground));
     font-size: 0.85rem;
     cursor: pointer;
     transition: all 0.2s ease;
   }
 
   .os-tab-button:hover {
-    background: #f3f4f6;
-    color: #374151;
+    background: hsl(var(--muted));
+    color: hsl(var(--card-foreground));
   }
 
   .os-tab-button.active {
-    background: #f3f4f6;
-    color: #1f2937;
-    border-color: #d1d5db;
+    background: hsl(var(--muted));
+    color: hsl(var(--card-foreground));
+    border-color: hsl(var(--border));
   }
 
   .os-tab-panel {
@@ -177,18 +177,18 @@ const configPaths = {
   }
 
   .config-path {
-    color: #6b7280;
+    color: hsl(var(--muted-foreground));
     font-size: 0.9rem;
     margin: 0;
   }
 
   .config-path code {
-    background: #f3f4f6;
+    background: hsl(var(--muted));
     padding: 0.2rem 0.5rem;
     border-radius: 4px;
     font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
     font-size: 0.85rem;
-    color: #374151;
+    color: hsl(var(--card-foreground));
     word-break: break-all;
   }
 
@@ -197,21 +197,21 @@ const configPaths = {
     align-items: flex-start;
     gap: 0.75rem;
     padding: 1rem;
-    background: rgba(245, 158, 11, 0.1);
+    background: hsla(var(--primary), 0.1);
     border-radius: 8px;
     margin-top: 1rem;
-    color: #92400e;
+    color: hsl(var(--primary));
     font-size: 0.9rem;
   }
 
   .env-note svg {
     flex-shrink: 0;
-    color: #f59e0b;
+    color: hsl(var(--primary));
     margin-top: 0.1rem;
   }
 
   .env-note code {
-    background: rgba(245, 158, 11, 0.2);
+    background: hsla(var(--primary), 0.2);
     padding: 0.1rem 0.3rem;
     border-radius: 3px;
     font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;

@@ -83,13 +83,13 @@
         font-size: 1rem;
         outline: none;
         background: white;
-        color: #333;
+        color: hsl(var(--foreground));
         box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         transition: box-shadow 0.3s ease;
     }
 
     .email-input::placeholder {
-        color: #999;
+        color: hsl(var(--muted-foreground));
     }
 
     .email-input:focus {
@@ -113,7 +113,7 @@
     .signup-button:hover {
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-        background: #f8f9ff;
+        background: hsl(var(--muted));
     }
 
     .signup-button:active {

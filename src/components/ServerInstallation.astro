@@ -77,11 +77,11 @@ const hasInstallation = methods.length > 0;
 
 <style>
   .installation-section {
-    background: #ffffff;
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
     border-radius: 12px;
     padding: 1.5rem;
     margin-bottom: 1.5rem;
-    border: 1px solid #e5e7eb;
   }
 
   .section-title {
@@ -90,12 +90,12 @@ const hasInstallation = methods.length > 0;
     gap: 0.75rem;
     font-size: 1.25rem;
     font-weight: 600;
-    color: #1f2937;
+    color: hsl(var(--card-foreground));
     margin: 0 0 1.25rem 0;
   }
 
   .section-title svg {
-    color: #6b7280;
+    color: hsl(var(--muted-foreground));
   }
 
   .installation-tabs {
@@ -106,7 +106,7 @@ const hasInstallation = methods.length > 0;
     display: flex;
     gap: 0.5rem;
     margin-bottom: 1rem;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid hsl(var(--border));
     padding-bottom: 0.5rem;
   }
 
@@ -115,7 +115,7 @@ const hasInstallation = methods.length > 0;
     background: transparent;
     border: 1px solid transparent;
     border-radius: 6px;
-    color: #6b7280;
+    color: hsl(var(--muted-foreground));
     font-size: 0.9rem;
     font-weight: 500;
     cursor: pointer;
@@ -123,14 +123,14 @@ const hasInstallation = methods.length > 0;
   }
 
   .tab-button:hover {
-    color: #374151;
-    background: #f3f4f6;
+    color: hsl(var(--card-foreground));
+    background: hsl(var(--muted));
   }
 
   .tab-button.active {
-    color: #f59e0b;
-    background: rgba(245, 158, 11, 0.1);
-    border-color: rgba(245, 158, 11, 0.3);
+    color: hsl(var(--primary));
+    background: hsla(var(--primary), 0.1);
+    border-color: hsla(var(--primary), 0.3);
   }
 
   .tab-panels {
@@ -147,13 +147,13 @@ const hasInstallation = methods.length > 0;
 
   .no-installation {
     padding: 1rem;
-    background: #f9fafb;
+    background: hsl(var(--muted));
     border-radius: 8px;
-    color: #6b7280;
+    color: hsl(var(--muted-foreground));
   }
 
   .no-installation a {
-    color: #f59e0b;
+    color: hsl(var(--primary));
     text-decoration: none;
   }
 

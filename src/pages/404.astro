@@ -26,8 +26,8 @@ import '../styles/global.css';
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       line-height: 1.7;
-      color: #1f2937;
-      background: #f9f7f5;
+      color: hsl(var(--foreground));
+      background: hsl(var(--background));
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -58,25 +58,25 @@ import '../styles/global.css';
       display: inline-flex;
       align-items: center;
       gap: 0.4rem;
-      color: #6b7280;
+      color: hsl(var(--muted-foreground));
       text-decoration: none;
       padding: 0.5rem 1rem;
       border-radius: 8px;
       font-size: 0.9rem;
       transition: all 0.2s ease;
-      background: #ffffff;
-      border: 1px solid #e5e7eb;
+      background: hsl(var(--card));
+      border: 1px solid hsl(var(--border));
     }
 
     .nav-links a:hover {
-      color: #f59e0b;
-      border-color: #f59e0b;
+      color: hsl(var(--primary));
+      border-color: hsl(var(--primary));
     }
 
     .error-code {
       font-size: 8rem;
       font-weight: 800;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -87,12 +87,12 @@ import '../styles/global.css';
     h1 {
       font-size: 2rem;
       font-weight: 700;
-      color: #1f2937;
+      color: hsl(var(--foreground));
       margin-bottom: 1rem;
     }
 
     p {
-      color: #6b7280;
+      color: hsl(var(--muted-foreground));
       font-size: 1.1rem;
       margin-bottom: 2rem;
       max-width: 400px;
@@ -118,39 +118,39 @@ import '../styles/global.css';
     }
 
     .btn-primary {
-      background: #f59e0b;
+      background: hsl(var(--primary));
       color: white;
     }
 
     .btn-primary:hover {
-      background: #d97706;
+      background: hsl(var(--primary) / 90%);
       transform: translateY(-2px);
     }
 
     .btn-secondary {
-      background: #ffffff;
-      color: #374151;
-      border: 1px solid #e5e7eb;
+      background: hsl(var(--card));
+      color: hsl(var(--foreground));
+      border: 1px solid hsl(var(--border));
     }
 
     .btn-secondary:hover {
-      background: #f3f4f6;
-      border-color: #d1d5db;
+      background: hsl(var(--muted));
+      border-color: hsl(var(--border));
     }
 
     .search-suggestion {
       margin-top: 3rem;
       padding: 2rem;
-      background: #ffffff;
+      background: hsl(var(--card));
       border-radius: 12px;
-      border: 1px solid #e5e7eb;
+      border: 1px solid hsl(var(--border));
       max-width: 500px;
     }
 
     .search-suggestion h3 {
       font-size: 1rem;
       font-weight: 600;
-      color: #374151;
+      color: hsl(var(--foreground));
       margin-bottom: 0.75rem;
     }
 
@@ -162,7 +162,7 @@ import '../styles/global.css';
     .search-input {
       flex: 1;
       padding: 0.75rem 1rem;
-      border: 1px solid #e5e7eb;
+      border: 1px solid hsl(var(--border));
       border-radius: 8px;
       font-size: 1rem;
       outline: none;
@@ -170,12 +170,12 @@ import '../styles/global.css';
     }
 
     .search-input:focus {
-      border-color: #f59e0b;
+      border-color: hsl(var(--primary));
     }
 
     .search-btn {
       padding: 0.75rem 1.25rem;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
       color: white;
       border: none;
       border-radius: 8px;
@@ -186,7 +186,7 @@ import '../styles/global.css';
 
     .search-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.3);
     }
 
     @media (max-width: 768px) {

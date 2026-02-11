@@ -3,7 +3,7 @@
 const faqs = [
     {
         question: "How do you verify servers?",
-        answer: "We evaluate GitHub activity, star count (real adoption), and maintenance status. If it has active development and community usage, it qualifies. We also check for proper documentation, security practices, and working examples. See our full verification process in the <a href='/blog/understanding-mcp-quality-standards' style='color: #f59e0b; text-decoration: underline;'>Quality Standards guide</a>."
+        answer: `We evaluate GitHub activity, star count (real adoption), and maintenance status. If it has active development and community usage, it qualifies. We also check for proper documentation, security practices, and working examples. See our full verification process in the <a href='/blog/understanding-mcp-quality-standards' class='faq-link'>Quality Standards guide</a>.`
     },
     {
         question: "Why 600 servers instead of 17,000?",
@@ -15,11 +15,11 @@ const faqs = [
     },
     {
         question: "How do I choose an MCP client?",
-        answer: "Check our <a href='/blog/mcp-client-complete-guide' style='color: #f59e0b; text-decoration: underline;'>MCP Client Selection Guide</a> for detailed recommendations. Key options: Claude Desktop (official, easy), Cursor (for coding), Cline (open source, terminal), Continue (IDE integrated). Consider your use case, OS, and whether you need multiple server connections."
+        answer: `Check our <a href='/blog/mcp-client-complete-guide' class='faq-link'>MCP Client Selection Guide</a> for detailed recommendations. Key options: Claude Desktop (official, easy), Cursor (for coding), Cline (open source, terminal), Continue (IDE integrated). Consider your use case, OS, and whether you need multiple server connections.`
     },
     {
         question: "Can I submit my server?",
-        answer: "Yes! Click <a href='#' onclick='alert(\"Submit feature coming soon! Email server details to: chester@mymcpshelf.com\"); return false;' style='color: #f59e0b; text-decoration: underline;'>\"Submit Your Server\"</a> or email us your repository. Requirements: 10+ GitHub stars, active maintenance, proper docs, and working examples. We review submissions weekly."
+        answer: `Yes! Click <a href='#' onclick='alert(\"Submit feature coming soon! Email server details to: chester@mymcpshelf.com\"); return false;' class='faq-link'>\"Submit Your Server\"</a> or email us your repository. Requirements: 10+ GitHub stars, active maintenance, proper docs, and working examples. We review submissions weekly.`
     }
 ];
 ---
@@ -52,7 +52,7 @@ const faqs = [
 
 <style>
     .faq-section {
-        background: #f3f4f6;
+        background: hsl(var(--muted));
         padding: 4rem 1rem;
     }
     
@@ -64,14 +64,14 @@ const faqs = [
     .faq-heading {
         font-size: 2rem;
         font-weight: 700;
-        color: #1f2937;
+        color: hsl(var(--foreground));
         text-align: center;
         margin-bottom: 0.5rem;
     }
     
     .faq-subheading {
         font-size: 1.1rem;
-        color: #6b7280;
+        color: hsl(var(--muted-foreground));
         text-align: center;
         margin-bottom: 2.5rem;
     }
@@ -83,10 +83,10 @@ const faqs = [
     }
     
     .faq-item {
-        background: #ffffff;
+        background: hsl(var(--card));
         border-radius: 12px;
         overflow: hidden;
-        border: 1px solid #e5e7eb;
+        border: 1px solid hsl(var(--border));
         transition: all 0.3s ease;
     }
     
@@ -109,20 +109,20 @@ const faqs = [
     }
     
     .faq-question:hover {
-        background: #f9fafb;
+        background: hsl(var(--muted));
     }
     
     .question-text {
         font-size: 1.05rem;
         font-weight: 600;
-        color: #1f2937;
+        color: hsl(var(--card-foreground));
         padding-right: 1rem;
         line-height: 1.5;
     }
     
     .faq-icon {
         font-size: 1.5rem;
-        color: #f59e0b;
+        color: hsl(var(--primary));
         font-weight: 300;
         transition: transform 0.3s ease;
         flex-shrink: 0;
@@ -145,8 +145,13 @@ const faqs = [
     .faq-answer p {
         padding: 0 1.5rem 1.25rem;
         font-size: 1rem;
-        color: #6b7280;
+        color: hsl(var(--muted-foreground));
         line-height: 1.7;
+    }
+
+    .faq-link {
+        color: hsl(var(--primary));
+        text-decoration: underline;
     }
     
     .faq-cta-wrapper {
@@ -156,13 +161,13 @@ const faqs = [
     
     .faq-more-text {
         font-size: 1rem;
-        color: #6b7280;
+        color: hsl(var(--muted-foreground));
         margin-bottom: 1rem;
     }
     
     .faq-view-all {
         display: inline-block;
-        background: #f59e0b;
+        background: hsl(var(--primary));
         color: white;
         padding: 0.75rem 2rem;
         border-radius: 8px;
@@ -173,41 +178,41 @@ const faqs = [
     }
     
     .faq-view-all:hover {
-        background: #d97706;
+        background: hsl(var(--primary) / 90%);
         transform: translateY(-2px);
     }
     
     html.dark-mode .faq-section {
-        background: #1f2937;
+        background: hsl(var(--card));
     }
     
     html.dark-mode .faq-heading {
-        color: #f9fafb;
+        color: hsl(var(--card-foreground));
     }
     
     html.dark-mode .faq-subheading {
-        color: #9ca3af;
+        color: hsl(var(--muted-foreground));
     }
     
     html.dark-mode .faq-item {
-        background: #374151;
-        border-color: #4b5563;
+        background: hsl(var(--card));
+        border-color: hsl(var(--border));
     }
     
     html.dark-mode .faq-question:hover {
-        background: #4b5563;
+        background: hsl(var(--muted));
     }
     
     html.dark-mode .question-text {
-        color: #f9fafb;
+        color: hsl(var(--card-foreground));
     }
     
     html.dark-mode .faq-answer p {
-        color: #d1d5db;
+        color: hsl(var(--muted-foreground));
     }
     
     html.dark-mode .faq-more-text {
-        color: #9ca3af;
+        color: hsl(var(--muted-foreground));
     }
     
     @media (max-width: 768px) {

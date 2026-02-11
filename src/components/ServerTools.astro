@@ -57,11 +57,11 @@ const hasTools = tools.length > 0;
 
 <style>
   .tools-section {
-    background: #ffffff;
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
     border-radius: 12px;
     padding: 1.5rem;
     margin-bottom: 1.5rem;
-    border: 1px solid #e5e7eb;
   }
 
   .section-title {
@@ -70,17 +70,17 @@ const hasTools = tools.length > 0;
     gap: 0.75rem;
     font-size: 1.25rem;
     font-weight: 600;
-    color: #1f2937;
+    color: hsl(var(--card-foreground));
     margin: 0 0 1.25rem 0;
   }
 
   .section-title svg {
-    color: #6b7280;
+    color: hsl(var(--muted-foreground));
   }
 
   .tool-count {
-    background: rgba(245, 158, 11, 0.1);
-    color: #f59e0b;
+    background: hsla(var(--primary), 0.1);
+    color: hsl(var(--primary));
     padding: 0.2rem 0.6rem;
     border-radius: 9999px;
     font-size: 0.8rem;
@@ -99,12 +99,12 @@ const hasTools = tools.length > 0;
   .category-title {
     font-size: 0.9rem;
     font-weight: 600;
-    color: #6b7280;
+    color: hsl(var(--muted-foreground));
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin: 0 0 0.75rem 0;
     padding-bottom: 0.5rem;
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid hsl(var(--border));
   }
 
   .tool-list {
@@ -120,28 +120,28 @@ const hasTools = tools.length > 0;
     flex-direction: column;
     gap: 0.25rem;
     padding: 0.75rem;
-    background: #f9fafb;
+    background: hsl(var(--muted));
     border-radius: 8px;
     transition: background 0.2s ease;
   }
 
   .tool-item:hover {
-    background: #f3f4f6;
+    background: hsl(var(--muted) / 0.8);
   }
 
   .tool-name {
     font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
     font-size: 0.9rem;
     font-weight: 600;
-    color: #667eea;
-    background: rgba(102, 126, 234, 0.1);
+    color: hsl(var(--primary));
+    background: hsla(var(--primary), 0.1);
     padding: 0.2rem 0.5rem;
     border-radius: 4px;
     width: fit-content;
   }
 
   .tool-description {
-    color: #6b7280;
+    color: hsl(var(--muted-foreground));
     font-size: 0.9rem;
     line-height: 1.5;
   }

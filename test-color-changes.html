@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Scheme Test</title>
+    <style>
+        :root {
+            /* Warm Earth Theme - Light Mode */
+            --background: 30 25% 97%;
+            --foreground: 270 5% 10%;
+
+            --card: 270 50% 98%;
+            --card-foreground: 270 5% 10%;
+
+            --popover: 0 0% 100%;
+            --popover-foreground: 270 5% 10%;
+
+            --primary: 25 75% 58%; /* #EE7B30 - Warm Orange */
+            --primary-foreground: 0 0% 100%;
+
+            --secondary: 35 35% 78%; /* #D1B490 - Warm Beige */
+            --secondary-foreground: 270 5% 10%;
+
+            --muted: 270 30% 96%;
+            --muted-foreground: 270 5% 40%;
+
+            --accent: 170 20% 60%; /* #8AA8A1 - Muted Teal */
+            --accent-foreground: 270 5% 10%;
+
+            --tertiary: 230 25% 82%; /* #CBCBD4 - Cool Lavender-Gray */
+            --tertiary-foreground: 270 5% 10%;
+
+            --destructive: 0 84% 60%;
+            --destructive-foreground: 0 0% 98%;
+
+            --border: 270 20% 88%;
+            --input: 270 20% 88%;
+            --ring: 25 75% 58%;
+
+            --radius: 0.5rem;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: hsl(var(--primary));
+            margin-bottom: 2rem;
+        }
+
+        .color-swatch {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .swatch {
+            width: 100px;
+            height: 100px;
+            margin-right: 1rem;
+            border-radius: var(--radius);
+            border: 1px solid hsl(var(--border));
+        }
+
+        .color-info {
+            flex: 1;
+        }
+
+        .color-name {
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+
+        .color-value {
+            font-size: 0.9rem;
+            color: hsl(var(--muted-foreground));
+        }
+
+        .primary-bg { background-color: hsl(var(--primary)); }
+        .secondary-bg { background-color: hsl(var(--secondary)); }
+        .accent-bg { background-color: hsl(var(--accent)); }
+        .tertiary-bg { background-color: hsl(var(--tertiary)); }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 0.5rem;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background-color: hsl(var(--primary));
+            border: 1px solid hsl(var(--primary));
+        }
+
+        .btn-secondary {
+            background-color: hsl(var(--secondary));
+            border: 1px solid hsl(var(--secondary));
+            color: hsl(var(--secondary-foreground));
+        }
+
+        .btn-accent {
+            background-color: hsl(var(--accent));
+            border: 1px solid hsl(var(--accent));
+            color: hsl(var(--accent-foreground));
+        }
+
+        .btn-tertiary {
+            background-color: hsl(var(--tertiary));
+            border: 1px solid hsl(var(--tertiary));
+            color: hsl(var(--tertiary-foreground));
+        }
+
+        .logo-preview {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(to bottom right, #EE7B30, #D1B490);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin: 2rem auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Warm Earth Color Scheme Test</h1>
+
+        <div class="logo-preview">
+            MCP Logo Preview
+        </div>
+
+        <h2>Color Palette</h2>
+
+        <div class="color-swatch">
+            <div class="swatch primary-bg"></div>
+            <div class="color-info">
+                <div class="color-name">Primary Color</div>
+                <div class="color-value">#EE7B30 - Warm Orange (25 75% 58%)</div>
+            </div>
+        </div>
+
+        <div class="color-swatch">
+            <div class="swatch secondary-bg"></div>
+            <div class="color-info">
+                <div class="color-name">Secondary Color</div>
+                <div class="color-value">#D1B490 - Warm Beige (35 35% 78%)</div>
+            </div>
+        </div>
+
+        <div class="color-swatch">
+            <div class="swatch accent-bg"></div>
+            <div class="color-info">
+                <div class="color-name">Accent Color</div>
+                <div class="color-value">#8AA8A1 - Muted Teal (170 20% 60%)</div>
+            </div>
+        </div>
+
+        <div class="color-swatch">
+            <div class="swatch tertiary-bg"></div>
+            <div class="color-info">
+                <div class="color-name">Tertiary Color</div>
+                <div class="color-value">#CBCBD4 - Cool Lavender-Gray (230 25% 82%)</div>
+            </div>
+        </div>
+
+        <h2>Button Examples</h2>
+
+        <div style="margin-bottom: 1rem;">
+            <a href="#" class="btn btn-primary">Primary Button</a>
+            <a href="#" class="btn btn-secondary">Secondary Button</a>
+            <a href="#" class="btn btn-accent">Accent Button</a>
+            <a href="#" class="btn btn-tertiary">Tertiary Button</a>
+        </div>
+
+        <h2>Color Contrast Test</h2>
+
+        <div style="background-color: hsl(var(--primary)); color: hsl(var(--primary-foreground)); padding: 1rem; border-radius: var(--radius); margin-bottom: 1rem;">
+            Primary color with foreground text
+        </div>
+
+        <div style="background-color: hsl(var(--secondary)); color: hsl(var(--secondary-foreground)); padding: 1rem; border-radius: var(--radius); margin-bottom: 1rem;">
+            Secondary color with foreground text
+        </div>
+
+        <div style="background-color: hsl(var(--accent)); color: hsl(var(--accent-foreground)); padding: 1rem; border-radius: var(--radius); margin-bottom: 1rem;">
+            Accent color with foreground text
+        </div>
+
+        <div style="background-color: hsl(var(--tertiary)); color: hsl(var(--tertiary-foreground)); padding: 1rem; border-radius: var(--radius); margin-bottom: 1rem;">
+            Tertiary color with foreground text
+        </div>
+
+        <h2>Summary</h2>
+        <p>The new Warm Earth color scheme replaces the previous purple/amethyst theme with a warmer, more inviting palette featuring:</p>
+        <ul>
+            <li><strong>Primary:</strong> Warm Orange (#EE7B30) - energetic and attention-grabbing</li>
+            <li><strong>Secondary:</strong> Warm Beige (#D1B490) - natural and comforting</li>
+            <li><strong>Accent:</strong> Muted Teal (#8AA8A1) - sophisticated and balanced</li>
+            <li><strong>Tertiary:</strong> Cool Lavender-Gray (#CBCBD4) - subtle and professional</li>
+        </ul>
+    </div>
+</body>
+</html>
