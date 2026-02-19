@@ -23,22 +23,38 @@ Generates ready-to-use `mcpServers` JSON configuration blocks for MCP clients:
 - Continue (VS Code Extension)
 - VS Code (Official)
 
-### Quick Start with Presets
+### Quick Start with Presets (15 Available)
 
 One-click server combinations for common use cases:
 
-| Preset | Servers | Difficulty | Setup Time |
-|--------|---------|------------|------------|
-| 👨‍💻 **Full Development Stack** | GitHub, File System, PostgreSQL, Puppeteer | Intermediate | 5 min |
-| ⚡ **Minimal Setup** | GitHub, File System | Beginner | 2 min |
-| 🗄️ **Database Admin** | PostgreSQL, SQLite, MongoDB, Redis | Intermediate | 10 min |
-| ☁️ **Cloud Infrastructure** | AWS, Azure, GCP, Kubernetes | Advanced | 15 min |
-| 🤖 **AI Development** | LangChain, LlamaIndex, GitHub, File System | Intermediate | 8 min |
-| 👥 **Team Collaboration** | Slack, Discord, Google Workspace | Intermediate | 10 min |
-| 🌐 **Web Automation** | Puppeteer, GitHub, File System | Beginner | 5 min |
-| 📊 **Data Pipeline** | MindsDB, Activepieces, PostgreSQL, Redis | Advanced | 15 min |
-| 🔒 **Security Tools** | GitHub, AWS, Kubernetes | Advanced | 12 min |
-| 🏠 **Local First** | File System, SQLite, Puppeteer | Beginner | 3 min |
+| Preset | Icon | Servers | Difficulty | Target User |
+|--------|------|---------|-----------|-------------|
+| 🤖 **Claude Code Assistant** | GitHub, File System, Commander | Beginner | Developers new to MCP |
+| ⚡ **Minimal Setup** | GitHub, File System | Beginner | Quick start for beginners |
+| 👨‍💻 **Full Development Stack** | GitHub, File System, PostgreSQL, Puppeteer | Intermediate | Full-stack developers |
+| 📝 **The Notion Alternative** | SQLite, File System, Obsidian | Beginner | Knowledge management |
+| 🔒 **Local-First Privacy** | File System, Ollama, Local PDF | Intermediate | Privacy-conscious users |
+| 🏠 **Local First** | File System, SQLite, Puppeteer | Beginner | Offline/privacy users |
+| 🌐 **Web Automation** | Puppeteer, GitHub, File System | Beginner | QA and web scrapers |
+| 🤖 **AI Development** | LangChain, LlamaIndex, GitHub, File System | Intermediate | AI/ML developers |
+| 🧠 **AI Engineering** | LangSmith, Pinecone, ChromaDB, GitHub | Advanced | AI builders (RAG/LLM) |
+| 🗄️ **Database Admin** | PostgreSQL, SQLite, MongoDB, Redis | Intermediate | DBAs and backend devs |
+| 👥 **Team Collaboration** | Slack, Discord, Google Workspace | Intermediate | Team communication |
+| 📈 **Marketing Ops Stack** | Airtable, Slack, Webflow, Analytics | Intermediate | Growth/marketing teams |
+| 📊 **Data Pipeline** | MindsDB, Activepieces, PostgreSQL, Redis | Advanced | Data engineers |
+| ☁️ **Cloud Infrastructure** | AWS, Azure, GCP, Kubernetes | Advanced | DevOps engineers |
+| 🔒 **Security Tools** | GitHub, AWS, Kubernetes | Advanced | Security teams |
+
+### Preset Categories
+
+#### Beginner (5 presets)
+Perfect for MCP newcomers - minimal setup, essential tools only
+
+#### Intermediate (5 presets)
+For users ready for more powerful setups - multiple integrations
+
+#### Advanced (4 presets)
+For teams and power users - complex multi-service configurations
 
 ### Usage
 
@@ -482,6 +498,130 @@ All tools render client-side with **zero server calls** after initial load.
 - ✅ Static data, no user input
 - ✅ External links open in new tabs
 - ✅ No PII collected
+- ✅ User reports stored locally (localStorage)
+
+---
+
+## Ghost CMS Integration
+
+### What It Is
+
+Server metadata can be stored and managed in Ghost CMS instead of hardcoded JavaScript files.
+
+### Setup
+
+1. **Add Ghost credentials to `.env.local`:**
+```env
+GHOST_API_URL=https://your-ghost-site.com
+GHOST_CONTENT_API_KEY=your_content_api_key
+```
+
+2. **Create MCP server posts in Ghost:**
+   - Tag posts with `mcp-server`
+   - Add metadata via code injection or excerpt
+
+### Ghost Post Structure
+
+```html
+<!-- Code Injection > Head -->
+<meta name="mcp-npm-package" content="@modelcontextprotocol/server-github">
+<meta name="mcp-github-url" content="https://github.com/github/github-mcp-server">
+<meta name="mcp-category" content="development">
+<meta name="mcp-language" content="TypeScript">
+<meta name="mcp-env-vars" content="GITHUB_TOKEN">
+```
+
+### Using Ghost Data
+
+```javascript
+import { fetchGhostMCPServers, transformGhostServerToInternal } from '../utils/ghostApi.js';
+
+// Fetch servers from Ghost
+const ghostServers = await fetchGhostMCPServers();
+const servers = ghostServers.map(transformGhostServerToInternal);
+
+// Use with tools
+<MCPConfigGenerator servers={servers} />
+```
+
+### Benefits
+
+| Without Ghost | With Ghost |
+|---------------|------------|
+| Edit JavaScript files | Edit in Ghost admin UI |
+| Requires developer | Content editors can update |
+| Git commit + deploy | Changes instant |
+| No scheduling | Schedule server announcements |
+
+---
+
+## User-Submitted Compatibility Reports
+
+### What It Is
+
+Users can submit their own compatibility test results, which are stored locally and displayed alongside the base compatibility matrix.
+
+### Features
+
+- **Submit Reports** - Form for users to report test results
+- **Voting System** - Upvote/downvote reports
+- **Aggregate Status** - Combined status from multiple reports
+- **Confidence Score** - Shows reliability of reports
+- **Local Storage** - Reports persist in browser
+
+### Report Fields
+
+| Field | Description |
+|-------|-------------|
+| Client | MCP client used (Claude Desktop, Cursor, etc.) |
+| Server | MCP server tested |
+| Status | Works / Partial / Broken / Unknown |
+| Transport | STDIO / SSE / Both |
+| Version | Client version tested |
+| Notes | Additional details |
+
+### Using Reports
+
+Reports are automatically integrated into the Compatibility Matrix. Users can:
+
+1. Click any cell in the matrix
+2. View existing user reports
+3. Submit their own report
+4. Vote on existing reports
+
+### Report Storage
+
+Reports are stored in `localStorage`:
+
+```javascript
+// Get all reports
+import { getAllReports } from '../data/compatibilityReports.js';
+const reports = getAllReports();
+
+// Submit a report
+import { submitReport } from '../data/compatibilityReports.js';
+submitReport({
+  clientId: 'claude-desktop',
+  clientName: 'Claude Desktop',
+  serverId: 'github-mcp',
+  serverName: 'GitHub MCP',
+  status: 'works',
+  transport: 'stdio',
+  version: '0.4.0',
+  notes: 'Works perfectly with no issues'
+});
+```
+
+### Merging with Base Matrix
+
+User reports can override or supplement the base compatibility matrix:
+
+```javascript
+import { mergeWithBaseMatrix } from '../data/compatibilityReports.js';
+import { compatibilityMatrix } from '../data/compatibilityMatrix.js';
+
+const mergedMatrix = mergeWithBaseMatrix(compatibilityMatrix.compatibility);
+```
 
 ---
 
@@ -500,7 +640,7 @@ All tools support:
 ### Config Generator
 - [ ] Import existing configs
 - [ ] Validate config syntax
-- [ ] Add server presets
+- [x] Add server presets (15 presets available)
 - [ ] Support custom server paths
 
 ### Stack Builder
@@ -510,10 +650,16 @@ All tools support:
 - [ ] Include monitoring (Prometheus)
 
 ### Compatibility Matrix
-- [ ] User-submitted reports
+- [x] User-submitted reports ✅
 - [ ] Version-specific compatibility
-- [ ] Historical data
+- [ ] Historical data / trends
 - [ ] Automated testing CI/CD
+- [ ] Export reports to API/database
+
+### Ghost Integration
+- [ ] Auto-sync with Ghost CMS
+- [ ] Webhook support for real-time updates
+- [ ] Multi-language support via Ghost translations
 
 ---
 

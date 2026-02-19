@@ -8,20 +8,48 @@ The MCP Config Generator is a client-side JavaScript tool that allows users to s
 
 Pre-packaged server combinations for common use cases - select multiple servers with one click!
 
-### Available Presets
+### Available Presets (15 Total)
 
-| Preset | Icon | Servers | Difficulty | Time | Env Vars |
-|--------|------|---------|-----------|------|----------|
-| **Full Development Stack** | 👨‍💻 | GitHub, File System, PostgreSQL, Puppeteer | Intermediate | 5 min | GITHUB_TOKEN, DATABASE_URL |
-| **Minimal Setup** | ⚡ | GitHub, File System | Beginner | 2 min | GITHUB_TOKEN |
-| **Database Admin** | 🗄️ | PostgreSQL, SQLite, MongoDB, Redis | Intermediate | 10 min | DATABASE_URL, MONGO_URL, REDIS_URL |
-| **Cloud Infrastructure** | ☁️ | AWS, Azure, GCP, Kubernetes | Advanced | 15 min | AWS_ACCESS_KEY_ID, AZURE_CLIENT_ID, etc. |
-| **AI Development** | 🤖 | LangChain, LlamaIndex, GitHub, File System | Intermediate | 8 min | OPENAI_API_KEY, ANTHROPIC_API_KEY |
-| **Team Collaboration** | 👥 | Slack, Discord, Google Workspace | Intermediate | 10 min | SLACK_BOT_TOKEN, DISCORD_TOKEN |
-| **Web Automation** | 🌐 | Puppeteer, GitHub, File System | Beginner | 5 min | GITHUB_TOKEN |
-| **Data Pipeline** | 📊 | MindsDB, Activepieces, PostgreSQL, Redis | Advanced | 15 min | DATABASE_URL, REDIS_URL |
-| **Security Tools** | 🔒 | GitHub, AWS, Kubernetes | Advanced | 12 min | GITHUB_TOKEN, AWS_ACCESS_KEY_ID |
-| **Local First** | 🏠 | File System, SQLite, Puppeteer | Beginner | 3 min | None (offline) |
+| Preset | Icon | Servers | Difficulty | Time | Target User |
+|--------|------|---------|-----------|------|-------------|
+| **Claude Code Assistant** | 🤖 | GitHub, File System, Commander | Beginner | 3 min | Developers new to MCP |
+| **Minimal Setup** | ⚡ | GitHub, File System | Beginner | 2 min | Quick start for beginners |
+| **Full Development Stack** | 👨‍💻 | GitHub, File System, PostgreSQL, Puppeteer | Intermediate | 5 min | Full-stack developers |
+| **The Notion Alternative** | 📝 | SQLite, File System, Obsidian | Beginner | 5 min | Knowledge management users |
+| **Local-First Privacy** | 🔒 | File System, Ollama, Local PDF | Intermediate | 5 min | Privacy-conscious users |
+| **Local First** | 🏠 | File System, SQLite, Puppeteer | Beginner | 3 min | Offline/privacy users |
+| **Web Automation** | 🌐 | Puppeteer, GitHub, File System | Beginner | 5 min | QA and web scrapers |
+| **AI Development** | 🤖 | LangChain, LlamaIndex, GitHub, File System | Intermediate | 8 min | AI/ML developers |
+| **AI Engineering** | 🧠 | LangSmith, Pinecone, ChromaDB, GitHub | Advanced | 12 min | AI builders (RAG/LLM) |
+| **Database Admin** | 🗄️ | PostgreSQL, SQLite, MongoDB, Redis | Intermediate | 10 min | DBAs and backend devs |
+| **Team Collaboration** | 👥 | Slack, Discord, Google Workspace | Intermediate | 10 min | Team communication |
+| **Marketing Ops Stack** | 📈 | Airtable, Slack, Webflow, Analytics | Intermediate | 10 min | Growth/marketing teams |
+| **Data Pipeline** | 📊 | MindsDB, Activepieces, PostgreSQL, Redis | Advanced | 15 min | Data engineers |
+| **Cloud Infrastructure** | ☁️ | AWS, Azure, GCP, Kubernetes | Advanced | 15 min | DevOps engineers |
+| **Security Tools** | 🔒 | GitHub, AWS, Kubernetes | Advanced | 12 min | Security teams |
+
+### Preset Categories
+
+#### Beginner (5 presets)
+- 🤖 Claude Code Assistant - Perfect starter for MCP newcomers
+- ⚡ Minimal Setup - GitHub + File system essentials
+- 📝 The Notion Alternative - Knowledge management without the cloud
+- 🏠 Local First - Offline-first development
+- 🌐 Web Automation - Browser testing and scraping
+
+#### Intermediate (5 presets)
+- 👨‍💻 Full Development Stack - Complete developer toolkit
+- 🔒 Local-First Privacy - AI without the cloud
+- 🤖 AI Development - LLM application building
+- 🗄️ Database Admin - Multi-database management
+- 👥 Team Collaboration - Communication tools
+- 📈 Marketing Ops Stack - Growth team automation
+
+#### Advanced (4 presets)
+- 🧠 AI Engineering - RAG pipelines and vector stores
+- 📊 Data Pipeline - ETL and data engineering
+- ☁️ Cloud Infrastructure - Multi-cloud management
+- 🔒 Security Tools - Auditing and compliance
 
 ### Using Presets
 
@@ -121,7 +149,7 @@ Each server in the generated config includes:
   "github-mcp": {
     "command": "npx @modelcontextprotocol/server-github",
     "env": {
-      "GITHUB_TOKEN": "YOUR_GITHUB_TOKEN_HERE"
+      "GITHUB_TOKEN": "<your-github-token>"
     }
   }
 }
@@ -145,9 +173,9 @@ Each server in the generated config includes:
   "gdrive-mcp": {
     "command": "npx gdrive-mcp-server",
     "env": {
-      "OAUTH_TOKEN": "YOUR_OAUTH_TOKEN_HERE",
-      "CLIENT_ID": "YOUR_CLIENT_ID_HERE",
-      "CLIENT_SECRET": "YOUR_CLIENT_SECRET_HERE"
+      "OAUTH_TOKEN": "<your-oauth-token>",
+      "CLIENT_ID": "<your-client-id>",
+      "CLIENT_SECRET": "<your-client-secret>"
     }
   }
 }

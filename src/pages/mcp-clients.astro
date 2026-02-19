@@ -13,7 +13,7 @@ import '../styles/global.css';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MCP Clients | My MCP Shelf</title>
     <meta name="description" content="Discover MCP client applications and integrations for connecting to MCP servers">
-    <link rel="canonical" href="https://www.mymcpshelf.com/mcp-clients/" />
+    <link rel="canonical" href="https://www.mymcpshelf.com/mcp-clients" />
     <meta name="google-site-verification" content="qmL-eYN3ygqiuLXVWHuWWko8vIBJj3hAYizdpo7dDug" />
     <meta name="msvalidate.01" content="8AA5A1EBF656D16B95B78BE654843905" />
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
@@ -509,9 +509,9 @@ import '../styles/global.css';
                 const githubUrl = statsElement.getAttribute('data-github-url');
                 if (githubUrl) {
                     // Stagger requests to avoid rate limiting (100ms between each)
-                    setTimeout(() => {
-                        fetchRepoStats(githubUrl, statsElement);
-                    }, index * 100);
+                    // setTimeout(() => {
+                    //     fetchRepoStats(githubUrl, statsElement);
+                    // }, index * 100);
                 } else {
                     statsElement.innerHTML = '';
                 }

@@ -1,8 +1,10 @@
 // PulseMCP API client for fetching MCP server data
-// Based on https://github.com/orliesaurus/pulsemcp-server
+// API docs: https://api.pulsemcp.com/v0beta
 
-// Use PulseMCP.com's website directly since the server is an MCP protocol server, not REST API
-const PULSEMCP_WEB_URL = 'https://www.pulsemcp.com';
+const PULSEMCP_API_BASE = 'https://api.pulsemcp.com/v0beta';
+const COUNT_PER_PAGE = 100;
+// Fetch up to 2500 servers (25 pages of 100)
+const MAX_SERVERS = 2500;
 
 /**
  * Fetch all MCP servers from the PulseMCP API with pagination
@@ -10,62 +12,60 @@ const PULSEMCP_WEB_URL = 'https://www.pulsemcp.com';
  */
 export async function fetchAllMCPServers() {
   console.log('Fetching MCP servers from PulseMCP API...');
-  
-  let page = 0;
+
   const allServers = [];
-  const maxPages = 100; // Safety limit to prevent infinite loops
-  
+  let offset = 0;
+
   try {
-    while (page < maxPages) {
-      console.log(`Fetching page ${page}...`);
-      
-      const response = await fetch(`${PULSEMCP_API_URL}/servers?page=${page}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'User-Agent': 'MCP-Directory/1.0'
-        },
-        // Add timeout
-        signal: AbortSignal.timeout(10000) // 10 second timeout
-      });
-      
+    while (allServers.length < MAX_SERVERS) {
+      console.log(`Fetching servers at offset ${offset}...`);
+
+      const response = await fetch(
+        `${PULSEMCP_API_BASE}/servers?count_per_page=${COUNT_PER_PAGE}&offset=${offset}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'User-Agent': 'MCP-Directory/1.0'
+          },
+          signal: AbortSignal.timeout(15000)
+        }
+      );
+
       if (!response.ok) {
-        if (response.status === 404 && page === 0) {
+        if (offset === 0) {
           console.warn('PulseMCP API not available, using fallback data');
-          return null; // Will trigger fallback to static data
+          return null;
         }
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
-      
-      const servers = await response.json();
-      
-      // If no servers or empty array, we've reached the end
+
+      const data = await response.json();
+      const servers = data.servers || data;
+
       if (!servers || !Array.isArray(servers) || servers.length === 0) {
-        console.log(`Reached end of results at page ${page}`);
+        console.log(`Reached end of results at offset ${offset}`);
         break;
       }
-      
-      console.log(`Got ${servers.length} servers from page ${page}`);
+
+      console.log(`Got ${servers.length} servers (total so far: ${allServers.length + servers.length})`);
       allServers.push(...servers);
-      page++;
-      
-      // Small delay to be nice to the API
-      await new Promise(resolve => setTimeout(resolve, 100));
+      offset += servers.length;
+
+      // Stop if we've hit our target or there are no more pages
+      if (!data.next || allServers.length >= MAX_SERVERS) {
+        break;
+      }
+
+      // Small delay to be polite to the API
+      await new Promise(resolve => setTimeout(resolve, 150));
     }
-    
+
     console.log(`Successfully fetched ${allServers.length} servers from PulseMCP API`);
     return allServers;
-    
+
   } catch (error) {
     console.error('Error fetching from PulseMCP API:', error.message);
-    
-    // Check if it's a connection error (API not running)
-    if (error.name === 'TypeError' && error.message.includes('fetch')) {
-      console.warn('PulseMCP API server appears to be offline, using fallback data');
-      return null;
-    }
-    
-    // For other errors, still return null to trigger fallback
     console.warn('Using fallback data due to API error');
     return null;
   }
@@ -82,87 +82,45 @@ export function transformPulseMCPData(apiServers) {
   }
   
   return apiServers.map((server, index) => {
-    // Map PulseMCP API structure to our format
-    // This may need adjustment based on actual API response structure
+    // Extract author from source_code_url (e.g. github.com/author/repo -> @author)
+    let author = '@unknown';
+    const sourceUrl = server.source_code_url || '';
+    const ghMatch = sourceUrl.match(/github\.com\/([^/]+)/);
+    if (ghMatch) {
+      author = `@${ghMatch[1]}`;
+    }
+
     return {
-      id: server.id || `pulsemcp-${index}`,
+      id: server.id || slugifyId(server.name) || `pulsemcp-${index}`,
       fields: {
-        name: server.name || server.title || 'Unknown Server',
-        description: server.description || server.summary || 'No description available',
-        author: server.author || server.maintainer || '@unknown',
-        category: mapCategory(server.category || server.type || 'other'),
-        language: server.language || server.tech || 'Unknown',
-        stars: server.stars || server.github_stars || 0,
-        github_url: server.github_url || server.repository || server.url || '#',
-        npm_package: server.npm_package || server.package || generateNpmPackage(server.name),
-        downloads: server.downloads || 0,
-        updated: server.updated_at || server.last_updated || new Date().toISOString(),
-        logoUrl: server.logoUrl || null,
-        logoSource: server.logoSource || null,
-        logoCachedAt: server.logoCachedAt || null
+        name: server.name || 'Unknown Server',
+        description: server.EXPERIMENTAL_ai_generated_description || server.short_description || 'No description available',
+        author,
+        category: 'other', // PulseMCP v0beta API does not expose category
+        language: 'Unknown',
+        stars: server.github_stars || 0,
+        github_url: server.source_code_url || server.external_url || server.url || '#',
+        npm_package: server.package_name || null,
+        downloads: server.package_download_count || 0,
+        updated: new Date().toISOString(),
+        logoUrl: null,
+        logoSource: null,
+        logoCachedAt: null
       }
     };
   });
 }
 
 /**
- * Map PulseMCP categories to our internal categories
- * @param {string} pulsemcpCategory 
- * @returns {string} Our internal category
- */
-function mapCategory(pulsemcpCategory) {
-  const categoryMap = {
-    'web-automation': 'browser-automation',
-    'browser': 'browser-automation',
-    'database': 'databases',
-    'db': 'databases',
-    'communication': 'communication',
-    'chat': 'communication',
-    'messaging': 'communication',
-    'development': 'development',
-    'dev-tools': 'development',
-    'cloud': 'cloud',
-    'aws': 'cloud',
-    'azure': 'cloud',
-    'gcp': 'cloud',
-    'file-system': 'file-systems',
-    'files': 'file-systems',
-    'storage': 'file-systems',
-    'ai': 'ai-tools',
-    'ml': 'ai-tools',
-    'artificial-intelligence': 'ai-tools',
-    'search': 'search',
-    'web-scraping': 'search',
-    'scraping': 'search',
-    'finance': 'finance',
-    'fintech': 'finance',
-    'payments': 'finance',
-    'media': 'media',
-    'video': 'media',
-    'audio': 'media',
-    'productivity': 'productivity',
-    'tools': 'productivity',
-    'security': 'security',
-    'aggregator': 'aggregators',
-    'meta': 'aggregators',
-    'registry': 'aggregators'
-  };
-  
-  const normalized = pulsemcpCategory.toLowerCase().trim();
-  return categoryMap[normalized] || 'other';
-}
-
-/**
- * Generate npm package name if not provided
- * @param {string} serverName 
+ * Create a stable ID from a server name
+ * @param {string} name
  * @returns {string}
  */
-function generateNpmPackage(serverName) {
-  if (!serverName) return 'unknown-mcp';
-  
-  return serverName
+function slugifyId(name) {
+  if (!name) return '';
+  return name
     .toLowerCase()
     .replace(/[^a-z0-9-]/g, '-')
     .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '') + '-mcp';
+    .replace(/^-|-$/g, '');
 }

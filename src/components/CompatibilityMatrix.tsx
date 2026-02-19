@@ -5,6 +5,13 @@ import {
   getCompatibilityNote,
   getTransportInfo 
 } from '../data/compatibilityMatrix.js';
+import { 
+  getReportsForPair, 
+  getAggregateStatus, 
+  upvoteReport, 
+  downvoteReport 
+} from '../data/compatibilityReports.js';
+import CompatibilityReportForm from './CompatibilityReportForm';
 
 interface MCPServer {
   id: string;
@@ -26,6 +33,7 @@ export default function CompatibilityMatrix({ servers }: CompatibilityMatrixProp
   const [filterMode, setFilterMode] = useState<FilterMode>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [hoveredCell, setHoveredCell] = useState<{ client: string; server: string } | null>(null);
+  const [showReportForm, setShowReportForm] = useState(false);
 
   const clients = Object.keys(compatibilityMatrix.clients);
   const serverIds = Object.keys(compatibilityMatrix.serverTransports);
@@ -323,6 +331,14 @@ export default function CompatibilityMatrix({ servers }: CompatibilityMatrixProp
                 <span className="result-text">{selectedInfo.display.label}</span>
               </div>
               
+              {/* User Reports Summary */}
+              {selectedClient && selectedServer && (
+                <UserReportsSection 
+                  clientId={selectedClient} 
+                  serverId={selectedServer}
+                />
+              )}
+              
               {selectedInfo.note && (
                 <div className="compatibility-note">
                   <span className="note-icon">ℹ️</span>
@@ -338,6 +354,25 @@ export default function CompatibilityMatrix({ servers }: CompatibilityMatrixProp
                     but server only supports {selectedInfo.transport.serverTransports.join('/')}.
                   </span>
                 </div>
+              )}
+              
+              {/* Submit Report Button */}
+              {selectedClient && selectedServer && (
+                <button 
+                  className="submit-report-btn"
+                  onClick={() => setShowReportForm(!showReportForm)}
+                >
+                  {showReportForm ? 'Hide Form' : '📝 Submit Your Report'}
+                </button>
+              )}
+              
+              {/* Report Form */}
+              {showReportForm && selectedClient && selectedServer && (
+                <CompatibilityReportForm 
+                  clientId={selectedClient}
+                  serverId={selectedServer}
+                  onSubmit={() => setShowReportForm(false)}
+                />
               )}
             </div>
           </div>
@@ -369,6 +404,68 @@ export default function CompatibilityMatrix({ servers }: CompatibilityMatrixProp
             View Raw Data
           </a>
         </div>
+      </div>
+    </div>
+  );
+}
+
+// User Reports Section Component
+function UserReportsSection({ clientId, serverId }: { clientId: string; serverId: string }) {
+  const reports = getReportsForPair(clientId, serverId);
+  const aggregate = getAggregateStatus(clientId, serverId);
+  
+  if (reports.length === 0) {
+    return (
+      <div className="user-reports-section empty">
+        <div className="reports-header">
+          <span>👥 User Reports</span>
+        </div>
+        <p className="no-reports">No user reports yet. Be the first to contribute!</p>
+      </div>
+    );
+  }
+  
+  return (
+    <div className="user-reports-section">
+      <div className="reports-header">
+        <span>👥 User Reports ({reports.length})</span>
+        <span className={`aggregate-status ${aggregate.status}`}>
+          {aggregate.confidence.toFixed(0)}% agree
+        </span>
+      </div>
+      <div className="reports-list">
+        {reports.slice(0, 5).map(report => (
+          <div key={report.id} className="report-card">
+            <div className="report-main">
+              <span className={`report-status ${report.status}`}>
+                {report.status === 'works' ? '✓' : report.status === 'broken' ? '✗' : '◐'}
+              </span>
+              <div className="report-details">
+                {report.version && <span className="report-version">{report.version}</span>}
+                {report.notes && <span className="report-notes">{report.notes}</span>}
+              </div>
+            </div>
+            <div className="report-actions">
+              <button 
+                className="vote-btn upvote"
+                onClick={() => upvoteReport(report.id)}
+              >
+                👍 {report.upvotes}
+              </button>
+              <button 
+                className="vote-btn downvote"
+                onClick={() => downvoteReport(report.id)}
+              >
+                👎 {report.downvotes}
+              </button>
+            </div>
+          </div>
+        ))}
+        {reports.length > 5 && (
+          <div className="more-reports">
+            + {reports.length - 5} more reports
+          </div>
+        )}
       </div>
     </div>
   );
@@ -809,6 +906,164 @@ const styles = `
 }
 
 .action-btn.primary:hover {
+  background: hsl(var(--primary), 0.9);
+}
+
+/* User Reports Section */
+.user-reports-section {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.user-reports-section.empty {
+  text-align: center;
+  padding: 0.75rem;
+}
+
+.reports-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.aggregate-status {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.aggregate-status.works {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+}
+
+.aggregate-status.partial {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+}
+
+.aggregate-status.broken {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+}
+
+.no-reports {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.reports-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.report-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.report-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.report-status {
+  font-size: 1.25rem;
+}
+
+.report-status.works { color: #22c55e; }
+.report-status.partial { color: #f59e0b; }
+.report-status.broken { color: #ef4444; }
+
+.report-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.report-version {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+}
+
+.report-notes {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.report-actions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.vote-btn {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.6);
+  transition: all 0.2s ease;
+}
+
+.vote-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.vote-btn.upvote:hover {
+  border-color: #22c55e;
+  color: #22c55e;
+}
+
+.vote-btn.downvote:hover {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.more-reports {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.8rem;
+  padding: 0.5rem 0;
+}
+
+.submit-report-btn {
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background: hsl(var(--primary));
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.submit-report-btn:hover {
   background: hsl(var(--primary), 0.9);
 }
 `;

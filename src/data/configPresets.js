@@ -217,6 +217,106 @@ export const configPresets: Record<string, ConfigPreset> = {
       'Fast local execution'
     ],
     envVars: []
+  },
+
+  'claude-code-assistant': {
+    id: 'claude-code-assistant',
+    name: 'Claude Code Assistant',
+    description: 'Perfect starter kit for developers new to MCP. GitHub integration, file system access, and terminal commands.',
+    icon: '🤖',
+    servers: ['github-mcp', 'filesystem-mcp', 'commander-mcp'],
+    tags: ['beginner', 'claude', 'developer', 'starter'],
+    popularity: 92,
+    estimatedSetupTime: '3 min',
+    difficulty: 'beginner',
+    useCase: 'Ideal for developers new to MCP or getting started with Claude',
+    benefits: [
+      'GitHub repo management',
+      'Read and write files safely',
+      'Execute terminal commands',
+      'Quick setup for Claude Desktop'
+    ],
+    envVars: ['GITHUB_TOKEN']
+  },
+
+  'notion-alternative': {
+    id: 'notion-alternative',
+    name: 'The Notion Alternative',
+    description: 'Build a local-first knowledge management system. SQLite database, file organization, and Obsidian integration.',
+    icon: '📝',
+    servers: ['sqlite-mcp', 'filesystem-mcp', 'obsidian-mcp'],
+    tags: ['knowledge', 'productivity', 'local', 'notes'],
+    popularity: 70,
+    estimatedSetupTime: '5 min',
+    difficulty: 'beginner',
+    useCase: 'Perfect for knowledge management and personal productivity',
+    benefits: [
+      'Local database for notes',
+      'File organization tools',
+      'Obsidian vault integration',
+      'No cloud dependency'
+    ],
+    envVars: []
+  },
+
+  'marketing-ops': {
+    id: 'marketing-ops',
+    name: 'Marketing Ops Stack',
+    description: 'Everything marketing teams need: Airtable databases, Slack notifications, Webflow CMS, and analytics.',
+    icon: '📈',
+    servers: ['airtable-mcp', 'slack-mcp', 'webflow-mcp', 'google-analytics-mcp'],
+    tags: ['marketing', 'growth', 'automation', 'business'],
+    popularity: 55,
+    estimatedSetupTime: '10 min',
+    difficulty: 'intermediate',
+    useCase: 'Built for growth marketers and marketing operations teams',
+    benefits: [
+      'Airtable database automation',
+      'Slack campaign notifications',
+      'Webflow content management',
+      'Analytics and reporting'
+    ],
+    envVars: ['AIRTABLE_API_KEY', 'SLACK_BOT_TOKEN', 'WEBFLOW_API_TOKEN', 'GOOGLE_ANALYTICS_KEY']
+  },
+
+  'local-privacy': {
+    id: 'local-privacy',
+    name: 'Local-First Privacy',
+    description: 'Complete privacy with local AI. File system, Ollama for local LLM, and PDF processing - nothing leaves your machine.',
+    icon: '🔒',
+    servers: ['filesystem-mcp', 'ollama-mcp', 'local-pdf-mcp'],
+    tags: ['privacy', 'local', 'offline', 'ai'],
+    popularity: 80,
+    estimatedSetupTime: '5 min',
+    difficulty: 'intermediate',
+    useCase: 'For privacy-conscious users who want AI without cloud services',
+    benefits: [
+      '100% local processing',
+      'Ollama for offline AI',
+      'PDF analysis locally',
+      'No data leaves your machine'
+    ],
+    envVars: []
+  },
+
+  'ai-engineering': {
+    id: 'ai-engineering',
+    name: 'AI Engineering',
+    description: 'Build AI applications with LangSmith tracing, Pinecone vector search, and vector store integrations.',
+    icon: '🧠',
+    servers: ['langsmith-mcp', 'pinecone-mcp', 'chromadb-mcp', 'github-mcp'],
+    tags: ['ai', 'ml', 'llm', 'vectors', 'rag'],
+    popularity: 65,
+    estimatedSetupTime: '12 min',
+    difficulty: 'advanced',
+    useCase: 'For AI engineers building RAG applications and LLM pipelines',
+    benefits: [
+      'LangSmith for LLM tracing',
+      'Pinecone vector search',
+      'ChromaDB local vectors',
+      'GitHub for code management'
+    ],
+    envVars: ['LANGSMITH_API_KEY', 'PINECONE_API_KEY', 'GITHUB_TOKEN']
   }
 };
 
@@ -246,7 +346,7 @@ export function getPresetsByTag(tag: string): ConfigPreset[] {
 /**
  * Get most popular presets
  */
-export function getPopularPresets(limit: number = 5): ConfigPreset[] {
+export function getPopularPresets(limit: number = 8): ConfigPreset[] {
   return Object.values(configPresets)
     .sort((a, b) => b.popularity - a.popularity)
     .slice(0, limit);
