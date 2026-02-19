@@ -10,6 +10,7 @@ import ServerTools from '../../components/ServerTools.astro';
 import ServerMetadata from '../../components/ServerMetadata.astro';
 import RelatedServers from '../../components/RelatedServers.astro';
 import EmailSignup from '../../components/EmailSignup.astro';
+import GitHubHealthVitals from '../../components/GitHubHealthVitals';
 import { FolderIcon, ToolboxIcon, ComputerIcon, VintageIcon } from '../../components/VintageIcon';
 import { getAllServers, getServerBySlug, getRelatedServers, getCategoryDisplayName } from '../../utils/serverData.js';
 import { slugify } from '../../utils/slugify.js';
@@ -666,6 +667,13 @@ const structuredData = {
       <!-- Sidebar -->
       <aside class="sidebar">
         <ServerMetadata server={server} />
+        {server.fields.github_url && (
+          <GitHubHealthVitals 
+            client:load
+            githubUrl={server.fields.github_url}
+            token={import.meta.env.GITHUB_TOKEN}
+          />
+        )}
         <RelatedServers servers={relatedServers} currentServerId={server.id} />
       </aside>
     </div>

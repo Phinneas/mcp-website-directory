@@ -1,0 +1,410 @@
+---
+/**
+ * MCP Tools Page
+ * Unified page for Config Generator, Stack Builder, and Compatibility Matrix
+ */
+import { staticServers as importedStaticServers } from '../data/staticServers.js';
+import MCPConfigGenerator from '../components/MCPConfigGenerator';
+import StackBuilder from '../components/StackBuilder';
+import CompatibilityMatrix from '../components/CompatibilityMatrix';
+import { FolderIcon, ToolboxIcon, ComputerIcon, VintageIcon } from '../components/VintageIcon';
+import '../styles/global.css';
+
+const staticServers = importedStaticServers;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MCP Tools | MyMCPShelf</title>
+  <meta name="description" content="MCP configuration tools: Config Generator, Docker Stack Builder, and Compatibility Matrix">
+  <link rel="canonical" href="https://www.mymcpshelf.com/mcp-tools" />
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/favicon.png" type="image/png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Dark mode flash prevention -->
+  <script>
+    (function() {
+      const theme = localStorage.getItem('theme');
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark-mode');
+        document.body.classList.add('dark-mode');
+      }
+    })();
+  </script>
+
+  <!-- Plausible Analytics -->
+  <script defer data-domain="mymcpshelf.com" src="https://plausible-analytics-ce-production-7165.up.railway.app/js/script.js"></script>
+
+  <style>
+    :root {
+      --bg-color: hsl(var(--background));
+      --text-primary: hsl(var(--foreground));
+      --text-secondary: hsl(var(--muted-foreground));
+      --card-bg: hsl(var(--card));
+      --border-color: hsl(var(--border));
+      --accent-color: hsl(var(--primary));
+      --hero-bg: hsl(220, 40%, 12%);
+    }
+
+    body.dark-mode {
+      --bg-color: hsl(var(--background));
+      --text-primary: hsl(var(--foreground));
+      --text-secondary: hsl(var(--muted-foreground));
+      --card-bg: hsl(var(--card));
+      --border-color: hsl(var(--border));
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      color: var(--text-primary);
+      background: var(--bg-color);
+      min-height: 100vh;
+    }
+
+    .page-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 3rem 0;
+    }
+
+    .hero h1 {
+      font-size: 2.75rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 1.125rem;
+      color: var(--text-secondary);
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    /* Navigation */
+    .nav-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+    }
+
+    .nav-links a:hover {
+      color: var(--accent-color);
+      border-color: var(--accent-color);
+    }
+
+    /* Tool Tabs */
+    .tool-tabs {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .tool-tab {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem 1.5rem;
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      background: var(--card-bg);
+      color: var(--text-secondary);
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      flex: 1;
+      min-width: 200px;
+      justify-content: center;
+    }
+
+    .tool-tab:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: var(--accent-color);
+    }
+
+    .tool-tab.active {
+      background: linear-gradient(135deg, hsl(var(--primary), 0.1) 0%, hsl(var(--secondary), 0.1) 100%);
+      border-color: hsl(var(--primary));
+      color: hsl(var(--primary));
+    }
+
+    .tool-tab-icon {
+      font-size: 1.5rem;
+    }
+
+    .tool-tab-content {
+      display: none;
+    }
+
+    .tool-tab-content.active {
+      display: block;
+    }
+
+    /* Feature Cards */
+    .feature-overview {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .feature-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+      border-color: var(--accent-color);
+      transform: translateY(-4px);
+    }
+
+    .feature-card h3 {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+
+    .feature-card p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    .feature-card ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .feature-card li {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.25rem 0;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .feature-card li::before {
+      content: '✓';
+      color: hsl(142, 71%, 45%);
+      font-weight: 600;
+    }
+
+    /* Footer */
+    .page-footer {
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border-color);
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+    }
+
+    @media (max-width: 768px) {
+      .page-container {
+        padding: 1rem;
+      }
+
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .nav-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .nav-links {
+        width: 100%;
+      }
+
+      .nav-links a {
+        flex: 1;
+        justify-content: center;
+        padding: 0.4rem 0.5rem;
+        font-size: 0.8rem;
+      }
+
+      .tool-tabs {
+        flex-direction: column;
+      }
+
+      .tool-tab {
+        min-width: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-container">
+    <!-- Navigation -->
+    <header class="nav-header">
+      <nav class="nav-links">
+        <a href="/"><FolderIcon client:load size={16} /> Shelf</a>
+        <a href="/claude-skills"><ToolboxIcon client:load size={16} /> Claude Skills</a>
+        <a href="/mcp-clients"><ComputerIcon client:load size={16} /> MCP Clients</a>
+        <a href="/blog"><VintageIcon client:load name="Windows95TextFile" size={16} /> Blog</a>
+        <a href="/mcp-tools">🛠️ Tools</a>
+      </nav>
+    </header>
+
+    <!-- Hero -->
+    <div class="hero">
+      <h1>MCP Tools Suite</h1>
+      <p>
+        Three powerful tools to configure, deploy, and verify your MCP server setup.
+        Generate configs, build Docker stacks, and check compatibility in seconds.
+      </p>
+    </div>
+
+    <!-- Feature Overview -->
+    <div class="feature-overview">
+      <div class="feature-card">
+        <h3>⚙️ Config Generator</h3>
+        <p>One-click configuration for Claude Desktop, Cursor, Cline, and more.</p>
+        <ul>
+          <li>5+ MCP clients supported</li>
+          <li>Copy-paste ready JSON</li>
+          <li>Auto-generated env vars</li>
+        </ul>
+      </div>
+
+      <div class="feature-card">
+        <h3>🐳 Stack Builder</h3>
+        <p>Multi-select servers and export a ready-to-run docker-compose.yml.</p>
+        <ul>
+          <li>20+ Docker images mapped</li>
+          <li>Auto-generated .env file</li>
+          <li>One-click download</li>
+        </ul>
+      </div>
+
+      <div class="feature-card">
+        <h3>📊 Compatibility Matrix</h3>
+        <p>Visual grid showing which servers work with which clients.</p>
+        <ul>
+          <li>Client × Server matrix</li>
+          <li>Transport compatibility</li>
+          <li>Crowdsourced data</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Tool Tabs -->
+    <div class="tool-tabs">
+      <button class="tool-tab active" data-tab="config-generator">
+        <span class="tool-tab-icon">⚙️</span>
+        <span>Config Generator</span>
+      </button>
+      <button class="tool-tab" data-tab="stack-builder">
+        <span class="tool-tab-icon">🐳</span>
+        <span>Stack Builder</span>
+      </button>
+      <button class="tool-tab" data-tab="compatibility-matrix">
+        <span class="tool-tab-icon">📊</span>
+        <span>Compatibility Matrix</span>
+      </button>
+    </div>
+
+    <!-- Tool Content -->
+    <div id="config-generator" class="tool-tab-content active">
+      <MCPConfigGenerator 
+        client:load
+        servers={staticServers}
+      />
+    </div>
+
+    <div id="stack-builder" class="tool-tab-content">
+      <StackBuilder 
+        client:load
+        servers={staticServers}
+      />
+    </div>
+
+    <div id="compatibility-matrix" class="tool-tab-content">
+      <CompatibilityMatrix 
+        client:load
+        servers={staticServers}
+      />
+    </div>
+
+    <!-- Footer -->
+    <footer class="page-footer">
+      <p>Built with ❤️ for the MCP community. All tools run client-side for instant results.</p>
+    </footer>
+  </div>
+
+  <script>
+    // Tab switching functionality
+    document.querySelectorAll('.tool-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        // Remove active class from all tabs and content
+        document.querySelectorAll('.tool-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tool-tab-content').forEach(c => c.classList.remove('active'));
+        
+        // Add active class to clicked tab and corresponding content
+        tab.classList.add('active');
+        const targetId = tab.getAttribute('data-tab');
+        document.getElementById(targetId)?.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

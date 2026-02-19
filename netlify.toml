@@ -1,4 +1,4 @@
-# Last updated: 2026-02-10 to force Netlify rebuild
+# Last updated: 2026-02-19 to force Netlify rebuild - MCP Tools Suite
 [build]
   command = "npm run build"
   publish = "dist"
@@ -38,12 +38,38 @@
 
 [[redirects]]
   from = "/blog/mcp-client-comparison"
-  to = "/blog/mcp-client-complete-guide/"
+  to = "/"
   status = 301
 
 [[redirects]]
   from = "/blog/mcp-client-comparison/"
-  to = "/blog/mcp-client-complete-guide/"
+  to = "/"
+  status = 301
+
+# Redirect old server slugs
+[[redirects]]
+  from = "/server/mcp-simple-pubmed"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/server/o3-search-mcp"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/server/erick-wendel-contributions-mcp"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/server/apple-shortcuts-mcp"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/server/aws-documentation-mcp"
+  to = "/"
   status = 301
 
 # SPA fallback (must be last)
