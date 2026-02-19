@@ -7137,10 +7137,10 @@ try {
   mcpServers = staticServers;
 }
 
-// Enrich all servers with GitHub organization logos
-// This fetches logos for all servers during build time
+// Enrich top servers with GitHub organization logos
+// Capped at 150 to avoid GitHub API rate limits and slow builds at scale
 try {
-  mcpServers = await enrichServersWithLogos(mcpServers, mcpServers.length);
+  mcpServers = await enrichServersWithLogos(mcpServers, 150);
 } catch (error) {
   console.error('Error enriching servers with logos:', error);
   // Continue without logos - fallback to gradient icons
@@ -7859,28 +7859,29 @@ function formatStars(stars?: number): string {
 
             let currentCategory = 'all';
 
+            // Pre-index cards once for fast filtering at scale
+            const allCards = Array.from(serversGrid.querySelectorAll('.server-card'));
+            allCards.forEach(card => {
+                const title = card.querySelector('h3')?.textContent.toLowerCase() || '';
+                const desc = card.querySelector('.server-description')?.textContent.toLowerCase() || '';
+                card.dataset.searchIndex = title + ' ' + desc;
+            });
+
+            let filterTimer = null;
             function filterServers() {
                 const searchTerm = searchInput.value.toLowerCase();
-                const cards = serversGrid.querySelectorAll('.server-card');
-
-                cards.forEach(card => {
-                    const title = card.querySelector('h3').textContent.toLowerCase();
-                    const description = card.querySelector('.server-description').textContent.toLowerCase();
-                    const category = card.dataset.category;
-
-                    const matchesSearch = title.includes(searchTerm) || description.includes(searchTerm);
-                    const matchesCategory = currentCategory === 'all' || category === currentCategory;
-
-                    if (matchesSearch && matchesCategory) {
-                        card.style.display = 'block';
-                    } else {
-                        card.style.display = 'none';
-                    }
+                allCards.forEach(card => {
+                    const matchesSearch = !searchTerm || card.dataset.searchIndex.includes(searchTerm);
+                    const matchesCategory = currentCategory === 'all' || card.dataset.category === currentCategory;
+                    card.style.display = (matchesSearch && matchesCategory) ? '' : 'none';
                 });
             }
 
-            // Search filter
-            searchInput.addEventListener('input', filterServers);
+            // Debounce search input to avoid filtering on every keystroke
+            searchInput.addEventListener('input', () => {
+                clearTimeout(filterTimer);
+                filterTimer = setTimeout(filterServers, 120);
+            });
 
             // Category filter
             categoryTags.forEach(tag => {
