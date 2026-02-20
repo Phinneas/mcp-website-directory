@@ -236,14 +236,14 @@ export const compatibilityMatrix = {
 /**
  * Get compatibility status for a client-server pair
  */
-export function getCompatibility(clientId: string, serverId: string): 'yes' | 'partial' | 'no' | 'unknown' {
+export function getCompatibility(clientId, serverId) {
   return compatibilityMatrix.compatibility[clientId]?.[serverId] || 'unknown';
 }
 
 /**
  * Get note for a client-server pair
  */
-export function getCompatibilityNote(clientId: string, serverId: string): string | null {
+export function getCompatibilityNote(clientId, serverId) {
   return compatibilityMatrix.notes[`${clientId}:${serverId}`] || 
          compatibilityMatrix.notes[serverId] || 
          null;
@@ -252,7 +252,7 @@ export function getCompatibilityNote(clientId: string, serverId: string): string
 /**
  * Get all compatible clients for a server
  */
-export function getCompatibleClients(serverId: string): string[] {
+export function getCompatibleClients(serverId) {
   return Object.entries(compatibilityMatrix.compatibility)
     .filter(([_, servers]) => servers[serverId] === 'yes')
     .map(([clientId]) => clientId);
@@ -261,7 +261,7 @@ export function getCompatibleClients(serverId: string): string[] {
 /**
  * Get all compatible servers for a client
  */
-export function getCompatibleServers(clientId: string): string[] {
+export function getCompatibleServers(clientId) {
   const clientData = compatibilityMatrix.compatibility[clientId];
   if (!clientData) return [];
   
@@ -273,7 +273,7 @@ export function getCompatibleServers(clientId: string): string[] {
 /**
  * Get servers that require SSE transport
  */
-export function getSSEServers(): string[] {
+export function getSSEServers() {
   return Object.entries(compatibilityMatrix.serverTransports)
     .filter(([_, config]) => config.supports.includes('sse') && !config.supports.includes('stdio'))
     .map(([serverId]) => serverId);
@@ -282,12 +282,7 @@ export function getSSEServers(): string[] {
 /**
  * Get transport compatibility info
  */
-export function getTransportInfo(clientId: string, serverId: string): {
-  clientTransports: string[];
-  serverTransports: string[];
-  compatible: boolean;
-  recommendedTransport: string;
-} {
+export function getTransportInfo(clientId, serverId) {
   const client = compatibilityMatrix.clients[clientId];
   const server = compatibilityMatrix.serverTransports[serverId];
   

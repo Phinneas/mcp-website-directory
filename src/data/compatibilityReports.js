@@ -1,34 +1,32 @@
 /**
  * User-Submitted Compatibility Reports System
  * Allows users to submit and view compatibility reports for client-server pairs
+ * 
+ * @typedef {Object} CompatibilityReport
+ * @property {string} id
+ * @property {string} clientId
+ * @property {string} clientName
+ * @property {string} serverId
+ * @property {string} serverName
+ * @property {'works' | 'partial' | 'broken' | 'unknown'} status
+ * @property {'stdio' | 'sse' | 'both'} transport
+ * @property {string} notes
+ * @property {string} version
+ * @property {number} timestamp
+ * @property {boolean} verified
+ * @property {number} upvotes
+ * @property {number} downvotes
+ * 
+ * @typedef {Object} CompatibilityReportInput
+ * @property {string} clientId
+ * @property {string} clientName
+ * @property {string} serverId
+ * @property {string} serverName
+ * @property {'works' | 'partial' | 'broken' | 'unknown'} status
+ * @property {'stdio' | 'sse' | 'both'} transport
+ * @property {string} notes
+ * @property {string} version
  */
-
-export interface CompatibilityReport {
-  id: string;
-  clientId: string;
-  clientName: string;
-  serverId: string;
-  serverName: string;
-  status: 'works' | 'partial' | 'broken' | 'unknown';
-  transport: 'stdio' | 'sse' | 'both';
-  notes: string;
-  version: string;
-  timestamp: number;
-  verified: boolean;
-  upvotes: number;
-  downvotes: number;
-}
-
-export interface CompatibilityReportInput {
-  clientId: string;
-  clientName: string;
-  serverId: string;
-  serverName: string;
-  status: 'works' | 'partial' | 'broken' | 'unknown';
-  transport: 'stdio' | 'sse' | 'both';
-  notes: string;
-  version: string;
-}
 
 const STORAGE_KEY = 'mcp_compatibility_reports';
 const MAX_REPORTS = 500;
@@ -36,14 +34,14 @@ const MAX_REPORTS = 500;
 /**
  * Generate unique report ID
  */
-function generateReportId(): string {
+function generateReportId() {
   return `report_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 }
 
 /**
  * Get all stored reports
  */
-export function getAllReports(): CompatibilityReport[] {
+export function getAllReports() {
   if (typeof window === 'undefined') return [];
   
   try {
@@ -61,7 +59,7 @@ export function getAllReports(): CompatibilityReport[] {
 /**
  * Save reports to storage
  */
-function saveReports(reports: CompatibilityReport[]): void {
+function saveReports(reports) {
   if (typeof window === 'undefined') return;
   
   // Limit storage size
@@ -72,7 +70,7 @@ function saveReports(reports: CompatibilityReport[]): void {
 /**
  * Submit a new compatibility report
  */
-export function submitReport(input: CompatibilityReportInput): CompatibilityReport {
+export function submitReport(input) {
   const reports = getAllReports();
   
   // Check for duplicate
@@ -80,7 +78,7 @@ export function submitReport(input: CompatibilityReportInput): CompatibilityRepo
     r => r.clientId === input.clientId && r.serverId === input.serverId
   );
   
-  const report: CompatibilityReport = {
+  const report = {
     id: existingIndex >= 0 ? reports[existingIndex].id : generateReportId(),
     clientId: input.clientId,
     clientName: input.clientName,
@@ -109,7 +107,7 @@ export function submitReport(input: CompatibilityReportInput): CompatibilityRepo
 /**
  * Get reports for a specific client-server pair
  */
-export function getReportsForPair(clientId: string, serverId: string): CompatibilityReport[] {
+export function getReportsForPair(clientId, serverId) {
   return getAllReports().filter(
     r => r.clientId === clientId && r.serverId === serverId
   );
@@ -118,21 +116,21 @@ export function getReportsForPair(clientId: string, serverId: string): Compatibi
 /**
  * Get reports for a specific client
  */
-export function getReportsForClient(clientId: string): CompatibilityReport[] {
+export function getReportsForClient(clientId) {
   return getAllReports().filter(r => r.clientId === clientId);
 }
 
 /**
  * Get reports for a specific server
  */
-export function getReportsForServer(serverId: string): CompatibilityReport[] {
+export function getReportsForServer(serverId) {
   return getAllReports().filter(r => r.serverId === serverId);
 }
 
 /**
  * Upvote a report
  */
-export function upvoteReport(reportId: string): CompatibilityReport | null {
+export function upvoteReport(reportId) {
   const reports = getAllReports();
   const report = reports.find(r => r.id === reportId);
   
@@ -148,7 +146,7 @@ export function upvoteReport(reportId: string): CompatibilityReport | null {
 /**
  * Downvote a report
  */
-export function downvoteReport(reportId: string): CompatibilityReport | null {
+export function downvoteReport(reportId) {
   const reports = getAllReports();
   const report = reports.find(r => r.id === reportId);
   
@@ -164,11 +162,7 @@ export function downvoteReport(reportId: string): CompatibilityReport | null {
 /**
  * Calculate aggregate status from reports
  */
-export function getAggregateStatus(clientId: string, serverId: string): {
-  status: 'works' | 'partial' | 'broken' | 'unknown';
-  confidence: number;
-  reportCount: number;
-} {
+export function getAggregateStatus(clientId, serverId) {
   const reports = getReportsForPair(clientId, serverId);
   
   if (reports.length === 0) {
@@ -186,7 +180,7 @@ export function getAggregateStatus(clientId: string, serverId: string): {
   const total = Object.values(votes).reduce((a, b) => a + b, 0);
   const maxStatus = Object.entries(votes).reduce((a, b) => 
     b[1] > a[1] ? b : a
-  ) as [keyof typeof votes, number];
+  );
   
   return {
     status: maxStatus[0],
@@ -198,13 +192,7 @@ export function getAggregateStatus(clientId: string, serverId: string): {
 /**
  * Get report statistics
  */
-export function getReportStats(): {
-  total: number;
-  byStatus: Record<string, number>;
-  byClient: Record<string, number>;
-  byServer: Record<string, number>;
-  verified: number;
-} {
+export function getReportStats() {
   const reports = getAllReports();
   
   return {
@@ -218,11 +206,11 @@ export function getReportStats(): {
     byClient: reports.reduce((acc, r) => {
       acc[r.clientId] = (acc[r.clientId] || 0) + 1;
       return acc;
-    }, {} as Record<string, number>),
+    }, {}),
     byServer: reports.reduce((acc, r) => {
       acc[r.serverId] = (acc[r.serverId] || 0) + 1;
       return acc;
-    }, {} as Record<string, number>),
+    }, {}),
     verified: reports.filter(r => r.verified).length
   };
 }
@@ -230,7 +218,7 @@ export function getReportStats(): {
 /**
  * Clear all reports (admin function)
  */
-export function clearAllReports(): void {
+export function clearAllReports() {
   if (typeof window === 'undefined') return;
   localStorage.removeItem(STORAGE_KEY);
 }
@@ -238,14 +226,14 @@ export function clearAllReports(): void {
 /**
  * Export reports as JSON
  */
-export function exportReports(): string {
+export function exportReports() {
   return JSON.stringify(getAllReports(), null, 2);
 }
 
 /**
  * Import reports from JSON
  */
-export function importReports(json: string): number {
+export function importReports(json) {
   try {
     const imported = JSON.parse(json);
     if (!Array.isArray(imported)) throw new Error('Invalid format');
@@ -253,7 +241,7 @@ export function importReports(json: string): number {
     const existing = getAllReports();
     const existingIds = new Set(existing.map(r => r.id));
     
-    const newReports = imported.filter((r: CompatibilityReport) => 
+    const newReports = imported.filter(r => 
       !existingIds.has(r.id) && 
       r.clientId && r.serverId && r.status
     );
@@ -271,9 +259,7 @@ export function importReports(json: string): number {
 /**
  * Merge user reports with base compatibility matrix
  */
-export function mergeWithBaseMatrix(
-  baseMatrix: Record<string, Record<string, string>>
-): Record<string, Record<string, string>> {
+export function mergeWithBaseMatrix(baseMatrix) {
   const reports = getAllReports();
   const merged = JSON.parse(JSON.stringify(baseMatrix));
   

@@ -140,9 +140,9 @@ export const dockerMappings = {
     image: 'elasticsearch:8.11.0',
     ports: ['9200:9200', '9300:9300'],
     environment: {
-      discovery.type: 'single-node',
-      xpack.security.enabled: 'false',
-      ES_JAVA_OPTS: '-Xms512m -Xmx512m'
+      'discovery.type': 'single-node',
+      'xpack.security.enabled': 'false',
+      'ES_JAVA_OPTS': '-Xms512m -Xmx512m'
     },
     volumes: [
       'elasticsearch_data:/usr/share/elasticsearch/data'

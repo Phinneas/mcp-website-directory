@@ -1,61 +1,49 @@
 /**
  * MCP Server Submissions System
  * Allows visitors to submit their MCP servers to the directory
+ * 
+ * @typedef {Object} MCPServerSubmission
+ * @property {string} id
+ * @property {'pending' | 'approved' | 'rejected'} status
+ * @property {number} submittedAt
+ * @property {string} name
+ * @property {string} description
+ * @property {string} category
+ * @property {string} language
+ * @property {string} author
+ * @property {string} [email]
+ * @property {string} githubUrl
+ * @property {string} [npmPackage]
+ * @property {string} [homepageUrl]
+ * @property {string} [documentationUrl]
+ * @property {'stdio' | 'sse' | 'both'} transport
+ * @property {boolean} hasDocker
+ * @property {string} [dockerImage]
+ * @property {string[]} [requiredEnvVars]
+ * @property {string[]} [tags]
+ * @property {string} [notes]
+ * @property {number} [reviewedAt]
+ * @property {string} [reviewedBy]
+ * @property {string} [reviewNotes]
+ * 
+ * @typedef {Object} SubmissionInput
+ * @property {string} name
+ * @property {string} description
+ * @property {string} category
+ * @property {string} language
+ * @property {string} author
+ * @property {string} [email]
+ * @property {string} githubUrl
+ * @property {string} [npmPackage]
+ * @property {string} [homepageUrl]
+ * @property {string} [documentationUrl]
+ * @property {'stdio' | 'sse' | 'both'} transport
+ * @property {boolean} hasDocker
+ * @property {string} [dockerImage]
+ * @property {string[]} [requiredEnvVars]
+ * @property {string[]} [tags]
+ * @property {string} [notes]
  */
-
-export interface MCPServerSubmission {
-  id: string;
-  status: 'pending' | 'approved' | 'rejected';
-  submittedAt: number;
-  
-  // Server details
-  name: string;
-  description: string;
-  category: string;
-  language: string;
-  author: string;
-  email?: string;
-  
-  // URLs
-  githubUrl: string;
-  npmPackage?: string;
-  homepageUrl?: string;
-  documentationUrl?: string;
-  
-  // Technical details
-  transport: 'stdio' | 'sse' | 'both';
-  hasDocker: boolean;
-  dockerImage?: string;
-  requiredEnvVars?: string[];
-  
-  // Additional info
-  tags?: string[];
-  notes?: string;
-  
-  // Review
-  reviewedAt?: number;
-  reviewedBy?: string;
-  reviewNotes?: string;
-}
-
-export interface SubmissionInput {
-  name: string;
-  description: string;
-  category: string;
-  language: string;
-  author: string;
-  email?: string;
-  githubUrl: string;
-  npmPackage?: string;
-  homepageUrl?: string;
-  documentationUrl?: string;
-  transport: 'stdio' | 'sse' | 'both';
-  hasDocker: boolean;
-  dockerImage?: string;
-  requiredEnvVars?: string[];
-  tags?: string[];
-  notes?: string;
-}
 
 const STORAGE_KEY = 'mcp_server_submissions';
 const MAX_SUBMISSIONS = 200;
@@ -93,14 +81,14 @@ export const SUBMISSION_LANGUAGES = [
 /**
  * Generate unique submission ID
  */
-function generateSubmissionId(): string {
+function generateSubmissionId() {
   return `sub_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 }
 
 /**
  * Get all submissions from storage
  */
-export function getAllSubmissions(): MCPServerSubmission[] {
+export function getAllSubmissions() {
   if (typeof window === 'undefined') return [];
   
   try {
@@ -118,7 +106,7 @@ export function getAllSubmissions(): MCPServerSubmission[] {
 /**
  * Save submissions to storage
  */
-function saveSubmissions(submissions: MCPServerSubmission[]): void {
+function saveSubmissions(submissions) {
   if (typeof window === 'undefined') return;
   
   const trimmed = submissions.slice(-MAX_SUBMISSIONS);
@@ -128,7 +116,7 @@ function saveSubmissions(submissions: MCPServerSubmission[]): void {
 /**
  * Submit a new MCP server
  */
-export function submitServer(input: SubmissionInput): MCPServerSubmission {
+export function submitServer(input) {
   const submissions = getAllSubmissions();
   
   // Check for duplicate GitHub URL
@@ -140,7 +128,7 @@ export function submitServer(input: SubmissionInput): MCPServerSubmission {
     throw new Error('A server with this GitHub URL has already been submitted');
   }
   
-  const submission: MCPServerSubmission = {
+  const submission = {
     id: generateSubmissionId(),
     status: 'pending',
     submittedAt: Date.now(),
@@ -171,35 +159,35 @@ export function submitServer(input: SubmissionInput): MCPServerSubmission {
 /**
  * Get submissions by status
  */
-export function getSubmissionsByStatus(status: MCPServerSubmission['status']): MCPServerSubmission[] {
+export function getSubmissionsByStatus(status) {
   return getAllSubmissions().filter(s => s.status === status);
 }
 
 /**
  * Get pending submissions
  */
-export function getPendingSubmissions(): MCPServerSubmission[] {
+export function getPendingSubmissions() {
   return getSubmissionsByStatus('pending');
 }
 
 /**
  * Get approved submissions
  */
-export function getApprovedSubmissions(): MCPServerSubmission[] {
+export function getApprovedSubmissions() {
   return getSubmissionsByStatus('approved');
 }
 
 /**
  * Get submission by ID
  */
-export function getSubmissionById(id: string): MCPServerSubmission | null {
+export function getSubmissionById(id) {
   return getAllSubmissions().find(s => s.id === id) || null;
 }
 
 /**
  * Approve a submission
  */
-export function approveSubmission(id: string, reviewedBy?: string, notes?: string): MCPServerSubmission | null {
+export function approveSubmission(id, reviewedBy, notes) {
   const submissions = getAllSubmissions();
   const submission = submissions.find(s => s.id === id);
   
@@ -218,7 +206,7 @@ export function approveSubmission(id: string, reviewedBy?: string, notes?: strin
 /**
  * Reject a submission
  */
-export function rejectSubmission(id: string, reviewedBy?: string, reason?: string): MCPServerSubmission | null {
+export function rejectSubmission(id, reviewedBy, reason) {
   const submissions = getAllSubmissions();
   const submission = submissions.find(s => s.id === id);
   
@@ -237,7 +225,7 @@ export function rejectSubmission(id: string, reviewedBy?: string, reason?: strin
 /**
  * Delete a submission
  */
-export function deleteSubmission(id: string): boolean {
+export function deleteSubmission(id) {
   const submissions = getAllSubmissions();
   const index = submissions.findIndex(s => s.id === id);
   
@@ -253,7 +241,7 @@ export function deleteSubmission(id: string): boolean {
 /**
  * Update a submission
  */
-export function updateSubmission(id: string, updates: Partial<SubmissionInput>): MCPServerSubmission | null {
+export function updateSubmission(id, updates) {
   const submissions = getAllSubmissions();
   const submission = submissions.find(s => s.id === id);
   
@@ -269,14 +257,7 @@ export function updateSubmission(id: string, updates: Partial<SubmissionInput>):
 /**
  * Get submission statistics
  */
-export function getSubmissionStats(): {
-  total: number;
-  pending: number;
-  approved: number;
-  rejected: number;
-  byCategory: Record<string, number>;
-  byLanguage: Record<string, number>;
-} {
+export function getSubmissionStats() {
   const submissions = getAllSubmissions();
   
   return {
@@ -287,25 +268,25 @@ export function getSubmissionStats(): {
     byCategory: submissions.reduce((acc, s) => {
       acc[s.category] = (acc[s.category] || 0) + 1;
       return acc;
-    }, {} as Record<string, number>),
+    }, {}),
     byLanguage: submissions.reduce((acc, s) => {
       acc[s.language] = (acc[s.language] || 0) + 1;
       return acc;
-    }, {} as Record<string, number>)
+    }, {})
   };
 }
 
 /**
  * Export submissions as JSON
  */
-export function exportSubmissions(): string {
+export function exportSubmissions() {
   return JSON.stringify(getAllSubmissions(), null, 2);
 }
 
 /**
  * Import submissions from JSON
  */
-export function importSubmissions(json: string): number {
+export function importSubmissions(json) {
   try {
     const imported = JSON.parse(json);
     if (!Array.isArray(imported)) throw new Error('Invalid format');
@@ -313,7 +294,7 @@ export function importSubmissions(json: string): number {
     const existing = getAllSubmissions();
     const existingIds = new Set(existing.map(s => s.id));
     
-    const newSubmissions = imported.filter((s: MCPServerSubmission) => 
+    const newSubmissions = imported.filter(s => 
       !existingIds.has(s.id) && 
       s.name && s.githubUrl
     );
@@ -331,7 +312,7 @@ export function importSubmissions(json: string): number {
 /**
  * Clear all submissions (admin function)
  */
-export function clearAllSubmissions(): void {
+export function clearAllSubmissions() {
   if (typeof window === 'undefined') return;
   localStorage.removeItem(STORAGE_KEY);
 }
@@ -339,7 +320,7 @@ export function clearAllSubmissions(): void {
 /**
  * Convert approved submission to server format
  */
-export function submissionToServerFormat(submission: MCPServerSubmission) {
+export function submissionToServerFormat(submission) {
   return {
     id: submission.id,
     fields: {
@@ -367,7 +348,7 @@ export function submissionToServerFormat(submission: MCPServerSubmission) {
 /**
  * Validate GitHub URL format
  */
-export function validateGitHubUrl(url: string): { valid: boolean; error?: string } {
+export function validateGitHubUrl(url) {
   if (!url) {
     return { valid: false, error: 'GitHub URL is required' };
   }
@@ -383,8 +364,8 @@ export function validateGitHubUrl(url: string): { valid: boolean; error?: string
 /**
  * Validate submission input
  */
-export function validateSubmission(input: SubmissionInput): { valid: boolean; errors: string[] } {
-  const errors: string[] = [];
+export function validateSubmission(input) {
+  const errors = [];
   
   if (!input.name?.trim()) {
     errors.push('Server name is required');
@@ -410,7 +391,7 @@ export function validateSubmission(input: SubmissionInput): { valid: boolean; er
   
   const githubValidation = validateGitHubUrl(input.githubUrl);
   if (!githubValidation.valid) {
-    errors.push(githubValidation.error!);
+    errors.push(githubValidation.error);
   }
   
   return {

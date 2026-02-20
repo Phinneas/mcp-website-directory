@@ -1,24 +1,23 @@
 /**
  * Config Presets for MCP Config Generator
  * Pre-packaged server combinations for common use cases
+ * 
+ * @typedef {Object} ConfigPreset
+ * @property {string} id
+ * @property {string} name
+ * @property {string} description
+ * @property {string} icon
+ * @property {string[]} servers
+ * @property {string[]} tags
+ * @property {number} popularity
+ * @property {string} estimatedSetupTime
+ * @property {'beginner' | 'intermediate' | 'advanced'} difficulty
+ * @property {string} useCase
+ * @property {string[]} benefits
+ * @property {string[]} envVars
  */
 
-export interface ConfigPreset {
-  id: string;
-  name: string;
-  description: string;
-  icon: string;
-  servers: string[];
-  tags: string[];
-  popularity: number;
-  estimatedSetupTime: string;
-  difficulty: 'beginner' | 'intermediate' | 'advanced';
-  useCase: string;
-  benefits: string[];
-  envVars: string[];
-}
-
-export const configPresets: Record<string, ConfigPreset> = {
+export const configPresets = {
   'full-development': {
     id: 'full-development',
     name: 'Full Development Stack',
@@ -323,21 +322,21 @@ export const configPresets: Record<string, ConfigPreset> = {
 /**
  * Get preset by ID
  */
-export function getPreset(id: string): ConfigPreset | undefined {
+export function getPreset(id) {
   return configPresets[id];
 }
 
 /**
  * Get all presets
  */
-export function getAllPresets(): ConfigPreset[] {
+export function getAllPresets() {
   return Object.values(configPresets);
 }
 
 /**
  * Get presets by tag
  */
-export function getPresetsByTag(tag: string): ConfigPreset[] {
+export function getPresetsByTag(tag) {
   return Object.values(configPresets).filter(preset => 
     preset.tags.includes(tag)
   );
@@ -346,7 +345,8 @@ export function getPresetsByTag(tag: string): ConfigPreset[] {
 /**
  * Get most popular presets
  */
-export function getPopularPresets(limit: number = 8): ConfigPreset[] {
+export function getPopularPresets(limit) {
+  limit = limit || 8;
   return Object.values(configPresets)
     .sort((a, b) => b.popularity - a.popularity)
     .slice(0, limit);
@@ -355,7 +355,7 @@ export function getPopularPresets(limit: number = 8): ConfigPreset[] {
 /**
  * Get presets by difficulty
  */
-export function getPresetsByDifficulty(difficulty: 'beginner' | 'intermediate' | 'advanced'): ConfigPreset[] {
+export function getPresetsByDifficulty(difficulty) {
   return Object.values(configPresets).filter(preset => 
     preset.difficulty === difficulty
   );
@@ -364,14 +364,14 @@ export function getPresetsByDifficulty(difficulty: 'beginner' | 'intermediate' |
 /**
  * Get beginner-friendly presets
  */
-export function getBeginnerPresets(): ConfigPreset[] {
+export function getBeginnerPresets() {
   return getPresetsByDifficulty('beginner');
 }
 
 /**
  * Search presets by keyword
  */
-export function searchPresets(query: string): ConfigPreset[] {
+export function searchPresets(query) {
   const lowerQuery = query.toLowerCase();
   return Object.values(configPresets).filter(preset =>
     preset.name.toLowerCase().includes(lowerQuery) ||
@@ -384,7 +384,7 @@ export function searchPresets(query: string): ConfigPreset[] {
 /**
  * Get total env vars needed for a preset
  */
-export function getPresetEnvVars(presetId: string): string[] {
+export function getPresetEnvVars(presetId) {
   const preset = configPresets[presetId];
   return preset?.envVars || [];
 }
@@ -392,7 +392,7 @@ export function getPresetEnvVars(presetId: string): string[] {
 /**
  * Estimate setup complexity score (0-100)
  */
-export function getPresetComplexityScore(presetId: string): number {
+export function getPresetComplexityScore(presetId) {
   const preset = configPresets[presetId];
   if (!preset) return 0;
 
