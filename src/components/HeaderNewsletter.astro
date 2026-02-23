@@ -1,20 +1,13 @@
 ---
-// Compact Header Newsletter Signup - Beehiiv Integration
+// Compact Header Newsletter Signup - Ghost Portal
+const ghostSignupUrl = 'https://ghost-production-5d84.up.railway.app/#/portal/signup';
 ---
 
 <div class="header-newsletter">
-    <span class="newsletter-label">📬 Get weekly MCP updates:</span>
-    <form class="header-newsletter-form" id="headerNewsletterForm">
-        <input
-            type="email"
-            name="email"
-            placeholder="your@email.com"
-            required
-            class="header-email-input"
-        />
-        <button type="submit" class="header-signup-button">Subscribe</button>
-    </form>
-    <span class="header-message" id="headerMessage"></span>
+    <span class="newsletter-label">📬 Get weekly AI & MCP updates:</span>
+    <a href={ghostSignupUrl} target="_blank" rel="noopener noreferrer" class="header-signup-button">
+        Subscribe — it's free
+    </a>
 </div>
 
 <style>
@@ -37,33 +30,6 @@
         white-space: nowrap;
     }
 
-    .header-newsletter-form {
-        display: flex;
-        gap: 0.5rem;
-        flex: 1;
-        min-width: 300px;
-    }
-
-    .header-email-input {
-        flex: 1;
-        padding: 0.6rem 1rem;
-        border: none;
-        border-radius: 25px;
-        font-size: 0.9rem;
-        outline: none;
-        background: white;
-        color: hsl(var(--foreground));
-        min-width: 200px;
-    }
-
-    .header-email-input::placeholder {
-        color: hsl(var(--muted-foreground));
-    }
-
-    .header-email-input:focus {
-        box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
-    }
-
     .header-signup-button {
         padding: 0.6rem 1.5rem;
         background: white;
@@ -75,31 +41,14 @@
         cursor: pointer;
         transition: all 0.3s ease;
         white-space: nowrap;
+        text-decoration: none;
     }
 
     .header-signup-button:hover {
         transform: translateY(-1px);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-
-    .header-signup-button:disabled {
-        opacity: 0.7;
-        cursor: not-allowed;
-    }
-
-    .header-message {
+        background: #FF1A75;
         color: white;
-        font-size: 0.85rem;
-        font-weight: 500;
-        min-width: 150px;
-    }
-
-    .header-message.success {
-        color: #4ade80;
-    }
-
-    .header-message.error {
-        color: #fca5a5;
     }
 
     @media (max-width: 1024px) {
@@ -109,15 +58,6 @@
 
         .newsletter-label {
             font-size: 0.85rem;
-        }
-
-        .header-newsletter-form {
-            min-width: 250px;
-        }
-
-        .header-email-input {
-            font-size: 0.85rem;
-            min-width: 150px;
         }
 
         .header-signup-button {
@@ -132,88 +72,11 @@
             align-items: stretch;
             padding: 1rem;
             border-radius: 15px;
-        }
-
-        .newsletter-label {
             text-align: center;
         }
 
-        .header-newsletter-form {
-            min-width: auto;
-            flex-direction: column;
-        }
-
-        .header-email-input,
         .header-signup-button {
-            width: 100%;
-        }
-
-        .header-message {
             text-align: center;
-            min-width: auto;
         }
     }
 </style>
-
-<script is:inline>
-    document.addEventListener('DOMContentLoaded', function() {
-        const form = document.getElementById('headerNewsletterForm');
-        const message = document.getElementById('headerMessage');
-
-        if (!form || !message) {
-            console.error('HeaderNewsletter: Form or message element not found');
-            return;
-        }
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const emailInput = form.querySelector('input[name="email"]') as HTMLInputElement;
-            const email = emailInput.value;
-            const button = form.querySelector('button') as HTMLButtonElement;
-
-            // Disable button during submission
-            button.disabled = true;
-            button.textContent = 'Subscribing...';
-            message.textContent = '';
-            message.className = 'header-message';
-
-            try {
-                const response = await fetch('/api/subscribe', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ email }),
-                });
-
-                // Check if response is ok before parsing
-                if (!response.ok) {
-                    const text = await response.text();
-                    let errorData;
-                    try {
-                        errorData = JSON.parse(text);
-                    } catch (e) {
-                        console.error('Failed to parse error response:', text);
-                        throw new Error('Server returned an error');
-                    }
-                    throw new Error(errorData.error || 'Subscription failed');
-                }
-
-                const data = await response.json();
-
-                // Use message from API response or default
-                const successMessage = data.message || 'Subscribed!';
-                message.textContent = `✓ ${successMessage}`;
-                message.classList.add('success');
-                emailInput.value = '';
-            } catch (error) {
-                message.textContent = `✗ ${error instanceof Error ? error.message : 'Try again'}`;
-                message.classList.add('error');
-            } finally {
-                button.disabled = false;
-                button.textContent = 'Subscribe';
-            }
-        });
-    });
-</script>
