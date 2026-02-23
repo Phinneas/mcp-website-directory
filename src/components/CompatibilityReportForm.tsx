@@ -237,7 +237,7 @@ const styles = `
   border-radius: 12px;
   padding: 1.5rem;
   margin: 1rem 0;
-  font-family: 'Inter', -apple-system, sans-serif;
+  font-family: 'Libre Franklin', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 .form-header {

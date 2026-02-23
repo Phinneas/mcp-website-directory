@@ -437,7 +437,7 @@ const styles = `
   border-radius: 16px;
   padding: 2rem;
   margin: 2rem 0;
-  font-family: 'Inter', -apple-system, sans-serif;
+  font-family: 'Libre Franklin', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: white;
   max-width: 800px;
 }

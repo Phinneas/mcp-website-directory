@@ -414,7 +414,7 @@ function getClientConfigPath(client: string): string {
 // Styles
 const styles = `
 .config-generator {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Libre Franklin', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background: linear-gradient(135deg, hsl(220, 40%, 12%) 0%, hsl(215, 30%, 18%) 100%);
   border-radius: 16px;
   padding: 2rem;

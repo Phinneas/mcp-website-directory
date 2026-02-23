@@ -257,7 +257,7 @@ export default function SubmissionAdmin() {
 // Styles
 const styles = `
 .submission-admin {
-  font-family: 'Inter', -apple-system, sans-serif;
+  font-family: 'Libre Franklin', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 16px;

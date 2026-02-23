@@ -390,7 +390,7 @@ function jsonToYaml(obj: any, indent: number = 0): string {
 // Styles
 const styles = `
 .stack-builder {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Libre Franklin', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background: linear-gradient(135deg, hsl(220, 40%, 12%) 0%, hsl(215, 30%, 18%) 100%);
   border-radius: 16px;
   padding: 2rem;
