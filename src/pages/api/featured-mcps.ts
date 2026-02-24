@@ -1,21 +1,22 @@
 import type { APIRoute } from 'astro';
+import { searchServers, healthCheck } from '../../utils/meilisearch.js';
+import { slugify } from '../../utils/slugify.js';
 
 export const prerender = false;
-
-const PULSEMCP_API_BASE = 'https://api.pulsemcp.com/v0beta';
 
 /**
  * GET /api/featured-mcps
  *
- * Returns a single featured MCP server for use in the BrainScriblr newsletter.
- * Picks the highest-starred server not present in the ?exclude= list.
+ * Returns a randomly selected MCP server for use in the BrainScriblr newsletter.
+ * Picks from the full Meilisearch catalog, excluding:
+ *   1. Servers hardcoded as always-featured on the homepage (ALWAYS_FEATURED_IDS)
+ *   2. Servers in the ?exclude= list (previously featured in past newsletter issues,
+ *      tracked by the newsletter in S3 as newsletter/featured-mcps-history.json)
  *
  * Query params:
- *   exclude  Comma-separated list of server slugs/IDs already featured in
- *            previous newsletter issues. The endpoint will skip these and
- *            return the next best candidate.
- *   count    Number of candidates to return (default 1, max 5). Useful if
- *            the newsletter wants a shortlist to pick from manually.
+ *   exclude  Comma-separated list of server IDs already featured in previous
+ *            newsletter issues. These will be skipped.
+ *   count    Number of candidates to return (default 1, max 5).
  *
  * Example:
  *   GET /api/featured-mcps?exclude=github-mcp,postgres-mcp&count=1
@@ -24,115 +25,138 @@ const PULSEMCP_API_BASE = 'https://api.pulsemcp.com/v0beta';
  *   {
  *     "featured": [
  *       {
- *         "id": "...",
- *         "name": "...",
+ *         "id": "puppeteer-mcp",          ← Meilisearch primary key, used as history key
+ *         "name": "Puppeteer MCP Server",
  *         "description": "...",
- *         "stars": 1234,
- *         "github_url": "...",
- *         "npm_package": "...",
- *         "author": "...",
- *         "shelf_url": "https://www.mymcpshelf.com/server/..."
+ *         "stars": 360,
+ *         "github_url": "https://github.com/...",
+ *         "npm_package": "puppeteer-mcp-server",
+ *         "author": "@merajmehrabi",
+ *         "shelf_url": "https://www.mymcpshelf.com/server/puppeteer-mcp-server"
  *       }
  *     ]
  *   }
  */
+
+/**
+ * These IDs are always shown in the site's "Featured MCP Servers" homepage section.
+ * Exclude them from newsletter random picks so the newsletter spotlights
+ * different servers than what visitors already see on the homepage.
+ * Mirrors the ALWAYS_FEATURED constant in FeaturedMcpServers.astro.
+ */
+const ALWAYS_FEATURED_IDS = new Set(['jetski', 'mcp-operator']);
+
+/** Pull up to this many servers from Meilisearch for the random pool. */
+const POOL_LIMIT = 500;
+
 export const GET: APIRoute = async ({ url }) => {
   try {
     const excludeParam = url.searchParams.get('exclude') || '';
     const countParam = parseInt(url.searchParams.get('count') || '1', 10);
     const count = Math.min(Math.max(countParam, 1), 5);
 
-    // Build exclude set — support both slugified names and raw names, lowercased
-    const excludeSet = new Set(
-      excludeParam
+    // Build the combined exclusion set:
+    // - always-featured site IDs
+    // - previously newsletter-featured IDs (sent by the newsletter via ?exclude=)
+    const excludeSet = new Set<string>([
+      ...ALWAYS_FEATURED_IDS,
+      ...excludeParam
         .split(',')
-        .map(s => s.trim().toLowerCase())
-        .filter(Boolean)
-    );
+        .map((s) => s.trim().toLowerCase())
+        .filter(Boolean),
+    ]);
 
-    // Fetch a batch of top servers from PulseMCP, sorted by github_stars desc
-    // Fetch enough pages to find non-excluded candidates even with a large exclude list
-    const FETCH_LIMIT = 200;
-    const response = await fetch(
-      `${PULSEMCP_API_BASE}/servers?count_per_page=${FETCH_LIMIT}&offset=0`,
-      {
-        headers: {
-          'User-Agent': 'BrainScriblr-Newsletter/1.0',
-          'Content-Type': 'application/json'
-        },
-        signal: AbortSignal.timeout(10000)
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(`PulseMCP API error: ${response.status}`);
+    // Health-check Meilisearch before querying
+    const healthy = await healthCheck();
+    if (!healthy) {
+      console.error('featured-mcps: Meilisearch unavailable');
+      return new Response(
+        JSON.stringify({ error: 'Search service unavailable', featured: [] }),
+        {
+          status: 503,
+          headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+        }
+      );
     }
 
-    const data = await response.json();
-    const servers: any[] = data.servers || [];
-
-    // Sort by stars descending
-    servers.sort((a, b) => (b.github_stars || 0) - (a.github_stars || 0));
-
-    // Filter out excluded servers
-    const candidates = servers.filter(server => {
-      const nameSlug = slugify(server.name || '');
-      const nameLower = (server.name || '').toLowerCase();
-      return (
-        !excludeSet.has(nameSlug) &&
-        !excludeSet.has(nameLower) &&
-        server.name // must have a name
-      );
+    // Fetch a large pool of servers from Meilisearch.
+    // Empty query returns all indexed servers; sort by stars desc so the pool
+    // is weighted toward well-maintained servers even before random selection.
+    const results = await searchServers('', {
+      limit: POOL_LIMIT,
+      sort: ['stars:desc'],
     });
 
-    // Pick top `count` candidates
-    const picked = candidates.slice(0, count).map(server => {
-      // Extract author from source_code_url
-      let author = '@unknown';
-      const ghMatch = (server.source_code_url || '').match(/github\.com\/([^/]+)/);
-      if (ghMatch) author = `@${ghMatch[1]}`;
+    const allServers: any[] = results.hits ?? [];
 
-      const nameSlug = slugify(server.name);
+    // Filter out excluded IDs and inactive/unnamed servers
+    const candidates = allServers.filter(
+      (s) =>
+        s.id &&
+        s.name &&
+        s.status !== 'inactive' &&
+        !excludeSet.has(s.id.toLowerCase())
+    );
 
-      return {
-        id: nameSlug,
-        name: server.name,
-        description: server.EXPERIMENTAL_ai_generated_description || server.short_description || '',
-        stars: server.github_stars || 0,
-        github_url: server.source_code_url || server.external_url || null,
-        npm_package: server.package_name || null,
-        author,
-        shelf_url: `https://www.mymcpshelf.com/server/${nameSlug}`
-      };
-    });
-
-    return new Response(
-      JSON.stringify({ featured: picked }),
-      {
+    if (candidates.length === 0) {
+      // All known servers have been featured — return empty so the newsletter
+      // resets its S3 history and skips the MCP block this issue.
+      return new Response(JSON.stringify({ featured: [] }), {
         status: 200,
         headers: {
           'Content-Type': 'application/json',
-          // Allow AINewsletter project to call this cross-origin
           'Access-Control-Allow-Origin': '*',
-          // Cache for 1 hour — PulseMCP data doesn't change that fast
-          'Cache-Control': 'public, max-age=3600'
-        }
-      }
-    );
+          'Cache-Control': 'no-store',
+        },
+      });
+    }
 
+    // Randomly shuffle the candidate pool and pick `count` servers.
+    const shuffled = fisherYatesShuffle([...candidates]);
+    const picked = shuffled.slice(0, count).map((server) => ({
+      // Use the Meilisearch primary key as the stable history-tracking ID.
+      id: server.id,
+      name: server.name,
+      description: server.description || '',
+      stars: server.stars || 0,
+      github_url: server.github_url || null,
+      npm_package: server.npm_package || null,
+      author: server.author || '@unknown',
+      // shelf_url uses slugify(name) — same logic as [slug].astro routing.
+      shelf_url: `https://www.mymcpshelf.com/server/${slugify(server.name)}`,
+    }));
+
+    return new Response(JSON.stringify({ featured: picked }), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        // Allow the AINewsletter Cloudflare Worker to call this cross-origin.
+        'Access-Control-Allow-Origin': '*',
+        // No caching — random selection should differ on each call.
+        'Cache-Control': 'no-store',
+      },
+    });
   } catch (error) {
     console.error('featured-mcps error:', error);
     return new Response(
-      JSON.stringify({ error: 'Failed to fetch featured MCPs' }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
+      JSON.stringify({ error: 'Failed to fetch featured MCPs', featured: [] }),
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      }
     );
   }
 };
 
-function slugify(name: string): string {
-  return name
-    .toLowerCase()
-    .replace(/[^a-z0-9-]/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '');
+/**
+ * Fisher-Yates shuffle — returns a new randomly ordered array.
+ * Using Math.random() is fine here; cryptographic randomness isn't needed
+ * for newsletter server selection.
+ */
+function fisherYatesShuffle<T>(arr: T[]): T[] {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
 }
