@@ -1,0 +1,565 @@
+---
+title: "Mastra MCP Server: Complete Guide to @mastra/mcp"
+description: "Complete guide to Mastra's @mastra/mcp package. Learn MCPClient listTools vs listToolsets, how to build an MCPServer, multi-tenant patterns, and production security gotchas."
+slug: "mastra-mcp-server"
+date: "2025-02-25"
+tags: ["mastra", "mcp", "typescript", "ai-agents", "mcp-server"]
+---
+
+TypeScript developers building AI agents have a new standard to pay attention to. Mastra AI has grown over 1,900% in search interest year-over-year, and for good reason — it's the first framework to treat the Model Context Protocol as a first-class concern from the ground up. Not an afterthought, not a plugin, not an adapter. First class.
+
+But the part most tutorials skip over is the part that matters most in production: **how you configure tools determines the entire security architecture of your multi-user app**. The difference between `listTools()` and `listToolsets()` isn't a preference — it's the difference between shared credentials across all users and per-request isolation. Get it wrong and you have a credential leakage vector baked into your agent.
+
+This guide covers everything you need to use `@mastra/mcp` in a production TypeScript application: configuring `MCPClient`, building an `MCPServer`, the static vs. dynamic tool decision, connection lifecycle management, performance patterns, and the gotchas that only surface at scale.
+
+If you're here to find MCP servers to connect to your Mastra agent, [browse the MyMCPShelf directory](/) — 600+ verified servers across 15 categories.
+
+---
+
+## What is Mastra AI?
+
+Mastra is an open-source, MIT-licensed TypeScript framework for building production AI agents. Its core primitives are Agents, Tools, Workflows, and Memory — all type-safe, all composable. Mastra 1.0 launched as a stable, production-ready release, and the GitHub repository has become one of the most actively contributed AI agent projects in the TypeScript ecosystem.
+
+The reason developers are choosing Mastra over alternatives comes down to three things: native TypeScript types throughout (no `any` duck-typing), first-class MCP support baked into the core, and built-in observability that doesn't require third-party instrumentation.
+
+---
+
+## What is `@mastra/mcp`?
+
+`@mastra/mcp` is the dedicated npm package that handles all MCP concerns separately from Mastra's core. It ships two classes:
+
+- **`MCPClient`** — connects your Mastra agent to external MCP servers (local or remote)
+- **`MCPServer`** — exposes your Mastra agents, tools, and workflows to any MCP-compatible client
+
+Install it with your package manager of choice:
+
+```bash
+npm install @mastra/mcp@latest
+# pnpm add @mastra/mcp@latest
+# yarn add @mastra/mcp@latest
+# bun add @mastra/mcp@latest
+```
+
+One implementation detail worth knowing upfront: connections are **eager on first tool access**, not at instantiation. Creating an `MCPClient` doesn't open any connections. The connection is established when you first call `listTools()` or `listToolsets()`. This matters for cold start planning in serverless environments.
+
+---
+
+## MCPClient — Connecting Your Agent to External MCP Servers
+
+### Constructor and Configuration
+
+The `MCPClient` constructor takes an options object with three key fields:
+
+```typescript
+import { MCPClient } from '@mastra/mcp'
+
+const mcpClient = new MCPClient({
+  id: 'my-mcp-client',         // Required when running multiple instances
+  servers: {
+    wikipedia: {
+      command: 'npx',
+      args: ['-y', 'wikipedia-mcp'],
+    },
+    weather: {
+      url: new URL('https://server.smithery.ai/@smithery-ai/weather/mcp'),
+    },
+  },
+  timeout: 60000,               // Optional: ms before connection times out (default: 60000)
+})
+```
+
+Two transport types are available:
+
+- **stdio** — spawns a local process via `npx` or a direct command. Use this for development and CLI tools.
+- **HTTP(S)** — connects to a remote endpoint. Mastra tries Streamable HTTP first, then falls back to SSE automatically.
+
+### The `id` Parameter — More Important Than It Looks
+
+Most tutorials treat `id` as optional boilerplate. It's not. Mastra tracks `MCPClient` instances internally to prevent memory leaks. If you create two `MCPClient` instances with **identical configurations and no `id`**, Mastra throws an error on the second instantiation.
+
+This becomes critical in multi-tenant code where you're creating per-user clients in a request handler. The fix is straightforward: scope `id` to the user or session.
+
+```typescript
+// ✅ Correct — scoped to user
+const userClient = new MCPClient({
+  id: `mcp-client-${userId}`,
+  servers: { ... }
+})
+
+// ❌ Wrong — identical configs without id will throw on second request
+const userClient = new MCPClient({
+  servers: { ... }
+})
+```
+
+---
+
+## `listTools()` vs `listToolsets()` — The Architectural Decision
+
+This is the section most developers get wrong. The choice between these two methods isn't about syntax — it determines whether your application has per-user credential isolation or a shared credential pool.
+
+### `listTools()` — Static Configuration
+
+```typescript
+// Signature
+async listTools(): Promise<Record<string, Tool>>
+
+// Returns flat object with tools namespaced as serverName_toolName
+// Example: { "weather_getForecast": Tool, "slack_sendMessage": Tool }
+```
+
+`listTools()` is called once, typically at agent initialization. The resulting tool set is fixed for the lifetime of the agent. All requests handled by that agent share the same credentials embedded in the `MCPClient` configuration.
+
+```typescript
+import { Agent } from '@mastra/core/agent'
+import { MCPClient } from '@mastra/mcp'
+
+const mcpClient = new MCPClient({
+  id: 'static-client',
+  servers: {
+    weather: {
+      url: new URL('https://weather-api.example.com/mcp'),
+      requestInit: {
+        headers: { Authorization: `Bearer ${process.env.WEATHER_API_KEY}` }
+      }
+    }
+  }
+})
+
+export const weatherAgent = new Agent({
+  id: 'weather-agent',
+  name: 'Weather Agent',
+  instructions: 'You help users check weather forecasts.',
+  model: 'openai/gpt-4o',
+  tools: await mcpClient.listTools(), // Loaded once, shared for all requests
+})
+```
+
+**When this is appropriate:** CLI tools, scripts, personal automations, single-user apps, development environments. Any context where one set of credentials is correct for every request.
+
+**When this goes wrong:** In a web application where users provide their own API keys, the first user's key is baked into the agent at initialization. Every subsequent user hitting that agent uses the first user's credentials until the process restarts. This isn't a hypothetical — it's a common mistake when developers copy CLI patterns into SaaS code.
+
+### `listToolsets()` — Dynamic Configuration
+
+```typescript
+// Signature
+async listToolsets(): Promise<Record<string, Record<string, Tool>>>
+
+// Returns nested object grouped by server
+// Example: { "weather": { "getForecast": Tool }, "slack": { "sendMessage": Tool } }
+```
+
+Note the structural difference: `listTools()` returns a flat object with underscore-namespaced keys. `listToolsets()` returns a nested object grouped by server name. This matters when you need to reason about which tools came from which server.
+
+`listToolsets()` is designed to be called per-request with a freshly created `MCPClient` carrying that specific user's credentials. The toolset is then injected into `agent.generate()` or `agent.stream()` rather than baked into the agent constructor.
+
+```typescript
+import { MCPClient } from '@mastra/mcp'
+import { mastra } from './mastra'
+
+async function handleRequest(
+  userPrompt: string,
+  userId: string,
+  userApiKey: string
+) {
+  const userMcp = new MCPClient({
+    id: `mcp-client-${userId}`,          // Scoped to this user
+    servers: {
+      github: {
+        url: new URL('https://api.github.com/mcp'),
+        requestInit: {
+          headers: { Authorization: `Bearer ${userApiKey}` }
+        }
+      }
+    }
+  })
+
+  const agent = mastra.getAgent('devAgent')
+
+  try {
+    const response = await agent.generate(userPrompt, {
+      toolsets: await userMcp.listToolsets()  // Injected per-request
+    })
+    return response
+  } finally {
+    await userMcp.disconnect()  // Critical — see below
+  }
+}
+```
+
+**When this is appropriate:** Any multi-user application. SaaS products, API backends, anything where users connect their own third-party accounts. If more than one person is using your agent with different credentials, use `listToolsets()`.
+
+### The `disconnect()` Call — Non-Negotiable
+
+Calling `disconnect()` closes all connections and releases resources associated with an `MCPClient` instance. When using the dynamic pattern, this call is mandatory. Omitting it leaves open connections consuming roughly 2–5MB of RAM each.
+
+At a modest 500 requests per hour without `disconnect()`, you accumulate dozens to hundreds of orphaned connections. This is not a theoretical concern — it's observable in heap snapshots.
+
+Always use `try/finally` to guarantee cleanup regardless of whether `generate()` succeeds or throws:
+
+```typescript
+const userMcp = new MCPClient({ id: `mcp-${userId}`, servers: { ... } })
+
+try {
+  const response = await agent.generate(userPrompt, {
+    toolsets: await userMcp.listToolsets()
+  })
+  return response
+} catch (error) {
+  // Handle error
+  throw error
+} finally {
+  await userMcp.disconnect() // Runs whether generate() succeeded or threw
+}
+```
+
+### Mixing Static and Dynamic Tools
+
+You can use both patterns simultaneously. Define always-available tools in the `Agent` constructor and inject per-user tools via `toolsets` in `.generate()`.
+
+```typescript
+// Agent with static tools that every user gets
+export const devAgent = new Agent({
+  id: 'dev-agent',
+  tools: {
+    calculator: calculatorTool,    // Always available
+    codeFormatter: formatterTool,  // Always available
+  },
+  // No MCP tools in constructor — those are dynamic
+})
+
+// Per-request: inject user-specific MCP tools alongside static ones
+const response = await devAgent.generate(userPrompt, {
+  toolsets: await userMcp.listToolsets()  // GitHub, Slack, Jira with user's tokens
+})
+```
+
+On name collision: dynamic toolset tools override static tools, and Mastra logs a warning. There's no documented limit on the number of toolsets per request, but keep context window budget in mind — each tool adds roughly 1,500 tokens to the context.
+
+### Static vs. Dynamic — Quick Reference
+
+| Factor | `listTools()` Static | `listToolsets()` Dynamic |
+|---|---|---|
+| Credential scope | Shared across all users | Isolated per user/request |
+| When called | Agent initialization (once) | Per request |
+| Tool object structure | Flat `serverName_toolName` | Nested `{ server: { tool } }` |
+| Memory management | Automatic | Manual `disconnect()` required |
+| Right for | CLI, single-user, dev | SaaS, multi-tenant, production API |
+| Connection overhead | One-time | Per-request (~50–500ms by transport) |
+| `toolsets` parameter | No | Yes — passed to `.generate()` / `.stream()` |
+
+---
+
+## Performance Considerations for Dynamic Toolsets
+
+The credential isolation of `listToolsets()` comes with a connection overhead cost. Understanding the numbers helps you decide when to optimize.
+
+**By transport type:**
+- HTTP(S) transport: ~50–100ms connection establishment per request
+- stdio transport (process spawn): ~200–500ms per request
+
+If you're using stdio servers in a dynamic pattern at any meaningful traffic level, consider whether those servers can be replaced with HTTP equivalents. Spawning a new process per request is expensive.
+
+**There is no built-in connection pooling.** Each `MCPClient` instance maintains its own connection set. For high-throughput multi-tenant applications, you need to implement pooling yourself. A practical approach using an LRU cache:
+
+```typescript
+import { LRUCache } from 'lru-cache'
+import { MCPClient } from '@mastra/mcp'
+
+// Pool of per-user MCPClient instances with automatic TTL-based cleanup
+const clientPool = new LRUCache<string, MCPClient>({
+  max: 100,                    // Maximum simultaneous user connections
+  ttl: 1000 * 60 * 5,         // 5-minute idle TTL
+  dispose: async (client) => { // Auto-disconnect on eviction
+    await client.disconnect()
+  }
+})
+
+async function getOrCreateClient(userId: string, apiKey: string): Promise<MCPClient> {
+  const cached = clientPool.get(userId)
+  if (cached) return cached
+
+  const client = new MCPClient({
+    id: `mcp-${userId}`,
+    servers: {
+      github: {
+        url: new URL('https://api.github.com/mcp'),
+        requestInit: {
+          headers: { Authorization: `Bearer ${apiKey}` }
+        }
+      }
+    }
+  })
+
+  clientPool.set(userId, client)
+  return client
+}
+
+async function handleRequest(userId: string, apiKey: string, prompt: string) {
+  const client = await getOrCreateClient(userId, apiKey)
+  const agent = mastra.getAgent('devAgent')
+
+  return agent.generate(prompt, {
+    toolsets: await client.listToolsets()
+  })
+  // Note: don't disconnect pooled clients — the LRU handles cleanup
+}
+```
+
+This pattern amortizes connection overhead across requests from the same user while keeping the security isolation of per-user credentials.
+
+**At scale:** Above ~50 concurrent users with fresh dynamic instantiation per request, connection overhead becomes the dominant latency factor. The pooling pattern above pushes that ceiling significantly higher.
+
+---
+
+## MCPServer — Exposing Your Mastra App as an MCP Server
+
+`MCPServer` is the other side of the equation. Instead of consuming MCP servers, you become one. This turns your Mastra agents, tools, and workflows into a standardized endpoint that any MCP-compatible client can connect to: Claude Desktop, Cursor, Windsurf, or another Mastra agent.
+
+### Building an MCPServer
+
+```typescript
+import { MCPServer } from '@mastra/mcp'
+import { myAgent } from '../agents/my-agent'
+import { myWorkflow } from '../workflows/my-workflow'
+import { calculatorTool } from '../tools/calculator'
+
+export const myMcpServer = new MCPServer({
+  id: 'my-mcp-server',
+  name: 'My Production Server',
+  version: '1.0.0',
+  agents: { myAgent },
+  tools: { calculatorTool },
+  workflows: { myWorkflow },
+})
+```
+
+Everything you expose here becomes callable from any system that implements MCP. An agent running in Claude Desktop can invoke your Mastra workflow. A Cursor user can call your custom tools. This is the value of an open protocol.
+
+### Registering with the Mastra Instance
+
+Register your `MCPServer` in the top-level `Mastra` configuration to bind it to Mastra's lifecycle:
+
+```typescript
+import { Mastra } from '@mastra/core/mastra'
+import { myMcpServer } from './mcp/my-mcp-server'
+
+export const mastra = new Mastra({
+  mcpServers: { myMcpServer }
+})
+```
+
+### OAuth Protection
+
+For any `MCPServer` you expose beyond your local network, configure OAuth via the `authProvider` option. This is not optional for production deployments. The [official MCPServer reference](https://mastra.ai/reference/tools/mcp-server#oauth-protection) covers the full configuration. The short version: unauthenticated MCP servers exposed to the internet are open APIs — treat them accordingly.
+
+---
+
+## Connecting to MCP Registries
+
+MCP registries are centralized discovery layers — directories of available servers you can connect your agent to without building integrations from scratch. [MyMCPShelf](/) maintains a curated directory of 600+ verified MCP servers across 15 categories, including the registries below.
+
+Here's how `MCPClient` connects to the major registries:
+
+### Smithery.ai
+
+Large general-purpose catalog, accessible via their CLI. Best for development use.
+
+```typescript
+const mcp = new MCPClient({
+  id: 'smithery-client',
+  servers: {
+    sequentialThinking: {
+      command: 'npx',
+      args: [
+        '-y', '@smithery/cli@latest', 'run',
+        '@smithery-ai/server-sequential-thinking',
+        '--config', '{}'
+      ]
+    }
+  }
+})
+```
+
+**Auth model:** CLI config. **Best for:** Broad tool discovery, development.
+
+### Composio.dev
+
+SSE-based servers, strong Google Workspace and SaaS coverage. Note: URLs are tied to a single user account, making this better for personal automation than multi-tenant apps.
+
+```typescript
+const mcp = new MCPClient({
+  id: 'composio-client',
+  servers: {
+    googleSheets: {
+      url: new URL('https://mcp.composio.dev/googlesheets/[your-private-url-path]')
+    },
+    gmail: {
+      url: new URL('https://mcp.composio.dev/gmail/[your-private-url-path]')
+    }
+  }
+})
+```
+
+**Auth model:** Per-user SSE URL. **Pairs with:** `listTools()` (single user) — not `listToolsets()` without URL rotation per user. **Best for:** Personal automation, Google Workspace.
+
+### mcp.run
+
+Pre-authenticated, managed servers with zero configuration. Tools are grouped into signed Profiles with unique URLs.
+
+```typescript
+const mcp = new MCPClient({
+  id: 'mcprun-client',
+  servers: {
+    myProfile: {
+      url: new URL(process.env.MCP_RUN_SSE_URL!) // Treat this like a password
+    }
+  }
+})
+```
+
+**Auth model:** Signed profile URL (store in env, never in code). **Best for:** Managed servers with no-config auth.
+
+### Klavis AI
+
+Enterprise-grade, OAuth-authenticated hosted servers. Built for production Salesforce and HubSpot integrations.
+
+```typescript
+const mcp = new MCPClient({
+  id: 'klavis-client',
+  servers: {
+    salesforce: {
+      url: new URL('https://salesforce-mcp-server.klavis.ai/mcp/?instance_id=YOUR_INSTANCE_ID')
+    },
+    hubspot: {
+      url: new URL('https://hubspot-mcp-server.klavis.ai/mcp/?instance_id=YOUR_INSTANCE_ID')
+    }
+  }
+})
+```
+
+**Auth model:** Enterprise OAuth per instance. **Best for:** Enterprise CRM integrations, production deployments.
+
+### Ampersand
+
+150+ SaaS integrations via a single server. Supports both SSE and stdio.
+
+```typescript
+const mcp = new MCPClient({
+  id: 'ampersand-client',
+  servers: {
+    '@amp-labs/mcp-server': {
+      url: `https://mcp.withampersand.com/v1/sse?${new URLSearchParams({
+        apiKey: process.env.AMPERSAND_API_KEY!,
+        project: process.env.AMPERSAND_PROJECT_ID!,
+        integrationName: process.env.AMPERSAND_INTEGRATION_NAME!,
+        groupRef: process.env.AMPERSAND_GROUP_REF!,
+      })}`
+    }
+  }
+})
+```
+
+**Auth model:** API key + project config. **Best for:** Broad SaaS integration coverage.
+
+**Registry + tool pattern pairing:**
+
+| Registry | Recommended Pattern | Why |
+|---|---|---|
+| Smithery | `listTools()` | Static CLI config, dev use |
+| Composio | `listTools()` | Per-user URLs, single account |
+| mcp.run | `listTools()` | Signed profile URLs are static |
+| Klavis | `listToolsets()` | Per-enterprise-instance auth |
+| Ampersand | `listToolsets()` | Per-user `groupRef` isolation |
+
+---
+
+## Known Production Gotchas
+
+These are the issues that surface at scale or in multi-user deployments. Most aren't in the main docs.
+
+### 1. The `requireApproval` Bug with Toolsets (GitHub Issue #9963)
+
+Tools passed via `toolsets` in `.generate()` **bypass `requireApproval: true`**. They execute immediately without triggering any approval UI.
+
+This is a critical issue for any destructive operations — file deletion, outbound API writes, sending emails, making purchases. If you're using dynamic toolsets with tools that should require user confirmation, you cannot rely on `requireApproval` until this is resolved.
+
+**Workaround:** Implement approval checks via before/after hooks or middleware that intercepts tool execution. Do not ship destructive toolset tools in production without a manual gate.
+
+### 2. SSE Auth Header Split
+
+When connecting to legacy SSE-transport servers (some Composio integrations fall into this category), auth headers must be set in **both** `requestInit` AND `eventSourceInit`. Setting only `requestInit` results in silent auth failure — the connection succeeds but requests are unauthenticated.
+
+```typescript
+servers: {
+  myServer: {
+    url: new URL('https://example.com/mcp/sse'),
+    requestInit: {
+      headers: { Authorization: 'Bearer token' }  // For HTTP requests
+    },
+    eventSourceInit: {
+      headers: { Authorization: 'Bearer token' }  // Also required for SSE stream
+    }
+  }
+}
+```
+
+### 3. Missing `id` in Dynamic Patterns
+
+Creating `MCPClient` instances in a request handler loop without unique `id` values throws on the second identical configuration. This is Mastra's memory leak protection working as intended, but it surfaces as a confusing runtime error in dynamic code.
+
+Always scope `id` to the user or request: `id: \`client-${userId}-${Date.now()}\``
+
+### 4. Tool Name Collisions Are Silent by Default
+
+When static constructor tools and dynamic toolset tools share a name, the dynamic toolset wins and Mastra logs a warning. This warning goes to the console — it won't surface in your observability stack unless you've piped console output there. If you're mixing static and dynamic tools, namespace your static tools explicitly to avoid surprises.
+
+---
+
+## Frequently Asked Questions
+
+**What is `@mastra/mcp`?**
+
+The official npm package that adds MCP support to the Mastra AI framework. It provides `MCPClient` for consuming external MCP servers and `MCPServer` for exposing your Mastra application to MCP-compatible clients.
+
+**What's the difference between `listTools()` and `listToolsets()` in Mastra?**
+
+`listTools()` returns a flat tool object loaded once at agent initialization — all users share the same credentials. `listToolsets()` returns tools grouped by server and is designed for per-request instantiation with user-specific credentials. In a multi-user app, always use `listToolsets()`.
+
+**Do I need to call `disconnect()` after `listToolsets()`?**
+
+Yes, when using the dynamic per-request pattern. Always call `await client.disconnect()` in a `finally` block after `generate()` completes. Skipping it leaves zombie connections accumulating in memory.
+
+**Can Mastra MCP work with Claude Desktop, Cursor, or Windsurf?**
+
+Yes. `MCPServer` exposes a standard MCP endpoint over HTTP(S). Any MCP-compatible client — Claude Desktop, Cursor, Windsurf, or a custom implementation — can connect to it.
+
+**Can I mix static constructor tools with per-request dynamic toolsets?**
+
+Yes. Define always-available tools in the `Agent` constructor and inject per-user tools via the `toolsets` option in `.generate()` or `.stream()`. Dynamic tools override static tools on name collision.
+
+**Is Mastra MCP production-ready?**
+
+Mastra 1.0 is stable and production-ready. One active bug to be aware of: `requireApproval` on tools is bypassed when tools are passed via `toolsets` (GitHub #9963). Don't use destructive toolset tools in production without a manual approval gate until this is patched.
+
+**Which MCP registries work with `@mastra/mcp`?**
+
+Smithery.ai, Composio.dev, mcp.run, Klavis AI, and Ampersand all have documented integration patterns with code examples in the official Mastra docs. You can [browse all verified MCP servers on MyMCPShelf](/) and filter by category to find servers for your specific use case.
+
+**Does `@mastra/mcp` support OAuth?**
+
+Yes. Both `MCPClient` (for consuming OAuth-protected servers) and `MCPServer` (for protecting your own server) support OAuth via the `authProvider` configuration option. See the [MCPClient reference](https://mastra.ai/reference/tools/mcp-client#oauth-authentication) and [MCPServer reference](https://mastra.ai/reference/tools/mcp-server#oauth-protection) for full configuration details.
+
+---
+
+## Conclusion
+
+Mastra's `@mastra/mcp` package is the most complete TypeScript implementation of the Model Context Protocol available. The bidirectional design — consume servers with `MCPClient`, expose your own with `MCPServer` — means you participate fully in the MCP ecosystem rather than just being a client.
+
+The `listToolsets()` pattern for dynamic, per-user credential isolation is a genuine architectural differentiator. No other major TypeScript agent framework has a first-class equivalent. But that capability comes with real operational requirements: manual `disconnect()` calls, scoped `id` values, connection pooling for scale, and awareness of the `requireApproval` bug until it's resolved upstream.
+
+If you're building a single-user tool or CLI, `listTools()` is perfectly appropriate and simpler to reason about. If you're building anything that multiple users will hit with their own credentials, `listToolsets()` with proper lifecycle management is the right foundation.
+
+Ready to find MCP servers to connect to your Mastra agent? [Browse the MyMCPShelf directory](/) — 600+ verified servers, filtered by category, with direct links to documentation and source.
+
+Want MCP ecosystem updates in your inbox? [Subscribe to the MyMCPShelf newsletter](/newsletter) for weekly coverage of new servers, framework updates, and implementation patterns.
