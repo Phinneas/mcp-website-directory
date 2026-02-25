@@ -1,3 +1,6 @@
 # Redirect non-www to www for canonical URL consistency
 http://mymcpshelf.com/* https://www.mymcpshelf.com/:splat 301!
 https://mymcpshelf.com/* https://www.mymcpshelf.com/:splat 301!
+
+# Blog post redirect - old long URL to new short URL
+/blog/what-is-mcp-in-ai-complete-guide-to-model-context-protocol /blog/what-is-mcp-in-ai 301
