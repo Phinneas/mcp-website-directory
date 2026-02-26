@@ -1,0 +1,429 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-02-25",
+  "description": "Vendor watchlist for MCP server discovery - 50+ SaaS vendors organized by category",
+  "vendors": [
+    {
+      "name": "Stripe",
+      "category": "Payments & Commerce",
+      "searchTerms": ["Stripe MCP server", "Stripe Model Context Protocol", "Stripe payments MCP"],
+      "priority": "high",
+      "notes": "Leading payment processor, likely to have official MCP integration"
+    },
+    {
+      "name": "PayPal",
+      "category": "Payments & Commerce",
+      "searchTerms": ["PayPal MCP server", "PayPal payments MCP"],
+      "priority": "high",
+      "notes": "Major payment platform with developer APIs"
+    },
+    {
+      "name": "Square",
+      "category": "Payments & Commerce",
+      "searchTerms": ["Square MCP server", "Square payments MCP"],
+      "priority": "medium",
+      "notes": "Popular payment processing for small businesses"
+    },
+    {
+      "name": "Shopify",
+      "category": "Payments & Commerce",
+      "searchTerms": ["Shopify MCP server", "Shopify ecommerce MCP"],
+      "priority": "high",
+      "notes": "Leading e-commerce platform with extensive APIs"
+    },
+    {
+      "name": "Braintree",
+      "category": "Payments & Commerce",
+      "searchTerms": ["Braintree MCP server", "Braintree payments MCP"],
+      "priority": "medium",
+      "notes": "PayPal-owned payment gateway"
+    },
+    {
+      "name": "Cloudflare",
+      "category": "Cloud Infrastructure",
+      "searchTerms": ["Cloudflare MCP server", "Cloudflare Workers MCP"],
+      "priority": "high",
+      "notes": "CDN and edge computing platform with Workers"
+    },
+    {
+      "name": "AWS",
+      "category": "Cloud Infrastructure",
+      "searchTerms": ["AWS MCP server", "Amazon Web Services MCP", "AWS Lambda MCP"],
+      "priority": "high",
+      "notes": "Leading cloud provider with extensive AI/ML services"
+    },
+    {
+      "name": "Azure",
+      "category": "Cloud Infrastructure",
+      "searchTerms": ["Azure MCP server", "Microsoft Azure MCP"],
+      "priority": "high",
+      "notes": "Microsoft's cloud platform with AI integration"
+    },
+    {
+      "name": "GCP",
+      "category": "Cloud Infrastructure",
+      "searchTerms": ["Google Cloud MCP server", "GCP MCP", "Google Cloud Platform MCP"],
+      "priority": "high",
+      "notes": "Google's cloud platform with Vertex AI"
+    },
+    {
+      "name": "Vercel",
+      "category": "Cloud Infrastructure",
+      "searchTerms": ["Vercel MCP server", "Vercel Edge Functions MCP"],
+      "priority": "medium",
+      "notes": "Frontend cloud platform popular with Next.js"
+    },
+    {
+      "name": "Netlify",
+      "category": "Cloud Infrastructure",
+      "searchTerms": ["Netlify MCP server", "Netlify Functions MCP"],
+      "priority": "medium",
+      "notes": "Jamstack platform with serverless functions"
+    },
+    {
+      "name": "Render",
+      "category": "Cloud Infrastructure",
+      "searchTerms": ["Render MCP server", "Render cloud MCP"],
+      "priority": "low",
+      "notes": "Modern cloud platform alternative"
+    },
+    {
+      "name": "GitHub",
+      "category": "Dev Tools",
+      "searchTerms": ["GitHub MCP server", "GitHub Copilot MCP", "GitHub Actions MCP"],
+      "priority": "high",
+      "notes": "Microsoft-owned code hosting with Copilot"
+    },
+    {
+      "name": "GitLab",
+      "category": "Dev Tools",
+      "searchTerms": ["GitLab MCP server", "GitLab CI/CD MCP"],
+      "priority": "medium",
+      "notes": "DevOps platform with CI/CD"
+    },
+    {
+      "name": "Bitbucket",
+      "category": "Dev Tools",
+      "searchTerms": ["Bitbucket MCP server", "Bitbucket Pipelines MCP"],
+      "priority": "low",
+      "notes": "Atlassian's Git repository management"
+    },
+    {
+      "name": "Linear",
+      "category": "Dev Tools",
+      "searchTerms": ["Linear MCP server", "Linear issue tracking MCP"],
+      "priority": "medium",
+      "notes": "Modern issue tracking and project management"
+    },
+    {
+      "name": "Jira",
+      "category": "Dev Tools",
+      "searchTerms": ["Jira MCP server", "Jira issue tracking MCP"],
+      "priority": "medium",
+      "notes": "Atlassian's project management tool"
+    },
+    {
+      "name": "Sentry",
+      "category": "Dev Tools",
+      "searchTerms": ["Sentry MCP server", "Sentry error tracking MCP"],
+      "priority": "medium",
+      "notes": "Application monitoring and error tracking"
+    },
+    {
+      "name": "Datadog",
+      "category": "Dev Tools",
+      "searchTerms": ["Datadog MCP server", "Datadog monitoring MCP"],
+      "priority": "medium",
+      "notes": "Cloud monitoring and observability platform"
+    },
+    {
+      "name": "PagerDuty",
+      "category": "Dev Tools",
+      "searchTerms": ["PagerDuty MCP server", "PagerDuty alerting MCP"],
+      "priority": "medium",
+      "notes": "Incident response and on-call management"
+    },
+    {
+      "name": "Neon",
+      "category": "Databases",
+      "searchTerms": ["Neon MCP server", "Neon Postgres MCP"],
+      "priority": "medium",
+      "notes": "Serverless Postgres platform"
+    },
+    {
+      "name": "Supabase",
+      "category": "Databases",
+      "searchTerms": ["Supabase MCP server", "Supabase Postgres MCP"],
+      "priority": "high",
+      "notes": "Open source Firebase alternative with Postgres"
+    },
+    {
+      "name": "PlanetScale",
+      "category": "Databases",
+      "searchTerms": ["PlanetScale MCP server", "PlanetScale MySQL MCP"],
+      "priority": "medium",
+      "notes": "Serverless MySQL platform"
+    },
+    {
+      "name": "MongoDB",
+      "category": "Databases",
+      "searchTerms": ["MongoDB MCP server", "MongoDB Atlas MCP"],
+      "priority": "high",
+      "notes": "Leading NoSQL database with Atlas cloud"
+    },
+    {
+      "name": "Snowflake",
+      "category": "Databases",
+      "searchTerms": ["Snowflake MCP server", "Snowflake data warehouse MCP"],
+      "priority": "high",
+      "notes": "Cloud data warehouse platform"
+    },
+    {
+      "name": "Databricks",
+      "category": "Databases",
+      "searchTerms": ["Databricks MCP server", "Databricks Lakehouse MCP"],
+      "priority": "high",
+      "notes": "Data and AI platform with Lakehouse"
+    },
+    {
+      "name": "Pinecone",
+      "category": "Databases",
+      "searchTerms": ["Pinecone MCP server", "Pinecone vector database MCP"],
+      "priority": "high",
+      "notes": "Vector database for AI applications"
+    },
+    {
+      "name": "Qdrant",
+      "category": "Databases",
+      "searchTerms": ["Qdrant MCP server", "Qdrant vector database MCP"],
+      "priority": "medium",
+      "notes": "Open source vector database"
+    },
+    {
+      "name": "Notion",
+      "category": "Productivity",
+      "searchTerms": ["Notion MCP server", "Notion API MCP"],
+      "priority": "high",
+      "notes": "All-in-one workspace with extensive API"
+    },
+    {
+      "name": "Confluence",
+      "category": "Productivity",
+      "searchTerms": ["Confluence MCP server", "Confluence wiki MCP"],
+      "priority": "medium",
+      "notes": "Atlassian's team collaboration software"
+    },
+    {
+      "name": "Airtable",
+      "category": "Productivity",
+      "searchTerms": ["Airtable MCP server", "Airtable database MCP"],
+      "priority": "high",
+      "notes": "Spreadsheet-database hybrid with API"
+    },
+    {
+      "name": "Coda",
+      "category": "Productivity",
+      "searchTerms": ["Coda MCP server", "Coda docs MCP"],
+      "priority": "medium",
+      "notes": "Document-database hybrid platform"
+    },
+    {
+      "name": "Asana",
+      "category": "Productivity",
+      "searchTerms": ["Asana MCP server", "Asana project management MCP"],
+      "priority": "medium",
+      "notes": "Work management platform"
+    },
+    {
+      "name": "Monday.com",
+      "category": "Productivity",
+      "searchTerms": ["Monday.com MCP server", "Monday.com work OS MCP"],
+      "priority": "medium",
+      "notes": "Work operating system platform"
+    },
+    {
+      "name": "ClickUp",
+      "category": "Productivity",
+      "searchTerms": ["ClickUp MCP server", "ClickUp productivity MCP"],
+      "priority": "medium",
+      "notes": "All-in-one productivity platform"
+    },
+    {
+      "name": "Slack",
+      "category": "Communication",
+      "searchTerms": ["Slack MCP server", "Slack API MCP"],
+      "priority": "high",
+      "notes": "Team communication platform with extensive API"
+    },
+    {
+      "name": "Twilio",
+      "category": "Communication",
+      "searchTerms": ["Twilio MCP server", "Twilio SMS MCP", "Twilio voice MCP"],
+      "priority": "high",
+      "notes": "Cloud communications platform"
+    },
+    {
+      "name": "SendGrid",
+      "category": "Communication",
+      "searchTerms": ["SendGrid MCP server", "SendGrid email MCP"],
+      "priority": "medium",
+      "notes": "Email delivery platform (Twilio-owned)"
+    },
+    {
+      "name": "Intercom",
+      "category": "Communication",
+      "searchTerms": ["Intercom MCP server", "Intercom customer messaging MCP"],
+      "priority": "high",
+      "notes": "Customer messaging platform"
+    },
+    {
+      "name": "Zendesk",
+      "category": "Communication",
+      "searchTerms": ["Zendesk MCP server", "Zendesk support MCP"],
+      "priority": "medium",
+      "notes": "Customer service software"
+    },
+    {
+      "name": "HubSpot",
+      "category": "Communication",
+      "searchTerms": ["HubSpot MCP server", "HubSpot CRM MCP"],
+      "priority": "high",
+      "notes": "CRM and marketing platform"
+    },
+    {
+      "name": "Hugging Face",
+      "category": "AI / ML",
+      "searchTerms": ["Hugging Face MCP server", "Hugging Face Transformers MCP"],
+      "priority": "high",
+      "notes": "Leading AI model repository and platform"
+    },
+    {
+      "name": "Replicate",
+      "category": "AI / ML",
+      "searchTerms": ["Replicate MCP server", "Replicate AI models MCP"],
+      "priority": "high",
+      "notes": "Cloud platform for running AI models"
+    },
+    {
+      "name": "Together AI",
+      "category": "AI / ML",
+      "searchTerms": ["Together AI MCP server", "Together AI inference MCP"],
+      "priority": "medium",
+      "notes": "Cloud platform for open source AI models"
+    },
+    {
+      "name": "Cohere",
+      "category": "AI / ML",
+      "searchTerms": ["Cohere MCP server", "Cohere language models MCP"],
+      "priority": "high",
+      "notes": "Enterprise AI platform for language models"
+    },
+    {
+      "name": "Mistral",
+      "category": "AI / ML",
+      "searchTerms": ["Mistral MCP server", "Mistral AI MCP"],
+      "priority": "high",
+      "notes": "French AI company with open models"
+    },
+    {
+      "name": "Perplexity",
+      "category": "AI / ML",
+      "searchTerms": ["Perplexity MCP server", "Perplexity AI search MCP"],
+      "priority": "medium",
+      "notes": "AI-powered search engine"
+    },
+    {
+      "name": "Segment",
+      "category": "Analytics",
+      "searchTerms": ["Segment MCP server", "Segment customer data MCP"],
+      "priority": "medium",
+      "notes": "Customer data platform (Twilio-owned)"
+    },
+    {
+      "name": "Amplitude",
+      "category": "Analytics",
+      "searchTerms": ["Amplitude MCP server", "Amplitude analytics MCP"],
+      "priority": "medium",
+      "notes": "Product analytics platform"
+    },
+    {
+      "name": "Mixpanel",
+      "category": "Analytics",
+      "searchTerms": ["Mixpanel MCP server", "Mixpanel analytics MCP"],
+      "priority": "medium",
+      "notes": "Product analytics and user behavior tracking"
+    },
+    {
+      "name": "PostHog",
+      "category": "Analytics",
+      "searchTerms": ["PostHog MCP server", "PostHog product analytics MCP"],
+      "priority": "medium",
+      "notes": "Open source product analytics"
+    },
+    {
+      "name": "FullStory",
+      "category": "Analytics",
+      "searchTerms": ["FullStory MCP server", "FullStory session replay MCP"],
+      "priority": "medium",
+      "notes": "Digital experience intelligence platform"
+    },
+    {
+      "name": "Plaid",
+      "category": "Finance / Legal",
+      "searchTerms": ["Plaid MCP server", "Plaid financial data MCP"],
+      "priority": "high",
+      "notes": "Financial data API platform"
+    },
+    {
+      "name": "Brex",
+      "category": "Finance / Legal",
+      "searchTerms": ["Brex MCP server", "Brex corporate cards MCP"],
+      "priority": "medium",
+      "notes": "Financial services for startups"
+    },
+    {
+      "name": "Mercury",
+      "category": "Finance / Legal",
+      "searchTerms": ["Mercury MCP server", "Mercury banking MCP"],
+      "priority": "medium",
+      "notes": "Banking for startups"
+    },
+    {
+      "name": "Carta",
+      "category": "Finance / Legal",
+      "searchTerms": ["Carta MCP server", "Carta cap table MCP"],
+      "priority": "medium",
+      "notes": "Equity management platform"
+    },
+    {
+      "name": "DocuSign",
+      "category": "Finance / Legal",
+      "searchTerms": ["DocuSign MCP server", "DocuSign eSignature MCP"],
+      "priority": "medium",
+      "notes": "Electronic signature and agreement platform"
+    }
+  ],
+  "categories": [
+    "Payments & Commerce",
+    "Cloud Infrastructure",
+    "Dev Tools",
+    "Databases",
+    "Productivity",
+    "Communication",
+    "AI / ML",
+    "Analytics",
+    "Finance / Legal"
+  ],
+  "searchConfig": {
+    "timeRange": "past_week",
+    "maxResults": 10,
+    "includeDomains": ["github.com", "dev.to", "medium.com", "company blogs"],
+    "excludeDomains": ["twitter.com", "x.com", "linkedin.com"],
+    "queryTemplates": [
+      "\"{vendor} MCP server\"",
+      "\"{vendor} Model Context Protocol\"",
+      "\"{vendor} MCP integration\"",
+      "official {vendor} MCP server"
+    ]
+  }
+}

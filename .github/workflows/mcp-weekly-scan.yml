@@ -1,0 +1,27 @@
+name: MCP Weekly Server Scan
+on:
+  schedule:
+    - cron: '0 8 * * 1'  # Every Monday at 8:00am UTC
+  workflow_dispatch:  # Manual trigger option
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm ci
+      - name: Run Weekly Scan
+        env:
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+        run: node scripts/tavily/weekly-scan.js
+      - name: Commit Results
+        if: success()
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add data/
+          git commit -m "Weekly MCP scan results $(date +'%Y-%m-%d')" || echo "No changes to commit"
+          git push

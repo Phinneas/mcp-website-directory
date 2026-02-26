@@ -1,0 +1,27 @@
+name: MCP Monthly Deep Dive
+on:
+  schedule:
+    - cron: '0 8 1-7 * 1'  # First Monday of each month at 8:00am UTC
+  workflow_dispatch:  # Manual trigger option
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm ci
+      - name: Run Monthly Review
+        env:
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+        run: node scripts/tavily/monthly-review.js
+      - name: Commit Results
+        if: success()
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add data/
+          git commit -m "Monthly MCP review $(date +'%Y-%m')" || echo "No changes to commit"
+          git push
