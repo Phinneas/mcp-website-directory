@@ -3,6 +3,7 @@ title: "Mastra MCP Server: Complete Guide to @mastra/mcp"
 description: "Complete guide to Mastra's @mastra/mcp package. Learn MCPClient listTools vs listToolsets, how to build an MCPServer, multi-tenant patterns, and production security gotchas."
 slug: "mastra-mcp-server"
 date: "2025-02-25T00:00:00.000Z"
+author: "Buzz"
 tags: ["mastra", "mcp", "typescript", "ai-agents", "mcp-server"]
 ---
 
@@ -82,7 +83,7 @@ This becomes critical in multi-tenant code where you're creating per-user client
 ```typescript
 // ✅ Correct — scoped to user
 const userClient = new MCPClient({
-  id: `mcp-client-${userId}`,
+  id: `mcp-client-$&lbrace;userId&rbrace;`,
   servers: { ... }
 })
 
@@ -120,7 +121,7 @@ const mcpClient = new MCPClient({
     weather: {
       url: new URL('https://weather-api.example.com/mcp'),
       requestInit: {
-        headers: { Authorization: `Bearer ${process.env.WEATHER_API_KEY}` }
+        headers: { Authorization: \`Bearer \${process.env.WEATHER_API_KEY}\` }
       }
     }
   }
@@ -163,12 +164,12 @@ async function handleRequest(
   userApiKey: string
 ) {
   const userMcp = new MCPClient({
-    id: `mcp-client-${userId}`,          // Scoped to this user
+    id: \`mcp-client-\${userId}\`,          // Scoped to this user
     servers: {
       github: {
         url: new URL('https://api.github.com/mcp'),
         requestInit: {
-          headers: { Authorization: `Bearer ${userApiKey}` }
+          headers: { Authorization: \`Bearer \${userApiKey}\` }
         }
       }
     }
@@ -198,7 +199,7 @@ At a modest 500 requests per hour without `disconnect()`, you accumulate dozens 
 Always use `try/finally` to guarantee cleanup regardless of whether `generate()` succeeds or throws:
 
 ```typescript
-const userMcp = new MCPClient({ id: `mcp-${userId}`, servers: { ... } })
+const userMcp = new MCPClient({ id: \`mcp-\${userId}\`, servers: { ... } })
 
 try {
   const response = await agent.generate(userPrompt, {
@@ -280,12 +281,12 @@ async function getOrCreateClient(userId: string, apiKey: string): Promise<MCPCli
   if (cached) return cached
 
   const client = new MCPClient({
-    id: `mcp-${userId}`,
+    id: \`mcp-\${userId}\`,
     servers: {
       github: {
         url: new URL('https://api.github.com/mcp'),
         requestInit: {
-          headers: { Authorization: `Bearer ${apiKey}` }
+          headers: { Authorization: \`Bearer \${apiKey}\` }
         }
       }
     }
@@ -449,12 +450,12 @@ const mcp = new MCPClient({
   id: 'ampersand-client',
   servers: {
     '@amp-labs/mcp-server': {
-      url: `https://mcp.withampersand.com/v1/sse?${new URLSearchParams({
+      url: \`https://mcp.withampersand.com/v1/sse?\${new URLSearchParams({
         apiKey: process.env.AMPERSAND_API_KEY!,
         project: process.env.AMPERSAND_PROJECT_ID!,
         integrationName: process.env.AMPERSAND_INTEGRATION_NAME!,
         groupRef: process.env.AMPERSAND_GROUP_REF!,
-      })}`
+      })}\`
     }
   }
 })
@@ -508,7 +509,7 @@ servers: {
 
 Creating `MCPClient` instances in a request handler loop without unique `id` values throws on the second identical configuration. This is Mastra's memory leak protection working as intended, but it surfaces as a confusing runtime error in dynamic code.
 
-Always scope `id` to the user or request: `id: \`client-${userId}-${Date.now()}\``
+Always scope `id` to the user or request: `id: \\\`client-\${userId}-\${Date.now()}\\\``
 
 ### 4. Tool Name Collisions Are Silent by Default
 
