@@ -1,0 +1,974 @@
+---
+title: "How to Build an MCP Server"
+slug: "how-to-build-an-mcp-server"
+description: "A step-by-step guide to building your first Model Context Protocol (MCP) server from scratch — covering architecture, tools, TypeScript and Python implementations, testing, and deployment."
+pubDate: 2025-02-25
+author: "Buzz"
+category: "Tutorials"
+tags: ["mcp", "model context protocol", "mcp server", "tutorial", "typescript", "python", "ai tools"]
+featured: true
+---
+
+import { Code } from 'astro:components'
+
+The MCP ecosystem just hit an inflection point. Search interest for "MCP servers" is up over 700% year-over-year, and every serious AI developer is asking the same question: **how do I actually build one of these things?**
+
+This is the tutorial I wish existed when I started. We're going to go from zero to a fully working, testable MCP server — covering everything from protocol fundamentals to production-ready TypeScript code to connecting it to Claude.
+
+By the end, you'll understand not just *how* to build an MCP server, but *why* each piece exists, so you can build your own integrations for any API or service.
+
+---
+
+## What Is an MCP Server, Really?
+
+Before writing a line of code, you need a mental model that actually holds up.
+
+**Model Context Protocol (MCP)** is an open standard created by Anthropic that defines how AI models (clients) communicate with external tools and data sources (servers). Think of it like USB for AI — a universal interface that lets any LLM connect to any tool without custom one-off integrations.
+
+An MCP server is a lightweight process that:
+1. Exposes **tools** (functions the LLM can call, like "search the web" or "create a GitHub issue")
+2. Optionally exposes **resources** (data the LLM can read, like files or database records)
+3. Optionally exposes **prompts** (reusable prompt templates)
+4. Communicates over a defined transport — either `stdio` (for local servers) or HTTP (for remote servers)
+
+Here's the key mental model: **the MCP server is the adapter layer between the LLM and the real world.** When Claude wants to check your calendar, it doesn't call the Google Calendar API directly — it calls your MCP server's `get_events` tool, and your server handles the API call, auth, error handling, and response formatting.
+
+```
+Claude (MCP Client)  ←→  Your MCP Server  ←→  External API/Service
+```
+
+---
+
+## Choosing Your Stack
+
+The MCP project maintains official SDKs across most major languages:
+
+| Language | Status | Best For |
+|----------|--------|----------|
+| **TypeScript** ⭐ | Active, first-party | Most use cases — best tooling, widest compatibility |
+| **Python** | Active, first-party | ML/data work, rapid prototyping |
+| **Java** | Active | Spring Boot, enterprise apps |
+| **Kotlin** | Active | JVM, Android, multiplatform |
+| **C#** | Active Preview | .NET, Windows apps |
+| **Swift** | Active | iOS/macOS native apps |
+| **Rust** | Active | High-performance, systems tools |
+| **Go** | Emerging | Microservices, cloud-native |
+
+This tutorial covers **TypeScript** as the primary path (with a Python equivalent in Part 8). The TypeScript SDK is battle-tested, the tooling is excellent, and most MCP server examples in the wild use it.
+
+**A note on FastMCP**: FastMCP is a high-level Python framework that simplifies server creation with decorators and automatic type inference from docstrings. It was contributed upstream to the official Python SDK but continues as a standalone project with additional features. For quick prototyping it's excellent; for production, the official SDK gives you more control.
+
+---
+
+## Prerequisites
+
+You'll need:
+- **Node.js 18+** (`node --version` to check)
+- **npm or pnpm**
+- A text editor (VS Code recommended)
+- Basic TypeScript familiarity
+
+Install check:
+```bash
+node --version    # Should be v18.0.0 or higher
+npm --version     # Should be v9+
+```
+
+---
+
+## Part 1: Scaffolding Your Project
+
+### 1.1 Create the Project Structure
+
+```bash
+mkdir my-mcp-server
+cd my-mcp-server
+npm init -y
+```
+
+### 1.2 Install Dependencies
+
+```bash
+npm install @modelcontextprotocol/sdk zod
+npm install --save-dev typescript @types/node tsx
+```
+
+What each package does:
+- `@modelcontextprotocol/sdk` — the official MCP TypeScript SDK
+- `zod` — schema validation for tool inputs (critical for safe LLM interactions)
+- `typescript` + `@types/node` — TypeScript support
+- `tsx` — run TypeScript directly without a build step (great for development)
+
+### 1.3 Configure TypeScript
+
+Create `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "outDir": "./build",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
+}
+```
+
+### 1.4 Update package.json
+
+```json
+{
+  "name": "my-mcp-server",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "start": "node build/index.js"
+  },
+  "bin": {
+    "my-mcp-server": "./build/index.js"
+  }
+}
+```
+
+Your project structure should look like this:
+
+```
+my-mcp-server/
+├── src/
+│   └── index.ts       ← Your server lives here
+├── package.json
+└── tsconfig.json
+```
+
+---
+
+## Part 2: Building Your First Tool
+
+We're going to build a practical example: a **weather MCP server** that lets Claude check weather conditions. This is a real-world pattern you'll replicate for any external API.
+
+### 2.1 Create the Server File
+
+Create `src/index.ts`:
+
+```typescript
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { z } from "zod";
+
+// Initialize the MCP server with name and version
+const server = new McpServer({
+  name: "weather-server",
+  version: "1.0.0",
+});
+```
+
+That's it — that's your server skeleton. Three imports and four lines of code. Now let's give it something useful to do.
+
+### 2.2 Register Your First Tool
+
+Tools are the heart of any MCP server. Each tool has:
+- A **name** (what the LLM calls it)
+- A **description** (how the LLM decides when to use it — this matters a lot)
+- An **input schema** (validated via Zod)
+- A **handler function** (the actual logic)
+
+```typescript
+server.tool(
+  "get_current_weather",
+  "Get current weather conditions for a city. Returns temperature, conditions, humidity, and wind speed.",
+  {
+    city: z.string().describe("The city name to get weather for, e.g. 'Seattle' or 'Tokyo'"),
+    units: z.enum(["celsius", "fahrenheit"]).default("celsius").describe("Temperature units"),
+  },
+  async ({ city, units }) => {
+    // Call a weather API (we'll use Open-Meteo — it's free, no API key needed)
+    const geocodeUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1`;
+    
+    const geoResponse = await fetch(geocodeUrl);
+    const geoData = await geoResponse.json() as {
+      results?: Array<{ latitude: number; longitude: number; name: string; country: string }>;
+    };
+    
+    if (!geoData.results || geoData.results.length === 0) {
+      return {
+        content: [{
+          type: "text",
+          text: `Could not find location: "${city}". Please check the city name and try again.`,
+        }],
+        isError: true,
+      };
+    }
+    
+    const { latitude, longitude, name, country } = geoData.results[0];
+    const tempUnit = units === "fahrenheit" ? "fahrenheit" : "celsius";
+    const windUnit = "kmh";
+    
+    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&temperature_unit=${tempUnit}&wind_speed_unit=${windUnit}`;
+    
+    const weatherResponse = await fetch(weatherUrl);
+    const weatherData = await weatherResponse.json() as {
+      current: {
+        temperature_2m: number;
+        relative_humidity_2m: number;
+        weather_code: number;
+        wind_speed_10m: number;
+      };
+    };
+    
+    const { temperature_2m, relative_humidity_2m, weather_code, wind_speed_10m } = weatherData.current;
+    const conditions = getWeatherDescription(weather_code);
+    const unitSymbol = units === "fahrenheit" ? "°F" : "°C";
+    
+    return {
+      content: [{
+        type: "text",
+        text: `Weather in ${name}, ${country}:
+🌡️  Temperature: ${temperature_2m}${unitSymbol}
+🌤️  Conditions: ${conditions}
+💧 Humidity: ${relative_humidity_2m}%
+💨 Wind Speed: ${wind_speed_10m} km/h`,
+      }],
+    };
+  }
+);
+```
+
+### 2.3 Add a Helper Function
+
+```typescript
+function getWeatherDescription(code: number): string {
+  const codes: Record<number, string> = {
+    0: "Clear sky",
+    1: "Mainly clear", 2: "Partly cloudy", 3: "Overcast",
+    45: "Foggy", 48: "Depositing rime fog",
+    51: "Light drizzle", 53: "Moderate drizzle", 55: "Dense drizzle",
+    61: "Slight rain", 63: "Moderate rain", 65: "Heavy rain",
+    71: "Slight snow", 73: "Moderate snow", 75: "Heavy snow",
+    80: "Slight showers", 81: "Moderate showers", 82: "Violent showers",
+    95: "Thunderstorm", 96: "Thunderstorm with hail", 99: "Thunderstorm with heavy hail",
+  };
+  return codes[code] ?? `Unknown (code: ${code})`;
+}
+```
+
+### 2.4 Start the Server
+
+Finally, wire up the stdio transport and start the server:
+
+```typescript
+async function main() {
+  const transport = new StdioServerTransport();
+  await server.connect(transport);
+  
+  // Log to stderr so it doesn't interfere with the MCP protocol on stdout
+  console.error("Weather MCP server running on stdio");
+}
+
+main().catch((error) => {
+  console.error("Fatal error:", error);
+  process.exit(1);
+});
+```
+
+### 2.5 The Complete File
+
+Here's your complete `src/index.ts`:
+
+```typescript
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { z } from "zod";
+
+const server = new McpServer({
+  name: "weather-server",
+  version: "1.0.0",
+});
+
+server.tool(
+  "get_current_weather",
+  "Get current weather conditions for a city. Returns temperature, conditions, humidity, and wind speed.",
+  {
+    city: z.string().describe("The city name to get weather for"),
+    units: z.enum(["celsius", "fahrenheit"]).default("celsius").describe("Temperature units"),
+  },
+  async ({ city, units }) => {
+    try {
+      const geoResponse = await fetch(
+        `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1`
+      );
+      const geoData = await geoResponse.json() as {
+        results?: Array<{ latitude: number; longitude: number; name: string; country: string }>;
+      };
+
+      if (!geoData.results?.length) {
+        return {
+          content: [{ type: "text", text: `City not found: "${city}"` }],
+          isError: true,
+        };
+      }
+
+      const { latitude, longitude, name, country } = geoData.results[0];
+      const tempUnit = units === "fahrenheit" ? "fahrenheit" : "celsius";
+
+      const weatherResponse = await fetch(
+        `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&temperature_unit=${tempUnit}&wind_speed_unit=kmh`
+      );
+      const weatherData = await weatherResponse.json() as {
+        current: { temperature_2m: number; relative_humidity_2m: number; weather_code: number; wind_speed_10m: number };
+      };
+
+      const { temperature_2m, relative_humidity_2m, weather_code, wind_speed_10m } = weatherData.current;
+      const unitSymbol = units === "fahrenheit" ? "°F" : "°C";
+
+      return {
+        content: [{
+          type: "text",
+          text: `Weather in ${name}, ${country}:
+🌡️  Temperature: ${temperature_2m}${unitSymbol}
+🌤️  Conditions: ${getWeatherDescription(weather_code)}
+💧 Humidity: ${relative_humidity_2m}%
+💨 Wind Speed: ${wind_speed_10m} km/h`,
+        }],
+      };
+    } catch (error) {
+      return {
+        content: [{ type: "text", text: `Error fetching weather: ${error instanceof Error ? error.message : String(error)}` }],
+        isError: true,
+      };
+    }
+  }
+);
+
+function getWeatherDescription(code: number): string {
+  const codes: Record<number, string> = {
+    0: "Clear sky", 1: "Mainly clear", 2: "Partly cloudy", 3: "Overcast",
+    45: "Foggy", 48: "Depositing rime fog",
+    51: "Light drizzle", 53: "Moderate drizzle", 55: "Dense drizzle",
+    61: "Slight rain", 63: "Moderate rain", 65: "Heavy rain",
+    71: "Slight snow", 73: "Moderate snow", 75: "Heavy snow",
+    80: "Slight showers", 81: "Moderate showers", 82: "Violent showers",
+    95: "Thunderstorm", 96: "Thunderstorm with hail", 99: "Thunderstorm with heavy hail",
+  };
+  return codes[code] ?? `Unknown (code: ${code})`;
+}
+
+async function main() {
+  const transport = new StdioServerTransport();
+  await server.connect(transport);
+  console.error("Weather MCP server running");
+}
+
+main().catch((error) => {
+  console.error("Fatal error:", error);
+  process.exit(1);
+});
+```
+
+---
+
+## Part 3: Testing Your Server
+
+### 3.1 Test with MCP Inspector (Recommended)
+
+The MCP Inspector is a visual testing tool that lets you call your server's tools directly from a browser UI. It's the fastest way to verify everything works before connecting to Claude.
+
+```bash
+# Build first
+npm run build
+
+# Then inspect
+npx @modelcontextprotocol/inspector node build/index.js
+```
+
+The Inspector will open at `http://localhost:5173`. From there:
+1. Your server connects automatically
+2. Click the **"Tools"** tab to see all registered tools
+3. Click `get_current_weather` → fill in a city → hit **"Run"**
+4. Watch the response come back
+
+If you see a weather result, your server is working perfectly.
+
+### 3.2 Test via CLI (Quick Sanity Check)
+
+You can also test by piping raw JSON to the server:
+
+```bash
+echo '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}' | node build/index.js
+```
+
+You should see your tool listed in the response.
+
+---
+
+## Part 4: Connecting to Claude Desktop
+
+This is where it gets real. Let's wire your server into Claude so you can actually use it in conversation.
+
+### 4.1 Locate the Config File
+
+Claude Desktop reads server configurations from a JSON file:
+
+- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+
+### 4.2 Add Your Server
+
+Open (or create) the config file and add your server:
+
+```json
+{
+  "mcpServers": {
+    "weather-server": {
+      "command": "node",
+      "args": ["/absolute/path/to/my-mcp-server/build/index.js"]
+    }
+  }
+}
+```
+
+> **Critical**: Use the absolute path, not a relative one. Claude Desktop runs in a different working directory and won't find relative paths.
+
+### 4.3 Restart Claude Desktop
+
+Completely quit and reopen Claude Desktop. You should see a small 🔌 icon (or hammer icon in some versions) in the chat interface indicating MCP tools are available.
+
+### 4.4 Test in a Conversation
+
+Try asking:
+- *"What's the weather like in Tokyo right now?"*
+- *"Is it raining in London?"*
+- *"Compare the weather in New York and Los Angeles — which is warmer?"*
+
+Claude will automatically call your `get_current_weather` tool and incorporate the results into its response.
+
+---
+
+## Part 5: Adding More Tools (The Right Way)
+
+One tool is a proof of concept. A useful server has a cohesive set of tools. Here's how to think about adding more.
+
+### 5.1 Design Principles for MCP Tools
+
+**Name tools clearly.** The LLM uses the tool name and description to decide when to call it. `get_weather` is fine; `fetch_meteorological_data_from_external_provider` will work but confuses the LLM. Use `verb_noun` naming: `get_forecast`, `search_cities`, `compare_locations`.
+
+**Write descriptions for the LLM, not humans.** Your description is a prompt. Be specific about what the tool returns and when to use it. Bad: *"Gets weather."* Good: *"Get a 7-day weather forecast for a city. Use this when the user asks about upcoming weather, planning trips, or needs to know conditions beyond today."*
+
+**Validate inputs aggressively with Zod.** The LLM might pass unexpected values. Zod will catch them before they hit your API calls.
+
+```typescript
+// Good: tight schema with constraints
+{
+  days: z.number().min(1).max(14).default(7).describe("Number of days to forecast (1-14)"),
+  city: z.string().min(1).max(100).describe("City name"),
+}
+
+// Bad: too permissive
+{
+  days: z.number(),
+  city: z.string(),
+}
+```
+
+**Return structured, readable text.** The LLM works best when responses are clean text it can parse and paraphrase. Avoid massive JSON blobs in your response — format them into readable output.
+
+### 5.2 Add a Forecast Tool
+
+```typescript
+server.tool(
+  "get_weather_forecast",
+  "Get a multi-day weather forecast for a city. Use when the user asks about upcoming weather or trip planning.",
+  {
+    city: z.string().describe("City name"),
+    days: z.number().min(1).max(7).default(5).describe("Number of days to forecast"),
+  },
+  async ({ city, days }) => {
+    try {
+      // Geocode the city
+      const geoResponse = await fetch(
+        `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1`
+      );
+      const geoData = await geoResponse.json() as {
+        results?: Array<{ latitude: number; longitude: number; name: string; country: string }>;
+      };
+
+      if (!geoData.results?.length) {
+        return {
+          content: [{ type: "text", text: `City not found: "${city}"` }],
+          isError: true,
+        };
+      }
+
+      const { latitude, longitude, name, country } = geoData.results[0];
+
+      // Fetch forecast
+      const forecastResponse = await fetch(
+        `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=temperature_2m_max,temperature_2m_min,weather_code,precipitation_sum&forecast_days=${days}&timezone=auto`
+      );
+      const forecastData = await forecastResponse.json() as {
+        daily: {
+          time: string[];
+          temperature_2m_max: number[];
+          temperature_2m_min: number[];
+          weather_code: number[];
+          precipitation_sum: number[];
+        };
+      };
+
+      const lines = forecastData.daily.time.map((date, i) => {
+        const max = forecastData.daily.temperature_2m_max[i];
+        const min = forecastData.daily.temperature_2m_min[i];
+        const desc = getWeatherDescription(forecastData.daily.weather_code[i]);
+        const precip = forecastData.daily.precipitation_sum[i];
+        return `${date}: ${desc}, ${min}°C–${max}°C, ${precip}mm rain`;
+      });
+
+      return {
+        content: [{
+          type: "text",
+          text: `${days}-day forecast for ${name}, ${country}:
+
+${lines.join("\n")}`,
+        }],
+      };
+    } catch (error) {
+      return {
+        content: [{ type: "text", text: `Forecast error: ${error instanceof Error ? error.message : String(error)}` }],
+        isError: true,
+      };
+    }
+  }
+);
+```
+
+---
+
+## Part 6: Error Handling Best Practices
+
+This is where most beginner MCP servers fall apart. The LLM needs actionable error messages — not cryptic stack traces.
+
+### 6.1 Error Response Pattern
+
+```typescript
+// ✅ Good: specific, actionable error
+return {
+  content: [{
+    type: "text",
+    text: `Could not fetch weather for "${city}". The city name might be misspelled or the location might not exist. Try using a major nearby city or add the country name (e.g., "Paris, France").`,
+  }],
+  isError: true,
+};
+
+// ❌ Bad: cryptic, not actionable
+return {
+  content: [{ type: "text", text: "Error: 404" }],
+  isError: true,
+};
+```
+
+### 6.2 Wrap All Tool Handlers
+
+Every tool handler should have a top-level try/catch:
+
+```typescript
+server.tool("my_tool", "Description", schema, async (params) => {
+  try {
+    // ... your logic
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return {
+      content: [{ type: "text", text: `Tool error: ${message}` }],
+      isError: true,
+    };
+  }
+});
+```
+
+### 6.3 Validate External API Responses
+
+Never trust external APIs to return what you expect:
+
+```typescript
+const data = await response.json() as unknown;
+
+// Guard against unexpected shapes
+if (!data || typeof data !== "object" || !("results" in data)) {
+  return {
+    content: [{ type: "text", text: "Unexpected API response format" }],
+    isError: true,
+  };
+}
+```
+
+---
+
+## Part 7: Authentication and Secrets
+
+Real-world servers need API keys. Never hardcode them.
+
+### 7.1 Environment Variables via Config
+
+When registering your server in `claude_desktop_config.json`, you can pass environment variables:
+
+```json
+{
+  "mcpServers": {
+    "my-api-server": {
+      "command": "node",
+      "args": ["/path/to/build/index.js"],
+      "env": {
+        "API_KEY": "your-key-here",
+        "API_BASE_URL": "https://api.example.com"
+      }
+    }
+  }
+}
+```
+
+In your server code, read them safely:
+
+```typescript
+const apiKey = process.env.API_KEY;
+if (!apiKey) {
+  throw new Error("API_KEY environment variable is required");
+}
+```
+
+### 7.2 Fail Fast on Missing Config
+
+Check for required environment variables at server startup, not inside tool handlers:
+
+```typescript
+function validateConfig() {
+  const required = ["API_KEY", "API_SECRET"];
+  const missing = required.filter(key => !process.env[key]);
+  
+  if (missing.length > 0) {
+    throw new Error(`Missing required environment variables: ${missing.join(", ")}`);
+  }
+}
+
+// Call before connecting
+validateConfig();
+const transport = new StdioServerTransport();
+await server.connect(transport);
+```
+
+---
+
+## Part 8: The Python Alternative (FastMCP)
+
+If you prefer Python, FastMCP makes building servers almost trivially simple. Here's the same weather server in Python.
+
+### 8.1 Setup with uv (Recommended)
+
+`uv` is the recommended Python package manager for MCP development — it handles virtual environments automatically and is significantly faster than pip:
+
+```bash
+# Install uv if you don't have it
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Create and set up project
+uv init weather-server
+cd weather-server
+uv venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+
+# Install dependencies
+uv add "mcp[cli]" httpx
+```
+
+If you'd rather use plain pip:
+```bash
+pip install fastmcp httpx
+```
+
+### 8.2 The Server Code
+
+```python
+# server.py
+import httpx
+from mcp.server.fastmcp import FastMCP
+
+mcp = FastMCP("weather-server")
+
+@mcp.tool()
+async def get_current_weather(city: str, units: str = "celsius") -> str:
+    """
+    Get current weather conditions for a city.
+    Returns temperature, conditions, humidity, and wind speed.
+    
+    Args:
+        city: The city name (e.g., 'Seattle' or 'Tokyo')
+        units: Temperature units - 'celsius' or 'fahrenheit'
+    """
+    async with httpx.AsyncClient() as client:
+        # Geocode
+        geo = await client.get(
+            "https://geocoding-api.open-meteo.com/v1/search",
+            params={"name": city, "count": 1}
+        )
+        geo_data = geo.json()
+        
+        if not geo_data.get("results"):
+            return f'City not found: "{city}"'
+        
+        loc = geo_data["results"][0]
+        lat, lon = loc["latitude"], loc["longitude"]
+        name, country = loc["name"], loc["country"]
+        
+        temp_unit = "fahrenheit" if units == "fahrenheit" else "celsius"
+        unit_symbol = "°F" if units == "fahrenheit" else "°C"
+        
+        # Fetch weather
+        weather = await client.get(
+            "https://api.open-meteo.com/v1/forecast",
+            params={
+                "latitude": lat,
+                "longitude": lon,
+                "current": "temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m",
+                "temperature_unit": temp_unit,
+                "wind_speed_unit": "kmh"
+            }
+        )
+        w = weather.json()["current"]
+        
+        return (
+            f"Weather in {name}, {country}:\n"
+            f"🌡️  Temperature: {w['temperature_2m']}{unit_symbol}\n"
+            f"💧 Humidity: {w['relative_humidity_2m']}%\n"
+            f"💨 Wind: {w['wind_speed_10m']} km/h"
+        )
+
+if __name__ == "__main__":
+    mcp.run()
+```
+
+The FastMCP decorator pattern is elegant — the function's docstring becomes the tool description automatically. FastMCP uses Python type hints and docstrings to generate JSON schemas; always write descriptive `Args:` sections since the LLM reads them to understand how to call your tools.
+
+### 8.3 Test with the MCP Dev Server
+
+Python has its own equivalent of the MCP Inspector built into the CLI:
+
+```bash
+mcp dev server.py
+```
+
+This opens a browser UI at `localhost:5173` where you can call your tools directly — same workflow as the TypeScript inspector.
+
+### 8.4 Connect to Claude Desktop
+
+The `uv` config is slightly different from plain Python — it handles the virtual environment automatically:
+
+```json
+{
+  "mcpServers": {
+    "weather-server": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "/absolute/path/to/weather-server",
+        "run",
+        "server.py"
+      ]
+    }
+  }
+}
+```
+
+Or if using plain Python:
+```json
+{
+  "mcpServers": {
+    "weather-server": {
+      "command": "python",
+      "args": ["/absolute/path/to/server.py"]
+    }
+  }
+}
+```
+
+> **Note on `print()` in Python**: The same rule applies as TypeScript's `console.log()` — never use `print()` in a server that runs on stdio transport. It corrupts the JSON-RPC message stream. Use Python's `logging` module writing to `stderr` instead.
+
+---
+
+## Part 9: Deploying as a Remote Server (HTTP Transport)
+
+So far we've used `stdio` — the server runs as a local process. For shared servers or SaaS integrations, you want HTTP transport.
+
+### 9.1 Transport Comparison
+
+| | **stdio** | **Streamable HTTP** | **SSE (Legacy)** |
+|---|---|---|---|
+| Best for | Local tools, personal use | Shared access, SaaS | — |
+| Auth | Via env vars | OAuth 2.1 / API tokens | — |
+| Scaling | Single instance | Horizontally scalable | — |
+| Setup complexity | Very simple | Moderate | — |
+| 2025 Status | ✅ Current | ✅ Current | ⚠️ **Deprecated** |
+
+> **⚠️ SSE Transport is Deprecated**: If you've seen older tutorials using Server-Sent Events (SSE) transport — that approach was deprecated in the 2025 MCP specification. Use **Streamable HTTP** for all new remote server development.
+
+### 9.2 OAuth 2.1 is Required for Remote Servers
+
+This is the most important security requirement to know before deploying remotely: **the March 2025 MCP spec update made OAuth 2.1 mandatory for HTTP transports.** You cannot skip authentication on a production remote server.
+
+What this means in practice:
+- Your server needs to validate a bearer token on every request
+- The token must come from an OAuth 2.1 authorization flow
+- Simple API key headers are not spec-compliant for production use
+
+For development and internal tools, you can use a simpler auth check. For anything public-facing, implement a proper OAuth 2.1 flow.
+
+### 9.3 HTTP Server Setup
+
+```typescript
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
+import express from "express";
+
+const app = express();
+app.use(express.json());
+
+const server = new McpServer({ name: "weather-server", version: "1.0.0" });
+
+// Register tools here (same as before)...
+
+// Simple auth middleware (replace with OAuth 2.1 for production)
+function requireAuth(req: express.Request, res: express.Response, next: express.NextFunction) {
+  const token = req.headers.authorization?.replace("Bearer ", "");
+  if (!token || token !== process.env.MCP_AUTH_TOKEN) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+  next();
+}
+
+// MCP endpoint
+app.post("/mcp", requireAuth, async (req, res) => {
+  const transport = new StreamableHTTPServerTransport({
+    sessionIdGenerator: undefined, // Stateless mode — easier to scale
+  });
+  
+  await server.connect(transport);
+  await transport.handleRequest(req, res, req.body);
+});
+
+app.listen(3000, () => {
+  console.error("MCP server listening on port 3000");
+});
+```
+
+### 9.4 Deployment Options
+
+**Serverless (recommended for stateless tools)**: Deploy to Cloud Run, AWS Lambda, or Cloudflare Workers. Scales to zero, no idle cost. Works perfectly for read-only API wrapper servers.
+
+**Containerized**: Use Docker for servers with local state or complex dependencies. Better for database connectors or servers that maintain connections.
+
+Example Dockerfile:
+```dockerfile
+FROM node:20-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY build/ ./build/
+USER node
+CMD ["node", "build/index.js"]
+```
+
+Deploy to Fly.io, Railway, Render, or any container platform. Set `MCP_AUTH_TOKEN` as a secret environment variable, not in your Dockerfile.
+
+---
+
+## Part 10: Submitting to MyMCPShelf
+
+Built something useful? **Submit it to the [MyMCPShelf directory](/servers).** The community is actively looking for quality servers in underserved categories — data & analytics, knowledge/RAG, and niche developer tools are especially in demand right now.
+
+Good candidates for submission:
+- Servers that wrap public APIs the community actually uses
+- Tools that solve a real workflow problem
+- Well-documented repos with working examples
+- Servers with more than 2-3 meaningful tools
+
+Before submitting, run through this checklist:
+
+- [ ] Server starts without errors (`npm run build && node build/index.js`)
+- [ ] All tools have clear, LLM-friendly descriptions
+- [ ] Inputs are validated with Zod (or Pydantic for Python)
+- [ ] Error responses are informative, not just `"Error: 500"`
+- [ ] README explains what the server does and how to configure it
+- [ ] API keys and secrets use environment variables, not hardcoded values
+- [ ] Tested with MCP Inspector
+
+---
+
+## Common Mistakes to Avoid
+
+**Using SSE transport for new remote servers.** Server-Sent Events (SSE) transport was deprecated in the 2025 MCP spec. If you're following an older tutorial that uses SSE, stop — use Streamable HTTP instead. The older approach won't be supported by modern MCP clients going forward.
+
+**Skipping auth on remote servers.** OAuth 2.1 is mandatory for HTTP transports per the current spec. Even for internal tools, add at minimum a bearer token check. An unauthenticated MCP server is a security liability.
+
+**Relative paths in Claude Desktop config.** Always use absolute paths. `~/my-server/build/index.js` won't work — expand the tilde to the full path.
+
+**Logging to stdout.** The MCP protocol uses stdout for communication. Any `console.log()` (TypeScript) or `print()` (Python) will corrupt the message stream. Always use `console.error()` or a logger writing to stderr.
+
+**Overly broad tool descriptions.** The LLM decides when to call your tools based on the description. If it says *"does everything weather-related,"* the LLM won't know when to use it. Be specific about use cases.
+
+**Missing error handling in tools.** An uncaught exception in a tool handler will crash your server. Always wrap handlers in try/catch.
+
+**Not testing with MCP Inspector first.** Debugging through Claude is slow. Test with the Inspector, which shows raw requests and responses.
+
+**Forgetting to rebuild after code changes.** With `stdio` transport, Claude Desktop starts your server fresh each session — but it's using the *built* files. Run `npm run build` after every change.
+
+---
+
+## What to Build Next
+
+Now that you've built your first server, here's a progression of increasingly powerful projects:
+
+**Beginner**: A note-taking server that reads/writes to local markdown files
+
+**Intermediate**: A GitHub server that can list issues, create PRs, and search code
+
+**Advanced**: A database server with query capabilities and write protection guards
+
+**Expert**: A multi-service orchestration server that combines Slack, Notion, and calendar APIs into unified workflow tools
+
+Each of these follows exactly the same pattern you learned here — just with more complex API interactions and more tools.
+
+---
+
+## Further Resources
+
+- **[MCP Official Specification](https://modelcontextprotocol.io)** — the canonical reference
+- **[TypeScript SDK on GitHub](https://github.com/modelcontextprotocol/typescript-sdk)** — source, examples, changelogs
+- **[Python SDK on GitHub](https://github.com/modelcontextprotocol/python-sdk)** — includes FastMCP
+- **[Reference Server Implementations](https://github.com/modelcontextprotocol/servers)** — official examples to learn from
+- **[MCP Inspector](https://github.com/modelcontextprotocol/inspector)** — visual testing tool
+- **[MyMCPShelf Directory](/servers)** — browse 600+ verified MCP servers for inspiration
+
+### Advanced Features Worth Knowing
+
+Once you've got the basics down, two advanced MCP features are worth exploring:
+
+**Sampling** — Your server can request an LLM completion from the host client, keeping your server model-agnostic. Useful for servers that need to summarize or analyze data as part of a tool response.
+
+**Elicitation** — Your server can request additional input or confirmation from the user mid-interaction. Critical for servers that take destructive or irreversible actions — you can pause execution and ask *"Are you sure you want to delete these 47 files?"* before proceeding.
+
+**Structured Output** — The modern TypeScript SDK supports `outputSchema` and `structuredContent` in tool responses, letting clients parse your tool output as typed data rather than raw text.
+
+---
+
+You now have everything you need to build, test, and deploy a production-ready MCP server. The ecosystem is still early — the servers you build today will be the ones the community depends on tomorrow.
+
+If you build something from this tutorial, [submit it to MyMCPShelf](/submit) and share it with the community. We feature quality submissions in our weekly roundup.
+
+---
+
+*Building something more advanced? Check out our [MCP Security Best Practices](/blog/mcp-security-best-practices) guide and [MCP Server Architecture Patterns](/blog/mcp-architecture-patterns) for the next level.*
