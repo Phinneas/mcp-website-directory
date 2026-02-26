@@ -20,7 +20,7 @@ const DEFAULT_CONFIG: SystemConfig = {
 export class ConfigManager {
   private systemConfig: SystemConfig;
   private tavilyConfig: TavilyConfig | null = null;
-  private vendorWatchlist: Vendor[] | null = null;
+  private vendorWatchlist: Vendor[] = [];
 
   constructor(customConfig?: Partial<SystemConfig>) {
     this.systemConfig = { ...DEFAULT_CONFIG, ...customConfig };
@@ -38,16 +38,16 @@ export class ConfigManager {
    */
   getTavilyConfig(): TavilyConfig {
     if (!this.tavilyConfig) {
-      const apiKey = process.env.TAVILY_API_KEY;
+      const apiKey = process.env['TAVILY_API_KEY'];
       if (!apiKey) {
         throw new Error('TAVILY_API_KEY environment variable is required');
       }
 
       this.tavilyConfig = {
         apiKey,
-        baseUrl: process.env.TAVILY_BASE_URL || 'https://api.tavily.com',
-        timeout: parseInt(process.env.TAVILY_TIMEOUT || '30000'),
-        maxRetries: parseInt(process.env.TAVILY_MAX_RETRIES || '3')
+        baseUrl: process.env['TAVILY_BASE_URL'] || 'https://api.tavily.com',
+        timeout: parseInt(process.env['TAVILY_TIMEOUT'] || '30000'),
+        maxRetries: parseInt(process.env['TAVILY_MAX_RETRIES'] || '3')
       };
     }
 
@@ -58,7 +58,7 @@ export class ConfigManager {
    * Load vendor watchlist from JSON file
    */
   loadVendorWatchlist(): Vendor[] {
-    if (this.vendorWatchlist) {
+    if (this.vendorWatchlist && this.vendorWatchlist.length > 0) {
       return this.vendorWatchlist;
     }
 
@@ -134,7 +134,7 @@ export class ConfigManager {
     const errors: string[] = [];
 
     // Check Tavily API key
-    if (!process.env.TAVILY_API_KEY) {
+    if (!process.env['TAVILY_API_KEY']) {
       errors.push('TAVILY_API_KEY environment variable is not set');
     }
 
@@ -206,7 +206,7 @@ export class ConfigManager {
    * Get delay between API calls (in ms) to avoid rate limiting
    */
   getApiDelay(): number {
-    return parseInt(process.env.API_DELAY_MS || '1000');
+    return parseInt(process.env['API_DELAY_MS'] || '1000');
   }
 }
 

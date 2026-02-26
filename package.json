@@ -11,7 +11,12 @@
     "tina:dev": "tinacms dev -c \"npm run dev\"",
     "tina:build": "tinacms build",
     "tina:init": "tinacms init",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test:tavily": "cd scripts/tavily && npm test",
+    "test:tavily:watch": "cd scripts/tavily && npm test --watch",
+    "test:tavily:coverage": "cd scripts/tavily && npm test --coverage",
+    "weekly-scan": "node scripts/tavily/weekly-scan.js",
+    "monthly-review": "node scripts/tavily/monthly-review.js"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.12",

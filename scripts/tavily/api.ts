@@ -2,8 +2,23 @@
  * Tavily API client for MCP Intelligence System
  */
 
-import { TavilyConfig, ApiError } from './types.js';
+import { TavilyConfig } from './types.js';
 import { logWithTimestamp, retryWithBackoff, sleep } from './utils.js';
+
+// Local ApiError class since it's used but not exported from types
+class ApiError extends Error {
+  code: string;
+  statusCode?: number;
+  retryable: boolean;
+
+  constructor(message: string, options: { code: string; statusCode?: number; retryable: boolean }) {
+    super(message);
+    this.name = 'ApiError';
+    this.code = options.code;
+    this.statusCode = options.statusCode;
+    this.retryable = options.retryable;
+  }
+}
 
 // Tavily API response types
 interface TavilySearchResult {
@@ -216,8 +231,8 @@ export class TavilyClient {
           }
           
           // Recent publication
-          if (item.publishedDate) {
-            const published = new Date(item.publishedDate);
+          if (item.published_date) {
+            const published = new Date(item.published_date);
             const now = new Date();
             const daysSince = (now.getTime() - published.getTime()) / (1000 * 60 * 60 * 24);
             
@@ -237,7 +252,7 @@ export class TavilyClient {
             url: item.url,
             content: item.content,
             confidence: Math.min(confidence, 1.0),
-            publishedDate: item.publishedDate
+            publishedDate: item.published_date
           });
         }
       }

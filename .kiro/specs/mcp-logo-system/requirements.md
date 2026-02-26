@@ -12,7 +12,7 @@
 **So that** I can quickly identify and recognize servers visually
 
 **Acceptance Criteria:**
-- [ ] Each server displays a logo or icon on the homepage
+- [x] Each server displays a logo or icon on the homepage
 - [ ] Logos are at least 48x48px and clearly visible
 - [ ] Logos load without blocking page rendering
 - [ ] A fallback (gradient avatar) displays if logo unavailable
