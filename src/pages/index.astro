@@ -7854,21 +7854,38 @@ function formatStars(stars?: number): string {
 
             let currentCategory = 'all';
 
+            // Fuzzy matching - normalize common character confusions
+            function normalizeForFuzzy(str) {
+                return str.toLowerCase()
+                    .replace(/0/g, 'o')
+                    .replace(/1/g, 'l')
+                    .replace(/5/g, 's')
+                    .replace(/8/g, 'b')
+                    .replace(/3/g, 'e')
+                    .replace(/4/g, 'a')
+                    .replace(/7/g, 't')
+                    .replace(/[^a-z0-9\s]/g, '');
+            }
+
             // Pre-index cards once for fast filtering at scale
             const allCards = Array.from(serversGrid.querySelectorAll('.server-card'));
             allCards.forEach(card => {
                 const title = card.querySelector('h3')?.textContent.toLowerCase() || '';
                 const desc = card.querySelector('.server-description')?.textContent.toLowerCase() || '';
                 card.dataset.searchIndex = title + ' ' + desc;
+                card.dataset.fuzzyIndex = normalizeForFuzzy(title + ' ' + desc);
             });
 
             let filterTimer = null;
             function filterServers() {
                 const searchTerm = searchInput.value.toLowerCase();
+                const fuzzySearchTerm = normalizeForFuzzy(searchTerm);
                 allCards.forEach(card => {
-                    const matchesSearch = !searchTerm || card.dataset.searchIndex.includes(searchTerm);
+                    // Try exact match first, then fuzzy match
+                    const matchesExact = !searchTerm || card.dataset.searchIndex.includes(searchTerm);
+                    const matchesFuzzy = !searchTerm || card.dataset.fuzzyIndex.includes(fuzzySearchTerm);
                     const matchesCategory = currentCategory === 'all' || card.dataset.category === currentCategory;
-                    card.style.display = (matchesSearch && matchesCategory) ? '' : 'none';
+                    card.style.display = ((matchesExact || matchesFuzzy) && matchesCategory) ? '' : 'none';
                 });
             }
 

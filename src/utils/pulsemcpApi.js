@@ -2,16 +2,60 @@
 // API docs: https://api.pulsemcp.com/v0beta
 
 const PULSEMCP_API_BASE = 'https://api.pulsemcp.com/v0beta';
-const COUNT_PER_PAGE = 100;
-// Fetch up to 5000 servers (50 pages of 100) - PulseMCP has 8600+ servers
+const COUNT_PER_PAGE = 250; // Max allowed by API
+// Fetch up to 5000 servers (20 pages of 250) - PulseMCP has 8600+ servers
+// Note: v0beta API is in sunset mode (random failures) - retry logic essential
 const MAX_SERVERS = 5000;
+const MAX_RETRIES = 3;
+
+/**
+ * Fetch with retry for API sunset handling
+ */
+async function fetchWithRetry(url, retries = MAX_RETRIES) {
+  for (let attempt = 0; attempt < retries; attempt++) {
+    try {
+      // Use minimal fetch options for Cloudflare compatibility
+      const response = await fetch(url);
+      
+      // Check for API sunset error in response
+      if (response.ok) {
+        const data = await response.json();
+        if (data.error?.code === 'API_SUNSET') {
+          console.warn(`API sunset error, retry ${attempt + 1}/${retries}`);
+          await new Promise(r => setTimeout(r, 500 * (attempt + 1))); // Exponential backoff
+          continue;
+        }
+        return { ok: true, data };
+      }
+      
+      // Try to parse error
+      try {
+        const errorData = await response.json();
+        if (errorData.error?.code === 'API_SUNSET') {
+          console.warn(`API sunset error (HTTP), retry ${attempt + 1}/${retries}`);
+          await new Promise(r => setTimeout(r, 500 * (attempt + 1)));
+          continue;
+        }
+        return { ok: false, status: response.status, error: errorData };
+      } catch {
+        return { ok: false, status: response.status };
+      }
+    } catch (fetchError) {
+      console.error(`Fetch error on attempt ${attempt + 1}:`, fetchError.message);
+      if (attempt < retries - 1) {
+        await new Promise(r => setTimeout(r, 500 * (attempt + 1)));
+      }
+    }
+  }
+  return { ok: false, error: 'Max retries exceeded' };
+}
 
 /**
  * Fetch all MCP servers from the PulseMCP API with pagination
  * @returns {Promise<Array>} Array of all MCP servers
  */
 export async function fetchAllMCPServers() {
-  console.log('Fetching MCP servers from PulseMCP API...');
+  console.log('Fetching MCP servers from PulseMCP API (with retry for sunset mode)...');
 
   const allServers = [];
   let offset = 0;
@@ -20,27 +64,19 @@ export async function fetchAllMCPServers() {
     while (allServers.length < MAX_SERVERS) {
       console.log(`Fetching servers at offset ${offset}...`);
 
-      const response = await fetch(
-        `${PULSEMCP_API_BASE}/servers?count_per_page=${COUNT_PER_PAGE}&offset=${offset}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'User-Agent': 'MCP-Directory/1.0'
-          },
-          signal: AbortSignal.timeout(15000)
-        }
-      );
-
-      if (!response.ok) {
+      const url = `${PULSEMCP_API_BASE}/servers?count_per_page=${COUNT_PER_PAGE}&offset=${offset}`;
+      const result = await fetchWithRetry(url);
+      
+      if (!result.ok) {
+        console.warn(`PulseMCP API failed after retries: ${result.status || result.error}`);
         if (offset === 0) {
-          console.warn('PulseMCP API not available, using fallback data');
+          console.warn('Using fallback data');
           return null;
         }
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        break; // Stop pagination on error, return what we have
       }
 
-      const data = await response.json();
+      const data = result.data;
       const servers = data.servers || data;
 
       if (!servers || !Array.isArray(servers) || servers.length === 0) {
@@ -58,7 +94,7 @@ export async function fetchAllMCPServers() {
       }
 
       // Small delay to be polite to the API
-      await new Promise(resolve => setTimeout(resolve, 150));
+      await new Promise(resolve => setTimeout(resolve, 200));
     }
 
     console.log(`Successfully fetched ${allServers.length} servers from PulseMCP API`);

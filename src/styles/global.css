@@ -74,9 +74,7 @@
     --card-foreground: 270 5% 95%;
 
     --popover: 270 30% 8%;
-    --
---popover: 0 0% 100%;
-    --popover-foreground: 270 5% 10%;
+    --popover-foreground: 270 5% 95%;
 
     --primary: 25 75% 58%; /* #EE7B30 - Warm Orange */
     --primary-rgb: 238, 123, 48; /* RGB equivalent of #EE7B30 */
