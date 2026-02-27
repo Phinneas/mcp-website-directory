@@ -3,8 +3,8 @@
 
 const PULSEMCP_API_BASE = 'https://api.pulsemcp.com/v0beta';
 const COUNT_PER_PAGE = 100;
-// Fetch up to 10000 servers (100 pages of 100) - PulseMCP has 8600+ servers
-const MAX_SERVERS = 10000;
+// Fetch up to 5000 servers (50 pages of 100) - PulseMCP has 8600+ servers
+const MAX_SERVERS = 5000;
 
 /**
  * Fetch all MCP servers from the PulseMCP API with pagination
