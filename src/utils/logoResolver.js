@@ -1,23 +1,23 @@
 /**
  * Logo resolution utility for MCP servers
- * Phase 1: GitHub organization avatars
- * 
- * Resolves logo URLs for MCP servers by fetching GitHub organization avatars
- * and caching the results for improved performance.
- * 
+ *
+ * Resolves logo URLs for MCP servers by deriving the GitHub owner avatar
+ * URL directly from the repository URL — no API calls, no rate limits.
+ *
+ * GitHub serves public owner/org avatars at a well-known URL:
+ *   https://github.com/{owner}.png?size=128
+ *
  * This module supports both:
- * - Build-time resolution (direct GitHub API calls)
+ * - Build-time resolution (static site generation)
  * - Runtime resolution via Cloudflare Worker
  */
 
-// In-memory cache for build-time logo resolution
-const logoCache = new Map();
-const CACHE_TTL = 6 * 60 * 60 * 1000; // 6 hours in milliseconds
-
 /**
- * Resolve logo URL for a server by fetching directly from GitHub API
- * This is used during build time (SSG/SSR) when we can't call the worker
- * 
+ * Resolve logo URL for a server using GitHub's public avatar URL.
+ *
+ * GitHub owner avatars are available at a predictable public URL with no
+ * API calls or authentication required, eliminating build-time rate limiting.
+ *
  * @param {Object} server - Server object with github_url
  * @param {Object} server.fields - Server fields
  * @param {string} server.fields.github_url - GitHub repository URL
@@ -25,7 +25,7 @@ const CACHE_TTL = 6 * 60 * 60 * 1000; // 6 hours in milliseconds
  */
 export async function resolveServerLogo(server) {
   const githubUrl = server?.fields?.github_url;
-  
+
   if (!githubUrl) {
     return { url: null, source: null, cachedAt: null };
   }
@@ -36,64 +36,23 @@ export async function resolveServerLogo(server) {
     return { url: null, source: null, cachedAt: null };
   }
 
-  const [, owner, repo] = match;
-  const cacheKey = `${owner}/${repo}`.toLowerCase();
+  const [, owner] = match;
 
-  // Check in-memory cache first
-  const cached = logoCache.get(cacheKey);
-  if (cached && (Date.now() - cached.timestamp) < CACHE_TTL) {
-    return cached.data;
-  }
+  // Construct the public GitHub avatar URL directly — no API call needed.
+  // GitHub serves owner/org avatars at this well-known public URL without auth.
+  const logoUrl = `https://github.com/${owner}.png?size=128`;
 
-  try {
-    // Fetch directly from GitHub API during build time
-    const githubApiUrl = `https://api.github.com/repos/${owner}/${repo}`;
-    const response = await fetch(githubApiUrl, {
-      headers: {
-        'User-Agent': 'MCP-Directory-Logo-Resolver',
-        'Accept': 'application/vnd.github.v3+json',
-        // Use GITHUB_TOKEN env var if available for higher rate limits
-        ...(import.meta.env.GITHUB_TOKEN && {
-          'Authorization': `token ${import.meta.env.GITHUB_TOKEN}`
-        })
-      }
-    });
-    
-    if (!response.ok) {
-      console.warn(`GitHub API fetch failed for ${owner}/${repo}: ${response.status}`);
-      return { url: null, source: null, cachedAt: null };
-    }
-
-    const data = await response.json();
-    
-    // Extract logo URL from owner avatar
-    const logoUrl = data.owner?.avatar_url 
-      ? `${data.owner.avatar_url}&s=128`
-      : null;
-
-    const result = {
-      url: logoUrl,
-      source: logoUrl ? 'github' : null,
-      cachedAt: new Date().toISOString()
-    };
-
-    // Cache the result
-    logoCache.set(cacheKey, {
-      data: result,
-      timestamp: Date.now()
-    });
-    
-    return result;
-  } catch (error) {
-    console.error(`Failed to resolve logo for ${owner}/${repo}:`, error.message);
-    return { url: null, source: null, cachedAt: null };
-  }
+  return {
+    url: logoUrl,
+    source: 'github',
+    cachedAt: new Date().toISOString()
+  };
 }
 
 /**
  * Batch resolve logos for multiple servers
  * Resolves logos in parallel for improved performance
- * 
+ *
  * @param {Array<Object>} servers - Array of server objects
  * @returns {Promise<Map>} Map of server IDs to logo data
  */
@@ -119,19 +78,21 @@ export async function batchResolveLogos(servers) {
 /**
  * Enrich servers with logo URLs
  * Returns new array with logoUrl added to each server's fields
- * 
+ *
  * @param {Array<Object>} servers - Array of server objects
- * @param {number} limit - Max number of servers to enrich (for rate limiting)
+ * @param {number} limit - Kept for API compatibility; no longer enforced since
+ *                         logo resolution no longer makes API calls and is not
+ *                         subject to rate limiting. All servers are now enriched.
  * @returns {Promise<Array<Object>>} Servers with logo data added
  */
-export async function enrichServersWithLogos(servers, limit = 20) {
+export async function enrichServersWithLogos(servers, limit) {
   if (!Array.isArray(servers) || servers.length === 0) {
     return servers;
   }
 
-  // Only process up to the limit to avoid rate limiting
-  const serversToEnrich = servers.slice(0, limit);
-  const logoMap = await batchResolveLogos(serversToEnrich);
+  // No rate-limit cap needed: logo URLs are derived directly from the
+  // GitHub URL (no API calls), so every server can be enriched safely.
+  const logoMap = await batchResolveLogos(servers);
 
   // Enrich servers with logo data
   return servers.map(server => {
@@ -154,7 +115,7 @@ export async function enrichServersWithLogos(servers, limit = 20) {
 /**
  * Get logo URL for a single server (synchronous helper for templates)
  * Returns the logo URL if already present in server data
- * 
+ *
  * @param {Object} server - Server object
  * @returns {string|null} Logo URL or null
  */
