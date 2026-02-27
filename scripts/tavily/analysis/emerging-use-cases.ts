@@ -260,7 +260,7 @@ function estimateSearchVolume(useCaseName: string): number {
 /**
  * Estimate competition level
  */
-function estimateCompetitionLevel(useCaseName: string, frequency: number): VendorPriority {
+function estimateCompetitionLevel(_useCaseName: string, frequency: number): VendorPriority {
   // High competition for common use cases with many servers
   if (frequency >= 5) {
     return 'high';

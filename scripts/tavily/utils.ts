@@ -59,7 +59,6 @@ export function writeJsonFile(filePath: string, data: any, backup = true): void 
     throw new StorageError(
       `Failed to write JSON file: ${error instanceof Error ? error.message : 'Unknown error'}`,
       {
-        code: 'STORAGE_ERROR',
         operation: 'write',
         path: filePath
       }
@@ -82,7 +81,6 @@ export function readJsonFile<T>(filePath: string): T {
     throw new StorageError(
       `Failed to read JSON file: ${error instanceof Error ? error.message : 'Unknown error'}`,
       {
-        code: 'STORAGE_ERROR',
         operation: 'read',
         path: filePath
       }
@@ -160,10 +158,7 @@ export function validateServerSchema(server: any): server is Server {
   }
 
   if (Object.keys(errors).length > 0) {
-    throw new ValidationError('Server validation failed', {
-      code: 'VALIDATION_ERROR',
-      details: errors
-    });
+    throw new ValidationError('Server validation failed', errors);
   }
 
   return true;
@@ -252,8 +247,7 @@ export async function retryWithBackoff<T>(
     }
   }
 
-  throw new ApiError(`Operation failed after ${maxRetries} retries: ${lastError.message}`, {
-    code: 'API_ERROR',
+  throw new ApiError(`Operation failed after ${maxRetries} retries: ${lastError!.message}`, {
     retryable: false
   });
 }
@@ -273,10 +267,14 @@ export function parseGitHubUrl(url: string): { owner: string; repo: string } | n
       return null;
     }
 
-    return {
-      owner: pathParts[0],
-      repo: pathParts[1]
-    };
+    const owner = pathParts[0];
+    const repo = pathParts[1];
+    
+    if (!owner || !repo) {
+      return null;
+    }
+
+    return { owner, repo };
   } catch {
     return null;
   }
@@ -341,7 +339,7 @@ export function calculateNicheScore(server: Server): number {
  * Format date to YYYY-MM-DD
  */
 export function formatDate(date: Date): string {
-  return date.toISOString().split('T')[0];
+  return date.toISOString().slice(0, 10);
 }
 
 /**
@@ -409,6 +407,8 @@ export async function batchProcess<T, R>(
 export function generateTimestampedFilename(prefix: string, extension = 'json'): string {
   const now = new Date();
   const dateStr = formatDate(now);
-  const timeStr = now.toISOString().replace(/[:.]/g, '-').split('T')[1].split('.')[0];
+  const iso = now.toISOString();
+  const timePart = iso.split('T')[1];
+  const timeStr = timePart ? timePart.replace(/[:.]/g, '-').slice(0, 8) : '00-00-00';
   return `${prefix}-${dateStr}-${timeStr}.${extension}`;
 }

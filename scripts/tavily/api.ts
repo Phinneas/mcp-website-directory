@@ -2,23 +2,8 @@
  * Tavily API client for MCP Intelligence System
  */
 
-import { TavilyConfig } from './types.js';
+import { TavilyConfig, ApiError } from './types.js';
 import { logWithTimestamp, retryWithBackoff, sleep } from './utils.js';
-
-// Local ApiError class since it's used but not exported from types
-class ApiError extends Error {
-  code: string;
-  statusCode?: number;
-  retryable: boolean;
-
-  constructor(message: string, options: { code: string; statusCode?: number; retryable: boolean }) {
-    super(message);
-    this.name = 'ApiError';
-    this.code = options.code;
-    this.statusCode = options.statusCode;
-    this.retryable = options.retryable;
-  }
-}
 
 // Tavily API response types
 interface TavilySearchResult {
@@ -111,7 +96,6 @@ export class TavilyClient {
         if (!response.ok) {
           const errorText = await response.text();
           throw new ApiError(`Tavily API error: ${response.status} ${errorText}`, {
-            code: 'API_ERROR',
             statusCode: response.status,
             retryable: response.status === 429 || response.status >= 500
           });
@@ -133,7 +117,6 @@ export class TavilyClient {
         }
         
         throw new ApiError(`Tavily search failed: ${error instanceof Error ? error.message : 'Unknown error'}`, {
-          code: 'API_ERROR',
           retryable: true
         });
       }

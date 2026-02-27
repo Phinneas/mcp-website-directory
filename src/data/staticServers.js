@@ -7086,6 +7086,367 @@ export const staticServers = [
       stars: 200,
       github_url: 'https://github.com/hyprmcp/jetski'
     }
+  },
+  // === NEW SERVERS FROM TAVILY SCAN (2026-02-27) ===
+  {
+    id: 'drawio-mcp',
+    fields: {
+      name: 'Draw.io MCP Server',
+      description: 'Renders draw.io diagrams inline in AI chat interfaces using the MCP Apps protocol. Diagrams appear directly in conversations instead of opening browser tabs.',
+      author: '@jgraph',
+      category: 'productivity',
+      language: 'TypeScript',
+      stars: 769,
+      github_url: 'https://github.com/jgraph/drawio-mcp'
+    }
+  },
+  {
+    id: 'context-engineering-kit',
+    fields: {
+      name: 'Context Engineering Kit',
+      description: 'Context engineering toolkit for AI development with documentation management and concise writing tools.',
+      author: '@NeoLabHQ',
+      category: 'development',
+      language: 'TypeScript',
+      stars: 497,
+      github_url: 'https://github.com/NeoLabHQ/context-engineering-kit'
+    }
+  },
+  {
+    id: 'codemap',
+    fields: {
+      name: 'Codemap',
+      description: 'A project brain for your AI - gives AI assistants persistent memory of your codebase structure and relationships.',
+      author: '@JordanCoin',
+      category: 'development',
+      language: 'TypeScript',
+      stars: 447,
+      github_url: 'https://github.com/JordanCoin/codemap'
+    }
+  },
+  {
+    id: 'task-orchestrator',
+    fields: {
+      name: 'Task Orchestrator MCP',
+      description: 'Multi-agent task orchestration with MCP support for coordinating complex workflows.',
+      author: '@jpicklyk',
+      category: 'productivity',
+      language: 'TypeScript',
+      stars: 156,
+      github_url: 'https://github.com/jpicklyk/task-orchestrator'
+    }
+  },
+  {
+    id: 'neurolink',
+    fields: {
+      name: 'Neurolink MCP',
+      description: 'AI development framework with MCP integration for building intelligent applications.',
+      author: '@juspay',
+      category: 'ai-ml',
+      language: 'TypeScript',
+      stars: 91,
+      github_url: 'https://github.com/juspay/neurolink'
+    }
+  },
+  {
+    id: 'oh-my-pi',
+    fields: {
+      name: 'Oh My Pi MCP',
+      description: 'Raspberry Pi management and monitoring via MCP protocol.',
+      author: '@can1357',
+      category: 'development',
+      language: 'Python',
+      stars: 90,
+      github_url: 'https://github.com/can1357/oh-my-pi'
+    }
+  },
+  {
+    id: 'logicstamp-context',
+    fields: {
+      name: 'LogicStamp Context',
+      description: 'Context management system with MCP integration for data pipelines.',
+      author: '@LogicStamp',
+      category: 'databases',
+      language: 'TypeScript',
+      stars: 56,
+      github_url: 'https://github.com/LogicStamp/logicstamp-context'
+    }
+  },
+  {
+    id: 'mcp-ssh-manager',
+    fields: {
+      name: 'MCP SSH Manager',
+      description: 'SSH connection management through MCP protocol for secure remote server access.',
+      author: '@bvisible',
+      category: 'development',
+      language: 'Python',
+      stars: 47,
+      github_url: 'https://github.com/bvisible/mcp-ssh-manager'
+    }
+  },
+  {
+    id: 'codev',
+    fields: {
+      name: 'Codev MCP',
+      description: 'Development tools and utilities exposed via MCP protocol.',
+      author: '@cluesmith',
+      category: 'development',
+      language: 'TypeScript',
+      stars: 28,
+      github_url: 'https://github.com/cluesmith/codev'
+    }
+  },
+  {
+    id: 'mcp-adr-analysis-server',
+    fields: {
+      name: 'ADR Analysis MCP Server',
+      description: 'Architecture Decision Records analysis and management via MCP.',
+      author: '@tosin2013',
+      category: 'development',
+      language: 'Python',
+      stars: 19,
+      github_url: 'https://github.com/tosin2013/mcp-adr-analysis-server'
+    }
+  },
+  {
+    id: 'cloudflare-mcp-official',
+    fields: {
+      name: 'Cloudflare MCP Server (Official)',
+      description: 'Official Cloudflare MCP server for Cloudflare API integration.',
+      author: '@cloudflare',
+      category: 'cloud',
+      language: 'TypeScript',
+      stars: 8,
+      github_url: 'https://github.com/cloudflare/mcp'
+    }
+  },
+  {
+    id: 'datagouv-mcp',
+    fields: {
+      name: 'Data.gouv MCP Server',
+      description: 'French government open data platform integration via MCP.',
+      author: '@datagouv',
+      category: 'databases',
+      language: 'Python',
+      stars: 1,
+      github_url: 'https://github.com/datagouv/datagouv-mcp'
+    }
+  },
+  {
+    id: 'mcp-lifecycle-operator',
+    fields: {
+      name: 'MCP Lifecycle Operator',
+      description: 'Kubernetes operator for managing MCP server lifecycles.',
+      author: '@kubernetes-sigs',
+      category: 'development',
+      language: 'Go',
+      stars: 1,
+      github_url: 'https://github.com/kubernetes-sigs/mcp-lifecycle-operator'
+    }
+  },
+  {
+    id: 'mcp-gateway-registry',
+    fields: {
+      name: 'MCP Gateway Registry',
+      description: 'AWS gateway registry for MCP server discovery and management.',
+      author: '@agentic-community',
+      category: 'cloud',
+      language: 'TypeScript',
+      stars: 0,
+      github_url: 'https://github.com/agentic-community/mcp-gateway-registry'
+    }
+  },
+  {
+    id: 'fastmcp-prefect',
+    fields: {
+      name: 'FastMCP (PrefectHQ)',
+      description: 'Fast MCP server framework with Prefect workflow integration.',
+      author: '@PrefectHQ',
+      category: 'development',
+      language: 'Python',
+      stars: 0,
+      github_url: 'https://github.com/PrefectHQ/fastmcp'
+    }
+  },
+  {
+    id: 'neo4j-mcp',
+    fields: {
+      name: 'Neo4j MCP Server',
+      description: 'Graph database integration via MCP protocol for Neo4j.',
+      author: '@neo4j',
+      category: 'databases',
+      language: 'Python',
+      stars: 0,
+      github_url: 'https://github.com/neo4j/mcp'
+    }
+  },
+  {
+    id: 'stitch-mcp',
+    fields: {
+      name: 'Stitch MCP Server',
+      description: 'Google Cloud Stitch data integration via MCP.',
+      author: '@davideast',
+      category: 'cloud',
+      language: 'TypeScript',
+      stars: 0,
+      github_url: 'https://github.com/davideast/stitch-mcp'
+    }
+  },
+  {
+    id: 'atlassian-mcp-server',
+    fields: {
+      name: 'Atlassian MCP Server',
+      description: 'Integration with Atlassian products (Jira, Confluence) via MCP.',
+      author: '@atlassian',
+      category: 'productivity',
+      language: 'TypeScript',
+      stars: 0,
+      github_url: 'https://github.com/atlassian/atlassian-mcp-server'
+    }
+  },
+  {
+    id: 'windows-mcp',
+    fields: {
+      name: 'Windows MCP Server',
+      description: 'Windows system integration via MCP protocol.',
+      author: '@CursorTouch',
+      category: 'development',
+      language: 'PowerShell',
+      stars: 0,
+      github_url: 'https://github.com/CursorTouch/Windows-MCP'
+    }
+  },
+  {
+    id: 'drawio-mcp-server',
+    fields: {
+      name: 'Draw.io MCP Server (Alternative)',
+      description: 'Alternative draw.io diagram rendering via MCP.',
+      author: '@lgazo',
+      category: 'productivity',
+      language: 'TypeScript',
+      stars: 0,
+      github_url: 'https://github.com/lgazo/drawio-mcp-server'
+    }
+  },
+  {
+    id: 'insights-mcp',
+    fields: {
+      name: 'Red Hat Insights MCP',
+      description: 'Red Hat Lightspeed and insights integration via MCP.',
+      author: '@RedHatInsights',
+      category: 'cloud',
+      language: 'Python',
+      stars: 0,
+      github_url: 'https://github.com/RedHatInsights/insights-mcp'
+    }
+  },
+  {
+    id: 'alpha-vantage-mcp',
+    fields: {
+      name: 'Alpha Vantage MCP Server',
+      description: 'Financial market data via Alpha Vantage API through MCP.',
+      author: '@alphavantage',
+      category: 'finance',
+      language: 'Python',
+      stars: 0,
+      github_url: 'https://github.com/alphavantage/alpha_vantage_mcp'
+    }
+  },
+  {
+    id: 'mcp-gitlab-server-alt',
+    fields: {
+      name: 'GitLab MCP Server',
+      description: 'GitLab integration via MCP protocol.',
+      author: '@yoda-digital',
+      category: 'development',
+      language: 'TypeScript',
+      stars: 0,
+      github_url: 'https://github.com/yoda-digital/mcp-gitlab-server'
+    }
+  },
+  {
+    id: 'mcp-cron',
+    fields: {
+      name: 'MCP Cron',
+      description: 'Scheduled task management via MCP protocol.',
+      author: '@jolks',
+      category: 'productivity',
+      language: 'Go',
+      stars: 0,
+      github_url: 'https://github.com/jolks/mcp-cron'
+    }
+  },
+  {
+    id: 'notebooklm-mcp-cli',
+    fields: {
+      name: 'NotebookLM MCP CLI',
+      description: 'Google NotebookLM integration via MCP command-line interface.',
+      author: '@jacob-bd',
+      category: 'ai-ml',
+      language: 'Python',
+      stars: 0,
+      github_url: 'https://github.com/jacob-bd/notebooklm-mcp-cli'
+    }
+  },
+  {
+    id: 'postman-mcp-server',
+    fields: {
+      name: 'Postman MCP Server',
+      description: 'Connect AI to Postman collections and APIs via MCP.',
+      author: '@postmanlabs',
+      category: 'development',
+      language: 'TypeScript',
+      stars: 0,
+      github_url: 'https://github.com/postmanlabs/postman-mcp-server'
+    }
+  },
+  {
+    id: 'ghidra-mcp',
+    fields: {
+      name: 'Ghidra MCP Server',
+      description: 'Reverse engineering with Ghidra via MCP protocol.',
+      author: '@bethington',
+      category: 'development',
+      language: 'Python',
+      stars: 0,
+      github_url: 'https://github.com/bethington/ghidra-mcp'
+    }
+  },
+  {
+    id: 'mcp-server-shortcut',
+    fields: {
+      name: 'Shortcut MCP Server',
+      description: 'Shortcut (formerly Clubhouse) project management via MCP.',
+      author: '@useshortcut',
+      category: 'productivity',
+      language: 'TypeScript',
+      stars: 0,
+      github_url: 'https://github.com/useshortcut/mcp-server-shortcut'
+    }
+  },
+  {
+    id: 'mcp-image',
+    fields: {
+      name: 'MCP Image Server',
+      description: 'Image processing and manipulation via MCP protocol.',
+      author: '@shinpr',
+      category: 'development',
+      language: 'Python',
+      stars: 0,
+      github_url: 'https://github.com/shinpr/mcp-image'
+    }
+  },
+  {
+    id: 'appium-mcp',
+    fields: {
+      name: 'Appium MCP Server',
+      description: 'Mobile app testing automation via Appium through MCP.',
+      author: '@appium',
+      category: 'development',
+      language: 'TypeScript',
+      stars: 0,
+      github_url: 'https://github.com/appium/appium-mcp'
+    }
   }
 ];
 

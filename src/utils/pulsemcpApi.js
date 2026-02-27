@@ -3,8 +3,8 @@
 
 const PULSEMCP_API_BASE = 'https://api.pulsemcp.com/v0beta';
 const COUNT_PER_PAGE = 100;
-// Fetch up to 2500 servers (25 pages of 100)
-const MAX_SERVERS = 2500;
+// Fetch up to 10000 servers (100 pages of 100) - PulseMCP has 8600+ servers
+const MAX_SERVERS = 10000;
 
 /**
  * Fetch all MCP servers from the PulseMCP API with pagination
@@ -89,6 +89,9 @@ export function transformPulseMCPData(apiServers) {
     if (ghMatch) {
       author = `@${ghMatch[1]}`;
     }
+    
+    // Infer category from name and description
+    const category = inferCategory(server.name, server.short_description, server.EXPERIMENTAL_ai_generated_description);
 
     return {
       id: server.id || slugifyId(server.name) || `pulsemcp-${index}`,
@@ -96,7 +99,7 @@ export function transformPulseMCPData(apiServers) {
         name: server.name || 'Unknown Server',
         description: server.EXPERIMENTAL_ai_generated_description || server.short_description || 'No description available',
         author,
-        category: 'other', // PulseMCP v0beta API does not expose category
+        category,
         language: 'Unknown',
         stars: server.github_stars || 0,
         github_url: server.source_code_url || server.external_url || server.url || '#',
@@ -109,6 +112,39 @@ export function transformPulseMCPData(apiServers) {
       }
     };
   });
+}
+
+/**
+ * Infer category from server name and description
+ */
+function inferCategory(name, shortDesc, aiDesc) {
+  const text = `${name} ${shortDesc || ''} ${aiDesc || ''}`.toLowerCase();
+  
+  // Category keywords
+  const categoryPatterns = [
+    { category: 'databases', keywords: ['database', 'sql', 'postgres', 'mysql', 'mongodb', 'sqlite', 'redis', 'supabase', 'neon', 'planetScale'] },
+    { category: 'cloud', keywords: ['aws', 'azure', 'gcp', 'cloudflare', 'vercel', 'netlify', 'kubernetes', 'docker', 'terraform'] },
+    { category: 'development', keywords: ['github', 'gitlab', 'git', 'code', 'development', 'build', 'test', 'debug', 'eslint', 'typescript'] },
+    { category: 'communication', keywords: ['slack', 'discord', 'telegram', 'email', 'twilio', 'sendgrid', 'notifier', 'messaging'] },
+    { category: 'productivity', keywords: ['notion', 'jira', 'linear', 'trello', 'asana', 'calendar', 'task', 'todo', 'project'] },
+    { category: 'ai-ml', keywords: ['ai', 'ml', 'llm', 'gpt', 'claude', 'openai', 'anthropic', 'huggingface', 'model', 'embedding', 'rag'] },
+    { category: 'search', keywords: ['search', 'web', 'scrape', 'crawl', 'browser', 'puppeteer', 'playwright', 'selenium'] },
+    { category: 'file-systems', keywords: ['file', 'filesystem', 'drive', 'storage', 'dropbox', 's3', 'blob'] },
+    { category: 'finance', keywords: ['finance', 'stock', 'trading', 'crypto', 'bitcoin', 'ethereum', 'payment', 'stripe', 'bank'] },
+    { category: 'security', keywords: ['security', 'auth', 'oauth', 'jwt', 'password', 'encryption', 'vulnerability'] },
+    { category: 'media', keywords: ['image', 'video', 'audio', 'media', 'youtube', 'spotify', 'ffmpeg'] },
+    { category: 'data-analytics', keywords: ['analytics', 'data', 'metrics', 'dashboard', 'chart', 'grafana', 'prometheus'] },
+    { category: 'aggregators', keywords: ['aggregator', 'platform', 'gateway', 'registry', 'hub', 'unified'] },
+    { category: 'browser-automation', keywords: ['browser', 'selenium', 'puppeteer', 'playwright', 'automation', 'scraping'] },
+  ];
+  
+  for (const { category, keywords } of categoryPatterns) {
+    if (keywords.some(kw => text.includes(kw))) {
+      return category;
+    }
+  }
+  
+  return 'development'; // Default category
 }
 
 /**

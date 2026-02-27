@@ -5,7 +5,7 @@
  * This file allows the monthly review to be run directly from Node.js
  */
 
-import { runMonthlyReview } from './monthly-review.js';
+import { runMonthlyReview } from './dist/monthly-review.js';
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (error) => {

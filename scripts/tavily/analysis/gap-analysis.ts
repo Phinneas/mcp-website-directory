@@ -9,7 +9,7 @@ import { logWithTimestamp } from '../utils.js';
 /**
  * Run gap analysis
  */
-export async function runGapAnalysis(servers: Server[]): Promise<GapAnalysisResult> {
+export async function runGapAnalysis(_servers: Server[]): Promise<GapAnalysisResult> {
   logWithTimestamp('Starting gap analysis', 'info');
   
   try {

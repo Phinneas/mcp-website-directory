@@ -3,10 +3,10 @@
  * Manages seen servers database and file operations
  */
 
-import { existsSync } from 'fs';
-import { join } from 'path';
+import { existsSync, writeFileSync, readFileSync } from 'fs';
+import { join, dirname } from 'path';
 import { Server, StorageError } from './types.js';
-import { ensureDirectoryExists, writeJsonFile, readJsonFile, generateUUID, isValidISODate, validateServerSchema } from './utils.js';
+import { ensureDirectoryExists, writeJsonFile, readJsonFile, generateUUID, validateServerSchema } from './utils.js';
 import { getConfigManager } from './config.js';
 
 // Seen servers database structure
@@ -96,7 +96,6 @@ export class StorageManager {
       throw new StorageError(
         `Failed to load seen servers database: ${error instanceof Error ? error.message : 'Unknown error'}`,
         {
-          code: 'STORAGE_ERROR',
           operation: 'read',
           path: filePath
         }
@@ -134,7 +133,6 @@ export class StorageManager {
       throw new StorageError(
         `Failed to save seen servers database: ${error instanceof Error ? error.message : 'Unknown error'}`,
         {
-          code: 'STORAGE_ERROR',
           operation: 'write',
           path: filePath
         }
@@ -286,7 +284,8 @@ export class StorageManager {
     processingTime: number;
     errorCount: number;
   }): Promise<string> {
-    const scanDate = new Date().toISOString().split('T')[0];
+    const now = new Date();
+    const scanDate = now.toISOString().slice(0, 10); // YYYY-MM-DD format
     const fileName = `${scanDate}.json`;
     const filePath = join(this.config.getSystemConfig().newServersDir, fileName);
     
@@ -311,7 +310,6 @@ export class StorageManager {
       throw new StorageError(
         `Failed to save new servers file: ${error instanceof Error ? error.message : 'Unknown error'}`,
         {
-          code: 'STORAGE_ERROR',
           operation: 'write',
           path: filePath
         }
@@ -336,7 +334,6 @@ export class StorageManager {
       throw new StorageError(
         `Failed to load new servers file: ${error instanceof Error ? error.message : 'Unknown error'}`,
         {
-          code: 'STORAGE_ERROR',
           operation: 'read',
           path: filePath
         }
@@ -358,7 +355,6 @@ export class StorageManager {
       throw new StorageError(
         `Failed to get weekly scan dates: ${error instanceof Error ? error.message : 'Unknown error'}`,
         {
-          code: 'STORAGE_ERROR',
           operation: 'read',
           path: dirPath
         }
@@ -367,21 +363,23 @@ export class StorageManager {
   }
 
   /**
-   * Save monthly report
+   * Save monthly report as Markdown
    */
   async saveMonthlyReport(report: any): Promise<string> {
-    const reportDate = new Date().toISOString().split('T')[0].slice(0, 7); // YYYY-MM
-    const fileName = `${reportDate}.json`;
+    const now = new Date();
+    const reportDate = now.toISOString().slice(0, 7); // YYYY-MM format
+    const fileName = `${reportDate}.md`;
     const filePath = join(this.config.getSystemConfig().monthlyReportsDir, fileName);
     
     try {
-      writeJsonFile(filePath, report);
+      const markdown = this.generateMonthlyReportMarkdown(report);
+      ensureDirectoryExists(dirname(filePath));
+      writeFileSync(filePath, markdown, 'utf-8');
       return filePath;
     } catch (error) {
       throw new StorageError(
         `Failed to save monthly report: ${error instanceof Error ? error.message : 'Unknown error'}`,
         {
-          code: 'STORAGE_ERROR',
           operation: 'write',
           path: filePath
         }
@@ -390,10 +388,161 @@ export class StorageManager {
   }
 
   /**
+   * Generate Markdown from monthly report
+   */
+  private generateMonthlyReportMarkdown(report: any): string {
+    const lines: string[] = [];
+    
+    lines.push(`# MCP Intelligence Monthly Report - ${report.reportDate}`);
+    lines.push('');
+    lines.push(`**Generated:** ${report.generatedAt}`);
+    lines.push(`**Period:** ${report.period?.start || 'N/A'} to ${report.period?.end || 'N/A'}`);
+    lines.push('');
+    
+    // Executive Summary
+    lines.push('## Executive Summary');
+    lines.push('');
+    const summary = report.summary || {};
+    if (summary.keyInsights && summary.keyInsights.length > 0) {
+      summary.keyInsights.forEach((insight: string) => {
+        lines.push(`- ${insight}`);
+      });
+    } else {
+      lines.push('No key insights this month.');
+    }
+    lines.push('');
+    
+    // Statistics
+    lines.push('### Statistics');
+    lines.push('');
+    lines.push(`- **Total Servers Discovered:** ${summary.totalServersDiscovered || 0}`);
+    lines.push(`- **New Vendors:** ${summary.newVendors || 0}`);
+    lines.push(`- **Approval Rate:** ${((summary.approvalRate || 0) * 100).toFixed(1)}%`);
+    lines.push('');
+    
+    // New Commercial Servers
+    lines.push('## New Commercial Servers');
+    lines.push('');
+    const servers = report.newServers || [];
+    if (servers.length > 0) {
+      servers.forEach((server: any) => {
+        lines.push(`### ${server.name}`);
+        lines.push(`- **Vendor:** ${server.vendor}`);
+        lines.push(`- **Category:** ${server.vendorCategory || 'Unknown'}`);
+        lines.push(`- **Confidence:** ${((server.confidenceScore || 0) * 100).toFixed(0)}%`);
+        lines.push(`- **Status:** ${server.status}`);
+        if (server.githubUrl) {
+          lines.push(`- **GitHub:** [${server.githubUrl}](${server.githubUrl})`);
+        }
+        lines.push('');
+      });
+    } else {
+      lines.push('No new commercial servers discovered this month.');
+      lines.push('');
+    }
+    
+    // Competitor Gap Report
+    lines.push('## Competitor Gap Report');
+    lines.push('');
+    const gapAnalysis = report.gapAnalysis || {};
+    if (gapAnalysis.gapsByCategory && gapAnalysis.gapsByCategory.length > 0) {
+      lines.push('### Gaps by Category');
+      gapAnalysis.gapsByCategory.forEach((gap: any) => {
+        lines.push(`- **${gap.category}:** ${gap.gapCount} missing servers (${gap.priority} priority)`);
+      });
+      lines.push('');
+    } else {
+      lines.push('No competitor gaps identified.');
+      lines.push('');
+    }
+    
+    // Category Trends
+    lines.push('## Category Trends');
+    lines.push('');
+    const categoryHealth = report.categoryHealth || {};
+    if (categoryHealth.categories && categoryHealth.categories.length > 0) {
+      const growing = categoryHealth.categories.filter((c: any) => c.growthRate > 0.1);
+      const declining = categoryHealth.categories.filter((c: any) => c.growthRate < -0.1);
+      
+      if (growing.length > 0) {
+        lines.push('### Growing Categories');
+        growing.forEach((c: any) => {
+          lines.push(`- **${c.name}:** +${((c.growthRate || 0) * 100).toFixed(0)}% growth`);
+        });
+        lines.push('');
+      }
+      
+      if (declining.length > 0) {
+        lines.push('### Declining Categories');
+        declining.forEach((c: any) => {
+          lines.push(`- **${c.name}:** ${((c.growthRate || 0) * 100).toFixed(0)}% growth`);
+        });
+        lines.push('');
+      }
+    } else {
+      lines.push('No category trends data available.');
+      lines.push('');
+    }
+    
+    // Vendor Momentum Top 5
+    lines.push('## Vendor Momentum Top 5');
+    lines.push('');
+    const vendorMomentum = report.vendorMomentum || {};
+    if (vendorMomentum.trends?.topGrowingVendors && vendorMomentum.trends.topGrowingVendors.length > 0) {
+      vendorMomentum.trends.topGrowingVendors.forEach((vendor: string, i: number) => {
+        lines.push(`${i + 1}. **${vendor}** - Shelf Spotlight candidate`);
+      });
+      lines.push('');
+    } else {
+      lines.push('No vendor momentum data available.');
+      lines.push('');
+    }
+    
+    // Emerging Use Cases
+    lines.push('## Emerging Use Cases');
+    lines.push('');
+    const emergingUseCases = report.emergingUseCases || {};
+    if (emergingUseCases.useCases && emergingUseCases.useCases.length > 0) {
+      lines.push('### Top Use Cases for Content Calendar');
+      emergingUseCases.useCases.slice(0, 10).forEach((useCase: any) => {
+        lines.push(`- **${useCase.name}** - ${useCase.description || 'No description'}`);
+      });
+      lines.push('');
+    } else {
+      lines.push('No emerging use cases identified.');
+      lines.push('');
+    }
+    
+    // Recommended Actions
+    lines.push('## Recommended Actions');
+    lines.push('');
+    if (summary.recommendations && summary.recommendations.length > 0) {
+      summary.recommendations.forEach((rec: string, i: number) => {
+        lines.push(`${i + 1}. ${rec}`);
+      });
+      lines.push('');
+    } else {
+      lines.push('No specific recommendations at this time.');
+      lines.push('');
+    }
+    
+    // Metrics
+    lines.push('## Metrics');
+    lines.push('');
+    const metrics = report.metrics || {};
+    lines.push(`- **Scan Duration:** ${metrics.scanDuration || 0}ms`);
+    lines.push(`- **API Calls:** ${metrics.apiCalls || 0}`);
+    lines.push(`- **Success Rate:** ${((metrics.successRate || 0) * 100).toFixed(0)}%`);
+    lines.push(`- **Error Count:** ${metrics.errorCount || 0}`);
+    
+    return lines.join('\n');
+  }
+
+  /**
    * Load monthly report
    */
   async loadMonthlyReport(date: string): Promise<any | null> {
-    const fileName = `${date}.json`;
+    const fileName = `${date}.md`;
     const filePath = join(this.config.getSystemConfig().monthlyReportsDir, fileName);
     
     try {
@@ -401,12 +550,12 @@ export class StorageManager {
         return null;
       }
       
-      return readJsonFile(filePath);
+      // Return the raw markdown content
+      return readFileSync(filePath, 'utf-8');
     } catch (error) {
       throw new StorageError(
         `Failed to load monthly report: ${error instanceof Error ? error.message : 'Unknown error'}`,
         {
-          code: 'STORAGE_ERROR',
           operation: 'read',
           path: filePath
         }
@@ -493,7 +642,6 @@ export class StorageManager {
       throw new StorageError(
         `Failed to import database: ${error instanceof Error ? error.message : 'Unknown error'}`,
         {
-          code: 'STORAGE_ERROR',
           operation: 'read',
           path: filePath
         }

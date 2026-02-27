@@ -270,22 +270,42 @@ export interface EmergingUseCaseResult {
   };
 }
 
-// Error types
-export interface ValidationError extends Error {
-  code: 'VALIDATION_ERROR';
+// Error classes
+export class ValidationError extends Error {
+  code: 'VALIDATION_ERROR' = 'VALIDATION_ERROR';
   details: Record<string, string>;
+
+  constructor(message: string, details: Record<string, string> = {}) {
+    super(message);
+    this.name = 'ValidationError';
+    this.details = details;
+  }
 }
 
-export interface ApiError extends Error {
-  code: 'API_ERROR';
+export class ApiError extends Error {
+  code: 'API_ERROR' = 'API_ERROR';
   statusCode?: number;
   retryable: boolean;
+
+  constructor(message: string, options: { statusCode?: number; retryable: boolean }) {
+    super(message);
+    this.name = 'ApiError';
+    this.statusCode = options.statusCode;
+    this.retryable = options.retryable;
+  }
 }
 
-export interface StorageError extends Error {
-  code: 'STORAGE_ERROR';
+export class StorageError extends Error {
+  code: 'STORAGE_ERROR' = 'STORAGE_ERROR';
   operation: 'read' | 'write' | 'delete';
   path: string;
+
+  constructor(message: string, options: { operation: 'read' | 'write' | 'delete'; path: string }) {
+    super(message);
+    this.name = 'StorageError';
+    this.operation = options.operation;
+    this.path = options.path;
+  }
 }
 
 // Configuration interfaces

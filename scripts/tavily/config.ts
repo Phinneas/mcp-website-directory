@@ -3,16 +3,25 @@
  */
 
 import { readFileSync } from 'fs';
-import { join } from 'path';
+import { join, dirname, resolve } from 'path';
+import { fileURLToPath } from 'url';
 import { SystemConfig, TavilyConfig, Vendor } from './types.js';
 
-// Default configuration
+// Get project root directory
+// When compiled, this file is in dist/ inside scripts/tavily/
+// So we need to go up 3 levels to reach project root
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+// From dist/ -> tavily/ -> scripts/ -> project root
+const PROJECT_ROOT = resolve(__dirname, '..', '..', '..');
+
+// Default configuration with absolute paths
 const DEFAULT_CONFIG: SystemConfig = {
-  dataDir: 'data',
-  newServersDir: 'data/new-servers',
-  monthlyReportsDir: 'data/monthly-reports',
-  seenServersFile: 'data/seen-servers.json',
-  vendorWatchlistFile: 'scripts/tavily/vendor-watchlist.json',
+  dataDir: join(PROJECT_ROOT, 'data'),
+  newServersDir: join(PROJECT_ROOT, 'data', 'new-servers'),
+  monthlyReportsDir: join(PROJECT_ROOT, 'data', 'monthly-reports'),
+  seenServersFile: join(PROJECT_ROOT, 'data', 'seen-servers.json'),
+  vendorWatchlistFile: join(PROJECT_ROOT, 'scripts', 'tavily', 'vendor-watchlist.json'),
   logLevel: 'info'
 };
 
@@ -63,7 +72,7 @@ export class ConfigManager {
     }
 
     try {
-      const watchlistPath = join(process.cwd(), this.systemConfig.vendorWatchlistFile);
+      const watchlistPath = this.systemConfig.vendorWatchlistFile;
       const data = readFileSync(watchlistPath, 'utf-8');
       const parsed = JSON.parse(data);
 
@@ -117,7 +126,7 @@ export class ConfigManager {
    */
   getCategories(): string[] {
     try {
-      const watchlistPath = join(process.cwd(), this.systemConfig.vendorWatchlistFile);
+      const watchlistPath = this.systemConfig.vendorWatchlistFile;
       const data = readFileSync(watchlistPath, 'utf-8');
       const parsed = JSON.parse(data);
       return parsed.categories || [];

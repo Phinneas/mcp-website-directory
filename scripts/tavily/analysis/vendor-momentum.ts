@@ -221,10 +221,14 @@ function calculateMomentumScore(servers: Server[], activityScore: number): numbe
   if (sortedServers.length >= 3) {
     const intervals: number[] = [];
     for (let i = 1; i < sortedServers.length; i++) {
-      const prevDate = new Date(sortedServers[i - 1].discoveryDate);
-      const currDate = new Date(sortedServers[i].discoveryDate);
-      const interval = (currDate.getTime() - prevDate.getTime()) / (1000 * 60 * 60 * 24);
-      intervals.push(interval);
+      const prevServer = sortedServers[i - 1];
+      const currServer = sortedServers[i];
+      if (prevServer && currServer) {
+        const prevDate = new Date(prevServer.discoveryDate);
+        const currDate = new Date(currServer.discoveryDate);
+        const interval = (currDate.getTime() - prevDate.getTime()) / (1000 * 60 * 60 * 24);
+        intervals.push(interval);
+      }
     }
     
     if (intervals.length > 0) {
@@ -267,13 +271,17 @@ function calculateAverageReleaseInterval(sortedServers: Server[]): number {
   
   const intervals: number[] = [];
   for (let i = 1; i < sortedServers.length; i++) {
-    const prevDate = new Date(sortedServers[i - 1].discoveryDate);
-    const currDate = new Date(sortedServers[i].discoveryDate);
-    const interval = (currDate.getTime() - prevDate.getTime()) / (1000 * 60 * 60 * 24);
-    intervals.push(interval);
+    const prevServer = sortedServers[i - 1];
+    const currServer = sortedServers[i];
+    if (prevServer && currServer) {
+      const prevDate = new Date(prevServer.discoveryDate);
+      const currDate = new Date(currServer.discoveryDate);
+      const interval = (currDate.getTime() - prevDate.getTime()) / (1000 * 60 * 60 * 24);
+      intervals.push(interval);
+    }
   }
   
-  return intervals.reduce((sum, interval) => sum + interval, 0) / intervals.length;
+  return intervals.length > 0 ? intervals.reduce((sum, interval) => sum + interval, 0) / intervals.length : 0;
 }
 
 /**

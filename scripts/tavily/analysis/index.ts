@@ -7,9 +7,5 @@ export { runCategoryHealthCheck } from './category-health.js';
 export { runVendorMomentumScan } from './vendor-momentum.js';
 export { runEmergingUseCaseDetection } from './emerging-use-cases.js';
 
-export default {
-  runGapAnalysis,
-  runCategoryHealthCheck,
-  runVendorMomentumScan,
-  runEmergingUseCaseDetection
-};
+// Re-export types needed by consumers
+export type { GapAnalysisResult, CategoryHealthResult, VendorMomentumResult, EmergingUseCaseResult } from '../types.js';

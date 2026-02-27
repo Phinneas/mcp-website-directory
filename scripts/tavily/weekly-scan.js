@@ -5,7 +5,7 @@
  * This file allows the weekly scan to be run directly from Node.js
  */
 
-import { runWeeklyScan } from './weekly-scan.js';
+import { runWeeklyScan } from './dist/weekly-scan.js';
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (error) => {
