@@ -1,7 +1,9 @@
 ---
+export const prerender = true;
 import { getCollection } from 'astro:content';
 import EmailSignup from '../components/EmailSignup.astro';
 import { FolderIcon, ToolboxIcon, ComputerIcon, VintageIcon } from '../components/VintageIcon';
+import '../styles/global.css';
 
 // Get all blog posts
 const blogPosts = await getCollection('blog');

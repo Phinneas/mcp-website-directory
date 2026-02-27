@@ -53,8 +53,8 @@ export async function resolveServerLogo(server) {
         'User-Agent': 'MCP-Directory-Logo-Resolver',
         'Accept': 'application/vnd.github.v3+json',
         // Use GITHUB_TOKEN env var if available for higher rate limits
-        ...(process.env.GITHUB_TOKEN && {
-          'Authorization': `token ${process.env.GITHUB_TOKEN}`
+        ...(import.meta.env.GITHUB_TOKEN && {
+          'Authorization': `token ${import.meta.env.GITHUB_TOKEN}`
         })
       }
     });
