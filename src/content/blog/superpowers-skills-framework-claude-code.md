@@ -1,7 +1,7 @@
 ---
 title: "Superpowers: The Skills Framework That Makes Claude Code a Disciplined Engineering Partner"
 description: "With 40k+ GitHub stars and more installs than Playwright on the Claude Code marketplace, Superpowers by Jesse Vincent is one of the most important open-source tools in the agentic AI ecosystem. Here's what it is, how it works, and why it matters."
-date: 2026-02-26T00:00:00.000Z
+date: "2026-02-26"
 author: "Buzz"
 tags: ["claude-code", "skills", "agentic-ai", "developer-tools", "claude-plugins", "tdd", "open-source"]
 featured: true

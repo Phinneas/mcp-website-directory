@@ -1,5 +1,7 @@
 import { searchServers, getServersByCategory, healthCheck } from '../../utils/meilisearch.js';
 
+export const prerender = false;
+
 export async function GET({ url, request }) {
   try {
     // Check if MeiliSearch is available

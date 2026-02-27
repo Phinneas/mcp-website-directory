@@ -1,6 +1,8 @@
 import { initializeIndex, indexServers, getIndexStats } from '../../utils/meilisearch.js';
 import { getMCPServers } from '../../utils/teableApi.js';
 
+export const prerender = false;
+
 export async function POST({ request }) {
   try {
     // Check if request has proper authorization (you might want to add API key validation)

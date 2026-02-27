@@ -509,7 +509,7 @@ servers: {
 
 Creating `MCPClient` instances in a request handler loop without unique `id` values throws on the second identical configuration. This is Mastra's memory leak protection working as intended, but it surfaces as a confusing runtime error in dynamic code.
 
-Always scope `id` to the user or request: `id: \\\`client-\${userId}-\${Date.now()}\\\``
+Always scope `id` to the user or request: `id: \`client-$&#123;userId&#125;-$&#123;Date.now()&#125;\``
 
 ### 4. Tool Name Collisions Are Silent by Default
 

@@ -1,4 +1,5 @@
 ---
+export const prerender = true;
 import { fetchAllMCPServers, transformPulseMCPData } from '../utils/pulsemcpApi.js';
 import { slugify } from '../utils/slugify.js';
 import { staticServers as importedStaticServers } from '../data/staticServers.js';
@@ -7757,7 +7758,7 @@ function formatStars(stars?: number): string {
 
     <!-- Search Section -->
     <div class="search-section">
-        <h2 class="search-section-heading">Explore {mcpServers.length || 600} Verified Servers</h2>
+        <h2 class="search-section-heading">Explore {mcpServers.length || 571} Verified Servers</h2>
         <div class="search-bar">
             <span class="search-icon"><SearchIcon client:load size={20} /></span>
             <input type="text" class="search-input" placeholder="Search MCP servers..." id="searchInput">
