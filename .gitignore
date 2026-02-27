@@ -26,6 +26,9 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 
+# Runtime data
+data/
+
 # Temporary/helper files
 *.backup
 *.log
