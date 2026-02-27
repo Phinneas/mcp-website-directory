@@ -378,15 +378,15 @@ function getEnvVarsForServer(server: MCPServer): Record<string, string> | undefi
   // Default env vars based on server type
   if (server.id === 'github-mcp') {
     return {
-      GITHUB_TOKEN: 'YOUR_GITHUB_TOKEN_HERE'
+      GITHUB_TOKEN: '<your-github-token>'
     };
   }
   
   if (server.id === 'gdrive-mcp' || server.id === 'gmail-mcp') {
     return {
-      'OAUTH_TOKEN': 'YOUR_OAUTH_TOKEN_HERE',
-      'CLIENT_ID': 'YOUR_CLIENT_ID_HERE',
-      'CLIENT_SECRET': 'YOUR_CLIENT_SECRET_HERE'
+      'OAUTH_TOKEN': '<your-oauth-token>',
+      'CLIENT_ID': '<your-client-id>',
+      'CLIENT_SECRET': '<your-client-secret>'
     };
   }
   
@@ -398,7 +398,7 @@ function getEnvVarsForServer(server: MCPServer): Record<string, string> | undefi
   
   if (server.category === 'cloud' || server.category === 'file-systems') {
     return {
-      'API_KEY': 'YOUR_API_KEY_HERE'
+      'API_KEY': '<your-api-key>'
     };
   }
   
