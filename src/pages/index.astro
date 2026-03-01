@@ -1,5 +1,8 @@
 ---
 export const prerender = true;
+import { readFileSync, existsSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
 import { fetchAllMCPServers, transformPulseMCPData } from '../utils/pulsemcpApi.js';
 import { slugify } from '../utils/slugify.js';
 import { staticServers as importedStaticServers } from '../data/staticServers.js';
@@ -7124,27 +7127,39 @@ const _unusedLegacyReference: MCPServer[] = [
   }
 ];
 
-// Try to fetch servers from PulseMCP API first, with fallback to static data
+// Try to load pre-fetched servers from Prefect flow (servers.json), then fall back to live API
 let mcpServers: MCPServer[] = [];
+const _serversJsonPath = join(dirname(fileURLToPath(import.meta.url)), '../data/servers.json');
 try {
-  const apiData = await fetchAllMCPServers();
-  if (apiData && apiData.length > 0) {
-    mcpServers = transformPulseMCPData(apiData);
-  } else {
-    mcpServers = staticServers;
+  if (existsSync(_serversJsonPath)) {
+    const cached = JSON.parse(readFileSync(_serversJsonPath, 'utf-8'));
+    if (Array.isArray(cached.servers) && cached.servers.length > 0) {
+      console.log(`index.astro: Loaded ${cached.servers.length} servers from servers.json (generated ${cached.generated_at})`);
+      mcpServers = cached.servers as MCPServer[];
+    }
   }
-} catch (error) {
-  console.error('Error with PulseMCP API, using static fallback:', error);
-  mcpServers = staticServers;
+} catch (e: any) {
+  console.warn('index.astro: Could not read servers.json:', e.message);
 }
 
-// Enrich top servers with GitHub organization logos
-// Capped at 150 to avoid GitHub API rate limits and slow builds at scale
-try {
-  mcpServers = await enrichServersWithLogos(mcpServers, 150);
-} catch (error) {
-  console.error('Error enriching servers with logos:', error);
-  // Continue without logos - fallback to gradient icons
+if (mcpServers.length === 0) {
+  try {
+    const apiData = await fetchAllMCPServers();
+    if (apiData && apiData.length > 0) {
+      mcpServers = transformPulseMCPData(apiData);
+    } else {
+      mcpServers = staticServers;
+    }
+  } catch (error) {
+    console.error('Error with PulseMCP API, using static fallback:', error);
+    mcpServers = staticServers;
+  }
+  // Enrich with logos — servers.json already includes logos from Prefect flow
+  try {
+    mcpServers = await enrichServersWithLogos(mcpServers, 150);
+  } catch (error) {
+    console.error('Error enriching servers with logos:', error);
+  }
 }
 
 // Helper function to get the first letter of server name for icon

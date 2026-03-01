@@ -1,8 +1,9 @@
 ---
-export const prerender = false;
+export const prerender = true;
 /**
- * Dynamic MCP Server Reference Page
+ * Static MCP Server Reference Page
  * URL: /server/[slug]
+ * Pre-rendered at build time using the same PulseMCP data as index.astro
  */
 import '../../styles/global.css';
 import ServerHeader from '../../components/ServerHeader.astro';
@@ -14,8 +15,12 @@ import RelatedServers from '../../components/RelatedServers.astro';
 import EmailSignup from '../../components/EmailSignup.astro';
 import GitHubHealthVitals from '../../components/GitHubHealthVitals';
 import { FolderIcon, ToolboxIcon, ComputerIcon, VintageIcon } from '../../components/VintageIcon';
-import { getAllServers, getServerBySlug, getRelatedServers, getCategoryDisplayName } from '../../utils/serverData.js';
+import { getRelatedServers, getCategoryDisplayName } from '../../utils/serverData.js';
 import { slugify } from '../../utils/slugify.js';
+
+import { readFileSync, existsSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
 
 // Import static servers from shared data file
 import { staticServers as sharedStaticServers } from '../../data/staticServers.js';
@@ -44,6 +49,9 @@ interface MCPServer {
     documentation_url?: string;
     tags?: string[];
     prerequisites?: string[];
+    logoUrl?: string;
+    logoSource?: string;
+    logoCachedAt?: string;
     available_tools?: Array<{
       name: string;
       description: string;
@@ -58,53 +66,84 @@ interface MCPServer {
   };
 }
 
-// Use the shared static servers data
-const staticServers = sharedStaticServers as MCPServer[];
+export async function getStaticPaths() {
+  // Try to load pre-fetched servers from Prefect flow (servers.json), fall back to live API
+  const _serversJsonPath = join(dirname(fileURLToPath(import.meta.url)), '../../data/servers.json');
+  let allServers: MCPServer[] = [];
 
-// Get slug from URL
-const { slug } = Astro.params;
-
-// Fetch all servers
-let allServers: MCPServer[] = [];
-try {
-  const apiServers = await fetchAllMCPServers();
-  if (apiServers && apiServers.length > 0) {
-    allServers = transformPulseMCPData(apiServers);
-  } else {
-    allServers = staticServers;
-  }
-} catch (error) {
-  console.error('Error fetching servers:', error);
-  allServers = staticServers;
-}
-
-// Find server by slug
-let server = getServerBySlug(slug!, allServers);
-
-// Handle 404 if server not found
-if (!server) {
-  return Astro.redirect('/404');
-}
-
-// Enrich current server with logo if not already present
-if (!server.fields?.logoUrl && server.fields?.github_url) {
   try {
-    const logoData = await resolveServerLogo(server);
-    if (logoData.url) {
-      server = {
-        ...server,
-        fields: {
-          ...server.fields,
-          logoUrl: logoData.url,
-          logoSource: logoData.source,
-          logoCachedAt: logoData.cachedAt
-        }
-      };
+    if (existsSync(_serversJsonPath)) {
+      const cached = JSON.parse(readFileSync(_serversJsonPath, 'utf-8'));
+      if (Array.isArray(cached.servers) && cached.servers.length > 0) {
+        console.log(`[slug].astro: Loaded ${cached.servers.length} servers from servers.json (generated ${cached.generated_at})`);
+        allServers = cached.servers as MCPServer[];
+      }
     }
-  } catch (error) {
-    console.error('Error resolving logo for server:', error);
+  } catch (e: any) {
+    console.warn('[slug].astro: Could not read servers.json:', e.message);
   }
+
+  if (allServers.length === 0) {
+    allServers = sharedStaticServers as MCPServer[];
+    try {
+      const apiServers = await fetchAllMCPServers();
+      if (apiServers && apiServers.length > 0) {
+        allServers = transformPulseMCPData(apiServers) as MCPServer[];
+      }
+    } catch (error) {
+      console.error('getStaticPaths: PulseMCP fetch failed, using static servers:', error);
+    }
+  }
+
+  // Build slug map with deduplication (same logic as buildSlugToServerMap)
+  const usedSlugs = new Set<string>();
+  const paths = [];
+
+  for (const server of allServers) {
+    const name = server.fields?.name || server.id;
+    let slug = slugify(name);
+
+    // Skip servers with no usable name
+    if (!slug) continue;
+
+    // Deduplicate exactly as serverData.js does
+    if (usedSlugs.has(slug)) {
+      let counter = 2;
+      while (usedSlugs.has(`${slug}-${counter}`)) counter++;
+      slug = `${slug}-${counter}`;
+    }
+    usedSlugs.add(slug);
+
+    // Enrich with logo at build time
+    let enrichedServer = { ...server, slug };
+    if (!server.fields?.logoUrl && server.fields?.github_url) {
+      try {
+        const logoData = await resolveServerLogo(server);
+        if (logoData?.url) {
+          enrichedServer = {
+            ...enrichedServer,
+            fields: {
+              ...enrichedServer.fields,
+              logoUrl: logoData.url,
+              logoSource: logoData.source,
+              logoCachedAt: logoData.cachedAt,
+            },
+          };
+        }
+      } catch {
+        // Logo enrichment is best-effort
+      }
+    }
+
+    paths.push({ params: { slug }, props: { server: enrichedServer, allServers } });
+  }
+
+  return paths;
 }
+
+// Props come from getStaticPaths — no runtime fetch needed
+const { server, allServers } = Astro.props as { server: MCPServer; allServers: MCPServer[] };
+const { slug } = Astro.params;
 
 // Get related servers
 const relatedServers = getRelatedServers(server, allServers, 5);
