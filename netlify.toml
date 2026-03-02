@@ -23,13 +23,26 @@
 # Redirect old/removed pages
 [[redirects]]
   from = "/skills"
-  to = "/claude-skills/"
+  to = "/agent-skills/"
   status = 301
 
 [[redirects]]
   from = "/skills/"
-  to = "/claude-skills/"
+  to = "/agent-skills/"
   status = 301
+
+# Redirect old claude-skills to new agent-skills
+[[redirects]]
+  from = "/claude-skills"
+  to = "/agent-skills"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/claude-skills/"
+  to = "/agent-skills/"
+  status = 301
+  force = true
 
 [[redirects]]
   from = "/category/*"
