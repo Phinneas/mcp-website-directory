@@ -7160,6 +7160,10 @@ if (mcpServers.length === 0) {
   } catch (error) {
     console.error('Error enriching servers with logos:', error);
   }
+  // Sort alphabetically by name
+  mcpServers = mcpServers.sort((a, b) =>
+    (a.fields.name || '').localeCompare(b.fields.name || '')
+  );
 }
 
 // Helper function to get the first letter of server name for icon
@@ -7827,7 +7831,9 @@ function formatStars(stars?: number): string {
                         </div>
                     </div>
                     <div class="server-description">
-                        {server.fields.description}
+                        {(server.fields.description || '').length > 120
+                            ? (server.fields.description || '').slice(0, 120).trimEnd() + '…'
+                            : server.fields.description}
                     </div>
                     <div class="server-meta">
                         {server.fields.language && <span class="meta-tag">{server.fields.language}</span>}
