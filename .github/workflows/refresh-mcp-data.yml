@@ -1,0 +1,182 @@
+name: Refresh MCP Server Data
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Fallback / CI runner for the Prefect data-refresh pipeline.
+#
+# This workflow serves two roles:
+#
+#   1. FALLBACK — runs weekly on Monday at 04:00 UTC (one hour after Prefect's
+#      nightly run at 03:00).  If Prefect is down or the worker is offline,
+#      GitHub Actions picks up the slack automatically.
+#
+#   2. CI VALIDATION — triggered on every push that touches the pipeline code
+#      so regressions are caught before they reach production.
+#
+# Workflow triggers
+# -----------------
+#   schedule       Weekly Monday 04:00 UTC (automatic fallback)
+#   workflow_dispatch  Manual run with configurable options (UI or gh CLI)
+#   push           On changes to the pipeline source (dry-run only)
+#   repository_dispatch  Triggered programmatically by other workflows/services
+#
+# Required secrets (Settings → Secrets and variables → Actions)
+# ─────────────────────────────────────────────────────────────
+#   CLOUDFLARE_DEPLOY_HOOK   Cloudflare Pages deploy-hook URL
+#   SLACK_WEBHOOK_URL        Slack incoming-webhook (optional)
+#
+# GITHUB_TOKEN is provided automatically by Actions with repo write scope.
+# ─────────────────────────────────────────────────────────────────────────────
+
+on:
+  schedule:
+    - cron: "0 4 * * 1"     # Every Monday 04:00 UTC — weekly fallback
+
+  workflow_dispatch:
+    inputs:
+      max_servers:
+        description: "Max servers to fetch from PulseMCP"
+        required: false
+        default: "5000"
+      dry_run:
+        description: "Dry run — write locally, skip GitHub commit + Cloudflare trigger"
+        required: false
+        default: "false"
+        type: choice
+        options: ["false", "true"]
+
+  push:
+    branches: [main]
+    paths:
+      - "scripts/prefect_refresh.py"
+      - "scripts/requirements.txt"
+      - "prefect.yaml"
+      - ".github/workflows/refresh-mcp-data.yml"
+
+  repository_dispatch:
+    types: [refresh-mcp-data]
+
+# Cancel any in-progress run for the same branch when a new one is triggered
+concurrency:
+  group: refresh-mcp-data-${{ github.ref }}
+  cancel-in-progress: false   # don't cancel — let data writes finish cleanly
+
+env:
+  PYTHON_VERSION: "3.12"
+
+jobs:
+  refresh:
+    name: Fetch → Transform → Commit → Deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    # Determine whether this is a dry run:
+    #   • push events always run dry (no side effects in CI)
+    #   • workflow_dispatch respects the user's choice
+    #   • schedule + repository_dispatch always run for real
+    env:
+      IS_DRY_RUN: >-
+        ${{
+          github.event_name == 'push' && 'true' ||
+          github.event.inputs.dry_run || 'false'
+        }}
+
+    steps:
+      # ── 1. Checkout ─────────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # Use the default GITHUB_TOKEN.  If you need the push to trigger
+          # Cloudflare's GitHub integration instead of the deploy hook, replace
+          # this with a PAT that has workflow scope.
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # ── 2. Python ───────────────────────────────────────────────────────────
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: scripts/requirements.txt
+
+      # ── 3. Install dependencies ──────────────────────────────────────────────
+      - name: Install Python dependencies
+        run: pip install -r scripts/requirements.txt
+
+      # ── 4. Run the Prefect flow ──────────────────────────────────────────────
+      # The flow's __main__ block accepts CLI flags that map to flow parameters,
+      # so no Prefect Cloud or worker is needed here — it runs in-process.
+      - name: Run refresh flow
+        env:
+          GITHUB_TOKEN:           ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPO:            ${{ github.repository }}
+          GITHUB_BRANCH:          ${{ github.ref_name }}
+          PULSEMCP_MAX_SERVERS:   ${{ github.event.inputs.max_servers || '5000' }}
+          CLOUDFLARE_DEPLOY_HOOK: ${{ secrets.CLOUDFLARE_DEPLOY_HOOK }}
+          SLACK_WEBHOOK_URL:      ${{ secrets.SLACK_WEBHOOK_URL }}
+          # Run without Prefect Cloud telemetry (uses local in-process runner)
+          PREFECT_API_URL:        ""
+        run: |
+          EXTRA_FLAGS=""
+          if [ "${{ env.IS_DRY_RUN }}" = "true" ]; then
+            EXTRA_FLAGS="--dry-run --no-notify"
+            echo "Running in DRY RUN mode — no GitHub commit or Cloudflare trigger"
+          fi
+
+          python scripts/prefect_refresh.py \
+            --max-servers "${{ github.event.inputs.max_servers || '5000' }}" \
+            $EXTRA_FLAGS
+
+      # ── 5. Verify output ──────────────────────────────────────────────────────
+      - name: Verify servers.json
+        run: |
+          if [ ! -f src/data/servers.json ]; then
+            echo "::error::servers.json was not created — pipeline may have failed"
+            exit 1
+          fi
+
+          COUNT=$(python3 -c "
+          import json, sys
+          with open('src/data/servers.json') as f:
+              d = json.load(f)
+          count = d.get('count', len(d.get('servers', [])))
+          print(count)
+          sys.exit(0 if count > 0 else 1)
+          ")
+
+          echo "::notice::servers.json contains ${COUNT} servers"
+          echo "SERVER_COUNT=${COUNT}" >> "$GITHUB_ENV"
+
+      # ── 6. Commit servers.json (belt-and-suspenders fallback) ─────────────────
+      # The Prefect flow already commits via the GitHub API when GITHUB_TOKEN is
+      # set.  This step catches any edge case where that commit was skipped
+      # (e.g. transient API error, first-time file creation race).
+      - name: Commit servers.json (fallback)
+        if: env.IS_DRY_RUN == 'false'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name  "github-actions[bot]"
+          git add src/data/servers.json
+          if git diff --staged --quiet; then
+            echo "servers.json already up-to-date (committed by flow) — nothing to do"
+          else
+            git commit -m "chore(data): refresh MCP server catalogue — ${{ env.SERVER_COUNT }} servers [$(date -u +'%Y-%m-%d')]"
+            git push
+            echo "Committed servers.json via fallback git push"
+          fi
+
+      # ── 7. Job summary ─────────────────────────────────────────────────────────
+      - name: Write job summary
+        if: always()
+        run: |
+          {
+            echo "## MCP Server Data Refresh"
+            echo ""
+            echo "| Field            | Value |"
+            echo "|------------------|-------|"
+            echo "| Run date         | $(date -u +'%Y-%m-%d %H:%M UTC') |"
+            echo "| Trigger          | \`${{ github.event_name }}\` |"
+            echo "| Branch           | \`${{ github.ref_name }}\` |"
+            echo "| Servers written  | **${{ env.SERVER_COUNT || 'N/A' }}** |"
+            echo "| Dry run          | \`${{ env.IS_DRY_RUN }}\` |"
+            echo "| Workflow run     | [${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) |"
+          } >> "$GITHUB_STEP_SUMMARY"

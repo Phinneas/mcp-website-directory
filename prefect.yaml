@@ -1,0 +1,135 @@
+# prefect.yaml
+# ─────────────────────────────────────────────────────────────────────────────
+# Prefect 3.x deployment configuration for the MCP server data refresh flow.
+#
+# One-time setup
+# --------------
+#   prefect cloud login                                   # authenticate
+#   prefect work-pool create mcp-work-pool --type process # create work pool
+#   prefect deploy --all                                  # register deployments
+#
+# Start a worker (on any machine with the env vars exported)
+#   prefect worker start --pool mcp-work-pool
+#
+# Trigger a run manually
+#   prefect deployment run 'refresh-mcp-server-data/nightly-refresh'
+#   prefect deployment run 'refresh-mcp-server-data/dry-run'
+#
+# Required environment variables (set on the worker machine or in Prefect Cloud
+# → Work Pools → Variables)
+#   GITHUB_TOKEN          Personal-access token with Contents: Read & Write
+#   GITHUB_REPO           "owner/repo"  e.g. "chesterbeard/mcp-directory"
+#
+# Optional environment variables
+#   GITHUB_BRANCH         default "main"
+#   PULSEMCP_MAX_SERVERS  default 5000
+#   CLOUDFLARE_DEPLOY_HOOK
+#   SLACK_WEBHOOK_URL
+# ─────────────────────────────────────────────────────────────────────────────
+
+name: mcp-directory
+prefect-version: "3.*"
+
+# Pull strategy — how the worker gets the flow code.
+# For local development this is a no-op (worker already has the code).
+# For remote workers, swap this out for a git-based pull block:
+#
+#   pull:
+#     - prefect.deployments.steps.git_clone:
+#         repository: https://github.com/your-org/mcp-directory.git
+#         branch: main
+#         credentials: "{{ prefect.blocks.github-credentials.mcp-deploy }}"
+pull:
+  - prefect.deployments.steps.set_working_directory:
+      directory: "."
+
+# ─────────────────────────────────────────────────────────────────────────────
+deployments:
+
+  # ── Nightly production refresh ─────────────────────────────────────────────
+  - name: nightly-refresh
+    description: >
+      Fetches the full PulseMCP catalogue, writes servers.json, commits to
+      GitHub, and triggers a Cloudflare Pages rebuild.  Runs every night at
+      03:00 UTC so fresh data is available before peak traffic.
+
+    entrypoint: scripts/prefect_refresh.py:refresh_server_data
+
+    work_pool:
+      name: mcp-work-pool
+
+    schedules:
+      - cron: "0 3 * * *"      # 03:00 UTC daily
+        timezone: "UTC"
+        active: true
+
+    # Default flow parameters (overridable per-run from UI or CLI)
+    parameters:
+      max_servers: 5000
+      dry_run:     false
+      notify:      true
+
+    # Tags make runs easy to filter in the Prefect UI and API
+    tags:
+      - production
+      - nightly
+      - mcp-data
+
+    # Pass extra env vars to the worker process (secrets should live in
+    # Prefect Cloud → Blocks → Secret, not here in plaintext)
+    job_variables:
+      env:
+        PULSEMCP_MAX_SERVERS: "5000"
+
+  # ── On-demand dry run (testing / CI validation) ───────────────────────────
+  - name: dry-run
+    description: >
+      Fetches up to 500 servers and writes servers.json locally, but skips the
+      GitHub commit and Cloudflare rebuild trigger.  Use this to validate the
+      full pipeline without any side effects.
+
+    entrypoint: scripts/prefect_refresh.py:refresh_server_data
+
+    work_pool:
+      name: mcp-work-pool
+
+    # No schedule — trigger manually:
+    #   prefect deployment run 'refresh-mcp-server-data/dry-run'
+
+    parameters:
+      max_servers: 500    # small sample for speed
+      dry_run:     true
+      notify:      false
+
+    tags:
+      - testing
+      - dry-run
+      - mcp-data
+
+  # ── Weekly full run (belt-and-suspenders schedule) ────────────────────────
+  - name: weekly-full
+    description: >
+      A second production schedule that runs every Monday at 05:00 UTC.
+      Intentionally offset from the nightly run so that if the nightly
+      deployment is paused or misconfigured, this provides a reliable weekly
+      backstop with a full 5 000-server fetch.
+
+    entrypoint: scripts/prefect_refresh.py:refresh_server_data
+
+    work_pool:
+      name: mcp-work-pool
+
+    schedules:
+      - cron: "0 5 * * 1"    # 05:00 UTC every Monday
+        timezone: "UTC"
+        active: true
+
+    parameters:
+      max_servers: 5000
+      dry_run:     false
+      notify:      true
+
+    tags:
+      - production
+      - weekly
+      - mcp-data
