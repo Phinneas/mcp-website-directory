@@ -206,7 +206,7 @@ def transform_servers(raw: list[dict]) -> list[dict]:
     servers: list[dict] = []
 
     for i, s in enumerate(raw):
-        source_url = s.get("source_code_url", "")
+        source_url = s.get("source_code_url") or ""
         gh_match   = re.search(r"github\.com/([^/]+)", source_url)
         author     = f"@{gh_match.group(1)}" if gh_match else "@unknown"
 
