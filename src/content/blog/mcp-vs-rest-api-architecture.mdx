@@ -1,0 +1,195 @@
+---
+title: "MCP vs REST API: Why Your MCP Server Shouldn't Just Be a REST Proxy"
+description: "The dominant MCP implementation pattern is architecturally wrong. Learn why wrapping REST endpoints degrades LLM performance, and how to design MCP servers around agent intents instead of database operations."
+author: "Chester Beard"
+date: "2026-03-03T00:00:00.000Z"
+tags: ["mcp", "rest-api", "architecture", "best-practices", "llm-tools"]
+---
+
+# MCP vs REST API: Why Your MCP Server Shouldn't Just Be a REST Proxy
+
+*The dominant MCP implementation pattern right now is architecturally wrong. Here's what to do instead.*
+
+---
+
+If you've been in any developer channel over the past six months, you've seen some version of this story: a developer has a FastAPI backend, discovers MCP, installs `fastmcp`, wraps their 40 REST endpoints in an afternoon, and ships it to their team. Feels productive. Checks a box. Gets a PR merged.
+
+This is the dominant MCP implementation pattern in 2025. It's also a category error.
+
+I've spent time in infrastructure and systems architecture — first at Microsoft on the Xbox team, later in blockchain infrastructure — and I've watched this pattern play out before. A new protocol lands, teams reach for the fastest migration path, and the technical debt compounds quietly until it doesn't. MCP is following the same arc.
+
+The wrapper pattern isn't wrong because it's lazy. It's wrong because MCP and REST are solving fundamentally different problems for fundamentally different clients. Treating MCP as a translation layer for your existing REST API creates what engineers call *protocol impedance mismatch* — a friction point where two systems with incompatible assumptions are forced to communicate through a shim that satisfies neither.
+
+This post is about why that mismatch happens, where it hurts, and what properly architected MCP looks like. We'll also cover when wrapping REST is actually fine — because sometimes it is.
+
+---
+
+## REST vs MCP: Design Philosophy, Not Just Syntax
+
+Before the argument can land, the foundations need to be clear. REST and MCP aren't just different syntaxes for doing the same thing. They were designed for different clients, with different assumptions baked into their core.
+
+### How REST Thinks About the World
+
+REST (Representational State Transfer) organizes everything around **resources** — nouns that live at URLs. You identify a resource, then act on it using HTTP verbs that carry semantic meaning:
+
+```
+GET    /invoices/123       → retrieve this resource (safe, idempotent)
+POST   /invoices           → create a new resource
+PUT    /invoices/123       → replace this resource
+DELETE /invoices/123       → destroy this resource
+```
+
+This design has elegant properties. HTTP verbs encode safety guarantees: a `GET` request won't mutate data, a `DELETE` will, and every competent HTTP client in the world understands this without reading your documentation. State is **stateless by design** — every request carries all the context it needs. The server remembers nothing between calls. Auth headers, session tokens, query parameters — all of it travels with each request.
+
+REST's documentation format — OpenAPI specs — describes paths, methods, and schemas for **human developers** who will read them once, understand them, and hardcode API calls into software they write.
+
+### How MCP Thinks About the World
+
+MCP (Model Context Protocol) organizes everything around **capabilities** — verbs that represent things an AI agent can *do*. Instead of resources at URLs, you expose tools with names and JSON Schema descriptions:
+
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "send_invoice",
+    "arguments": { "customer_id": "123", "amount": 450.00 }
+  }
+}
+```
+
+MCP is built on JSON-RPC 2.0, not HTTP verb semantics. Transport is deliberately agnostic — MCP works over stdio, Server-Sent Events, or HTTP streaming, but none of these carry the semantic weight that REST assigns to GET/POST/DELETE. The transport is a pipe. The meaning lives in the tool definitions.
+
+State is **stateful by design**. MCP sessions begin with an `initialize` → `initialized` handshake where the server and client negotiate capabilities. Context persists across tool calls. When Claude is executing a multi-step task — "find all open PRs, summarize them, then close the stale ones" — MCP tracks session state so each step builds on the last without re-authenticating or re-sending context.
+
+And critically, MCP's discovery mechanism — `tools/list` with full JSON Schema descriptions — is designed for **LLMs to read at runtime**, not for developers to read once and hardcode. The LLM asks "what can I do here?" and gets back a structured description of capabilities it can reason about.
+
+### Side by Side
+
+| Dimension | REST | MCP |
+|---|---|---|
+| Oriented around | Resources (nouns) | Capabilities (verbs/tools) |
+| State model | Stateless — context per request | Stateful — context across session |
+| Discovery | OpenAPI docs (humans read once) | `tools/list` at runtime (LLM reads each session) |
+| Assumed client | Developer writing deterministic code | LLM reasoning dynamically |
+| Transport semantics | HTTP verbs carry meaning | Transport-agnostic; meaning in tool definitions |
+| Ideal granularity | Fine-grained CRUD endpoints | Coarse-grained workflow tools |
+| Auth pattern | Per-request (JWT, API key in headers) | Session-level negotiation |
+
+These aren't two ways of doing the same thing. They're two protocols with incompatible assumptions about who's on the other end of the connection.
+
+---
+
+## The Three Friction Points of Wrapping REST
+
+Understanding the philosophy is one thing. Here's where the rubber meets the road — the three specific places where the wrapper pattern causes real problems.
+
+### 1. The Semantics Gap: Resource Nouns vs. Tool Verbs
+
+When you wrap a REST API 1:1, you end up producing MCP tools that look like this:
+
+- `get_invoice_by_id`
+- `create_invoice`
+- `update_invoice`
+- `delete_invoice`
+- `list_invoices_by_customer`
+
+This is RPC-by-stealth. You've taken REST's CRUD operations, stripped out the HTTP verb semantics that gave them meaning, and re-wrapped them as tools with no new design thinking applied.
+
+The problem isn't aesthetic — it's functional. Your original REST API encoded important information in the HTTP layer: `GET /invoices` is safe and idempotent; `DELETE /invoices/123` is destructive and irreversible. When you translate this to MCP tools, that semantic information evaporates. The LLM sees `get_invoice_by_id` and `delete_invoice` as equally weighted choices in a list. The safety guarantees that REST baked into transport semantics now have to be manually re-specified in tool descriptions — if you remember to do it at all.
+
+There's also a confusion problem for the agent. When an LLM is trying to help a user with a billing question, should it "GET" the invoice or "call" the invoice lookup tool? The conceptual model is muddled. REST tools live in a resource model the LLM has to mentally translate. Native MCP tools live in an intent model the LLM can act on directly.
+
+### 2. Granularity Mismatch: CRUD Operations vs. Workflows
+
+This is where wrapper implementations visibly break down in production.
+
+A moderately complex REST API might have 60–200 endpoints. A well-designed MCP server should have 10–40 tools. These are not the same number, and closing that gap by ignoring it creates a real problem for LLM performance.
+
+When you expose 80 tools to an LLM, tool selection degrades. The model has to reason across a large surface area of fine-grained options to determine which combination achieves the user's intent. Research on LLM tool use consistently shows that more tools with overlapping concerns leads to worse selection accuracy — the model either picks the wrong tool, calls the right tools in the wrong order, or makes redundant calls.
+
+Consider a simple user request in an e-commerce context: "Check if this product is in stock and let me know when I can expect delivery."
+
+A REST-wrapped MCP implementation forces the agent to:
+1. Call `get_product` to retrieve product details
+2. Call `get_inventory_by_sku` to check stock levels
+3. Call `get_shipping_estimates` with the warehouse location
+4. Synthesize all three responses into an answer
+
+A workflow-native MCP implementation handles this with one tool call: `check_product_availability` — which internally aggregates product data, inventory, and shipping estimates and returns an LLM-optimized response.
+
+The REST wrapper exposes your *database*. The native design exposes your *business logic*. The LLM only needs the latter.
+
+### 3. Session State Confusion: Who Owns Context?
+
+This is the deepest problem, and it's genuinely underappreciated in the current MCP discourse. Most wrapper implementations don't solve it — they just don't encounter it until they hit production.
+
+REST is stateless. Auth is per-request — a JWT token or API key in the Authorization header on every call. The server holds no session context. This is a feature, not a limitation: it's why REST APIs scale horizontally and are easy to reason about.
+
+MCP is stateful. The session maintains context. The `initialize` handshake establishes capabilities. Tool calls can reference previous tool results. The connection persists.
+
+When you wrap a stateless REST API inside a stateful MCP session, you create an unresolved tension: **where does state actually live?**
+
+Option A: You store auth state in the MCP server between tool calls. Now your MCP server is stateful in a way your REST API wasn't designed to accommodate. What happens when the MCP server restarts? Does the LLM's session context survive? Does it need to re-authenticate? Who is responsible for token refresh?
+
+Option B: You re-authenticate on every tool call, passing credentials through with each REST request as if MCP's session layer doesn't exist. This is functionally correct but architecturally wasteful — you've built a stateful session layer and then ignored it.
+
+Option C: Most wrapper implementations don't choose — they inherit whatever auth pattern the underlying REST API uses without explicitly designing the MCP layer's state model. This works until it doesn't.
+
+The MCP spec is intentionally vague about transport and session management, which means this tension is yours to resolve. In a native MCP implementation, you design the session model first, then build tools around it. In a REST wrapper, you inherit a session model that was designed for a different protocol and hope the edges don't show.
+
+---
+
+## When Wrapping REST Is Actually Fine
+
+This isn't an absolutist argument. The wrapper pattern is a **migration strategy**, not a destination — and like most migration strategies, it has legitimate uses.
+
+**Legacy systems with entrenched REST APIs.** If you're adding MCP capabilities to a system where rebuilding business logic isn't feasible on any reasonable timeline, a REST wrapper is a pragmatic starting point. Ship something functional, measure how the LLM uses it, then refactor toward workflow-native tools in the areas that matter most.
+
+**Internal tooling where migration cost exceeds benefit.** If you're building an MCP server for internal team use with a handful of tools and a small number of users, the overhead of native design may genuinely outweigh the benefit. Developer productivity tools, admin interfaces, internal reporting — these are lower stakes than customer-facing or production AI workflows.
+
+**APIs already designed around workflows.** Not all REST APIs are CRUD-heavy. Stripe's API, for example, already uses action-oriented endpoints: `/charges`, `/refunds`, `/payouts` — these are verbs masquerading as nouns and translate to MCP tools naturally. If the underlying REST API was designed with workflow semantics, the wrapper impedance is much lower.
+
+**Rapid prototyping and validation.** Wrapping your existing REST API is a legitimate way to validate whether MCP is the right fit for your use case before committing engineering resources to native design. Prototype with wrappers, observe how the LLM actually uses the tools, then invest in redesign for the tools that get used most.
+
+The test to apply is straightforward: does each MCP tool map to an **agent intent**, or to a **database operation**? If your LLM needs to chain three or four tools together to satisfy a single user request, your granularity is probably inherited from REST and your architecture needs rethinking.
+
+---
+
+## What This Means When Evaluating MCP Servers
+
+This distinction matters beyond your own implementation decisions — it matters when you're choosing which MCP servers to build on.
+
+The MCP ecosystem is growing fast. MyMCPShelf currently tracks 600+ verified servers, and the number is increasing weekly. But not all MCP servers are equal, and the REST wrapper anti-pattern is common enough in the directory that it's worth knowing how to spot it.
+
+Here's a quick evaluation framework to apply when assessing any MCP server:
+
+**Workflow-Native (the goal)**
+Tools are named for agent intents: `process_refund`, `summarize_meeting`, `deploy_to_staging`. Tool descriptions are rich and include guidance on when to use them. The number of tools is manageable (typically under 40). Calling a single tool completes a meaningful task.
+
+**API Proxy (functional, but fragile)**
+Tools are named for database operations: `get_user`, `update_record`, `delete_item`. Tool descriptions are sparse — often just "Get [thing] by ID." The tool count mirrors the REST API's endpoint count. Multiple tools must be chained to complete user tasks.
+
+**Hybrid (pragmatic, acceptable)**
+Core workflows are native MCP; supporting CRUD operations are available where genuinely needed. This is often the right answer for complex platforms that need both LLM-optimized paths and lower-level access.
+
+When evaluating servers in the [MyMCPShelf directory](https://www.mymcpshelf.com), look at the tool names in the README or schema. If they read like REST endpoints with underscores instead of slashes, you're looking at a proxy. If they read like user stories, you're looking at a well-designed server worth building on.
+
+We're working on surfacing architecture quality more explicitly in the directory — more on that soon.
+
+---
+
+## The Bottom Line
+
+The MCP ecosystem is in its FastAPI-wrapper phase — the stage where everyone reaches for the fastest path to "shipped" without stopping to ask whether the architecture fits the protocol's design intent.
+
+This matters because the servers being built now will form the foundation that production AI systems run on in 2026 and beyond. REST wrappers that work fine for demos will show their seams in production: LLMs making redundant tool calls, agents confused by granularity that was designed for human developers, session state bugs that only appear after 20 minutes of multi-step workflows.
+
+The fix isn't complicated. Stop thinking about what your database exposes. Start thinking about what your users — specifically, your AI agent users — need to accomplish. Design tools around intents, not entities. Make destructive operations explicit. Aggregate internal complexity so the LLM sees business logic, not infrastructure.
+
+If you're evaluating which MCP servers to build on, the same principle applies: look for servers that were designed for AI agents, not translated from REST.
+
+The [MyMCPShelf directory](https://www.mymcpshelf.com) is a good starting point for finding well-vetted MCP servers across every category — from development tools and database integrations to file management and web services. Browse the directory, read the tool schemas, and apply the evaluation framework above. The architecture quality difference between a proxy and a native implementation is usually visible in the first five tool names.
+
+---
+
+*Have thoughts on MCP architecture patterns? Found servers in the wild that exemplify workflow-native design — or the opposite? The directory is community-driven. [Submit a server](https://www.mymcpshelf.com) or reach out.*
