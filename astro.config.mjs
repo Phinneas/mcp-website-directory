@@ -11,6 +11,7 @@ export default defineConfig({
   site: 'https://www.mymcpshelf.com',
   output: 'server',
   adapter: cloudflare(),
+  trailingSlash: 'never',  // Disable automatic trailing slashes
   integrations: [react(), mdx(), sitemap()],
 
   vite: {
