@@ -2,11 +2,13 @@
 export const prerender = true;
 import '../styles/global.css';
 import { VintageIcon } from '../components/VintageIcon';
-import { loadAgentSkills, getSkillCategories } from '../utils/agentSkillsApi';
 
-// Load agent skills data
-const allSkills = loadAgentSkills();
-const categories = getSkillCategories(allSkills);
+// Load agent skills data directly
+import agentSkillsData from '../data/agent-skills.json';
+const allSkills = agentSkillsData;
+
+// Get unique categories
+const categories = ['All', ...new Set(allSkills.map(skill => skill.category))];
 
 // SEO metadata
 const title = 'Agent Skills Directory | My MCP Shelf';
@@ -384,6 +386,18 @@ const canonicalUrl = 'https://www.mymcpshelf.com/agent-skills';
           <div class="stat-label">Updates</div>
         </div>
       </div>
+
+    <!-- Debug info (remove in production) -->
+    {allSkills.length === 0 && (
+      <div style="background: #ffebee; padding: 1rem; border-radius: 8px; margin: 1rem 0; text-align: center;">
+        <p style="color: #c62828; font-weight: 600;">
+          ⚠️ No skills found. The skills data might not be loading correctly.
+        </p>
+        <p style="color: #8e24aa; font-size: 0.9rem;">
+          Check that <code>data/agent-skills.json</code> exists and contains valid data.
+        </p>
+      </div>
+    )}
 
       <!-- Search -->
       <div class="search-section">
