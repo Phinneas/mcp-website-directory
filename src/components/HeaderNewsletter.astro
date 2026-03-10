@@ -1,13 +1,23 @@
 ---
-// Compact Header Newsletter Signup - Ghost Portal
-const ghostSignupUrl = 'https://ghost-production-5d84.up.railway.app/#/portal/signup';
+// Compact Header Newsletter Signup with Email Input
 ---
 
 <div class="header-newsletter">
     <span class="newsletter-label">📬 Get weekly AI & MCP updates:</span>
-    <a href={ghostSignupUrl} target="_blank" rel="noopener noreferrer" class="header-signup-button">
-        Subscribe — it's free
-    </a>
+    <form class="newsletter-form" id="headerNewsletterForm">
+        <input
+            type="email"
+            class="email-input"
+            placeholder="Enter your email"
+            required
+            id="headerEmailInput"
+        />
+        <button type="submit" class="subscribe-btn">Subscribe</button>
+    </form>
+</div>
+
+<div class="newsletter-success" id="newsletterSuccess" style="display: none;">
+    <span class="success-message">✓ Thanks for subscribing!</span>
 </div>
 
 <style>
@@ -17,53 +27,77 @@ const ghostSignupUrl = 'https://ghost-production-5d84.up.railway.app/#/portal/si
         gap: 1rem;
         flex-wrap: wrap;
         padding: 0.75rem 1.5rem;
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
+        background: hsl(var(--card));
         border-radius: 50px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        border: 1px solid hsl(var(--border));
     }
 
     .newsletter-label {
-        color: white;
+        color: hsl(var(--foreground));
         font-size: 0.9rem;
         font-weight: 500;
         white-space: nowrap;
     }
 
-    .header-signup-button {
-        padding: 0.6rem 1.5rem;
-        background: white;
-        color: hsl(var(--primary));
+    .newsletter-form {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .email-input {
+        padding: 0.5rem 1rem;
+        border: 2px solid hsl(var(--border));
+        border-radius: 25px;
+        font-size: 0.9rem;
+        background: hsl(var(--background));
+        color: hsl(var(--foreground));
+        min-width: 180px;
+        outline: none;
+        transition: border-color 0.2s ease;
+    }
+
+    .email-input::placeholder {
+        color: hsl(var(--muted-foreground));
+    }
+
+    .email-input:focus {
+        border-color: hsl(var(--primary));
+    }
+
+    .subscribe-btn {
+        padding: 0.5rem 1.25rem;
+        background: hsl(var(--primary));
+        color: white;
         border: none;
         border-radius: 25px;
         font-size: 0.9rem;
         font-weight: 600;
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: all 0.2s ease;
         white-space: nowrap;
-        text-decoration: none;
     }
 
-    .header-signup-button:hover {
+    .subscribe-btn:hover {
+        background: hsl(var(--primary) / 0.9);
         transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        background: #FF1A75;
-        color: white;
     }
 
-    @media (max-width: 1024px) {
-        .header-newsletter {
-            padding: 0.5rem 1rem;
-        }
+    .newsletter-success {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.75rem 1.5rem;
+        background: hsl(142 76% 36%);
+        border-radius: 50px;
+        margin-top: 0.5rem;
+    }
 
-        .newsletter-label {
-            font-size: 0.85rem;
-        }
-
-        .header-signup-button {
-            padding: 0.5rem 1rem;
-            font-size: 0.85rem;
-        }
+    .success-message {
+        color: white;
+        font-size: 0.9rem;
+        font-weight: 500;
     }
 
     @media (max-width: 768px) {
@@ -75,8 +109,49 @@ const ghostSignupUrl = 'https://ghost-production-5d84.up.railway.app/#/portal/si
             text-align: center;
         }
 
-        .header-signup-button {
-            text-align: center;
+        .newsletter-form {
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .email-input {
+            width: 100%;
+            min-width: unset;
+        }
+
+        .subscribe-btn {
+            width: 100%;
         }
     }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('headerNewsletterForm');
+        const success = document.getElementById('newsletterSuccess');
+        const newsletter = document.querySelector('.header-newsletter');
+
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = document.getElementById('headerEmailInput').value;
+
+                // Store email locally (you can replace this with actual API call)
+                console.log('Newsletter signup:', email);
+
+                // Show success message
+                if (newsletter) newsletter.style.display = 'none';
+                if (success) success.style.display = 'flex';
+
+                // Reset form
+                form.reset();
+
+                // Hide success after 5 seconds and show form again
+                setTimeout(() => {
+                    if (success) success.style.display = 'none';
+                    if (newsletter) newsletter.style.display = 'flex';
+                }, 5000);
+            });
+        }
+    });
+</script>
