@@ -333,38 +333,64 @@ const faqSections = [
         .faq-item {
             background: var(--card-bg);
             border-radius: 12px;
-            padding: 1.5rem 2rem;
             box-shadow: 0 4px 20px var(--card-shadow);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .faq-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 24px var(--card-shadow);
+            overflow: hidden;
+            border: 1px solid hsl(var(--border));
         }
 
         .faq-question {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 600;
             color: var(--card-text);
-            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 1.25rem 1.5rem;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            user-select: none;
+        }
+
+        .faq-question:hover {
+            background: hsl(var(--muted) / 0.3);
+        }
+
+        .question-content {
             display: flex;
             align-items: flex-start;
             gap: 0.75rem;
+            flex: 1;
         }
 
         .question-icon {
-            color: var(--cta-primary);
-            font-size: 1.2rem;
+            color: hsl(var(--primary));
+            font-size: 1rem;
             flex-shrink: 0;
             font-weight: 700;
+        }
+
+        .toggle-icon {
+            font-size: 1.25rem;
+            color: hsl(var(--primary));
+            transition: transform 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .faq-item.active .toggle-icon {
+            transform: rotate(180deg);
         }
 
         .faq-answer {
             color: hsl(var(--muted-foreground));
             line-height: 1.7;
-            font-size: 1rem;
-            padding-left: 1.95rem;
+            font-size: 0.95rem;
+            padding: 0 1.5rem 1.25rem 2.75rem;
+            display: none;
+        }
+
+        .faq-item.active .faq-answer {
+            display: block;
         }
 
         html.dark-mode .faq-answer {
@@ -543,9 +569,12 @@ const faqSections = [
                 <div class="faq-list">
                     {section.items.map((faq) => (
                         <div class="faq-item">
-                            <h3 class="faq-question">
-                                <span class="question-icon">Q:</span>
-                                <span>{faq.question}</span>
+                            <h3 class="faq-question" onclick="toggleFaq(this)">
+                                <span class="question-content">
+                                    <span class="question-icon">Q:</span>
+                                    <span>{faq.question}</span>
+                                </span>
+                                <span class="toggle-icon">▼</span>
                             </h3>
                             <p class="faq-answer">{faq.answer}</p>
                         </div>
@@ -563,6 +592,23 @@ const faqSections = [
     </div>
 
     <script>
+        // FAQ Accordion toggle
+        function toggleFaq(element) {
+            const faqItem = element.closest('.faq-item');
+            const isActive = faqItem.classList.contains('active');
+            
+            // Close all other FAQ items in the same section
+            const section = faqItem.closest('.faq-section');
+            section.querySelectorAll('.faq-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Toggle the clicked item (if it wasn't already open)
+            if (!isActive) {
+                faqItem.classList.add('active');
+            }
+        }
+
         // Dark mode toggle
         const themeToggle = document.getElementById('themeToggle');
         const sunIcon = document.getElementById('sunIcon');
