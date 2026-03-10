@@ -3,6 +3,7 @@ export const prerender = true;
 // FAQ Page - Full FAQ with all questions
 import '../styles/global.css';
 import { FolderIcon, ToolboxIcon, ComputerIcon, VintageIcon } from '../components/VintageIcon';
+import HeaderNewsletter from '../components/HeaderNewsletter.astro';
 
 const faqSections = [
     {
@@ -310,29 +311,6 @@ const faqSections = [
             border-color: hsl(var(--primary));
         }
 
-        .nav-links {
-            margin-top: 1.5rem;
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .nav-link {
-            color: hsla(var(--foreground), 0.9);
-            text-decoration: none;
-            background: hsla(var(--card), 0.2);
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            border: 1px solid hsla(var(--foreground), 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .nav-link:hover {
-            background: hsla(var(--card), 0.3);
-            transform: translateY(-2px);
-        }
-
         .faq-section {
             margin-bottom: 3rem;
         }
@@ -554,6 +532,11 @@ const faqSections = [
             <a href="/blog" class="nav-link"><VintageIcon client:load name="Windows95TextFile" size={18} /> Blog</a>
         </nav>
 
+        <!-- Newsletter -->
+        <div style="margin-top: 1.5rem; display: flex; justify-content: center;">
+            <HeaderNewsletter />
+        </div>
+
         {faqSections.map((section) => (
             <div class="faq-section">
                 <h2 class="section-title">{section.title}</h2>
@@ -570,23 +553,6 @@ const faqSections = [
                 </div>
             </div>
         ))}
-
-        <div class="newsletter-section">
-            <h2 class="newsletter-title">Stay Updated</h2>
-            <p class="newsletter-subtitle">
-                Get the latest MCP servers, blog posts, and best practices delivered to your inbox
-            </p>
-            <form class="email-form" onsubmit="handleSubscribe(event)">
-                <input 
-                    type="email" 
-                    class="email-input" 
-                    placeholder="Enter your email address"
-                    required
-                    id="emailInput"
-                />
-                <button type="submit" class="subscribe-btn">Subscribe</button>
-            </form>
-        </div>
 
         <div class="footer-links">
             <a href="/"><FolderIcon client:load size={16} /> Back to MCP Shelf</a>

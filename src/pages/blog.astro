@@ -2,6 +2,7 @@
 export const prerender = true;
 import { getCollection } from 'astro:content';
 import EmailSignup from '../components/EmailSignup.astro';
+import HeaderNewsletter from '../components/HeaderNewsletter.astro';
 import { FolderIcon, ToolboxIcon, ComputerIcon, VintageIcon } from '../components/VintageIcon';
 import '../styles/global.css';
 
@@ -310,14 +311,19 @@ const pageTitle = "My MCP Shelf Blog";
                     <div class="stat-label">Authors</div>
                 </div>
             </div>
-
-            <div class="nav-links">
-                <a href="/" class="nav-link"><FolderIcon client:load size={18} /> Shelf</a>
-                <a href="/agent-skills" class="nav-link"><ToolboxIcon client:load size={18} /> Agent Skills</a>
-                <a href="/mcp-clients" class="nav-link"><ComputerIcon client:load size={18} /> MCP Clients</a>
-                <a href="/faq" class="nav-link"><VintageIcon client:load name="Windows95Help" size={18} /> FAQ</a>
-            </div>
         </section>
+
+        <nav class="nav-links">
+            <a href="/" class="nav-link"><FolderIcon client:load size={18} /> Shelf</a>
+            <a href="/agent-skills" class="nav-link"><ToolboxIcon client:load size={18} /> Agent Skills</a>
+            <a href="/mcp-clients" class="nav-link"><ComputerIcon client:load size={18} /> MCP Clients</a>
+            <a href="/faq" class="nav-link"><VintageIcon client:load name="Windows95Help" size={18} /> FAQ</a>
+        </nav>
+
+        <!-- Newsletter -->
+        <div style="margin-top: 1.5rem; display: flex; justify-content: center;">
+            <HeaderNewsletter />
+        </div>
 
         <main>
             {sortedPosts.length > 0 ? (

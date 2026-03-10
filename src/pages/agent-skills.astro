@@ -2,6 +2,7 @@
 export const prerender = true;
 import '../styles/global.css';
 import { VintageIcon } from '../components/VintageIcon';
+import HeaderNewsletter from '../components/HeaderNewsletter.astro';
 
 // Import skills data directly - this works with Cloudflare Pages
 import skillsData from '../data/agent-skills.json';
@@ -358,15 +359,6 @@ const canonicalUrl = 'https://www.mymcpshelf.com/agent-skills';
 </head>
 <body>
   <div class="page-container">
-    <!-- Navigation -->
-    <header class="nav-header">
-      <nav class="nav-links">
-        <a href="/"><VintageIcon client:load name="WindowsFolder" size={16} /> Shelf</a>
-        <a href="/mcp-clients"><VintageIcon client:load name="Windows95MyComputer" size={16} /> MCP Clients</a>
-        <a href="/blog"><VintageIcon client:load name="Windows95TextFile" size={16} /> Blog</a>
-      </nav>
-    </header>
-
     <!-- Hero Section -->
     <section class="hero-section">
       <h1 class="hero-title">Agent Skills Directory</h1>
@@ -388,16 +380,30 @@ const canonicalUrl = 'https://www.mymcpshelf.com/agent-skills';
           <div class="stat-label">Updates</div>
         </div>
       </div>
+    </section>
 
-      <!-- Submit CTA -->
-      <div class="submit-cta">
-        <a href="https://github.com/mymcpshelf/skills/issues/new" class="submit-btn">
-          🚀 Submit a Skill
-        </a>
-      </div>
+    <!-- Navigation -->
+    <nav class="nav-links">
+      <a href="/"><VintageIcon client:load name="WindowsFolder" size={16} /> Shelf</a>
+      <a href="/mcp-clients"><VintageIcon client:load name="Windows95MyComputer" size={16} /> MCP Clients</a>
+      <a href="/blog"><VintageIcon client:load name="Windows95TextFile" size={16} /> Blog</a>
+      <a href="/faq"><VintageIcon client:load name="Windows95Help" size={16} /> FAQ</a>
+    </nav>
 
-      <!-- Search -->
-      <div class="search-section">
+    <!-- Newsletter -->
+    <div style="margin-top: 1.5rem; display: flex; justify-content: center;">
+      <HeaderNewsletter />
+    </div>
+
+    <!-- Submit CTA -->
+    <div class="submit-cta">
+      <a href="https://github.com/mymcpshelf/skills/issues/new" class="submit-btn">
+        🚀 Submit a Skill
+      </a>
+    </div>
+
+    <!-- Search -->
+    <div class="search-section">
         <div class="search-input-wrapper">
           <input
             type="text"
