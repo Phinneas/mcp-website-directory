@@ -78,8 +78,10 @@ const canonicalUrl = 'https://www.mymcpshelf.com/agent-skills';
     }
 
     .nav-links {
+      margin-top: 1.5rem;
       display: flex;
       gap: 0.75rem;
+      justify-content: center;
       flex-wrap: wrap;
     }
 
@@ -87,19 +89,19 @@ const canonicalUrl = 'https://www.mymcpshelf.com/agent-skills';
       display: inline-flex;
       align-items: center;
       gap: 0.4rem;
-      color: var(--text-secondary);
+      color: hsl(var(--muted-foreground));
       text-decoration: none;
       padding: 0.5rem 1rem;
       border-radius: 8px;
       font-size: 0.9rem;
       transition: all 0.2s ease;
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
+      background: hsl(var(--card));
+      border: 1px solid hsl(var(--border));
     }
 
     .nav-links a:hover {
-      color: var(--accent-color);
-      border-color: var(--accent-color);
+      color: hsl(var(--primary));
+      border-color: hsl(var(--primary));
     }
 
     .hero-section {
@@ -111,7 +113,7 @@ const canonicalUrl = 'https://www.mymcpshelf.com/agent-skills';
     .hero-title {
       font-size: 2.5rem;
       font-weight: 800;
-      background: linear-gradient(135deg, var(--accent-color) 0%, hsl(var(--secondary)) 100%);
+      background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -120,7 +122,7 @@ const canonicalUrl = 'https://www.mymcpshelf.com/agent-skills';
 
     .hero-subtitle {
       font-size: 1.2rem;
-      color: var(--text-secondary);
+      color: hsl(var(--muted-foreground));
       max-width: 600px;
       margin: 0 auto 2rem;
     }
@@ -143,12 +145,12 @@ const canonicalUrl = 'https://www.mymcpshelf.com/agent-skills';
     .stat-value {
       font-size: 1.5rem;
       font-weight: 700;
-      color: var(--accent-color);
+      color: hsl(var(--primary));
     }
 
     .stat-label {
       font-size: 0.9rem;
-      color: var(--text-secondary);
+      color: hsl(var(--muted-foreground));
     }
 
     .search-section {
