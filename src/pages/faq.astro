@@ -569,7 +569,7 @@ const faqSections = [
                 <div class="faq-list">
                     {section.items.map((faq) => (
                         <div class="faq-item">
-                            <h3 class="faq-question" onclick="toggleFaq(this)">
+                            <h3 class="faq-question">
                                 <span class="question-content">
                                     <span class="question-icon">Q:</span>
                                     <span>{faq.question}</span>
@@ -592,22 +592,28 @@ const faqSections = [
     </div>
 
     <script>
-        // FAQ Accordion toggle
-        function toggleFaq(element) {
-            const faqItem = element.closest('.faq-item');
-            const isActive = faqItem.classList.contains('active');
+        // FAQ Accordion toggle - using event delegation
+        document.addEventListener('DOMContentLoaded', function() {
+            const faqQuestions = document.querySelectorAll('.faq-question');
             
-            // Close all other FAQ items in the same section
-            const section = faqItem.closest('.faq-section');
-            section.querySelectorAll('.faq-item').forEach(item => {
-                item.classList.remove('active');
+            faqQuestions.forEach(question => {
+                question.addEventListener('click', function() {
+                    const faqItem = this.closest('.faq-item');
+                    const isActive = faqItem.classList.contains('active');
+                    
+                    // Close all other FAQ items in the same section
+                    const section = faqItem.closest('.faq-section');
+                    section.querySelectorAll('.faq-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    
+                    // Toggle the clicked item (if it wasn't already open)
+                    if (!isActive) {
+                        faqItem.classList.add('active');
+                    }
+                });
             });
-            
-            // Toggle the clicked item (if it wasn't already open)
-            if (!isActive) {
-                faqItem.classList.add('active');
-            }
-        }
+        });
 
         // Dark mode toggle
         const themeToggle = document.getElementById('themeToggle');
