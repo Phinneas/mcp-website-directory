@@ -43,7 +43,7 @@
     },
     {
       "source": "/skills",
-      "destination": "/claude-skills",
+      "destination": "/agent-skills",
       "permanent": true
     },
     {
@@ -53,7 +53,12 @@
     },
     {
       "source": "/blog/mcp-client-comparison",
-      "destination": "/blog/mcp-client-complete-guide",
+      "destination": "/mcp-clients",
+      "permanent": true
+    },
+    {
+      "source": "/claude-skills",
+      "destination": "/agent-skills",
       "permanent": true
     }
   ],
