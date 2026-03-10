@@ -2,13 +2,11 @@
 export const prerender = true;
 import '../styles/global.css';
 import { VintageIcon } from '../components/VintageIcon';
+import { loadAgentSkills, getSkillCategories } from '../utils/agentSkillsApi';
 
-// Load agent skills data directly
-import agentSkillsData from '../data/agent-skills.json';
-const allSkills = agentSkillsData;
-
-// Get unique categories
-const categories = ['All', ...new Set(allSkills.map(skill => skill.category))];
+// Load agent skills data
+const allSkills = loadAgentSkills();
+const categories = getSkillCategories(allSkills);
 
 // SEO metadata
 const title = 'Agent Skills Directory | My MCP Shelf';
