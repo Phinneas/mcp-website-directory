@@ -257,7 +257,7 @@ import '../styles/global.css';
 
         .clients-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 2rem;
             margin-top: 3rem;
         }
@@ -395,6 +395,12 @@ import '../styles/global.css';
                 padding: 1rem;
             }
         }
+
+        @media (max-width: 1024px) and (min-width: 769px) {
+            .clients-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
     </style>
 </head>
 <body>
@@ -435,16 +441,17 @@ import '../styles/global.css';
                     <div class="stat-label">Quality</div>
                 </div>
             </div>
+        </section>
 
-            <div class="nav-links">
-                <a href="/" class="nav-link"><FolderIcon client:load size={18} /> Shelf</a>
-                <a href="/agent-skills" class="nav-link"><ToolboxIcon client:load size={18} /> Agent Skills</a>
-                <a href="/blog" class="nav-link"><VintageIcon client:load name="Windows95TextFile" size={18} /> Blog</a>
-                <a href="/faq" class="nav-link"><VintageIcon client:load name="Windows95Help" size={18} /> FAQ</a>
-            </div>
-            <div style="margin-top: 2rem; display: flex; justify-content: center;">
-                <HeaderNewsletter />
-            </div>
+        <nav class="nav-links">
+            <a href="/" class="nav-link"><FolderIcon client:load size={18} /> Shelf</a>
+            <a href="/agent-skills" class="nav-link"><ToolboxIcon client:load size={18} /> Agent Skills</a>
+            <a href="/blog" class="nav-link"><VintageIcon client:load name="Windows95TextFile" size={18} /> Blog</a>
+            <a href="/faq" class="nav-link"><VintageIcon client:load name="Windows95Help" size={18} /> FAQ</a>
+        </nav>
+
+        <div style="margin-top: 2rem; display: flex; justify-content: center;">
+            <HeaderNewsletter />
         </div>
 
         <div class="search-section">
