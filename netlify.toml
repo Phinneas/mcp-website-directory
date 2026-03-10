@@ -23,12 +23,12 @@
 # Redirect old/removed pages
 [[redirects]]
   from = "/skills"
-  to = "/agent-skills/"
+  to = "/agent-skills"
   status = 301
 
 [[redirects]]
   from = "/skills/"
-  to = "/agent-skills/"
+  to = "/agent-skills"
   status = 301
 
 # Redirect old claude-skills to new agent-skills
@@ -40,7 +40,7 @@
 
 [[redirects]]
   from = "/claude-skills/"
-  to = "/agent-skills/"
+  to = "/agent-skills"
   status = 301
   force = true
 
@@ -59,7 +59,18 @@
   to = "/"
   status = 301
 
-# Redirect old server slugs
+# Redirect removed blog content to relevant pages
+[[redirects]]
+  from = "/blog/mcp-client-comparison"
+  to = "/mcp-clients"
+  status = 301
+
+[[redirects]]
+  from = "/blog/mcp-client-comparison/"
+  to = "/mcp-clients"
+  status = 301
+
+# Redirect old server slugs to main directory
 [[redirects]]
   from = "/server/mcp-simple-pubmed"
   to = "/"
