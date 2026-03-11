@@ -2,3 +2,11 @@ name = "mcp-directory"
 compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = "dist"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "mcp-directory"
+database_id = "527bf637-7aba-4719-8d39-b9e6e614a3b9"
+
+[vars]
+CACHE_TTL = "3600"
