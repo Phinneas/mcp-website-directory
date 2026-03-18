@@ -1,0 +1,348 @@
+---
+title: "Slack MCP Server: Which Implementation Is Right for Your Use Case"
+description: "Five Slack MCP server implementations exist and they are not interchangeable. This guide breaks down the official server, korotovsky, ubie-oss, and others — with a decision framework for personal, dev, and production use."
+pubDate: 2026-03-18
+author: Buzz
+draft: false
+tags: ["slack", "mcp", "integrations", "security", "agentic-ai"]
+image: /images/slack-mcp-server-guide.png
+---
+
+The Slack MCP server is not a single thing.
+
+Search for setup instructions and you will find five distinct implementations — each with different tool sets, authentication models, transport support, and security postures. Pick the wrong one and your agent either can't search messages (a scope problem almost no setup guide explains), bypasses your company's admin approval workflow, or stores tokens in ways that will not survive a security review.
+
+This guide maps every major Slack MCP server implementation, explains the token scope problem that causes most failed setups, and gives you a direct decision framework based on your actual use case — whether that's a personal Claude Desktop workflow, an IDE integration in Cursor, or a production agentic pipeline.
+
+---
+
+## What the Slack MCP Server Actually Does
+
+MCP gives an AI agent a standardized interface to interact with external services. For Slack specifically, that means your agent gains access to a defined set of tools — callable actions it can execute against your workspace.
+
+Across the major implementations, those tools fall into four categories:
+
+- **Search** — query messages, files, channels, and users across the workspace
+- **Messaging** — post to channels, reply to threads, send DMs, read channel history
+- **Canvas management** — read and write Slack Canvases (official server only)
+- **User data** — retrieve profiles, email addresses, and custom fields
+
+What the Slack MCP server cannot do varies by implementation, but common limits include: creating or archiving channels, managing workspace settings, accessing private channels without explicit scope, and interacting with Slack's app management surface.
+
+Transport is also a variable. The official Slack MCP server uses streamable HTTP over JSON-RPC 2.0 — no Server-Sent Events (SSE). Community implementations vary, and SSE support matters if you're running the server persistently rather than invoking it per-session.
+
+Explore available Slack MCP server listings on [MyMCPShelf's Communication category](/categories/communication) to see how different implementations are categorized.
+
+---
+
+## The Bot Token vs. User Token Problem
+
+This is the failure mode that trips up the majority of Slack MCP setups, and almost no tutorial addresses it directly.
+
+Slack's permission model distinguishes between two token types:
+
+- **Bot tokens (`xoxb`)** — issued to a Slack app acting on its own behalf
+- **User tokens (`xoxp`)** — issued on behalf of a specific human user who authorized the app
+
+The critical limitation: **`search:read.*` scopes are user-only.** Bot tokens cannot search Slack. This means if you configure any Slack MCP server with a bot token alone, the `slack_search_messages` tool will either be silently omitted from the tool list or return a `not_authed` error when called.
+
+The silence is the worst part. There is no error on startup. The tool simply does not appear.
+
+### Which scopes require which token type
+
+**Bot token (`xoxb`) covers:**
+- `chat:write` — post messages
+- `channels:history` — read public channel history
+- `groups:history` — read private channel history
+- `im:history` — read DM history
+- `mpim:history` — read group DM history
+- `users:read` — basic user info
+- `reactions:write` — add emoji reactions
+
+**User token (`xoxp`) required for:**
+- `search:read.public` — search public messages
+- `search:read.private` — search private messages
+- `search:read.files` — search files
+- `search:read.users` — search users
+- `search:read.mpim` — search group DMs
+- `search:read.im` — search DMs
+
+Any implementation that does not configure both token types will be missing search functionality. The ubie-oss server requires both explicitly and will not start without them. The official Slack MCP server handles this through its OAuth flow. The korotovsky server accepts multiple token types and lets you configure them independently.
+
+**If your agent cannot find the `slack_search_messages` tool, this is the reason.**
+
+---
+
+## The Five Implementations, Compared
+
+| Implementation | Language | Auth Methods | Tools Exposed | Transports | Production Ready |
+|---|---|---|---|---|---|
+| **Official Slack MCP Server** | Hosted | OAuth 2.0 user token (registered app) | Full: search, messaging, canvases, users | Streamable HTTP only | Yes |
+| **korotovsky/slack-mcp-server** | Go | `xoxp`, `xoxb`, `xoxc`, `xoxd` browser tokens | Extensive: conversation history, DMs, smart date-range fetch, per-tool toggles | SSE + stdio + HTTP | With caveats |
+| **ubie-oss/slack-mcp-server** | TypeScript | Bot token + user token (both required) | 9 core tools: list, post, reply, react, history, search, users | stdio + streamable HTTP | Partial |
+| **jtalk22/slack-mcp-server** | TypeScript | Token file (`xoxc`/`xoxd`) or OAuth token | 16 tools with JSON schema validation | stdio + HTTP + hosted HTTP | With caveats |
+| **piekstra/slack-mcp-server** | TypeScript | Bot token only (macOS keychain) | Write-focused, no search | stdio | Personal use only |
+
+### Official Slack MCP Server
+
+The official implementation is hosted and managed by Slack. It requires a registered Slack app — either published internally to your workspace or listed in the Slack Marketplace. The OAuth 2.0 flow is standard, token rotation is handled by Slack's platform, and every action goes through workspace admin approval.
+
+The tradeoff: no SSE transport, no stealth access, and no ability to run it locally without a registered app. If your workspace admin hasn't approved the integration, you cannot use it. That's a feature in regulated environments; it's friction in personal workflows.
+
+Canvas support (read and write) is exclusive to the official implementation. If you are building an agentic workflow that needs to create or update Slack Canvases — collaborative documents embedded in channels — this alone may determine your implementation choice.
+
+The official server is also the only implementation that benefits from Slack's ongoing maintenance and security response. Community servers depend on their maintainers patching against new Slack API changes or deprecations; the official server tracks Slack's own API evolution.
+
+### korotovsky/slack-mcp-server
+
+The korotovsky Go implementation is the most flexible community server. It accepts all four Slack token types — including `xoxc` and `xoxd` browser session tokens — and supports SSE, stdio, and HTTP transports. Individual tools can be enabled or disabled via environment variables (`SLACK_MCP_ENABLED_TOOLS`), which is useful for scoping down an agent's capabilities when you do not need the full tool set.
+
+The smart history fetch is a notable differentiator: unlike the basic `channels:history` pagination available in most implementations, korotovsky supports history retrieval by date range, not just message count. For agents doing temporal analysis — "what did the team discuss about this topic last week" — this is a meaningful capability gap.
+
+The browser token support enables what the project calls "stealth mode" — running a Slack MCP server without creating a Slack app at all, using session tokens extracted from a browser. This is useful for solo developers doing local experiments. The security implications of stealth mode are covered in detail in the security section below.
+
+### ubie-oss/slack-mcp-server
+
+The TypeScript implementation from ubie-oss is the simplest to understand and configure. It exposes nine core tools covering the most common operations: listing channels, posting messages, replying to threads, adding reactions, fetching history, searching, and retrieving user profiles.
+
+It requires both a bot token and a user token, which actually enforces correct scope configuration. There is no canvas support and no SSE transport, but for developers who want a clean TypeScript codebase they can read and modify, it is the easiest starting point.
+
+### jtalk22/slack-mcp-server
+
+This implementation offers 16 tools with JSON schema validation on each, making it better suited for integration with strict type-checking pipelines. It supports Docker deployment out of the box and can run in stdio, HTTP, or hosted HTTP modes. Authentication uses token files or OAuth tokens, with an optional HTTP API key for transport-level security.
+
+### piekstra/slack-mcp-server
+
+Write-focused and macOS-specific, using keychain storage rather than environment variable tokens. Bot token only — no search. Best suited for personal use cases where you need to post to Slack from an AI client and have no need to query history or search.
+
+---
+
+## Decision Framework: Which One for Your Use Case
+
+### Personal productivity with Claude Desktop or Claude.ai
+
+**Use: ubie-oss**
+
+The two-token setup is slightly more configuration upfront but enforces correct scope handling. All nine tools work as documented. The TypeScript codebase is readable if anything breaks. Accept that you will not have canvas access.
+
+### Developer workflow in Cursor or VS Code
+
+**Use: korotovsky**
+
+SSE transport makes it persistent without reinitializing per session. Per-tool env var toggles let you scope it down to read-only for safer IDE use. Configure the SSE API key (`SLACK_MCP_API_KEY`) before exposing it on any port. The Go binary is lightweight and restarts cleanly.
+
+### Production agentic pipeline
+
+**Use: Official Slack MCP Server**
+
+When an AI agent is posting to Slack on your behalf at scale, audit logs matter. The official server routes everything through Slack's platform, generates entries in the admin audit log, and goes through workspace admin approval. Token rotation is managed. There is no `.env` file with a raw `xoxb` token sitting in a repository.
+
+### Quick personal Slack reader with no app registration
+
+**Use: korotovsky in stealth mode**
+
+Understand what you are accepting: browser tokens expire unpredictably, there is no audit trail, and this is not acceptable for any production or regulated environment. For a solo developer reading their own Slack history locally, it works.
+
+> **Note for enterprise and compliance-sensitive teams:** If your organization requires SOC 2 compliance, operates on Slack Enterprise Grid, or has data loss prevention requirements, the official Slack MCP server is the only defensible choice. Community implementations that use raw token files or browser session tokens will not pass a security review.
+
+---
+
+## Security Posture Breakdown
+
+Having built production infrastructure at scale — including systems where token mismanagement has real operational consequences — there are a few Slack MCP security patterns worth examining before you deploy anything beyond a personal experiment.
+
+### Stealth mode and the audit trail gap
+
+The korotovsky server's browser token support (`xoxc`/`xoxd`) enables access to Slack without creating a registered app. From Slack's perspective, these requests look like a user operating a browser — they do not appear in the workspace admin's audit log.
+
+This means your AI agent can post messages, read history, and search your workspace with no admin visibility whatsoever. In a personal context that may be acceptable. In any organizational context, it is a meaningful governance gap. Workspace admins cannot see the integration, cannot revoke it through normal Slack controls, and cannot audit what the agent has accessed. If you are in a SOC 2-audited environment or subject to any data retention or access logging requirements, this gap is not a minor inconvenience — it is a compliance failure waiting to be discovered.
+
+Browser tokens also expire unpredictably. When a `xoxc`/`xoxd` token expires, the agent fails silently unless you have error handling that surfaces the expiry. There is no programmatic rotation path — you extract a new token from a browser session manually. At any reasonable volume of agent usage, this becomes an operational maintenance burden rather than a one-time setup.
+
+The distinction from properly registered OAuth tokens is significant: a `xoxp` user token obtained through a registered Slack app goes through a documented, revocable OAuth flow. Workspace admins can see the app in their installed apps list, can revoke access instantly, and can configure which channels the app can access. None of that applies to browser session tokens.
+
+### Token storage anti-patterns
+
+The majority of Slack MCP setup tutorials instruct you to place tokens directly in a `.env` file. This is the path of least resistance and the fastest way to expose credentials if the repository is ever made public, a developer's machine is compromised, or the file ends up in logs.
+
+For anything beyond a personal local experiment:
+- Use a secrets manager (AWS Secrets Manager, HashiCorp Vault, 1Password Secrets Automation)
+- Use environment-scoped secrets in your CI/CD system rather than committed files
+- Never commit `.env` files containing Slack tokens, even to private repositories
+
+### Scope minimization
+
+Only request the OAuth scopes required by the tools you are actually using. If your agent only needs to search and read — not post — there is no reason to include `chat:write` in your token scopes.
+
+A minimal read-only Slack MCP configuration needs only:
+- `search:read.public`, `search:read.private` (user token)
+- `channels:history`, `groups:history` (bot token)
+- `users:read` (bot token)
+
+Every additional scope is an additional blast radius if a token is compromised.
+
+### Rate limit handling
+
+Slack enforces per-method rate limit tiers. None of the community Slack MCP server implementations include automatic exponential back-off. Under any sustained agent load — particularly search operations, which are Tier 2 — you will hit 429 responses. If your agent does not handle these gracefully, it will fail in ways that are difficult to debug without Slack API logging in place.
+
+The official Slack MCP server does not hide this either. Rate limit handling is the application's responsibility regardless of which implementation you use.
+
+Slack's main rate limit tiers relevant to MCP tool use:
+- **Tier 1** (1 request/minute) — rarely applicable to MCP tools
+- **Tier 2** (20 requests/minute) — search operations; this is where agents get throttled
+- **Tier 3** (50 requests/minute) — most history and messaging operations
+- **Tier 4** (100+ requests/minute) — lightweight metadata calls
+
+Any production agentic pipeline that runs multiple tool calls in sequence — for example, searching messages then retrieving thread history for each result — will hit Tier 2 limits quickly. Build retry logic with exponential back-off before you discover this in production.
+
+### Minimum scope reference table
+
+| Tool | Required Token | Required Scopes |
+|---|---|---|
+| `slack_search_messages` | User (`xoxp`) | `search:read.public`, `search:read.private` |
+| `slack_post_message` | Bot (`xoxb`) | `chat:write` |
+| `slack_get_channel_history` | Bot (`xoxb`) | `channels:history`, `groups:history` |
+| `slack_reply_to_thread` | Bot (`xoxb`) | `chat:write` |
+| `slack_get_users` | Bot (`xoxb`) | `users:read` |
+| `slack_get_user_profiles` | Bot (`xoxb`) | `users:read`, `users:read.email` |
+| `slack_add_reaction` | Bot (`xoxb`) | `reactions:write` |
+| Canvas read | User (`xoxp`) | `canvases:read` |
+| Canvas write | User (`xoxp`) | `canvases:write` |
+
+---
+
+## Setup Walkthrough
+
+### Official Slack MCP Server
+
+**Step 1: Create a Slack app**
+
+Go to [api.slack.com/apps](https://api.slack.com/apps) and create a new app from scratch. Under OAuth & Permissions, add the following scopes based on the tools you intend to use.
+
+Required user token scopes for full functionality:
+```
+search:read.public
+search:read.private
+search:read.files
+search:read.users
+search:read.mpim
+search:read.im
+```
+
+Required bot token scopes:
+```
+chat:write
+channels:history
+groups:history
+im:history
+mpim:history
+users:read
+users:read.email
+canvases:read
+canvases:write
+```
+
+**Step 2: Install to your workspace and get the OAuth token**
+
+Use the OAuth install flow. Your workspace admin will need to approve the app if you have admin approval requirements enabled.
+
+**Step 3: Add to Claude Desktop**
+
+Edit `~/Library/Application Support/Claude/claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "slack": {
+      "url": "https://mcp.slack.com/api/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_USER_OAUTH_TOKEN"
+      }
+    }
+  }
+}
+```
+
+**Step 4: Add to Cursor**
+
+In Cursor Settings → MCP → Add Server:
+
+```json
+{
+  "slack": {
+    "url": "https://mcp.slack.com/api/mcp",
+    "headers": {
+      "Authorization": "Bearer YOUR_USER_OAUTH_TOKEN"
+    }
+  }
+}
+```
+
+---
+
+### ubie-oss/slack-mcp-server (for personal use)
+
+**Step 1: Create a Slack app and get both token types**
+
+Follow the same app creation process above. You need both `SLACK_BOT_TOKEN` (starts with `xoxb-`) and `SLACK_USER_TOKEN` (starts with `xoxp-`).
+
+**Step 2: Configure Claude Desktop**
+
+```json
+{
+  "mcpServers": {
+    "slack": {
+      "command": "npx",
+      "args": ["-y", "@ubie-oss/slack-mcp-server"],
+      "env": {
+        "SLACK_BOT_TOKEN": "xoxb-your-bot-token",
+        "SLACK_USER_TOKEN": "xoxp-your-user-token"
+      }
+    }
+  }
+}
+```
+
+**Step 3: Verify tool availability**
+
+After connecting, ask your AI client to list available tools. You should see `slack_search_messages` in the list. If it is missing, your user token is either not set or is missing the `search:read.*` scopes — refer back to the token scope section above.
+
+**Common failure:** Configuring only `SLACK_BOT_TOKEN` and wondering why search does not work. The bot token alone is insufficient. Both are required.
+
+---
+
+## FAQ
+
+**Which Slack MCP server works with Cursor?**
+
+Both the official Slack MCP server (via HTTP transport) and korotovsky (via SSE transport) work with Cursor. The official server uses a remote URL; korotovsky runs locally and exposes an SSE endpoint. For a persistent local setup in Cursor, korotovsky with SSE is the more reliable configuration.
+
+**How do I use the Slack MCP server with Claude Code?**
+
+Both the official server and ubie-oss work with Claude Code via stdio transport. Add the server configuration to your Claude Code MCP settings using the same JSON structure as the Claude Desktop config. The official server's HTTP endpoint also works if you prefer not to run a local process.
+
+**Can I use the Slack MCP server in VS Code?**
+
+Yes. The configuration follows the same JSON pattern as Cursor. VS Code with Copilot or other MCP-aware extensions can connect using either the HTTP endpoint (official server) or a locally running stdio/SSE process (community servers).
+
+**Why can't my agent search Slack messages?**
+
+Almost certainly a missing user token or missing `search:read.*` scopes on that user token. Bot tokens cannot perform search. See the token scope section above. Check that `SLACK_USER_TOKEN` is set in your environment configuration and that the token was generated with the correct scopes in your Slack app settings.
+
+**Is the Slack MCP server free?**
+
+The open source implementations (korotovsky, ubie-oss, jtalk22, piekstra) are free. The official Slack-hosted MCP server is part of Slack's platform and is available on standard paid Slack plans. Slack's API usage itself operates within standard workspace rate limits at no additional charge.
+
+**What is the difference between the official Slack MCP server and the open source ones?**
+
+Four meaningful differences: (1) Audit logging — the official server generates entries in Slack's admin audit log; community servers do not. (2) Admin visibility — workspace admins can see and revoke official server integrations; they cannot see community server connections using raw tokens. (3) OAuth 2.0 — the official server uses a proper OAuth flow with token rotation; community servers use environment variable tokens you manage manually. (4) Canvas support — only the official server exposes canvas read/write tools.
+
+---
+
+## Conclusion
+
+If you need to pick one default: start with ubie-oss for personal use and the official Slack MCP server for anything touching a team workspace or production workflow. The community implementations offer flexibility — particularly korotovsky's SSE transport and per-tool toggles — but they require you to own token management, rate limit handling, and the absence of an audit trail.
+
+The ecosystem is moving quickly. The official Slack MCP server added canvas support recently, and community implementations continue adding tools. Check the GitHub repositories for current tool lists before finalizing your configuration.
+
+Browse [Slack MCP server listings on MyMCPShelf](/servers?category=communication) to compare verified implementations and find additional communication-layer MCP servers for your stack.
