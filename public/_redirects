@@ -4,3 +4,31 @@ https://mymcpshelf.com/* https://www.mymcpshelf.com/:splat 301!
 
 # Blog post redirect - old long URL to new short URL
 /blog/what-is-mcp-in-ai-complete-guide-to-model-context-protocol /blog/what-is-mcp-in-ai 301
+
+# Removed pages
+/skills /agent-skills 301
+/skills/ /agent-skills 301
+/claude-skills /agent-skills 301
+/claude-skills/ /agent-skills 301
+/category/* / 301
+
+# Blog redirects
+/blog/mcp-client-comparison /mcp-clients 301
+/blog/mcp-client-comparison/ /mcp-clients 301
+
+# Server slug redirects — known renames in new dataset
+/server/flutter-mcp-server /server/flutter 301
+/server/elasticsearch-mcp-server /server/elasticsearch 301
+
+# Server slug redirects — no direct equivalent
+/server/mcp-simple-pubmed / 301
+/server/o3-search-mcp / 301
+/server/erick-wendel-contributions-mcp / 301
+/server/apple-shortcuts-mcp / 301
+/server/aws-documentation-mcp / 301
+/server/mcprb / 301
+/server/xiyan-mcp-server / 301
+/server/atlassian-mcp-server / 301
+/server/modex / 301
+/server/mcp-documentation-server / 301
+/server/mcp-servers-hub / 301

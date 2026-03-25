@@ -12,7 +12,9 @@ export default defineConfig({
   output: 'server',
   adapter: cloudflare(),
   trailingSlash: 'never',  // Disable automatic trailing slashes
-  integrations: [react(), mdx(), sitemap()],
+  integrations: [react(), mdx(), sitemap({
+    filter: (page) => !page.includes('/server/'),
+  })],
 
   vite: {
     plugins: [tailwindcss()]
