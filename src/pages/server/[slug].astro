@@ -14,7 +14,7 @@ import ServerMetadata from '../../components/ServerMetadata.astro';
 import RelatedServers from '../../components/RelatedServers.astro';
 import EmailSignup from '../../components/EmailSignup.astro';
 import GitHubHealthVitals from '../../components/GitHubHealthVitals';
-import { FolderIcon, ToolboxIcon, ComputerIcon, VintageIcon } from '../../components/VintageIcon';
+import Navbar from '../../components/Navbar.astro';
 import { getRelatedServers, getCategoryDisplayName } from '../../utils/serverData.js';
 import { slugify } from '../../utils/slugify.js';
 
@@ -563,6 +563,7 @@ const structuredData = {
   </style>
 </head>
 <body>
+  <Navbar />
   <!-- Dark Mode Toggle -->
   <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
     <svg id="sunIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -582,15 +583,6 @@ const structuredData = {
   </button>
 
   <div class="page-container">
-    <!-- Navigation -->
-    <header class="nav-header">
-      <nav class="nav-links">
-        <a href="/"><FolderIcon client:load size={16} /> Shelf</a>
-        <a href="/agent-skills"><ToolboxIcon client:load size={16} /> Agent Skills</a>
-        <a href="/mcp-clients"><ComputerIcon client:load size={16} /> MCP Clients</a>
-        <a href="/blog"><VintageIcon client:load name="Windows95TextFile" size={16} /> Blog</a>
-      </nav>
-    </header>
 
     <!-- Breadcrumb -->
     <nav class="breadcrumb" aria-label="Breadcrumb">

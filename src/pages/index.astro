@@ -8,6 +8,7 @@ import FeaturedArticles from '../components/FeaturedArticles.astro';
 import FeaturedMcpServers from '../components/FeaturedMcpServers.astro';
 import FAQSection from '../components/FAQSection.astro';
 import ServerGrid from '../components/ServerGrid';
+import Navbar from '../components/Navbar.astro';
 import '../styles/global.css';
 
 const FEATURED_IDS = ['jetski', 'mcp-operator', 'mindsdb', '1panel', 'context7', 'github'];
@@ -54,7 +55,7 @@ if (db) {
     <!-- Plausible Analytics -->
     <script defer data-domain="mymcpshelf.com" src="https://plausible-analytics-ce-production-7165.up.railway.app/js/script.js"></script>
     <!-- End Plausible Analytics -->
-    <style>
+    <style is:global>
         :root {
             --bg-gradient-start: #f9f7f5;
             --bg-gradient-end: #f9f7f5;
@@ -583,6 +584,8 @@ if (db) {
     </style>
 </head>
 <body>
+    <Navbar />
+
     <!-- Dark Mode Toggle -->
     <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
         <svg id="sunIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">

@@ -3,6 +3,7 @@ export const prerender = true;
 // FAQ Page - Full FAQ with all questions
 import '../styles/global.css';
 import { FolderIcon, ToolboxIcon, ComputerIcon, VintageIcon } from '../components/VintageIcon';
+import Navbar from '../components/Navbar.astro';
 import HeaderNewsletter from '../components/HeaderNewsletter.astro';
 
 const faqSections = [
@@ -512,6 +513,7 @@ const faqSections = [
     </style>
 </head>
 <body>
+    <Navbar />
     <!-- Dark Mode Toggle -->
     <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
         <svg id="sunIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -550,13 +552,6 @@ const faqSections = [
                 </div>
             </div>
         </section>
-
-        <nav class="nav-links">
-            <a href="/" class="nav-link"><FolderIcon client:load size={18} /> Shelf</a>
-            <a href="/agent-skills" class="nav-link"><ToolboxIcon client:load size={18} /> Agent Skills</a>
-            <a href="/mcp-clients" class="nav-link"><ComputerIcon client:load size={18} /> MCP Clients</a>
-            <a href="/blog" class="nav-link"><VintageIcon client:load name="Windows95TextFile" size={18} /> Blog</a>
-        </nav>
 
         <!-- Newsletter -->
         <div style="margin-top: 1.5rem; display: flex; justify-content: center;">

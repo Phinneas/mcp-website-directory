@@ -1,7 +1,7 @@
 ---
 export const prerender = true;
 import '../styles/global.css';
-import { VintageIcon } from '../components/VintageIcon';
+import Navbar from '../components/Navbar.astro';
 import HeaderNewsletter from '../components/HeaderNewsletter.astro';
 
 // Import skills data directly - this works with Cloudflare Pages
@@ -264,12 +264,48 @@ const canonicalUrl = 'https://www.mymcpshelf.com/agent-skills';
       font-size: 0.95rem;
     }
 
+    .skill-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .skill-link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--accent-color);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding: 0.4rem 0.75rem;
+      border: 1px solid var(--accent-color);
+      border-radius: 6px;
+      width: fit-content;
+      transition: all 0.2s ease;
+    }
+
+    .skill-link-btn:hover {
+      background: var(--accent-color);
+      color: white;
+    }
+
     .skill-meta {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       color: var(--text-secondary);
+      gap: 0.5rem;
+    }
+
+    .skill-source {
+      background: rgba(var(--primary-rgb), 0.1);
+      color: var(--accent-color);
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
     }
 
     .skill-install {
@@ -283,6 +319,9 @@ const canonicalUrl = 'https://www.mymcpshelf.com/agent-skills';
       font-size: 0.8rem;
       cursor: pointer;
       transition: all 0.2s ease;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .skill-install:hover {
@@ -291,12 +330,8 @@ const canonicalUrl = 'https://www.mymcpshelf.com/agent-skills';
     }
 
     .copy-icon {
-      cursor: pointer;
+      flex-shrink: 0;
       transition: all 0.2s ease;
-    }
-
-    .copy-icon:hover {
-      transform: scale(1.2);
     }
 
     .copied-tooltip {
@@ -358,6 +393,7 @@ const canonicalUrl = 'https://www.mymcpshelf.com/agent-skills';
   </style>
 </head>
 <body>
+  <Navbar />
   <div class="page-container">
     <!-- Hero Section -->
     <section class="hero-section">
@@ -381,14 +417,6 @@ const canonicalUrl = 'https://www.mymcpshelf.com/agent-skills';
         </div>
       </div>
     </section>
-
-    <!-- Navigation -->
-    <nav class="nav-links">
-      <a href="/"><VintageIcon client:load name="WindowsFolder" size={16} /> Shelf</a>
-      <a href="/mcp-clients"><VintageIcon client:load name="Windows95MyComputer" size={16} /> MCP Clients</a>
-      <a href="/blog"><VintageIcon client:load name="Windows95TextFile" size={16} /> Blog</a>
-      <a href="/faq"><VintageIcon client:load name="Windows95Help" size={16} /> FAQ</a>
-    </nav>
 
     <!-- Newsletter -->
     <div style="margin-top: 1.5rem; display: flex; justify-content: center;">
@@ -437,20 +465,28 @@ const canonicalUrl = 'https://www.mymcpshelf.com/agent-skills';
               <span class="skill-category">{skill.category}</span>
             </div>
             <p class="skill-description">
-              {skill.description.length > 150 
-                ? skill.description.substring(0, 150) + '...' 
+              {skill.description.length > 150
+                ? skill.description.substring(0, 150) + '...'
                 : skill.description}
             </p>
-            <div class="skill-meta">
-              <span>{skill.publisher}</span>
+            <div class="skill-actions">
+              {skill.url && (
+                <a href={skill.url} target="_blank" rel="noopener noreferrer" class="skill-link-btn">
+                  🔗 View on GitHub
+                </a>
+              )}
               <div
                 class="skill-install"
                 title="Click to copy install command"
-                onclick="copyToClipboard('{skill.install}')"
+                data-install={skill.install}
               >
                 {skill.install}
                 <span class="copy-icon">📋</span>
               </div>
+            </div>
+            <div class="skill-meta">
+              <span class="skill-publisher">{skill.publisher}</span>
+              {skill.source && <span class="skill-source">{skill.source}</span>}
             </div>
           </div>
         ))}
@@ -520,13 +556,21 @@ const canonicalUrl = 'https://www.mymcpshelf.com/agent-skills';
       }
     }
 
-    // Copy to clipboard
-    function copyToClipboard(text) {
-      navigator.clipboard.writeText(text).then(() => {
-        copiedTooltip.style.display = 'block';
-        setTimeout(() => {
-          copiedTooltip.style.display = 'none';
-        }, 2000);
+    // Copy to clipboard via data-install attribute
+    function setupCopyButtons() {
+      skillsGrid.addEventListener('click', function(e) {
+        const installEl = e.target.closest('.skill-install');
+        if (!installEl) return;
+        const text = installEl.dataset.install;
+        if (!text) return;
+        navigator.clipboard.writeText(text).then(() => {
+          copiedTooltip.style.display = 'block';
+          installEl.textContent = '✅ Copied!';
+          setTimeout(() => {
+            copiedTooltip.style.display = 'none';
+            installEl.innerHTML = text + ' <span class="copy-icon">📋</span>';
+          }, 1500);
+        });
       });
     }
 
@@ -535,6 +579,7 @@ const canonicalUrl = 'https://www.mymcpshelf.com/agent-skills';
 
     // Initialize
     setupCategoryFilters();
+    setupCopyButtons();
     searchSkills(); // Initial filter
   </script>
 </body>

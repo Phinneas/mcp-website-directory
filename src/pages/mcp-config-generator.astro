@@ -6,7 +6,7 @@ export const prerender = true;
  */
 import { staticServers as importedStaticServers } from '../data/staticServers.js';
 import MCPConfigGenerator from '../components/MCPConfigGenerator';
-import { FolderIcon, ToolboxIcon, ComputerIcon, VintageIcon } from '../components/VintageIcon';
+import Navbar from '../components/Navbar.astro';
 import '../styles/global.css';
 
 // Import static servers
@@ -224,18 +224,8 @@ const claudeConfigPath = process.platform === 'darwin'
   </style>
 </head>
 <body>
+  <Navbar />
   <div class="page-container">
-    <!-- Navigation -->
-    <header class="nav-header">
-      <nav class="nav-links">
-        <a href="/"><FolderIcon client:load size={16} /> Shelf</a>
-        <a href="/agent-skills"><ToolboxIcon client:load size={16} /> Agent Skills</a>
-        <a href="/mcp-clients"><ComputerIcon client:load size={16} /> MCP Clients</a>
-        <a href="/blog"><VintageIcon client:load name="Windows95TextFile" size={16} /> Blog</a>
-        <a href="/mcp-config-generator" class="active">⚙️ Config Generator</a>
-      </nav>
-    </header>
-
     <!-- Hero -->
     <div class="hero">
       <h1>MCP Config Generator</h1>

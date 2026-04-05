@@ -5,7 +5,7 @@ export const prerender = true;
  * Allows visitors to submit their MCP servers to the directory
  */
 import MCPServerSubmitForm from '../components/MCPServerSubmitForm';
-import { FolderIcon, ToolboxIcon, ComputerIcon, VintageIcon } from '../components/VintageIcon';
+import Navbar from '../components/Navbar.astro';
 import '../styles/global.css';
 ---
 
@@ -243,18 +243,8 @@ import '../styles/global.css';
   </style>
 </head>
 <body>
+  <Navbar />
   <div class="page-container">
-    <!-- Navigation -->
-    <header class="nav-header">
-      <nav class="nav-links">
-        <a href="/"><FolderIcon client:load size={16} /> Shelf</a>
-        <a href="/agent-skills"><ToolboxIcon client:load size={16} /> Agent Skills</a>
-        <a href="/mcp-clients"><ComputerIcon client:load size={16} /> MCP Clients</a>
-        <a href="/mcp-tools">🛠️ Tools</a>
-        <a href="/submit-server" class="active">📤 Submit Server</a>
-      </nav>
-    </header>
-
     <!-- Hero -->
     <div class="hero">
       <h1>Submit Your MCP Server</h1>

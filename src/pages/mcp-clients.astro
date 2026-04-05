@@ -4,6 +4,7 @@ export const prerender = true;
 import clientsData from '../../clients.json';
 import HeaderNewsletter from '../components/HeaderNewsletter.astro';
 import { SearchIcon, ComputerIcon, FolderIcon, ToolboxIcon, VintageIcon } from '../components/VintageIcon';
+import Navbar from '../components/Navbar.astro';
 import '../styles/global.css';
 ---
 
@@ -381,6 +382,7 @@ import '../styles/global.css';
     </style>
 </head>
 <body>
+    <Navbar />
     <!-- Dark Mode Toggle -->
     <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
         <svg id="sunIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -419,13 +421,6 @@ import '../styles/global.css';
                 </div>
             </div>
         </section>
-
-        <nav class="nav-links">
-            <a href="/" class="nav-link"><FolderIcon client:load size={18} /> Shelf</a>
-            <a href="/agent-skills" class="nav-link"><ToolboxIcon client:load size={18} /> Agent Skills</a>
-            <a href="/blog" class="nav-link"><VintageIcon client:load name="Windows95TextFile" size={18} /> Blog</a>
-            <a href="/faq" class="nav-link"><VintageIcon client:load name="Windows95Help" size={18} /> FAQ</a>
-        </nav>
 
         <div style="margin-top: 2rem; display: flex; justify-content: center;">
             <HeaderNewsletter />

@@ -1,0 +1,110 @@
+---
+const pathname = Astro.url.pathname;
+const isActive = (href: string) => {
+  if (href === '/') return pathname === '/';
+  return pathname.startsWith(href);
+};
+const isHome = isActive('/') && !isActive('/agent-skills') && !isActive('/cursor-skills') && !isActive('/mcp-clients') && !isActive('/blog') && !isActive('/faq') && !isActive('/mcp-tools') && !isActive('/mcp-config-generator') && !isActive('/submit-server');
+---
+<nav class="site-navbar">
+  <div class="navbar-inner">
+    <a href="/" class="navbar-logo">
+      <span class="logo-text">My MCP Shelf</span>
+    </a>
+    <div class="navbar-links">
+      <a href="/" class:list={['nav-link', { active: isHome }]}>Servers</a>
+      <a href="/agent-skills" class:list={['nav-link', { active: isActive('/agent-skills') }]}>Agent Skills</a>
+      <a href="/cursor-skills" class:list={['nav-link', { active: isActive('/cursor-skills') }]}>Cursor Skills</a>
+      <a href="/mcp-clients" class:list={['nav-link', { active: isActive('/mcp-clients') }]}>MCP Clients</a>
+      <a href="/mcp-tools" class:list={['nav-link', { active: isActive('/mcp-tools') }]}>Tools</a>
+      <a href="/mcp-config-generator" class:list={['nav-link', { active: isActive('/mcp-config-generator') }]}>Config Gen</a>
+      <a href="/submit-server" class:list={['nav-link', { active: isActive('/submit-server') }]}>Submit</a>
+      <a href="/blog" class:list={['nav-link', { active: isActive('/blog') }]}>Blog</a>
+      <a href="/faq" class:list={['nav-link', { active: isActive('/faq') }]}>FAQ</a>
+    </div>
+  </div>
+</nav>
+
+<style is:global>
+  .site-navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: #0f172a;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .navbar-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    height: 58px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .navbar-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+
+  .logo-text {
+    color: #ffffff;
+    font-size: 1.05rem;
+    font-weight: 700;
+    font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+    letter-spacing: -0.01em;
+  }
+
+  .navbar-links {
+    display: flex;
+    align-items: center;
+    gap: 0.125rem;
+  }
+
+  .nav-link {
+    color: #94a3b8;
+    text-decoration: none;
+    padding: 0.4rem 0.55rem;
+    border-radius: 6px;
+    font-size: 0.825rem;
+    font-weight: 500;
+    transition: color 0.15s ease, background 0.15s ease;
+    white-space: nowrap;
+  }
+
+  .nav-link:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .nav-link.active {
+    color: #f59e0b;
+    background: rgba(245, 158, 11, 0.12);
+  }
+
+  @media (max-width: 768px) {
+    .navbar-inner {
+      height: auto;
+      padding: 0.75rem 1rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .navbar-links {
+      width: 100%;
+      flex-wrap: wrap;
+      gap: 0.125rem;
+    }
+
+    .nav-link {
+      padding: 0.35rem 0.6rem;
+      font-size: 0.8rem;
+    }
+  }
+</style>
