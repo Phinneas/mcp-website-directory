@@ -21,12 +21,20 @@ jobs:
       - name: Run Weekly Scan
         env:
           TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
-        run: node scripts/tavily/weekly-scan.js
+        run: |
+          if [ -z "$TAVILY_API_KEY" ]; then
+            echo "Error: TAVILY_API_KEY is not set. Skipping scan."
+            exit 1
+          fi
+          node scripts/tavily/weekly-scan.js
       - name: Commit Results
         if: success()
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add data/
+          # Unignore data files if they are ignored by global rules
+          git add data/seen-servers.json
+          git add data/new-servers/*.json || true
+          git add data/monthly-reports/*.md || true
           git diff --staged --quiet || git commit -m "Weekly MCP scan results $(date +'%Y-%m-%d')"
           git push
