@@ -7087,6 +7087,19 @@ export const staticServers = [
       github_url: 'https://github.com/hyprmcp/jetski'
     }
   },
+  {
+    id: 'semiotic',
+    fields: {
+      name: 'Semiotic',
+      description: 'AI-native React data visualization library with a built-in MCP server. Five tools give AI assistants live prop schemas, chart recommendations from real data, server-side SVG rendering, config diagnostics, and bug reporting — no API keys, runs locally via stdio.',
+      author: '@emeeks',
+      category: 'data-analytics',
+      language: 'TypeScript',
+      stars: 0,
+      github_url: 'https://github.com/nteract/semiotic',
+      npm_package: 'semiotic'
+    }
+  },
   // === NEW SERVERS FROM TAVILY SCAN (2026-02-27) ===
   {
     id: 'drawio-mcp',

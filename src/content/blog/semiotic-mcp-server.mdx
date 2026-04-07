@@ -1,0 +1,137 @@
+---
+title: "Shelf Spotlight: Semiotic MCP Server"
+description: "How the Semiotic React data visualization library ships a first-class MCP server that lets AI assistants generate correct chart code without writing React by hand."
+slug: "semiotic-mcp-server"
+date: "2026-04-06T00:00:00.000Z"
+author: "Buzz"
+tags: ["shelf-spotlight", "data-visualization", "mcp-server", "open-source", "react"]
+---
+
+**Bottom line:** Semiotic ships a fully integrated MCP server inside the core library — no separate package, no API keys, no cloud dependency. Your AI assistant gets five tools for schema discovery, chart recommendation, SVG rendering, config validation, and bug reporting. If you build data products with React and want AI to generate accurate visualization code on the first try, Semiotic is the most AI-native chart library available today.
+
+---
+
+Most React visualization libraries are designed for developers who know what they want. You read the docs, you pick your component, you wire up the props. That works fine when you're the one writing the code.
+
+The workflow breaks when an AI assistant is generating the chart code for you. The model doesn't have a reliable mental model of your library's prop contracts, valid accessor shapes, or which components support which rendering modes. The result: hallucinated prop names, broken configurations, multiple rounds of trial-and-error.
+
+Semiotic takes a different approach. The library ships with an MCP server built in — not as an afterthought, but as a first-class citizen of the project architecture. The MCP server gives any compatible AI client structured access to the library's own internals: live prop schemas, ranked chart suggestions from your actual data, SVG rendering, and an anti-pattern detector that catches misconfigurations before they hit the browser.
+
+## What Semiotic Is
+
+Semiotic is a React data visualization library maintained by [Elijah Meeks](https://github.com/emeeks) under the [nteract](https://github.com/nteract) organization. It targets use cases that simpler chart libraries routinely skip: network graphs, Sankey diagrams, streaming real-time data, geographic choropleths, and coordinated cross-filtered dashboards where hovering one chart highlights another.
+
+The library is licensed Apache-2.0 and has been actively shipping through early 2026 — v3.0 through v3.2.x all landed in March 2026, a pace that signals genuine momentum rather than maintenance mode.
+
+What makes Semiotic unusual in the current ecosystem is its explicit design orientation toward AI-assisted development. The repo ships `CLAUDE.md`, `llms.txt`, `.cursorrules`, `.clinerules`, and `.windsurfrules` alongside the source — a machine-readable instruction set for every major AI coding environment. The MCP server is the capstone of that infrastructure.
+
+## The MCP Server
+
+### Installation
+
+The MCP server is bundled inside the main `semiotic` package. You don't install a separate npm package — you just configure your MCP client to run it:
+
+```json
+{
+  "mcpServers": {
+    "semiotic": {
+      "command": "npx",
+      "args": ["semiotic-mcp"]
+    }
+  }
+}
+```
+
+No API keys. No authentication. The server runs locally via stdio, which means your chart data never leaves your machine.
+
+If you're working in an environment that needs HTTP transport instead of stdio — a web-based MCP client or a multi-session setup — that's available too:
+
+```bash
+npx semiotic-mcp --http --port 3001
+```
+
+### The Five Tools
+
+**`getSchema`** — Returns the full prop schema for any Semiotic component. Before asking the AI to render a `ForceDirectedGraph`, it can call `getSchema` to retrieve exactly which props are required, which are optional, and what shapes they expect. This eliminates the most common failure mode in AI-assisted visualization: hallucinated prop names.
+
+**`suggestChart`** — Pass 1–5 rows of your actual data (and optionally an intent string like "show regional revenue trends") and get back ranked chart type recommendations with confidence levels. The output includes example props shaped to your specific data fields. Useful when you're not sure which chart type fits your dataset, or when you want the AI to make a defensible recommendation rather than defaulting to a bar chart.
+
+**`renderChart`** — Accepts a component name and a props object, renders it server-side, and returns an SVG string. This is the core capability that sets Semiotic apart from chart libraries that only generate code: the AI can actually produce a rendered visualization artifact, not just code that might render correctly. Works across all 25+ SVG-renderable component types.
+
+**`diagnoseConfig`** — Validates a chart configuration against a checklist of known failure patterns: empty data arrays, bad accessor values, missing required props, margin overflows, wrong data shapes. Returns a human-readable report with actionable fixes. The same diagnostics engine also powers a `SafeRender` error boundary in development mode, so config problems surface with fix suggestions inline rather than silent render failures.
+
+**`reportIssue`** — Generates a pre-filled GitHub issue URL from a title, body, and optional label array. More of a quality-of-life tool than a core capability, but it reduces friction for users who encounter bugs during AI-assisted development.
+
+### What "AI-Native" Actually Means Here
+
+The phrase "AI-native" gets applied loosely. In Semiotic's case it has specific technical meaning. The library ships a `schema.json` file — machine-readable prop schemas for all components — and the MCP server reads from this file at startup to build its component lookup table. The CHANGELOG includes an explicit entry for schema freshness checks in CI, meaning the schema stays in sync with the actual component implementations as the library evolves.
+
+That's different from a library that documents props in a README and hopes AI models have ingested it correctly.
+
+## Supported Chart Types
+
+Semiotic's renderable component catalog is broad enough to cover most production visualization requirements:
+
+**Standard charts:** LineChart, BarChart, StackedBarChart, ScatterPlot, AreaChart, DonutChart, LikertChart
+
+**Network and hierarchy:** ForceDirectedGraph, SankeyDiagram, TreeMap, DendrogramChart, ArcDiagram
+
+**Geographic:** ChoroplethMap, ProportionalSymbolMap, FlowMap, DistanceCartogram (added v3.1.2)
+
+**Streaming and real-time:** RealtimeLineChart, StreamNetworkFrame with particle effects
+
+**Coordinated views:** LinkedCharts with cross-filtering, ChartContainer with DetailsPanel
+
+The geo support is worth noting specifically. Geographic visualization is an area where most chart libraries either skip it entirely or require a separate plugin ecosystem. Semiotic ships it natively and exposes it through the same MCP tools.
+
+## Practical Use Cases
+
+**Data journalists and analysts** building exploratory dashboards in a Claude or Cursor environment can use `suggestChart` to let the AI recommend chart types from raw data samples, then `renderChart` to produce SVG outputs without any React context.
+
+**Dashboard developers** working in React codebases get an AI assistant that actually understands Semiotic's prop contracts — no more iterating on a `ForceDirectedGraph` configuration because the AI invented a `nodeRadius` prop that doesn't exist.
+
+**AI agents building visual reports** can call `renderChart` to embed SVG visualizations in generated documents or HTML outputs without requiring a browser rendering environment.
+
+**Teams evaluating chart libraries** can run `getSchema` across multiple component types to quickly understand the prop surface before committing to the library.
+
+## What It Doesn't Do
+
+A few honest limitations worth noting before you commit:
+
+The MCP rendering tools produce SVG. If your environment requires PNG or animated output, that requires installing `sharp` (for PNG) and `sharp` + `gifenc` (for animated GIF) separately — those are optional dependencies, not bundled. The `renderChart` MCP tool returns SVG only.
+
+Semiotic is a React library. The MCP server can render charts to SVG server-side without a browser, but if you're building a non-React visualization pipeline, the library's broader ecosystem won't map cleanly to your stack.
+
+The `semiotic-mcp` npm package doesn't exist as a standalone install. The MCP server lives inside the main `semiotic` package. That's fine for most use cases, but it's worth knowing if you're evaluating package footprint.
+
+## Verdict
+
+Semiotic earns a featured spot on the shelf because it solves a real, specific problem — AI-assisted chart generation that actually works — with genuine technical depth rather than a thin API wrapper. The combination of live schema access, server-side rendering, and config diagnostics creates a feedback loop that standard chart libraries can't replicate through documentation alone.
+
+The niche is precise: React-based data products where AI is part of the development workflow. If that describes your environment, Semiotic's MCP integration is worth evaluating before reaching for a more generic visualization library.
+
+**Open source.** Apache-2.0. No API keys.
+
+[Browse more Data & Analytics MCP servers on MyMCPShelf →](/category/data-analytics)
+
+---
+
+## Frequently Asked Questions
+
+**Does Semiotic MCP require an API key or cloud account?**
+No. The server runs entirely locally via stdio transport. No authentication, no external dependencies beyond Node.js.
+
+**What MCP clients work with the Semiotic MCP server?**
+Any MCP-compatible client. The repo ships config files for Claude Desktop, Claude Code, Cursor, Windsurf, and Cline. The HTTP transport mode adds compatibility with web-based MCP clients.
+
+**Can the MCP server render charts without a React app running?**
+Yes. The `renderChart` tool renders SVG server-side using the same rendering engine as the React components. You don't need a browser or a running React application.
+
+**Is Semiotic actively maintained?**
+As of April 2026, yes. Versions 3.0 through 3.2.x all shipped in March 2026. The primary maintainer is Elijah Meeks ([@emeeks](https://github.com/emeeks)) under the nteract organization.
+
+**How does `suggestChart` know which chart type fits my data?**
+You pass 1–5 representative data rows and an optional intent string. The tool analyzes field types, cardinality, and the stated intent to return ranked suggestions with confidence levels and example props shaped to your actual data keys.
+
+**What's the difference between `diagnoseConfig` and just reading the error in the browser?**
+`diagnoseConfig` runs proactively against a config object before rendering and checks against a known list of anti-patterns — empty data, bad accessors, margin overflows, wrong data shapes. In development mode, the same engine powers the `SafeRender` error boundary, which displays actionable fixes alongside the error rather than a generic stack trace.

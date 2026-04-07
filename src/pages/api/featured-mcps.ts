@@ -44,7 +44,7 @@ export const prerender = false;
  * different servers than what visitors already see on the homepage.
  * Mirrors the ALWAYS_FEATURED constant in FeaturedMcpServers.astro.
  */
-const ALWAYS_FEATURED_IDS = new Set(['jetski', 'mcp-operator']);
+const ALWAYS_FEATURED_IDS = new Set(['jetski', 'mcp-operator', 'semiotic']);
 
 /** Pull up to this many servers from Meilisearch for the random pool. */
 const POOL_LIMIT = 500;
