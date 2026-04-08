@@ -798,6 +798,32 @@ export const staticServers = [
     }
   },
   {
+    id: 'playwright-browser-automation',
+    fields: {
+      name: 'Playwright Browser Automation',
+      description: 'Official Microsoft Playwright MCP server enabling LLMs to interact with web pages through structured accessibility snapshots and vision-based screenshots.',
+      author: '@microsoft',
+      category: 'browser-automation',
+      language: 'TypeScript',
+      stars: 28403,
+      github_url: 'https://github.com/microsoft/playwright-mcp',
+      npm_package: '@playwright/mcp'
+    }
+  },
+  {
+    id: 'mastra-docs',
+    fields: {
+      name: 'Mastra Docs',
+      description: 'Official Mastra.ai MCP server providing direct access to complete documentation, code examples, blog posts, and technical guides for the Mastra ecosystem.',
+      author: '@mastra-ai',
+      category: 'development',
+      language: 'TypeScript',
+      stars: 21792,
+      github_url: 'https://github.com/mastra-ai/mastra/tree/HEAD/packages/mcp-docs-server',
+      npm_package: '@mastra/mcp-docs-server'
+    }
+  },
+  {
     id: 'ida-pro-mcp',
     fields: {
       name: 'IDA Pro MCP Server',
