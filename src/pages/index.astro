@@ -34,16 +34,32 @@ let total = 0;
 let featuredServers: MCPServer[] = [];
 
 if (db) {
-  const [firstPage, featured] = await Promise.all([
-    getServersPage(db, { limit: 24 }),
-    getFeaturedServers(db, FEATURED_IDS),
-  ]);
-  initialServers = firstPage.servers;
-  total = firstPage.total;
-  featuredServers = featured;
+  try {
+    const [firstPage, featured] = await Promise.all([
+      getServersPage(db, { limit: 24 }),
+      getFeaturedServers(db, FEATURED_IDS),
+    ]);
+    initialServers = firstPage.servers;
+    total = firstPage.total;
+    
+    // Hybrid approach: Ensure all FEATURED_IDS are present by filling gaps from staticServers
+    const featuredMap = new Map(featured.map(s => [s.id, s]));
+    featuredServers = FEATURED_IDS.map(id => {
+      if (featuredMap.has(id)) return featuredMap.get(id);
+      // Fallback to static data for this specific ID if missing from DB
+      const staticMatch = (staticServers as any[]).find(s => s.id === id);
+      return staticMatch ? staticMatch as MCPServer : null;
+    }).filter(Boolean) as MCPServer[];
+    
+  } catch (error) {
+    console.error('Error fetching servers from DB:', error);
+    // Complete fallback if DB query fails entirely
+    initialServers = (staticServers as any[]).slice(0, 24) as MCPServer[];
+    total = staticServers.length;
+    featuredServers = (staticServers as any[]).filter(s => FEATURED_IDS.includes(s.id)) as MCPServer[];
+  }
 } else {
   // Fallback for static builds or local dev without DB
-  // Use staticServers as the source for initial servers and featured
   initialServers = (staticServers as any[]).slice(0, 24) as MCPServer[];
   total = staticServers.length;
   featuredServers = (staticServers as any[]).filter(s => FEATURED_IDS.includes(s.id)) as MCPServer[];
