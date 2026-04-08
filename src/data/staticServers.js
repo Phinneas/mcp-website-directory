@@ -6,7 +6,7 @@
 export const staticServers = [
   // Official Servers
   {
-    id: 'github-mcp',
+    id: 'github',
     fields: {
       name: 'GitHub MCP Server',
       description: 'Access GitHub repositories, issues, and pull requests directly through MCP. Perfect for AI assistants that need to interact with code repositories.',
@@ -3402,7 +3402,7 @@ export const staticServers = [
     }
   },
   {
-    id: 'mcp-1panel',
+    id: '1panel',
     fields: {
       name: '1Panel MCP',
       description: 'mcp-1panel is an implementation of the Model Context Protocol server for 1Panel server management.',

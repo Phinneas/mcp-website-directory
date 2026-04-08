@@ -12,7 +12,20 @@ import Navbar from '../components/Navbar.astro';
 import { staticServers } from '../data/staticServers.js';
 import '../styles/global.css';
 
-const FEATURED_IDS = ['semiotic', 'jetski', 'mcp-operator', 'mindsdb-mcp', '1panel', 'upstash-context7', 'github'];
+const FEATURED_IDS = [
+  'playwright-browser-automation', 
+  'mastra-docs', 
+  'semiotic', 
+  'specs-workflow-mcp',
+  'jetski', 
+  'mcp-operator', 
+  'mindsdb-mcp', 
+  '1panel', 
+  'upstash-context7', 
+  'github',
+  'drawio-mcp',
+  'cloudflare-mcp-official'
+];
 
 const db = (Astro.locals as any).runtime?.env?.DB as D1Database | undefined;
 

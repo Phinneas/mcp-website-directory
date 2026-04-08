@@ -56,7 +56,20 @@ function getServerUrl(server: MCPServer): string {
 const { servers } = Astro.props;
 
 // Featured servers that should always be included
-const ALWAYS_FEATURED = ['semiotic', 'jetski', 'mcp-operator', 'mindsdb-mcp', '1panel', 'upstash-context7', 'github'];
+const ALWAYS_FEATURED = [
+  'playwright-browser-automation', 
+  'mastra-docs', 
+  'semiotic', 
+  'specs-workflow-mcp',
+  'jetski', 
+  'mcp-operator', 
+  'mindsdb-mcp', 
+  '1panel', 
+  'upstash-context7', 
+  'github',
+  'drawio-mcp',
+  'cloudflare-mcp-official'
+];
 
 // Separate featured and non-featured servers
 const featuredServersMap = new Map();
@@ -106,6 +119,9 @@ try {
         const isMcpOperator = server.id === 'mcp-operator';
         const isJetski = server.id === 'jetski';
         const isSemiotic = server.id === 'semiotic';
+        const isMastra = server.id === 'mastra-docs';
+        const isPlaywright = server.id === 'playwright-browser-automation';
+
         // Default to server detail page, but keep blog links for special servers
         const href = isMcpOperator
           ? '/blog/mcp-operator-kubernetes-native-deployment'
@@ -113,6 +129,10 @@ try {
           ? '/blog/jetski-spotlight'
           : isSemiotic
           ? '/blog/semiotic-mcp-server'
+          : isMastra
+          ? '/server/mastra-docs'
+          : isPlaywright
+          ? '/server/playwright-browser-automation'
           : getServerUrl(server);
         
         return (
