@@ -42,13 +42,15 @@ if (db) {
     initialServers = firstPage.servers;
     total = firstPage.total;
     
-    // Hybrid approach: Ensure all FEATURED_IDS are present by filling gaps from staticServers
+    // Use staticServers as the primary source for featured servers to ensure they match our manual list
     const featuredMap = new Map(featured.map(s => [s.id, s]));
     featuredServers = FEATURED_IDS.map(id => {
-      if (featuredMap.has(id)) return featuredMap.get(id);
-      // Fallback to static data for this specific ID if missing from DB
+      // Prioritize static data for featured targets
       const staticMatch = (staticServers as any[]).find(s => s.id === id);
-      return staticMatch ? staticMatch as MCPServer : null;
+      if (staticMatch) return staticMatch as MCPServer;
+      
+      // Fallback to database if not in static list
+      return featuredMap.get(id) || null;
     }).filter(Boolean) as MCPServer[];
     
   } catch (error) {
