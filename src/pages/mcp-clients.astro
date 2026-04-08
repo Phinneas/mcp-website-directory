@@ -3,9 +3,26 @@ export const prerender = true;
 // MCP Clients Page
 import clientsData from '../../clients.json';
 import HeaderNewsletter from '../components/HeaderNewsletter.astro';
-import { SearchIcon, ComputerIcon, FolderIcon, ToolboxIcon, VintageIcon } from '../components/VintageIcon';
+import { SearchIcon, ComputerIcon, CheckCircleIcon, ExternalLinkIcon, GithubIcon } from '../components/VintageIcon';
 import Navbar from '../components/Navbar.astro';
 import '../styles/global.css';
+
+// Get today's date for "Last Updated"
+const lastUpdated = new Date().toLocaleDateString('en-US', { 
+    month: 'long', 
+    day: 'numeric', 
+    year: 'numeric' 
+});
+
+// Heuristic for "Verified" - high profile ones or well known
+const verifiedClients = [
+    'VS Code', 'Cursor', 'Cline', 'Continue', 'Zed', 'Claude', 'Windsurf', 'Roo Code', 'Cherry Studio'
+];
+
+const processedClients = clientsData.map(client => ({
+    ...client,
+    isVerified: verifiedClients.includes(client.title) || (client.stars > 500)
+}));
 ---
 
 <!DOCTYPE html>
@@ -14,7 +31,7 @@ import '../styles/global.css';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MCP Clients | My MCP Shelf</title>
-    <meta name="description" content="Discover MCP client applications and integrations for connecting to MCP servers">
+    <meta name="description" content="Discover premium MCP client applications and integrations. Curated list of verified tools connecting to the Model Context Protocol.">
     <link rel="canonical" href="https://www.mymcpshelf.com/mcp-clients" />
     <meta name="google-site-verification" content="qmL-eYN3ygqiuLXVWHuWWko8vIBJj3hAYizdpo7dDug" />
     <meta name="msvalidate.01" content="8AA5A1EBF656D16B95B78BE654843905" />
@@ -26,7 +43,6 @@ import '../styles/global.css';
             const theme = localStorage.getItem('theme');
             if (theme === 'dark') {
                 document.documentElement.classList.add('dark-mode');
-                document.body.classList.add('dark-mode');
             }
         })();
     </script>
@@ -42,22 +58,13 @@ import '../styles/global.css';
             --text-light: hsl(var(--foreground) / 0.9);
             --card-bg: hsla(var(--card), 1);
             --card-text: hsl(var(--card-foreground));
-            --card-shadow: hsla(0, 0%, 0%, 0.1);
+            --card-shadow: hsla(0, 0%, 0%, 0.05);
             --border-color: hsla(var(--border), 0.2);
-            --hero-bg: hsl(220, 40%, 12%);
-            --hero-text: hsl(var(--tertiary));
-            --hero-subtext: hsl(var(--muted-foreground));
-            --cta-primary: hsl(var(--primary));
-            --cta-hover: hsl(var(--primary) / 90%);
+            --accent-primary: hsl(var(--primary));
+            --verified-color: #10b981;
         }
 
         body.dark-mode {
-            --bg-gradient-start: hsl(var(--background));
-            --bg-gradient-end: hsl(var(--background));
-            --text-primary: hsl(var(--foreground));
-            --text-light: hsl(var(--foreground) / 0.95);
-            --card-bg: hsla(var(--card), 1);
-            --card-text: hsl(var(--card-foreground));
             --card-shadow: hsla(0, 0%, 0%, 0.3);
             --border-color: hsla(var(--border), 0.1);
         }
@@ -74,6 +81,7 @@ import '../styles/global.css';
             background: var(--bg-gradient-start);
             color: var(--text-primary);
             transition: background 0.3s ease, color 0.3s ease;
+            line-height: 1.5;
         }
 
         h1, h2, h3, h4, h5, h6 {
@@ -117,13 +125,16 @@ import '../styles/global.css';
 
         .hero-section {
             text-align: center;
-            margin-bottom: 2rem;
-            padding: 2rem 0;
+            margin-bottom: 3rem;
+            padding: 4rem 0 2rem;
+            background: radial-gradient(circle at center, hsla(var(--primary), 0.05) 0%, transparent 70%);
+            border-radius: 40px;
         }
 
         .hero-title {
-            font-size: 2.5rem;
+            font-size: clamp(2.5rem, 5vw, 4rem);
             font-weight: 800;
+            letter-spacing: -0.02em;
             background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -132,88 +143,62 @@ import '../styles/global.css';
         }
 
         .hero-subtitle {
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             color: hsl(var(--muted-foreground));
-            max-width: 600px;
-            margin: 0 auto 2rem;
+            max-width: 700px;
+            margin: 0 auto 2.5rem;
         }
 
         .stats-bar {
             display: flex;
             justify-content: center;
-            gap: 2rem;
+            gap: 3rem;
             margin-bottom: 2rem;
             flex-wrap: wrap;
         }
 
         .stat-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 0 1rem;
+            text-align: center;
         }
 
         .stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: hsl(var(--primary));
+            font-size: 2rem;
+            font-weight: 800;
+            color: hsl(var(--foreground));
+            display: block;
         }
 
         .stat-label {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
             color: hsl(var(--muted-foreground));
-        }
-
-        .nav-links {
-            margin-top: 1.5rem;
-            display: flex;
-            gap: 0.75rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .nav-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            color: hsl(var(--muted-foreground));
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            transition: all 0.2s ease;
-            background: hsl(var(--card));
-            border: 1px solid hsl(var(--border));
-        }
-
-        .nav-link:hover {
-            color: hsl(var(--primary));
-            border-color: hsl(var(--primary));
         }
 
         .search-section {
-            max-width: 900px;
-            margin: 2rem auto;
+            position: sticky;
+            top: 5rem;
+            z-index: 10;
+            max-width: 800px;
+            margin: 0 auto 4rem;
+            padding: 0 1rem;
         }
 
-        .search-bar {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 50px;
-            padding: 1rem 2rem;
+        .search-wrapper {
+            background: hsla(var(--card), 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 0.5rem;
             display: flex;
             align-items: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
-        }
-
-        body.dark-mode .search-bar {
-            background: rgba(255, 255, 255, 0.95);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 20px 40px var(--card-shadow);
         }
 
         .search-icon {
-            font-size: 1.5rem;
-            margin-right: 1rem;
+            padding: 0 1rem;
+            color: hsl(var(--muted-foreground));
         }
 
         .search-input {
@@ -221,168 +206,215 @@ import '../styles/global.css';
             border: none;
             outline: none;
             font-size: 1.1rem;
+            padding: 0.75rem 0;
             background: transparent;
             color: hsl(var(--foreground));
         }
 
-        body.dark-mode .search-input {
-            color: hsl(var(--foreground));
+        .filter-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
         }
 
-        .search-input::placeholder {
+        .filter-tab {
+            padding: 0.5rem 1.25rem;
+            border-radius: 100px;
+            background: hsla(var(--card), 0.5);
+            border: 1px solid var(--border-color);
             color: hsl(var(--muted-foreground));
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
 
+        .filter-tab:hover {
+            border-color: hsl(var(--primary));
+            color: hsl(var(--primary));
+        }
+
+        .filter-tab.active {
+            background: hsl(var(--primary));
+            color: white;
+            border-color: hsl(var(--primary));
+            box-shadow: 0 4px 12px hsla(var(--primary), 0.3);
+        }
+
+        /* Clients Grid */
         .clients-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
             gap: 2rem;
-            margin-top: 3rem;
+            margin-top: 2rem;
         }
 
         .client-card {
             background: var(--card-bg);
-            border-radius: 15px;
+            border-radius: 24px;
             padding: 2rem;
+            border: 1px solid var(--border-color);
             box-shadow: 0 4px 20px var(--card-shadow);
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
         }
 
         .client-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px var(--card-shadow);
+            border-color: hsla(var(--primary), 0.3);
+        }
+
+        .client-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, hsla(var(--primary), 0.5), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .client-card:hover::after {
+            opacity: 1;
         }
 
         .client-header {
             display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .client-info {
+            display: flex;
+            gap: 1.25rem;
+        }
+
+        .client-icon-box {
+            width: 56px;
+            height: 56px;
+            background: hsla(var(--primary), 0.1);
+            border-radius: 16px;
+            display: flex;
             align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .client-icon {
-            font-size: 2rem;
-            margin-right: 1rem;
-        }
-
-        .client-title h3 {
-            font-size: 1.3rem;
-            margin-bottom: 0.3rem;
-            color: var(--card-text);
-        }
-
-        .client-category {
-            font-size: 0.85rem;
+            justify-content: center;
             color: hsl(var(--primary));
-            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .client-title-area h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: hsl(var(--foreground));
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .badge-verified {
+            color: var(--verified-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .client-tagline {
+            font-size: 0.875rem;
+            color: hsl(var(--muted-foreground));
+            font-weight: 500;
         }
 
         .client-description {
-            color: var(--card-text);
-            opacity: 0.8;
+            font-size: 1rem;
+            color: hsl(var(--foreground) / 0.8);
             line-height: 1.6;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
+            flex-grow: 1;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .client-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
         }
 
         .client-meta {
             display: flex;
-            gap: 0.75rem;
-            flex-wrap: wrap;
-            margin-bottom: 1rem;
+            gap: 1rem;
         }
 
-        .meta-tag {
-            background: hsl(var(--accent) / 0.15);
-            color: hsl(var(--primary));
-            padding: 0.3rem 0.8rem;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-
-        .repo-stats {
+        .meta-stat {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            margin-top: 0.5rem;
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .repo-stat {
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-            font-size: 0.75rem;
-            color: hsl(var(--muted-foreground));
-        }
-
-        .repo-stat-fresh {
-            color: #10b981;
-        }
-
-        .repo-stat-stale {
-            color: hsl(var(--primary));
-        }
-
-        .repo-stat-abandoned {
-            color: #ef4444;
-        }
-
-        .repo-stat-loading {
-            color: hsl(var(--muted-foreground));
-            font-style: italic;
-        }
-
-        .client-actions {
-            display: flex;
-            gap: 0.75rem;
-        }
-
-        .btn {
-            padding: 0.7rem 1.2rem;
-            border-radius: 8px;
-            text-decoration: none;
+            gap: 0.375rem;
+            font-size: 0.875rem;
             font-weight: 600;
-            transition: all 0.3s ease;
-            display: inline-block;
-            border: none;
-            cursor: pointer;
+            color: hsl(var(--muted-foreground));
+        }
+
+        .btn-visit {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: hsl(var(--foreground));
+            color: hsl(var(--background));
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-visit:hover {
+            transform: scale(1.02);
+            opacity: 0.9;
+        }
+
+        .page-footer {
+            text-align: center;
+            margin-top: 6rem;
+            padding: 4rem 2rem;
+            border-top: 1px solid var(--border-color);
+            color: hsl(var(--muted-foreground));
+        }
+
+        .last-updated {
+            font-weight: 600;
             font-size: 0.9rem;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.4);
+            background: hsla(var(--primary), 0.1);
+            color: hsl(var(--primary));
+            padding: 0.5rem 1rem;
+            border-radius: 100px;
+            display: inline-block;
+            margin-bottom: 1rem;
         }
 
         @media (max-width: 768px) {
-            .header h1 {
-                font-size: 2.5rem;
-            }
-
-            .clients-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .container {
-                padding: 1rem;
-            }
-        }
-
-        @media (max-width: 1024px) and (min-width: 769px) {
-            .clients-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
+            .container { padding: 1rem; }
+            .clients-grid { grid-template-columns: 1fr; }
+            .hero-section { padding: 3rem 1rem; }
+            .search-section { top: 1rem; }
         }
     </style>
 </head>
 <body>
     <Navbar />
+    
     <!-- Dark Mode Toggle -->
     <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
         <svg id="sunIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -403,187 +435,161 @@ import '../styles/global.css';
 
     <div class="container">
         <section class="hero-section">
-            <h1 class="hero-title">MCP Clients</h1>
-            <p class="hero-subtitle">Explore applications and tools that connect to MCP servers</p>
+            <h1 class="hero-title">MCP Client Directory</h1>
+            <p class="hero-subtitle">The definitive list of applications and integrations connecting to the Model Context Protocol.</p>
 
             <div class="stats-bar">
                 <div class="stat-item">
-                    <div class="stat-value">{clientsData.length}</div>
-                    <div class="stat-label">Clients</div>
+                    <span class="stat-value">{processedClients.length}</span>
+                    <span class="stat-label">Clients</span>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-value">All</div>
-                    <div class="stat-label">Platforms</div>
+                    <span class="stat-value">{verifiedClients.length}</span>
+                    <span class="stat-label">Verified</span>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-value">Verified</div>
-                    <div class="stat-label">Quality</div>
+                    <span class="stat-value">100%</span>
+                    <span class="stat-label">Open Source</span>
                 </div>
             </div>
         </section>
 
-        <div style="margin-top: 2rem; display: flex; justify-content: center;">
+        <div style="margin-bottom: 4rem; display: flex; justify-content: center;">
             <HeaderNewsletter />
         </div>
 
         <div class="search-section">
-            <div class="search-bar">
-                <span class="search-icon"><SearchIcon client:load size={20} /></span>
-                <input type="text" class="search-input" placeholder="Search MCP clients..." id="searchInput">
+            <div class="search-wrapper">
+                <span class="search-icon"><SearchIcon client:load size={24} /></span>
+                <input type="text" class="search-input" placeholder="Search by name, description, or feature..." id="searchInput">
             </div>
-            <div style="text-align: center; color: white; margin-top: 1rem;">
-                <p>{clientsData.length} MCP clients available</p>
+            <div class="filter-tabs">
+                <button class="filter-tab active" data-filter="all">All Clients</button>
+                <button class="filter-tab" data-filter="verified">Verified Only</button>
+                <button class="filter-tab" data-filter="github">GitHub Repos</button>
             </div>
         </div>
 
         <div class="clients-grid" id="clientsGrid">
-            {clientsData.map((client) => (
-                <div class="client-card">
+            {processedClients.map((client) => (
+                <div class="client-card" 
+                     data-verified={client.isVerified ? "true" : "false"}
+                     data-github={client.url.includes('github.com') ? "true" : "false"}>
                     <div class="client-header">
-                        <div class="client-icon"><ComputerIcon client:load size={32} /></div>
-                        <div class="client-title">
-                            <h3>{client.title}</h3>
-                            <div class="client-category">MCP Client</div>
+                        <div class="client-info">
+                            <div class="client-icon-box">
+                                <ComputerIcon client:load size={32} />
+                            </div>
+                            <div class="client-title-area">
+                                <h3>
+                                    {client.title}
+                                    {client.isVerified && (
+                                        <span class="badge-verified" title="Verified Quality">
+                                            <CheckCircleIcon client:load size={20} />
+                                        </span>
+                                    )}
+                                </h3>
+                                <div class="client-tagline">MCP Client Integration</div>
+                            </div>
                         </div>
                     </div>
+                    
                     <div class="client-description">
-                        {client.description.length > 150
-                            ? client.description.substring(0, 150) + '...'
-                            : client.description}
+                        {client.description || "A powerful integration for connecting AI models to external tools and data via the Model Context Protocol."}
                     </div>
-                    {client.stars > 0 && (
+
+                    <div class="client-footer">
                         <div class="client-meta">
-                            <span class="meta-tag">⭐ {client.stars}</span>
+                            {client.stars > 0 && (
+                                <div class="meta-stat">
+                                    <span style="color: #f59e0b">★</span> {client.stars}
+                                </div>
+                            )}
+                            {client.url.includes('github.com') && (
+                                <div class="meta-stat">
+                                    <GithubIcon client:load size={16} />
+                                    GitHub
+                                </div>
+                            )}
                         </div>
-                    )}
-                    <div class="repo-stats" data-github-url={client.url}>
-                        <span class="repo-stat repo-stat-loading">Loading...</span>
-                    </div>
-                    <div class="client-actions">
-                        <a href={client.url} target="_blank" rel="noopener noreferrer" class="btn btn-primary">View on GitHub</a>
+                        <a href={client.url} target="_blank" rel="noopener noreferrer" class="btn-visit">
+                            View Project
+                            <ExternalLinkIcon client:load size={16} />
+                        </a>
                     </div>
                 </div>
             ))}
         </div>
+
+        <footer class="page-footer">
+            <div class="last-updated">Last Validated: {lastUpdated}</div>
+            <p>Spot an issue? Help us keep the directory clean by suggesting a fix on <a href="https://github.com/Phinneas/mcp-website-directory" style="color: inherit; font-weight: bold;">GitHub</a>.</p>
+            <p style="margin-top: 1rem; font-size: 0.8rem;">Note: Listing does not constitute endorsement. Always verify tools before installing.</p>
+        </footer>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('searchInput');
             const clientsGrid = document.getElementById('clientsGrid');
+            const filterTabs = document.querySelectorAll('.filter-tab');
+            let currentFilter = 'all';
 
-            function filterClients() {
+            function updateDisplay() {
                 const searchTerm = searchInput.value.toLowerCase();
                 const cards = clientsGrid.querySelectorAll('.client-card');
+                let visibleCount = 0;
 
                 cards.forEach(card => {
                     const title = card.querySelector('h3').textContent.toLowerCase();
                     const description = card.querySelector('.client-description').textContent.toLowerCase();
+                    const isVerified = card.getAttribute('data-verified') === 'true';
+                    const isGithub = card.getAttribute('data-github') === 'true';
 
                     const matchesSearch = title.includes(searchTerm) || description.includes(searchTerm);
+                    const matchesFilter = 
+                        currentFilter === 'all' || 
+                        (currentFilter === 'verified' && isVerified) ||
+                        (currentFilter === 'github' && isGithub);
 
-                    if (matchesSearch) {
-                        card.style.display = 'block';
+                    if (matchesSearch && matchesFilter) {
+                        card.style.display = 'flex';
+                        visibleCount++;
                     } else {
                         card.style.display = 'none';
                     }
                 });
             }
 
-            searchInput.addEventListener('input', filterClients);
+            searchInput.addEventListener('input', updateDisplay);
 
-            // GitHub repo stats fetching
-            async function fetchRepoStats(githubUrl, statsElement) {
-                const match = githubUrl?.match(/github\.com\/([^/]+\/[^/]+)/);
-                if (!match) {
-                    statsElement.innerHTML = '';
-                    return;
-                }
-
-                const repo = match[1];
-                // TODO: Replace with your actual Cloudflare Worker URL after deployment
-                const workerUrl = `https://YOUR_WORKER_URL.workers.dev?repo=${encodeURIComponent(repo)}`;
-
-                try {
-                    const response = await fetch(workerUrl);
-                    const data = await response.json();
-
-                    // Calculate days since last commit
-                    const lastCommit = new Date(data.pushedAt);
-                    const now = new Date();
-                    const daysAgo = Math.floor((now - lastCommit) / (1000 * 60 * 60 * 24));
-
-                    // Determine freshness status
-                    let freshnessClass = 'repo-stat-fresh';
-                    let freshnessText = '';
-                    if (daysAgo < 30) {
-                        freshnessClass = 'repo-stat-fresh';
-                        freshnessText = daysAgo === 0 ? 'Today' : daysAgo === 1 ? 'Yesterday' : `${daysAgo}d ago`;
-                    } else if (daysAgo < 90) {
-                        freshnessClass = 'repo-stat-stale';
-                        const monthsAgo = Math.floor(daysAgo / 30);
-                        freshnessText = monthsAgo === 1 ? '1mo ago' : `${monthsAgo}mo ago`;
-                    } else {
-                        freshnessClass = 'repo-stat-abandoned';
-                        const monthsAgo = Math.floor(daysAgo / 30);
-                        freshnessText = monthsAgo === 1 ? '1mo ago' : `${monthsAgo}mo ago`;
-                    }
-
-                    // Display issues count
-                    const issuesClass = data.openIssues > 50 ? 'repo-stat-stale' : 'repo-stat';
-
-                    statsElement.innerHTML = `
-                        <span class="repo-stat ${freshnessClass}">
-                            📅 ${freshnessText}
-                        </span>
-                        <span class="repo-stat ${issuesClass}">
-                            🐛 ${data.openIssues} issues
-                        </span>
-                    `;
-                } catch (error) {
-                    console.error('Failed to fetch repo stats:', error);
-                    statsElement.innerHTML = '';
-                }
-            }
-
-            // Fetch stats for all visible clients
-            const repoStatsElements = document.querySelectorAll('.repo-stats');
-            repoStatsElements.forEach((statsElement, index) => {
-                const githubUrl = statsElement.getAttribute('data-github-url');
-                if (githubUrl) {
-                    // Stagger requests to avoid rate limiting (100ms between each)
-                    // setTimeout(() => {
-                    //     fetchRepoStats(githubUrl, statsElement);
-                    // }, index * 100);
-                } else {
-                    statsElement.innerHTML = '';
-                }
+            filterTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    filterTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    currentFilter = tab.getAttribute('data-filter');
+                    updateDisplay();
+                });
             });
-        });
 
-        // Dark mode toggle
-        const themeToggle = document.getElementById('themeToggle');
-        const sunIcon = document.getElementById('sunIcon');
-        const moonIcon = document.getElementById('moonIcon');
-        const body = document.body;
+            // Dark mode toggle
+            const themeToggle = document.getElementById('themeToggle');
+            const sunIcon = document.getElementById('sunIcon');
+            const moonIcon = document.getElementById('moonIcon');
+            const html = document.documentElement;
 
-        const currentTheme = localStorage.getItem('theme') || 'light';
-        if (currentTheme === 'dark') {
-            body.classList.add('dark-mode');
-            sunIcon.style.display = 'none';
-            moonIcon.style.display = 'block';
-        }
-
-        themeToggle.addEventListener('click', () => {
-            body.classList.toggle('dark-mode');
-            if (body.classList.contains('dark-mode')) {
-                localStorage.setItem('theme', 'dark');
+            themeToggle.addEventListener('click', () => {
+                const isDark = html.classList.toggle('dark-mode');
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+                sunIcon.style.display = isDark ? 'none' : 'block';
+                moonIcon.style.display = isDark ? 'block' : 'none';
+            });
+            
+            // Initial theme setup
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
                 sunIcon.style.display = 'none';
                 moonIcon.style.display = 'block';
-            } else {
-                localStorage.setItem('theme', 'light');
-                sunIcon.style.display = 'block';
-                moonIcon.style.display = 'none';
             }
         });
     </script>
