@@ -9,9 +9,10 @@ import FeaturedMcpServers from '../components/FeaturedMcpServers.astro';
 import FAQSection from '../components/FAQSection.astro';
 import ServerGrid from '../components/ServerGrid';
 import Navbar from '../components/Navbar.astro';
+import { staticServers } from '../data/staticServers.js';
 import '../styles/global.css';
 
-const FEATURED_IDS = ['semiotic', 'jetski', 'mcp-operator', 'mindsdb', '1panel', 'context7', 'github'];
+const FEATURED_IDS = ['semiotic', 'jetski', 'mcp-operator', 'mindsdb-mcp', '1panel', 'upstash-context7', 'github'];
 
 const db = (Astro.locals as any).runtime?.env?.DB as D1Database | undefined;
 
@@ -27,6 +28,12 @@ if (db) {
   initialServers = firstPage.servers;
   total = firstPage.total;
   featuredServers = featured;
+} else {
+  // Fallback for static builds or local dev without DB
+  // Use staticServers as the source for initial servers and featured
+  initialServers = (staticServers as any[]).slice(0, 24) as MCPServer[];
+  total = staticServers.length;
+  featuredServers = (staticServers as any[]).filter(s => FEATURED_IDS.includes(s.id)) as MCPServer[];
 }
 ---
 
