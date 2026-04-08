@@ -26,7 +26,7 @@ export const ComputerIcon = (props: Omit<VintageIconProps, 'name'>) =>
   <VintageIcon name="Windows95MyComputer" {...props} />;
 
 export const GlobeIcon = (props: Omit<VintageIconProps, 'name'>) =>
-  <VintageIcon name="NetscapeGlobe" {...props} />;
+  <VintageIcon name="NetscapeHome" {...props} />;
 
 export const ToolboxIcon = (props: Omit<VintageIconProps, 'name'>) =>
   <VintageIcon name="VisualStudioWRENCH" {...props} />;
@@ -45,3 +45,12 @@ export const SearchIcon = (props: Omit<VintageIconProps, 'name'>) =>
 
 export const HelpIcon = (props: Omit<VintageIconProps, 'name'>) =>
   <VintageIcon name="Windows95Help" {...props} />;
+
+export const GithubIcon = (props: Omit<VintageIconProps, 'name'>) =>
+  <VintageIcon name="WindowsBriefcase" {...props} />;
+
+export const ExternalLinkIcon = (props: Omit<VintageIconProps, 'name'>) =>
+  <VintageIcon name="Windows95Shortcut" {...props} />;
+
+export const CheckCircleIcon = (props: Omit<VintageIconProps, 'name'>) =>
+  <VintageIcon name="SecurityEssentials" {...props} />; // Reusing Security for Check
