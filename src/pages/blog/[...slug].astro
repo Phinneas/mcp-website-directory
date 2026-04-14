@@ -329,7 +329,7 @@ const { Content } = await post.render();
                 <h1>{post.data.title}</h1>
                 
                 <div class="article-meta">
-                    <p>By {post.data.author} • {post.data.date.toLocaleDateString('en-US', {
+                    <p>By {post.data.author} • {new Date(post.data.pubDate).toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'long', 
                         day: 'numeric'
