@@ -27,7 +27,7 @@ pnpm-debug.log*
 .idea/
 
 # Runtime data
-data/
+data/*.backup
 
 # Temporary/helper files
 *.backup
