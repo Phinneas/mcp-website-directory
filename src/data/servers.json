@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-14T02:10:41.720055+00:00",
+  "generated_at": "2026-04-14T02:16:07.376909+00:00",
   "count": 250,
   "servers": [
     {
@@ -14,10 +14,10 @@
         "github_url": "https://github.com/07freedom/mcp-server-mteam",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.466926+00:00",
+        "updated": "2026-04-14T02:16:07.100709+00:00",
         "logoUrl": "https://github.com/07freedom.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.466936+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.100718+00:00"
       }
     },
     {
@@ -32,10 +32,10 @@
         "github_url": "https://github.com/0ics-srls/ui-ticket-mcp_public",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.466972+00:00",
+        "updated": "2026-04-14T02:16:07.100737+00:00",
         "logoUrl": "https://github.com/0ics-srls.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.466975+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.100740+00:00"
       }
     },
     {
@@ -50,10 +50,10 @@
         "github_url": "https://github.com/0latency-ai/0latency",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.467016+00:00",
+        "updated": "2026-04-14T02:16:07.100778+00:00",
         "logoUrl": "https://github.com/0latency-ai.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.467018+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.100780+00:00"
       }
     },
     {
@@ -68,10 +68,10 @@
         "github_url": "https://github.com/0nork/0nmcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.467043+00:00",
+        "updated": "2026-04-14T02:16:07.100804+00:00",
         "logoUrl": "https://github.com/0nork.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.467045+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.100826+00:00"
       }
     },
     {
@@ -86,10 +86,10 @@
         "github_url": "https://github.com/ozgureyilmaz/polymarket-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.467084+00:00",
+        "updated": "2026-04-14T02:16:07.100864+00:00",
         "logoUrl": "https://github.com/ozgureyilmaz.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.467087+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.100866+00:00"
       }
     },
     {
@@ -104,10 +104,10 @@
         "github_url": "https://github.com/0xbeedao/mcp-taskwarrior",
         "npm_package": "@0xbeedao/mcp-taskwarrior",
         "downloads": 4373,
-        "updated": "2026-04-14T02:10:41.467115+00:00",
+        "updated": "2026-04-14T02:16:07.100893+00:00",
         "logoUrl": "https://github.com/0xbeedao.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.467117+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.100895+00:00"
       }
     },
     {
@@ -122,10 +122,10 @@
         "github_url": "https://github.com/0xbruno/mcpexec",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.467155+00:00",
+        "updated": "2026-04-14T02:16:07.100930+00:00",
         "logoUrl": "https://github.com/0xbruno.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.467157+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.100932+00:00"
       }
     },
     {
@@ -140,10 +140,10 @@
         "github_url": "https://github.com/0xbuz3r/emba-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.467190+00:00",
+        "updated": "2026-04-14T02:16:07.100968+00:00",
         "logoUrl": "https://github.com/0xbuz3r.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.467192+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.100970+00:00"
       }
     },
     {
@@ -158,10 +158,10 @@
         "github_url": "https://github.com/0xcjt/templonixlite",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.467229+00:00",
+        "updated": "2026-04-14T02:16:07.101005+00:00",
         "logoUrl": "https://github.com/0xcjt.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.467231+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.101007+00:00"
       }
     },
     {
@@ -176,10 +176,10 @@
         "github_url": "https://github.com/deanpluse/sui-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.467254+00:00",
+        "updated": "2026-04-14T02:16:07.101029+00:00",
         "logoUrl": "https://github.com/deanpluse.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.467255+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.101031+00:00"
       }
     },
     {
@@ -194,10 +194,10 @@
         "github_url": "https://github.com/0xgval/evm-mcp-tools",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.467307+00:00",
+        "updated": "2026-04-14T02:16:07.101078+00:00",
         "logoUrl": "https://github.com/0xgval.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.467308+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.101080+00:00"
       }
     },
     {
@@ -212,10 +212,10 @@
         "github_url": "https://github.com/0xgval/twitter-x-mcp-server",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.467363+00:00",
+        "updated": "2026-04-14T02:16:07.101130+00:00",
         "logoUrl": "https://github.com/0xgval.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.467365+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.101132+00:00"
       }
     },
     {
@@ -230,10 +230,10 @@
         "github_url": "https://github.com/0xhackerfren/frida-game-hacking-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.467393+00:00",
+        "updated": "2026-04-14T02:16:07.101158+00:00",
         "logoUrl": "https://github.com/0xhackerfren.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.467394+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.101160+00:00"
       }
     },
     {
@@ -248,10 +248,10 @@
         "github_url": "https://github.com/0xhijo/mcp_twitter",
         "npm_package": "mcp_twitter",
         "downloads": 517,
-        "updated": "2026-04-14T02:10:41.467445+00:00",
+        "updated": "2026-04-14T02:16:07.101206+00:00",
         "logoUrl": "https://github.com/0xhijo.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.467447+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.101207+00:00"
       }
     },
     {
@@ -266,10 +266,10 @@
         "github_url": "https://github.com/0xkoda/eth-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.467477+00:00",
+        "updated": "2026-04-14T02:16:07.101232+00:00",
         "logoUrl": "https://github.com/0xkoda.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.467479+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.101234+00:00"
       }
     },
     {
@@ -284,10 +284,10 @@
         "github_url": "https://github.com/0xkoda/mcp-rust-docs",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.467500+00:00",
+        "updated": "2026-04-14T02:16:07.101258+00:00",
         "logoUrl": "https://github.com/0xkoda.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.467502+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.101260+00:00"
       }
     },
     {
@@ -302,10 +302,10 @@
         "github_url": "https://github.com/0x-professor/ctf-time-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.467555+00:00",
+        "updated": "2026-04-14T02:16:07.101307+00:00",
         "logoUrl": "https://github.com/0x-professor.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.467556+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.101309+00:00"
       }
     },
     {
@@ -320,10 +320,10 @@
         "github_url": "https://github.com/0x-professor/uianalyzermcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.467593+00:00",
+        "updated": "2026-04-14T02:16:07.101341+00:00",
         "logoUrl": "https://github.com/0x-professor.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.467595+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.101343+00:00"
       }
     },
     {
@@ -338,10 +338,10 @@
         "github_url": "https://github.com/0xrag/mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.467618+00:00",
+        "updated": "2026-04-14T02:16:07.101366+00:00",
         "logoUrl": "https://github.com/0xrag.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.467620+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.101368+00:00"
       }
     },
     {
@@ -356,10 +356,10 @@
         "github_url": "https://github.com/0xshellming/mcp-summarizer",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.467642+00:00",
+        "updated": "2026-04-14T02:16:07.101390+00:00",
         "logoUrl": "https://github.com/0xshellming.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.467644+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.101392+00:00"
       }
     },
     {
@@ -374,10 +374,10 @@
         "github_url": "https://github.com/1052666/wechat-mcp-server",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.467679+00:00",
+        "updated": "2026-04-14T02:16:07.101425+00:00",
         "logoUrl": "https://github.com/1052666.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.467681+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.101429+00:00"
       }
     },
     {
@@ -392,10 +392,10 @@
         "github_url": "https://github.com/1193776794/frida-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.467709+00:00",
+        "updated": "2026-04-14T02:16:07.101456+00:00",
         "logoUrl": "https://github.com/1193776794.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.467711+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.101457+00:00"
       }
     },
     {
@@ -410,7 +410,7 @@
         "github_url": "https://www.123elec.com",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.467745+00:00",
+        "updated": "2026-04-14T02:16:07.101491+00:00",
         "logoUrl": null,
         "logoSource": null,
         "logoCachedAt": null
@@ -428,10 +428,10 @@
         "github_url": "https://github.com/13rac1/videocapture-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.467795+00:00",
+        "updated": "2026-04-14T02:16:07.101535+00:00",
         "logoUrl": "https://github.com/13rac1.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.467798+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.101537+00:00"
       }
     },
     {
@@ -446,10 +446,10 @@
         "github_url": "https://github.com/156554395/doubao-image-video-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.467836+00:00",
+        "updated": "2026-04-14T02:16:07.101570+00:00",
         "logoUrl": "https://github.com/156554395.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.467838+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.101572+00:00"
       }
     },
     {
@@ -464,10 +464,10 @@
         "github_url": "https://github.com/1595901624/qrcode-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.467858+00:00",
+        "updated": "2026-04-14T02:16:07.101593+00:00",
         "logoUrl": "https://github.com/1595901624.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.467860+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.101595+00:00"
       }
     },
     {
@@ -482,10 +482,10 @@
         "github_url": "https://github.com/1broseidon/mcp-jira-server",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.467891+00:00",
+        "updated": "2026-04-14T02:16:07.101624+00:00",
         "logoUrl": "https://github.com/1broseidon.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.467893+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.101626+00:00"
       }
     },
     {
@@ -500,10 +500,10 @@
         "github_url": "https://github.com/1lystore/1ly-mcp-server",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.467930+00:00",
+        "updated": "2026-04-14T02:16:07.101663+00:00",
         "logoUrl": "https://github.com/1lystore.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.467932+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.101665+00:00"
       }
     },
     {
@@ -518,10 +518,10 @@
         "github_url": "https://github.com/1mcp-app/agent",
         "npm_package": "@1mcp/agent",
         "downloads": 12174,
-        "updated": "2026-04-14T02:10:41.467986+00:00",
+        "updated": "2026-04-14T02:16:07.101693+00:00",
         "logoUrl": "https://github.com/1mcp-app.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.467988+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.101695+00:00"
       }
     },
     {
@@ -536,10 +536,10 @@
         "github_url": "https://github.com/1panel-dev/mcp-1panel",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.467998+00:00",
+        "updated": "2026-04-14T02:16:07.101704+00:00",
         "logoUrl": "https://github.com/1panel-dev.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.467999+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.101706+00:00"
       }
     },
     {
@@ -554,10 +554,10 @@
         "github_url": "https://github.com/1pitaph/su_mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.468023+00:00",
+        "updated": "2026-04-14T02:16:07.101728+00:00",
         "logoUrl": "https://github.com/1pitaph.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.468025+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.101729+00:00"
       }
     },
     {
@@ -572,10 +572,10 @@
         "github_url": "https://github.com/1rb/mongo-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.468033+00:00",
+        "updated": "2026-04-14T02:16:07.101738+00:00",
         "logoUrl": "https://github.com/1rb.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.468035+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.101740+00:00"
       }
     },
     {
@@ -590,10 +590,10 @@
         "github_url": "https://github.com/1shin-7/ya-frida-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.468063+00:00",
+        "updated": "2026-04-14T02:16:07.101767+00:00",
         "logoUrl": "https://github.com/1shin-7.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.468064+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.101769+00:00"
       }
     },
     {
@@ -608,7 +608,7 @@
         "github_url": "https://www.1stdibs.com",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.468096+00:00",
+        "updated": "2026-04-14T02:16:07.101798+00:00",
         "logoUrl": null,
         "logoSource": null,
         "logoCachedAt": null
@@ -626,10 +626,10 @@
         "github_url": "https://github.com/1yhy/oss-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.468131+00:00",
+        "updated": "2026-04-14T02:16:07.101843+00:00",
         "logoUrl": "https://github.com/1yhy.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.468133+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.101846+00:00"
       }
     },
     {
@@ -644,10 +644,10 @@
         "github_url": "https://github.com/1yhy/figma-context-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.468161+00:00",
+        "updated": "2026-04-14T02:16:07.101878+00:00",
         "logoUrl": "https://github.com/1yhy.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.468162+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.101880+00:00"
       }
     },
     {
@@ -662,10 +662,10 @@
         "github_url": "https://github.com/2051project/cryptoweather",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.468196+00:00",
+        "updated": "2026-04-14T02:16:07.101911+00:00",
         "logoUrl": "https://github.com/2051project.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.468198+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.101913+00:00"
       }
     },
     {
@@ -680,10 +680,10 @@
         "github_url": "https://github.com/214140846/skillhub-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.468228+00:00",
+        "updated": "2026-04-14T02:16:07.101941+00:00",
         "logoUrl": "https://github.com/214140846.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.468229+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.101943+00:00"
       }
     },
     {
@@ -698,10 +698,10 @@
         "github_url": "https://github.com/21st-dev/magic-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.468258+00:00",
+        "updated": "2026-04-14T02:16:07.101968+00:00",
         "logoUrl": "https://github.com/21st-dev.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.468260+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.101970+00:00"
       }
     },
     {
@@ -716,10 +716,10 @@
         "github_url": "https://github.com/oyasimi1209/magic-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.468294+00:00",
+        "updated": "2026-04-14T02:16:07.102001+00:00",
         "logoUrl": "https://github.com/oyasimi1209.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.468296+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.102003+00:00"
       }
     },
     {
@@ -734,10 +734,10 @@
         "github_url": "https://github.com/2389-research/mcp-socialmedia",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.468323+00:00",
+        "updated": "2026-04-14T02:16:07.102028+00:00",
         "logoUrl": "https://github.com/2389-research.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.468325+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.102030+00:00"
       }
     },
     {
@@ -752,10 +752,10 @@
         "github_url": "https://github.com/24mlight/a-share-mcp-is-just-i-need",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.468411+00:00",
+        "updated": "2026-04-14T02:16:07.102100+00:00",
         "logoUrl": "https://github.com/24mlight.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.468414+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.102102+00:00"
       }
     },
     {
@@ -770,10 +770,10 @@
         "github_url": "https://github.com/2501-ai/vmware-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.468444+00:00",
+        "updated": "2026-04-14T02:16:07.102122+00:00",
         "logoUrl": "https://github.com/2501-ai.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.468447+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.102127+00:00"
       }
     },
     {
@@ -788,10 +788,10 @@
         "github_url": "https://github.com/264gaurav/mcp_ai",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.468575+00:00",
+        "updated": "2026-04-14T02:16:07.102223+00:00",
         "logoUrl": "https://github.com/264gaurav.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.468578+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.102225+00:00"
       }
     },
     {
@@ -806,10 +806,10 @@
         "github_url": "https://github.com/29decibel/record-to-markdown",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.468654+00:00",
+        "updated": "2026-04-14T02:16:07.102272+00:00",
         "logoUrl": "https://github.com/29decibel.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.468657+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.102274+00:00"
       }
     },
     {
@@ -824,10 +824,10 @@
         "github_url": "https://github.com/2b3pro/markdown2pdf-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.468702+00:00",
+        "updated": "2026-04-14T02:16:07.102311+00:00",
         "logoUrl": "https://github.com/2b3pro.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.468705+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.102313+00:00"
       }
     },
     {
@@ -842,10 +842,10 @@
         "github_url": "https://github.com/2b3pro/roam-research-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.468751+00:00",
+        "updated": "2026-04-14T02:16:07.102345+00:00",
         "logoUrl": "https://github.com/2b3pro.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.468754+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.102347+00:00"
       }
     },
     {
@@ -860,10 +860,10 @@
         "github_url": "https://github.com/2niuhe/qrcode_mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.468798+00:00",
+        "updated": "2026-04-14T02:16:07.102377+00:00",
         "logoUrl": "https://github.com/2niuhe.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.468801+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.102379+00:00"
       }
     },
     {
@@ -878,10 +878,10 @@
         "github_url": "https://github.com/2slides/mcp-2slides",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.468848+00:00",
+        "updated": "2026-04-14T02:16:07.102410+00:00",
         "logoUrl": "https://github.com/2slides.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.468851+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.102412+00:00"
       }
     },
     {
@@ -896,10 +896,10 @@
         "github_url": "https://github.com/304techmaven/plaid-mcp-server",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.468886+00:00",
+        "updated": "2026-04-14T02:16:07.102435+00:00",
         "logoUrl": "https://github.com/304techmaven.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.468888+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.102437+00:00"
       }
     },
     {
@@ -914,10 +914,10 @@
         "github_url": "https://github.com/317431629/3dsmaxmcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.468957+00:00",
+        "updated": "2026-04-14T02:16:07.102472+00:00",
         "logoUrl": "https://github.com/317431629.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.468961+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.102474+00:00"
       }
     },
     {
@@ -932,10 +932,10 @@
         "github_url": "https://github.com/3202336152/mcp-tools/tree/HEAD/oracle-map-tool",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.468983+00:00",
+        "updated": "2026-04-14T02:16:07.102486+00:00",
         "logoUrl": "https://github.com/3202336152.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.468986+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.102488+00:00"
       }
     },
     {
@@ -950,10 +950,10 @@
         "github_url": "https://github.com/3351163616/mcp_pdf_reader",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.469043+00:00",
+        "updated": "2026-04-14T02:16:07.102527+00:00",
         "logoUrl": "https://github.com/3351163616.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.469046+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.102528+00:00"
       }
     },
     {
@@ -968,10 +968,10 @@
         "github_url": "https://github.com/3dcreationsbychad/fusion360-cam-assistant",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.469058+00:00",
+        "updated": "2026-04-14T02:16:07.102541+00:00",
         "logoUrl": "https://github.com/3dcreationsbychad.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.469060+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.102543+00:00"
       }
     },
     {
@@ -986,10 +986,10 @@
         "github_url": "https://github.com/distinctlydeveloped/stylemcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.469096+00:00",
+        "updated": "2026-04-14T02:16:07.102573+00:00",
         "logoUrl": "https://github.com/distinctlydeveloped.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.469098+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.102575+00:00"
       }
     },
     {
@@ -1004,10 +1004,10 @@
         "github_url": "https://github.com/edhijlu/3gpp-mcp-server",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.469142+00:00",
+        "updated": "2026-04-14T02:16:07.102616+00:00",
         "logoUrl": "https://github.com/edhijlu.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.469144+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.102618+00:00"
       }
     },
     {
@@ -1022,10 +1022,10 @@
         "github_url": "https://github.com/3io-w/strawbery-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.469168+00:00",
+        "updated": "2026-04-14T02:16:07.102640+00:00",
         "logoUrl": "https://github.com/3io-w.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.469170+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.102642+00:00"
       }
     },
     {
@@ -1040,10 +1040,10 @@
         "github_url": "https://github.com/3rzy/make-mcp-integration-issue",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.469205+00:00",
+        "updated": "2026-04-14T02:16:07.102673+00:00",
         "logoUrl": "https://github.com/3rzy.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.469207+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.102675+00:00"
       }
     },
     {
@@ -1058,10 +1058,10 @@
         "github_url": "https://github.com/3xfreedom/agentpedia",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.469220+00:00",
+        "updated": "2026-04-14T02:16:07.102689+00:00",
         "logoUrl": "https://github.com/3xfreedom.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.469222+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.102690+00:00"
       }
     },
     {
@@ -1076,7 +1076,7 @@
         "github_url": "https://402.bot",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.469264+00:00",
+        "updated": "2026-04-14T02:16:07.102729+00:00",
         "logoUrl": null,
         "logoSource": null,
         "logoCachedAt": null
@@ -1094,10 +1094,10 @@
         "github_url": "https://github.com/ryanthegentry/402index-mcp-server",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.469302+00:00",
+        "updated": "2026-04-14T02:16:07.102766+00:00",
         "logoUrl": "https://github.com/ryanthegentry.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.469305+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.102768+00:00"
       }
     },
     {
@@ -1112,10 +1112,10 @@
         "github_url": "https://github.com/40ants/lisp-dev-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.469324+00:00",
+        "updated": "2026-04-14T02:16:07.102787+00:00",
         "logoUrl": "https://github.com/40ants.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.469326+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.102789+00:00"
       }
     },
     {
@@ -1130,10 +1130,10 @@
         "github_url": "https://github.com/420247jake/session-forge",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.469363+00:00",
+        "updated": "2026-04-14T02:16:07.102856+00:00",
         "logoUrl": "https://github.com/420247jake.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.469364+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.102861+00:00"
       }
     },
     {
@@ -1148,10 +1148,10 @@
         "github_url": "https://github.com/4regab/agent-rules-mcp",
         "npm_package": "agent-rules-mcp",
         "downloads": 2414,
-        "updated": "2026-04-14T02:10:41.469397+00:00",
+        "updated": "2026-04-14T02:16:07.102894+00:00",
         "logoUrl": "https://github.com/4regab.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.469398+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.102896+00:00"
       }
     },
     {
@@ -1166,10 +1166,10 @@
         "github_url": "https://github.com/4rgon4ut/sutra",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.469427+00:00",
+        "updated": "2026-04-14T02:16:07.102921+00:00",
         "logoUrl": "https://github.com/4rgon4ut.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.469428+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.102923+00:00"
       }
     },
     {
@@ -1184,10 +1184,10 @@
         "github_url": "https://github.com/54rt1n/container-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.469458+00:00",
+        "updated": "2026-04-14T02:16:07.102960+00:00",
         "logoUrl": "https://github.com/54rt1n.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.469460+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.102962+00:00"
       }
     },
     {
@@ -1202,10 +1202,10 @@
         "github_url": "https://github.com/5ajaki/veri5ight",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.469493+00:00",
+        "updated": "2026-04-14T02:16:07.102993+00:00",
         "logoUrl": "https://github.com/5ajaki.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.469495+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.102995+00:00"
       }
     },
     {
@@ -1220,10 +1220,10 @@
         "github_url": "https://github.com/5ajaki/mcp-etherscan-server",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.469526+00:00",
+        "updated": "2026-04-14T02:16:07.103023+00:00",
         "logoUrl": "https://github.com/5ajaki.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.469528+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.103025+00:00"
       }
     },
     {
@@ -1238,10 +1238,10 @@
         "github_url": "https://github.com/5ajaki/safe-mcp-server",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.469561+00:00",
+        "updated": "2026-04-14T02:16:07.103054+00:00",
         "logoUrl": "https://github.com/5ajaki.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.469563+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.103056+00:00"
       }
     },
     {
@@ -1256,10 +1256,10 @@
         "github_url": "https://github.com/611711dark/mcp_calculate_server",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.469609+00:00",
+        "updated": "2026-04-14T02:16:07.103096+00:00",
         "logoUrl": "https://github.com/611711dark.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.469611+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.103097+00:00"
       }
     },
     {
@@ -1274,10 +1274,10 @@
         "github_url": "https://github.com/6551team/opennews-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.469645+00:00",
+        "updated": "2026-04-14T02:16:07.103128+00:00",
         "logoUrl": "https://github.com/6551team.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.469647+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.103130+00:00"
       }
     },
     {
@@ -1292,10 +1292,10 @@
         "github_url": "https://github.com/6ninelives/godot-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.469675+00:00",
+        "updated": "2026-04-14T02:16:07.103155+00:00",
         "logoUrl": "https://github.com/6ninelives.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.469676+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.103157+00:00"
       }
     },
     {
@@ -1310,10 +1310,10 @@
         "github_url": "https://github.com/7836246/claude-team-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.469705+00:00",
+        "updated": "2026-04-14T02:16:07.103183+00:00",
         "logoUrl": "https://github.com/7836246.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.469706+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.103184+00:00"
       }
     },
     {
@@ -1328,10 +1328,10 @@
         "github_url": "https://github.com/7gugu/zip-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.469748+00:00",
+        "updated": "2026-04-14T02:16:07.103221+00:00",
         "logoUrl": "https://github.com/7gugu.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.469750+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.103222+00:00"
       }
     },
     {
@@ -1346,10 +1346,10 @@
         "github_url": "https://github.com/8agana/autonome-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.469761+00:00",
+        "updated": "2026-04-14T02:16:07.103232+00:00",
         "logoUrl": "https://github.com/8agana.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.469763+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.103233+00:00"
       }
     },
     {
@@ -1364,10 +1364,10 @@
         "github_url": "https://github.com/8beeeaaat/touchdesigner-mcp",
         "npm_package": "touchdesigner-mcp-server",
         "downloads": 9265,
-        "updated": "2026-04-14T02:10:41.469791+00:00",
+        "updated": "2026-04-14T02:16:07.103261+00:00",
         "logoUrl": "https://github.com/8beeeaaat.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.469793+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.103263+00:00"
       }
     },
     {
@@ -1382,10 +1382,10 @@
         "github_url": "https://github.com/8bitgentleman/activitywatch-mcp-server",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.469833+00:00",
+        "updated": "2026-04-14T02:16:07.103299+00:00",
         "logoUrl": "https://github.com/8bitgentleman.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.469835+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.103301+00:00"
       }
     },
     {
@@ -1400,10 +1400,10 @@
         "github_url": "https://github.com/8ensmith/mcp-open-library",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.469874+00:00",
+        "updated": "2026-04-14T02:16:07.103333+00:00",
         "logoUrl": "https://github.com/8ensmith.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.469875+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.103334+00:00"
       }
     },
     {
@@ -1418,10 +1418,10 @@
         "github_url": "https://github.com/90barricade93/msfs-sdk-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.469910+00:00",
+        "updated": "2026-04-14T02:16:07.103365+00:00",
         "logoUrl": "https://github.com/90barricade93.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.469912+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.103367+00:00"
       }
     },
     {
@@ -1436,10 +1436,10 @@
         "github_url": "https://github.com/98lukehall/renoun-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.469984+00:00",
+        "updated": "2026-04-14T02:16:07.103414+00:00",
         "logoUrl": "https://github.com/98lukehall.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.469987+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.103415+00:00"
       }
     },
     {
@@ -1454,10 +1454,10 @@
         "github_url": "https://github.com/9ninety/mcpnotes",
         "npm_package": "mcp-notes",
         "downloads": 786,
-        "updated": "2026-04-14T02:10:41.470021+00:00",
+        "updated": "2026-04-14T02:16:07.103452+00:00",
         "logoUrl": "https://github.com/9ninety.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.470022+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.103457+00:00"
       }
     },
     {
@@ -1472,10 +1472,10 @@
         "github_url": "https://github.com/9olidity/mcp-server-pentest",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.470033+00:00",
+        "updated": "2026-04-14T02:16:07.103482+00:00",
         "logoUrl": "https://github.com/9olidity.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.470034+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.103487+00:00"
       }
     },
     {
@@ -1490,10 +1490,10 @@
         "github_url": "https://github.com/9-trinkets/projectbrain-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.470059+00:00",
+        "updated": "2026-04-14T02:16:07.103522+00:00",
         "logoUrl": "https://github.com/9-trinkets.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.470061+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.103530+00:00"
       }
     },
     {
@@ -1508,10 +1508,10 @@
         "github_url": "https://github.com/a01110946/rhinomcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.470088+00:00",
+        "updated": "2026-04-14T02:16:07.103568+00:00",
         "logoUrl": "https://github.com/a01110946.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.470090+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.103572+00:00"
       }
     },
     {
@@ -1526,10 +1526,10 @@
         "github_url": "https://github.com/deadcodedump/expose",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.470144+00:00",
+        "updated": "2026-04-14T02:16:07.103627+00:00",
         "logoUrl": "https://github.com/deadcodedump.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.470146+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.103630+00:00"
       }
     },
     {
@@ -1544,10 +1544,10 @@
         "github_url": "https://github.com/a21071/mcp-postgres",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.470154+00:00",
+        "updated": "2026-04-14T02:16:07.103644+00:00",
         "logoUrl": "https://github.com/a21071.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.470156+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.103646+00:00"
       }
     },
     {
@@ -1562,10 +1562,10 @@
         "github_url": "https://github.com/gongrzhe/a2a-mcp-server",
         "npm_package": "a2a-mcp-server",
         "downloads": 10501,
-        "updated": "2026-04-14T02:10:41.470201+00:00",
+        "updated": "2026-04-14T02:16:07.103687+00:00",
         "logoUrl": "https://github.com/gongrzhe.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.470203+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.103688+00:00"
       }
     },
     {
@@ -1580,10 +1580,10 @@
         "github_url": "https://github.com/a2amarket/mcp-clamav",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.470229+00:00",
+        "updated": "2026-04-14T02:16:07.103713+00:00",
         "logoUrl": "https://github.com/a2amarket.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.470231+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.103714+00:00"
       }
     },
     {
@@ -1598,10 +1598,10 @@
         "github_url": "https://github.com/a2xdeveloper/tagesschau-mcp-server",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.470256+00:00",
+        "updated": "2026-04-14T02:16:07.103737+00:00",
         "logoUrl": "https://github.com/a2xdeveloper.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.470257+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.103739+00:00"
       }
     },
     {
@@ -1616,10 +1616,10 @@
         "github_url": "https://github.com/a37ai/ansible-tower-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.470312+00:00",
+        "updated": "2026-04-14T02:16:07.103784+00:00",
         "logoUrl": "https://github.com/a37ai.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.470313+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.103786+00:00"
       }
     },
     {
@@ -1634,10 +1634,10 @@
         "github_url": "https://github.com/a7om-ai/atom-mcp-server",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.470346+00:00",
+        "updated": "2026-04-14T02:16:07.103832+00:00",
         "logoUrl": "https://github.com/a7om-ai.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.470348+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.103835+00:00"
       }
     },
     {
@@ -1652,10 +1652,10 @@
         "github_url": "https://github.com/atomadictech/aaaa-nexus",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.470363+00:00",
+        "updated": "2026-04-14T02:16:07.103853+00:00",
         "logoUrl": "https://github.com/atomadictech.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.470365+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.103855+00:00"
       }
     },
     {
@@ -1670,10 +1670,10 @@
         "github_url": "https://github.com/aac6fef/mathematica_mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.470396+00:00",
+        "updated": "2026-04-14T02:16:07.103884+00:00",
         "logoUrl": "https://github.com/aac6fef.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.470398+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.103886+00:00"
       }
     },
     {
@@ -1688,10 +1688,10 @@
         "github_url": "https://github.com/aadi775/mahoraga",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.470406+00:00",
+        "updated": "2026-04-14T02:16:07.103894+00:00",
         "logoUrl": "https://github.com/aadi775.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.470408+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.103896+00:00"
       }
     },
     {
@@ -1706,10 +1706,10 @@
         "github_url": "https://github.com/aahl/mcp-aktools",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.470432+00:00",
+        "updated": "2026-04-14T02:16:07.103917+00:00",
         "logoUrl": "https://github.com/aahl.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.470433+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.103918+00:00"
       }
     },
     {
@@ -1724,10 +1724,10 @@
         "github_url": "https://github.com/aahl/mcp-notify",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.470457+00:00",
+        "updated": "2026-04-14T02:16:07.103943+00:00",
         "logoUrl": "https://github.com/aahl.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.470459+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.103945+00:00"
       }
     },
     {
@@ -1742,10 +1742,10 @@
         "github_url": "https://github.com/aahl/mcp-okx",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.470503+00:00",
+        "updated": "2026-04-14T02:16:07.103981+00:00",
         "logoUrl": "https://github.com/aahl.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.470504+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.103983+00:00"
       }
     },
     {
@@ -1760,10 +1760,10 @@
         "github_url": "https://github.com/aahl/mcp-vods",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.470522+00:00",
+        "updated": "2026-04-14T02:16:07.104000+00:00",
         "logoUrl": "https://github.com/aahl.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.470524+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.104002+00:00"
       }
     },
     {
@@ -1778,10 +1778,10 @@
         "github_url": "https://github.com/aakashbhardwaj27/ai-scanner-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.470545+00:00",
+        "updated": "2026-04-14T02:16:07.104020+00:00",
         "logoUrl": "https://github.com/aakashbhardwaj27.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.470547+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.104022+00:00"
       }
     },
     {
@@ -1796,10 +1796,10 @@
         "github_url": "https://github.com/aalexuser/mcp-wait",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.470565+00:00",
+        "updated": "2026-04-14T02:16:07.104041+00:00",
         "logoUrl": "https://github.com/aalexuser.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.470566+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.104043+00:00"
       }
     },
     {
@@ -1814,10 +1814,10 @@
         "github_url": "https://github.com/aallsbury/qb-time-mcp-server",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.470595+00:00",
+        "updated": "2026-04-14T02:16:07.104069+00:00",
         "logoUrl": "https://github.com/aallsbury.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.470597+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.104071+00:00"
       }
     },
     {
@@ -1832,10 +1832,10 @@
         "github_url": "https://github.com/aamir-gmail/lm_studio_mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.470628+00:00",
+        "updated": "2026-04-14T02:16:07.104099+00:00",
         "logoUrl": "https://github.com/aamir-gmail.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.470630+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.104100+00:00"
       }
     },
     {
@@ -1850,10 +1850,10 @@
         "github_url": "https://github.com/aantti/mcp-netbird",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.470667+00:00",
+        "updated": "2026-04-14T02:16:07.104136+00:00",
         "logoUrl": "https://github.com/aantti.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.470669+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.104138+00:00"
       }
     },
     {
@@ -1868,10 +1868,10 @@
         "github_url": "https://github.com/aaomidi/mcp-bazel",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.470695+00:00",
+        "updated": "2026-04-14T02:16:07.104160+00:00",
         "logoUrl": "https://github.com/aaomidi.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.470697+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.104162+00:00"
       }
     },
     {
@@ -1886,10 +1886,10 @@
         "github_url": "https://github.com/aapanel/mcp-server",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.470707+00:00",
+        "updated": "2026-04-14T02:16:07.104171+00:00",
         "logoUrl": "https://github.com/aapanel.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.470709+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.104172+00:00"
       }
     },
     {
@@ -1904,10 +1904,10 @@
         "github_url": "https://github.com/aarna-ai/atv-sdk/tree/HEAD/packages/mcp-server",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.470731+00:00",
+        "updated": "2026-04-14T02:16:07.104195+00:00",
         "logoUrl": "https://github.com/aarna-ai.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.470733+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.104197+00:00"
       }
     },
     {
@@ -1922,10 +1922,10 @@
         "github_url": "https://github.com/aaronjmars/opendia",
         "npm_package": "opendia",
         "downloads": 3367,
-        "updated": "2026-04-14T02:10:41.470788+00:00",
+        "updated": "2026-04-14T02:16:07.104245+00:00",
         "logoUrl": "https://github.com/aaronjmars.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.470790+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.104246+00:00"
       }
     },
     {
@@ -1940,10 +1940,10 @@
         "github_url": "https://github.com/aaronmurillo01/secure-github-ops",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.470975+00:00",
+        "updated": "2026-04-14T02:16:07.104270+00:00",
         "logoUrl": "https://github.com/aaronmurillo01.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.470978+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.104272+00:00"
       }
     },
     {
@@ -1958,10 +1958,10 @@
         "github_url": "https://github.com/aaronontheweb/mssql-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.470989+00:00",
+        "updated": "2026-04-14T02:16:07.104283+00:00",
         "logoUrl": "https://github.com/aaronontheweb.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.470991+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.104284+00:00"
       }
     },
     {
@@ -1976,10 +1976,10 @@
         "github_url": "https://github.com/aaronsb/confluence-cloud-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.471023+00:00",
+        "updated": "2026-04-14T02:16:07.104313+00:00",
         "logoUrl": "https://github.com/aaronsb.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.471024+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.104314+00:00"
       }
     },
     {
@@ -1994,10 +1994,10 @@
         "github_url": "https://github.com/aaronsb/confluence-cloud",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.471067+00:00",
+        "updated": "2026-04-14T02:16:07.104352+00:00",
         "logoUrl": "https://github.com/aaronsb.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.471069+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.104353+00:00"
       }
     },
     {
@@ -2012,10 +2012,10 @@
         "github_url": "https://github.com/aaronsb/google-workspace-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.471102+00:00",
+        "updated": "2026-04-14T02:16:07.104382+00:00",
         "logoUrl": "https://github.com/aaronsb.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.471104+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.104384+00:00"
       }
     },
     {
@@ -2030,10 +2030,10 @@
         "github_url": "https://github.com/aaronsb/jira-insights-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.471126+00:00",
+        "updated": "2026-04-14T02:16:07.104405+00:00",
         "logoUrl": "https://github.com/aaronsb.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.471128+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.104406+00:00"
       }
     },
     {
@@ -2048,10 +2048,10 @@
         "github_url": "https://github.com/aaronsb/obsidian-semantic-mcp",
         "npm_package": "obsidian-semantic-mcp",
         "downloads": 1758,
-        "updated": "2026-04-14T02:10:41.471172+00:00",
+        "updated": "2026-04-14T02:16:07.104445+00:00",
         "logoUrl": "https://github.com/aaronsb.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.471173+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.104447+00:00"
       }
     },
     {
@@ -2066,10 +2066,10 @@
         "github_url": "https://github.com/aaronsb/salesforce-cloud",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.471214+00:00",
+        "updated": "2026-04-14T02:16:07.104480+00:00",
         "logoUrl": "https://github.com/aaronsb.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.471216+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.104482+00:00"
       }
     },
     {
@@ -2084,10 +2084,10 @@
         "github_url": "https://github.com/aartiq/servicenow-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.471240+00:00",
+        "updated": "2026-04-14T02:16:07.104506+00:00",
         "logoUrl": "https://github.com/aartiq.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.471242+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.104508+00:00"
       }
     },
     {
@@ -2102,10 +2102,10 @@
         "github_url": "https://github.com/aarushkx/covid-mcp-server",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.471270+00:00",
+        "updated": "2026-04-14T02:16:07.104533+00:00",
         "logoUrl": "https://github.com/aarushkx.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.471272+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.104535+00:00"
       }
     },
     {
@@ -2120,10 +2120,10 @@
         "github_url": "https://github.com/aaryan-kapoor/mcp-character-tools",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.471281+00:00",
+        "updated": "2026-04-14T02:16:07.104544+00:00",
         "logoUrl": "https://github.com/aaryan-kapoor.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.471284+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.104546+00:00"
       }
     },
     {
@@ -2138,10 +2138,10 @@
         "github_url": "https://github.com/aas-ee/open-websearch",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.471325+00:00",
+        "updated": "2026-04-14T02:16:07.104579+00:00",
         "logoUrl": "https://github.com/aas-ee.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.471326+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.104580+00:00"
       }
     },
     {
@@ -2156,10 +2156,10 @@
         "github_url": "https://github.com/aashari/mcp-server-atlassian-bitbucket",
         "npm_package": "@aashari/mcp-server-atlassian-bitbucket",
         "downloads": 86632,
-        "updated": "2026-04-14T02:10:41.471356+00:00",
+        "updated": "2026-04-14T02:16:07.104607+00:00",
         "logoUrl": "https://github.com/aashari.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.471357+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.104609+00:00"
       }
     },
     {
@@ -2174,10 +2174,10 @@
         "github_url": "https://github.com/aaymeloglu/venmo-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.471394+00:00",
+        "updated": "2026-04-14T02:16:07.104641+00:00",
         "logoUrl": "https://github.com/aaymeloglu.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.471396+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.104642+00:00"
       }
     },
     {
@@ -2192,10 +2192,10 @@
         "github_url": "https://github.com/aayoawoyemi/ori-mnemos",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.471414+00:00",
+        "updated": "2026-04-14T02:16:07.104659+00:00",
         "logoUrl": "https://github.com/aayoawoyemi.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.471415+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.104662+00:00"
       }
     },
     {
@@ -2210,10 +2210,10 @@
         "github_url": "https://github.com/ab498/code-context-provider-mcp",
         "npm_package": "code-context-provider-mcp",
         "downloads": 6131,
-        "updated": "2026-04-14T02:10:41.471446+00:00",
+        "updated": "2026-04-14T02:16:07.104690+00:00",
         "logoUrl": "https://github.com/ab498.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.471447+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.104691+00:00"
       }
     },
     {
@@ -2228,10 +2228,10 @@
         "github_url": "https://github.com/ab498/computer-control-mcp",
         "npm_package": "computer-control-mcp",
         "downloads": 206232,
-        "updated": "2026-04-14T02:10:41.471494+00:00",
+        "updated": "2026-04-14T02:16:07.104732+00:00",
         "logoUrl": "https://github.com/ab498.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.471496+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.104734+00:00"
       }
     },
     {
@@ -2246,10 +2246,10 @@
         "github_url": "https://github.com/abdelstark/bitcoin-mcp",
         "npm_package": "bitcoin-mcp",
         "downloads": 6732,
-        "updated": "2026-04-14T02:10:41.471532+00:00",
+        "updated": "2026-04-14T02:16:07.104760+00:00",
         "logoUrl": "https://github.com/abdelstark.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.471533+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.104762+00:00"
       }
     },
     {
@@ -2264,10 +2264,10 @@
         "github_url": "https://github.com/abdelstark/lightning-mcp",
         "npm_package": "nostr-mcp",
         "downloads": 1463,
-        "updated": "2026-04-14T02:10:41.471567+00:00",
+        "updated": "2026-04-14T02:16:07.104795+00:00",
         "logoUrl": "https://github.com/abdelstark.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.471568+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.104796+00:00"
       }
     },
     {
@@ -2282,10 +2282,10 @@
         "github_url": "https://github.com/abdelstark/nostr-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.471599+00:00",
+        "updated": "2026-04-14T02:16:07.104853+00:00",
         "logoUrl": "https://github.com/abdelstark.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.471601+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.104856+00:00"
       }
     },
     {
@@ -2300,10 +2300,10 @@
         "github_url": "https://github.com/abdessamad-elamrani/malwareanalyzermcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.471653+00:00",
+        "updated": "2026-04-14T02:16:07.104906+00:00",
         "logoUrl": "https://github.com/abdessamad-elamrani.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.471654+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.104908+00:00"
       }
     },
     {
@@ -2318,10 +2318,10 @@
         "github_url": "https://github.com/abdulkhalek-1/drf-mcp-docs",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.471676+00:00",
+        "updated": "2026-04-14T02:16:07.104928+00:00",
         "logoUrl": "https://github.com/abdulkhalek-1.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.471677+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.104930+00:00"
       }
     },
     {
@@ -2336,10 +2336,10 @@
         "github_url": "https://github.com/aberemia24/code-executor-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.471698+00:00",
+        "updated": "2026-04-14T02:16:07.104949+00:00",
         "logoUrl": "https://github.com/aberemia24.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.471699+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.104951+00:00"
       }
     },
     {
@@ -2354,10 +2354,10 @@
         "github_url": "https://github.com/abhaybabbar/retellai-mcp-server",
         "npm_package": "@abhaybabbar/retellai-mcp-server",
         "downloads": 9864,
-        "updated": "2026-04-14T02:10:41.471753+00:00",
+        "updated": "2026-04-14T02:16:07.104998+00:00",
         "logoUrl": "https://github.com/abhaybabbar.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.471755+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.105000+00:00"
       }
     },
     {
@@ -2372,10 +2372,10 @@
         "github_url": "https://github.com/abhi5h3k/mcp-email-verify",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.471786+00:00",
+        "updated": "2026-04-14T02:16:07.105032+00:00",
         "logoUrl": "https://github.com/abhi5h3k.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.471788+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.105034+00:00"
       }
     },
     {
@@ -2390,10 +2390,10 @@
         "github_url": "https://github.com/abhi5h3k/mcp-url2snap",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.471837+00:00",
+        "updated": "2026-04-14T02:16:07.105079+00:00",
         "logoUrl": "https://github.com/abhi5h3k.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.471839+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.105080+00:00"
       }
     },
     {
@@ -2408,10 +2408,10 @@
         "github_url": "https://github.com/abhichandra21/promptheus",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.471868+00:00",
+        "updated": "2026-04-14T02:16:07.105107+00:00",
         "logoUrl": "https://github.com/abhichandra21.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.471870+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.105109+00:00"
       }
     },
     {
@@ -2426,10 +2426,10 @@
         "github_url": "https://github.com/abhijay007/btcpayserver-mcp",
         "npm_package": "btcpayserver-mcp",
         "downloads": 349,
-        "updated": "2026-04-14T02:10:41.471913+00:00",
+        "updated": "2026-04-14T02:16:07.105145+00:00",
         "logoUrl": "https://github.com/abhijay007.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.471915+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.105147+00:00"
       }
     },
     {
@@ -2444,10 +2444,10 @@
         "github_url": "https://github.com/abhijeetka/mcp-k8s-server",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.471950+00:00",
+        "updated": "2026-04-14T02:16:07.105170+00:00",
         "logoUrl": "https://github.com/abhijeetka.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.471951+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.105172+00:00"
       }
     },
     {
@@ -2462,10 +2462,10 @@
         "github_url": "https://github.com/abhinab-handique/db_talk",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.471964+00:00",
+        "updated": "2026-04-14T02:16:07.105182+00:00",
         "logoUrl": "https://github.com/abhinab-handique.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.471966+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.105184+00:00"
       }
     },
     {
@@ -2480,10 +2480,10 @@
         "github_url": "https://github.com/abhinav-mangla/think-tool-mcp",
         "npm_package": "think-tool-mcp",
         "downloads": 5549,
-        "updated": "2026-04-14T02:10:41.471991+00:00",
+        "updated": "2026-04-14T02:16:07.105208+00:00",
         "logoUrl": "https://github.com/abhinav-mangla.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.471993+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.105210+00:00"
       }
     },
     {
@@ -2498,10 +2498,10 @@
         "github_url": "https://github.com/abhinav7895/system-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.472026+00:00",
+        "updated": "2026-04-14T02:16:07.105241+00:00",
         "logoUrl": "https://github.com/abhinav7895.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.472027+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.105243+00:00"
       }
     },
     {
@@ -2516,10 +2516,10 @@
         "github_url": "https://github.com/abhiphile/fermat-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.472094+00:00",
+        "updated": "2026-04-14T02:16:07.105301+00:00",
         "logoUrl": "https://github.com/abhiphile.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.472096+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.105303+00:00"
       }
     },
     {
@@ -2534,10 +2534,10 @@
         "github_url": "https://github.com/abhirockzz/mcp_cosmosdb_go",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.472111+00:00",
+        "updated": "2026-04-14T02:16:07.105313+00:00",
         "logoUrl": "https://github.com/abhirockzz.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.472113+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.105314+00:00"
       }
     },
     {
@@ -2552,10 +2552,10 @@
         "github_url": "https://github.com/abhirockzz/mcp_kusto",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.472124+00:00",
+        "updated": "2026-04-14T02:16:07.105325+00:00",
         "logoUrl": "https://github.com/abhirockzz.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.472125+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.105326+00:00"
       }
     },
     {
@@ -2570,10 +2570,10 @@
         "github_url": "https://github.com/abhishek2432001/deeprepo",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.472143+00:00",
+        "updated": "2026-04-14T02:16:07.105343+00:00",
         "logoUrl": "https://github.com/abhishek2432001.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.472144+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.105345+00:00"
       }
     },
     {
@@ -2588,10 +2588,10 @@
         "github_url": "https://github.com/abhishek305/contentstack-app-mcp-remote",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.472163+00:00",
+        "updated": "2026-04-14T02:16:07.105363+00:00",
         "logoUrl": "https://github.com/abhishek305.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.472165+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.105365+00:00"
       }
     },
     {
@@ -2606,10 +2606,10 @@
         "github_url": "https://github.com/abhishekbhakat/airflow-mcp-server",
         "npm_package": "airflow-mcp-server",
         "downloads": 17712,
-        "updated": "2026-04-14T02:10:41.472218+00:00",
+        "updated": "2026-04-14T02:16:07.105409+00:00",
         "logoUrl": "https://github.com/abhishekbhakat.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.472220+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.105410+00:00"
       }
     },
     {
@@ -2624,10 +2624,10 @@
         "github_url": "https://github.com/abhishekbhakat/mcp_server_code_assist",
         "npm_package": "mcp-server-code-assist",
         "downloads": 3528,
-        "updated": "2026-04-14T02:10:41.472249+00:00",
+        "updated": "2026-04-14T02:16:07.105440+00:00",
         "logoUrl": "https://github.com/abhishekbhakat.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.472251+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.105442+00:00"
       }
     },
     {
@@ -2642,10 +2642,10 @@
         "github_url": "https://github.com/abhishekjairath/sonic-pi-mcp",
         "npm_package": "sonic-pi-mcp",
         "downloads": 3559,
-        "updated": "2026-04-14T02:10:41.472276+00:00",
+        "updated": "2026-04-14T02:16:07.105466+00:00",
         "logoUrl": "https://github.com/abhishekjairath.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.472278+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.105467+00:00"
       }
     },
     {
@@ -2660,10 +2660,10 @@
         "github_url": "https://github.com/abhiz123/todoist-mcp-server",
         "npm_package": "@abhiz123/todoist-mcp-server",
         "downloads": 23655,
-        "updated": "2026-04-14T02:10:41.472324+00:00",
+        "updated": "2026-04-14T02:16:07.105508+00:00",
         "logoUrl": "https://github.com/abhiz123.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.472326+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.105510+00:00"
       }
     },
     {
@@ -2678,10 +2678,10 @@
         "github_url": "https://github.com/chaudepark/ableton-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.472391+00:00",
+        "updated": "2026-04-14T02:16:07.105567+00:00",
         "logoUrl": "https://github.com/chaudepark.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.472393+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.105569+00:00"
       }
     },
     {
@@ -2696,10 +2696,10 @@
         "github_url": "https://github.com/a-bonus/google-docs-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.472426+00:00",
+        "updated": "2026-04-14T02:16:07.105598+00:00",
         "logoUrl": "https://github.com/a-bonus.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.472428+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.105600+00:00"
       }
     },
     {
@@ -2714,10 +2714,10 @@
         "github_url": "https://github.com/aborroy/alfresco-mcp-poc",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.472461+00:00",
+        "updated": "2026-04-14T02:16:07.105627+00:00",
         "logoUrl": "https://github.com/aborroy.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.472462+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.105629+00:00"
       }
     },
     {
@@ -2732,10 +2732,10 @@
         "github_url": "https://github.com/abossard/ledfx-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.472472+00:00",
+        "updated": "2026-04-14T02:16:07.105639+00:00",
         "logoUrl": "https://github.com/abossard.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.472473+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.105640+00:00"
       }
     },
     {
@@ -2750,10 +2750,10 @@
         "github_url": "https://github.com/seanfenlon/abovo-mcp-server",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.472498+00:00",
+        "updated": "2026-04-14T02:16:07.105664+00:00",
         "logoUrl": "https://github.com/seanfenlon.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.472499+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.105666+00:00"
       }
     },
     {
@@ -2768,10 +2768,10 @@
         "github_url": "https://github.com/vitexsoftware/abraflexi-mcp-server",
         "npm_package": "abraflexi-mcp-server",
         "downloads": 1231,
-        "updated": "2026-04-14T02:10:41.472545+00:00",
+        "updated": "2026-04-14T02:16:07.105706+00:00",
         "logoUrl": "https://github.com/vitexsoftware.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.472547+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.105708+00:00"
       }
     },
     {
@@ -2786,10 +2786,10 @@
         "github_url": "https://github.com/abstracta/ibm-as-400-iseries-mcp-server",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.472605+00:00",
+        "updated": "2026-04-14T02:16:07.105759+00:00",
         "logoUrl": "https://github.com/abstracta.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.472607+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.105761+00:00"
       }
     },
     {
@@ -2804,10 +2804,10 @@
         "github_url": "https://github.com/abuiles/codex-whatsapp-relay",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.472627+00:00",
+        "updated": "2026-04-14T02:16:07.105782+00:00",
         "logoUrl": "https://github.com/abuiles.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.472628+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.105783+00:00"
       }
     },
     {
@@ -2822,10 +2822,10 @@
         "github_url": "https://github.com/abukstech/mcp-server-weather",
         "npm_package": "mcp-server-weather",
         "downloads": 1167,
-        "updated": "2026-04-14T02:10:41.472660+00:00",
+        "updated": "2026-04-14T02:16:07.105828+00:00",
         "logoUrl": "https://github.com/abukstech.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.472662+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.105830+00:00"
       }
     },
     {
@@ -2840,10 +2840,10 @@
         "github_url": "https://github.com/abutbul/gatherings-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.472674+00:00",
+        "updated": "2026-04-14T02:16:07.105844+00:00",
         "logoUrl": "https://github.com/abutbul.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.472676+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.105846+00:00"
       }
     },
     {
@@ -2858,10 +2858,10 @@
         "github_url": "https://github.com/abutbul/gatherings-mcp-python",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.472686+00:00",
+        "updated": "2026-04-14T02:16:07.105856+00:00",
         "logoUrl": "https://github.com/abutbul.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.472688+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.105858+00:00"
       }
     },
     {
@@ -2876,10 +2876,10 @@
         "github_url": "https://github.com/aby0/reading-companion",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.472717+00:00",
+        "updated": "2026-04-14T02:16:07.105884+00:00",
         "logoUrl": "https://github.com/aby0.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.472719+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.105886+00:00"
       }
     },
     {
@@ -2894,10 +2894,10 @@
         "github_url": "https://github.com/ac3xx/mcp-servers-kagi",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.472749+00:00",
+        "updated": "2026-04-14T02:16:07.105914+00:00",
         "logoUrl": "https://github.com/ac3xx.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.472753+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.105916+00:00"
       }
     },
     {
@@ -2912,10 +2912,10 @@
         "github_url": "https://github.com/acabala/apidog-tests-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.472772+00:00",
+        "updated": "2026-04-14T02:16:07.105933+00:00",
         "logoUrl": "https://github.com/acabala.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.472774+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.105935+00:00"
       }
     },
     {
@@ -2930,10 +2930,10 @@
         "github_url": "https://github.com/acacian/aegis",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.472803+00:00",
+        "updated": "2026-04-14T02:16:07.105962+00:00",
         "logoUrl": "https://github.com/acacian.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.472805+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.105964+00:00"
       }
     },
     {
@@ -2948,10 +2948,10 @@
         "github_url": "https://github.com/alperenkocyigit/authorprofilemcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.472839+00:00",
+        "updated": "2026-04-14T02:16:07.105997+00:00",
         "logoUrl": "https://github.com/alperenkocyigit.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.472840+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.105999+00:00"
       }
     },
     {
@@ -2966,10 +2966,10 @@
         "github_url": "https://github.com/acashmoney/bio-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.472851+00:00",
+        "updated": "2026-04-14T02:16:07.106008+00:00",
         "logoUrl": "https://github.com/acashmoney.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.472853+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.106012+00:00"
       }
     },
     {
@@ -2984,10 +2984,10 @@
         "github_url": "https://github.com/acedatacloud/fluxmcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.472886+00:00",
+        "updated": "2026-04-14T02:16:07.106041+00:00",
         "logoUrl": "https://github.com/acedatacloud.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.472888+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.106043+00:00"
       }
     },
     {
@@ -3002,10 +3002,10 @@
         "github_url": "https://github.com/acedatacloud/lumamcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.472915+00:00",
+        "updated": "2026-04-14T02:16:07.106067+00:00",
         "logoUrl": "https://github.com/acedatacloud.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.472916+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.106069+00:00"
       }
     },
     {
@@ -3020,10 +3020,10 @@
         "github_url": "https://github.com/acedatacloud/midjourneymcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.472951+00:00",
+        "updated": "2026-04-14T02:16:07.106093+00:00",
         "logoUrl": "https://github.com/acedatacloud.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.472953+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.106095+00:00"
       }
     },
     {
@@ -3038,10 +3038,10 @@
         "github_url": "https://github.com/acedatacloud/nanobananamcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.472982+00:00",
+        "updated": "2026-04-14T02:16:07.106119+00:00",
         "logoUrl": "https://github.com/acedatacloud.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.472983+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.106121+00:00"
       }
     },
     {
@@ -3056,10 +3056,10 @@
         "github_url": "https://github.com/acedatacloud/seedancemcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.473008+00:00",
+        "updated": "2026-04-14T02:16:07.106144+00:00",
         "logoUrl": "https://github.com/acedatacloud.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.473010+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.106146+00:00"
       }
     },
     {
@@ -3074,10 +3074,10 @@
         "github_url": "https://github.com/acedatacloud/seedreammcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.473035+00:00",
+        "updated": "2026-04-14T02:16:07.106174+00:00",
         "logoUrl": "https://github.com/acedatacloud.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.473036+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.106176+00:00"
       }
     },
     {
@@ -3092,10 +3092,10 @@
         "github_url": "https://github.com/acedatacloud/serpmcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.473062+00:00",
+        "updated": "2026-04-14T02:16:07.106200+00:00",
         "logoUrl": "https://github.com/acedatacloud.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.473063+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.106202+00:00"
       }
     },
     {
@@ -3110,10 +3110,10 @@
         "github_url": "https://github.com/acedatacloud/shorturlmcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.473088+00:00",
+        "updated": "2026-04-14T02:16:07.106224+00:00",
         "logoUrl": "https://github.com/acedatacloud.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.473089+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.106226+00:00"
       }
     },
     {
@@ -3128,10 +3128,10 @@
         "github_url": "https://github.com/acedatacloud/soramcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.473113+00:00",
+        "updated": "2026-04-14T02:16:07.106249+00:00",
         "logoUrl": "https://github.com/acedatacloud.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.473115+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.106251+00:00"
       }
     },
     {
@@ -3146,10 +3146,10 @@
         "github_url": "https://github.com/acedatacloud/sunomcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.473143+00:00",
+        "updated": "2026-04-14T02:16:07.106275+00:00",
         "logoUrl": "https://github.com/acedatacloud.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.473144+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.106277+00:00"
       }
     },
     {
@@ -3164,10 +3164,10 @@
         "github_url": "https://github.com/acedatacloud/veomcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.473168+00:00",
+        "updated": "2026-04-14T02:16:07.106302+00:00",
         "logoUrl": "https://github.com/acedatacloud.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.473170+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.106303+00:00"
       }
     },
     {
@@ -3182,10 +3182,10 @@
         "github_url": "https://github.com/acedatacloud/hailuomcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.473196+00:00",
+        "updated": "2026-04-14T02:16:07.106327+00:00",
         "logoUrl": "https://github.com/acedatacloud.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.473197+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.106329+00:00"
       }
     },
     {
@@ -3200,10 +3200,10 @@
         "github_url": "https://github.com/acedatacloud/klingmcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.473222+00:00",
+        "updated": "2026-04-14T02:16:07.106352+00:00",
         "logoUrl": "https://github.com/acedatacloud.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.473224+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.106354+00:00"
       }
     },
     {
@@ -3218,10 +3218,10 @@
         "github_url": "https://github.com/acedatacloud/producermcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.473251+00:00",
+        "updated": "2026-04-14T02:16:07.106377+00:00",
         "logoUrl": "https://github.com/acedatacloud.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.473253+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.106379+00:00"
       }
     },
     {
@@ -3236,10 +3236,10 @@
         "github_url": "https://github.com/acedatacloud/wanmcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.473276+00:00",
+        "updated": "2026-04-14T02:16:07.106401+00:00",
         "logoUrl": "https://github.com/acedatacloud.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.473278+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.106402+00:00"
       }
     },
     {
@@ -3254,10 +3254,10 @@
         "github_url": "https://github.com/acheong08/synthetic-search-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.473317+00:00",
+        "updated": "2026-04-14T02:16:07.106436+00:00",
         "logoUrl": "https://github.com/acheong08.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.473319+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.106438+00:00"
       }
     },
     {
@@ -3272,10 +3272,10 @@
         "github_url": "https://github.com/achetronic/browse-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.473340+00:00",
+        "updated": "2026-04-14T02:16:07.106457+00:00",
         "logoUrl": "https://github.com/achetronic.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.473342+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.106459+00:00"
       }
     },
     {
@@ -3290,10 +3290,10 @@
         "github_url": "https://github.com/achetronic/filesystem-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.473366+00:00",
+        "updated": "2026-04-14T02:16:07.106481+00:00",
         "logoUrl": "https://github.com/achetronic.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.473368+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.106483+00:00"
       }
     },
     {
@@ -3308,10 +3308,10 @@
         "github_url": "https://github.com/achetronic/hass-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.473391+00:00",
+        "updated": "2026-04-14T02:16:07.106504+00:00",
         "logoUrl": "https://github.com/achetronic.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.473393+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.106506+00:00"
       }
     },
     {
@@ -3326,10 +3326,10 @@
         "github_url": "https://github.com/achilliesbot/delphi",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.473418+00:00",
+        "updated": "2026-04-14T02:16:07.106527+00:00",
         "logoUrl": "https://github.com/achilliesbot.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.473422+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.106528+00:00"
       }
     },
     {
@@ -3344,10 +3344,10 @@
         "github_url": "https://github.com/achiya-automation/safari-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.473456+00:00",
+        "updated": "2026-04-14T02:16:07.106561+00:00",
         "logoUrl": "https://github.com/achiya-automation.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.473457+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.106563+00:00"
       }
     },
     {
@@ -3362,10 +3362,10 @@
         "github_url": "https://github.com/achriom/achriom-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.473485+00:00",
+        "updated": "2026-04-14T02:16:07.106590+00:00",
         "logoUrl": "https://github.com/achriom.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.473486+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.106592+00:00"
       }
     },
     {
@@ -3380,10 +3380,10 @@
         "github_url": "https://github.com/datumnova/ms-fabric-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.473505+00:00",
+        "updated": "2026-04-14T02:16:07.106610+00:00",
         "logoUrl": "https://github.com/datumnova.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.473507+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.106611+00:00"
       }
     },
     {
@@ -3398,10 +3398,10 @@
         "github_url": "https://github.com/ackness/fetch-jsonpath-mcp",
         "npm_package": "fetch-jsonpath-mcp",
         "downloads": 4071,
-        "updated": "2026-04-14T02:10:41.473563+00:00",
+        "updated": "2026-04-14T02:16:07.106661+00:00",
         "logoUrl": "https://github.com/ackness.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.473565+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.106668+00:00"
       }
     },
     {
@@ -3416,10 +3416,10 @@
         "github_url": "https://github.com/gongrzhe/acp-mcp-server",
         "npm_package": "acp-mcp-server",
         "downloads": 7552,
-        "updated": "2026-04-14T02:10:41.473593+00:00",
+        "updated": "2026-04-14T02:16:07.106695+00:00",
         "logoUrl": "https://github.com/gongrzhe.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.473595+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.106697+00:00"
       }
     },
     {
@@ -3434,10 +3434,10 @@
         "github_url": "https://github.com/acrolinx/nextgen-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.473638+00:00",
+        "updated": "2026-04-14T02:16:07.106734+00:00",
         "logoUrl": "https://github.com/acrolinx.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.473640+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.106736+00:00"
       }
     },
     {
@@ -3452,10 +3452,10 @@
         "github_url": "https://github.com/acryldata/mcp-server-datahub",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.473684+00:00",
+        "updated": "2026-04-14T02:16:07.106775+00:00",
         "logoUrl": "https://github.com/acryldata.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.473686+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.106777+00:00"
       }
     },
     {
@@ -3470,10 +3470,10 @@
         "github_url": "https://github.com/tsviz/github-mcp-server-devops",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.473703+00:00",
+        "updated": "2026-04-14T02:16:07.106793+00:00",
         "logoUrl": "https://github.com/tsviz.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.473705+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.106795+00:00"
       }
     },
     {
@@ -3488,10 +3488,10 @@
         "github_url": "https://github.com/activepieces/activepieces",
         "npm_package": "@activepieces/piece-mcp",
         "downloads": 32077,
-        "updated": "2026-04-14T02:10:41.473725+00:00",
+        "updated": "2026-04-14T02:16:07.106841+00:00",
         "logoUrl": "https://github.com/activepieces.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.473726+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.106845+00:00"
       }
     },
     {
@@ -3506,10 +3506,10 @@
         "github_url": "https://github.com/aquarius-wing/actor-critic-thinking-mcp",
         "npm_package": "mcp-server-actor-critic-thinking",
         "downloads": 5453,
-        "updated": "2026-04-14T02:10:41.473871+00:00",
+        "updated": "2026-04-14T02:16:07.106970+00:00",
         "logoUrl": "https://github.com/aquarius-wing.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.473873+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.106972+00:00"
       }
     },
     {
@@ -3524,10 +3524,10 @@
         "github_url": "https://github.com/s-stefanov/actual-mcp",
         "npm_package": "actual-mcp",
         "downloads": 4312,
-        "updated": "2026-04-14T02:10:41.473906+00:00",
+        "updated": "2026-04-14T02:16:07.107018+00:00",
         "logoUrl": "https://github.com/s-stefanov.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.473908+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.107020+00:00"
       }
     },
     {
@@ -3542,10 +3542,10 @@
         "github_url": "https://github.com/actual-outcomes/doit",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.473916+00:00",
+        "updated": "2026-04-14T02:16:07.107029+00:00",
         "logoUrl": "https://github.com/actual-outcomes.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.473918+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.107031+00:00"
       }
     },
     {
@@ -3560,10 +3560,10 @@
         "github_url": "https://github.com/andreasgassmann/acurast-mcp-server",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.473964+00:00",
+        "updated": "2026-04-14T02:16:07.107056+00:00",
         "logoUrl": "https://github.com/andreasgassmann.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.473967+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.107059+00:00"
       }
     },
     {
@@ -3578,10 +3578,10 @@
         "github_url": "https://github.com/acxelerator/mcp-tenki",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.474014+00:00",
+        "updated": "2026-04-14T02:16:07.107100+00:00",
         "logoUrl": "https://github.com/acxelerator.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.474016+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.107102+00:00"
       }
     },
     {
@@ -3596,10 +3596,10 @@
         "github_url": "https://github.com/ada20204/antigravity-sync-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.474041+00:00",
+        "updated": "2026-04-14T02:16:07.107246+00:00",
         "logoUrl": "https://github.com/ada20204.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.474042+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.107248+00:00"
       }
     },
     {
@@ -3614,10 +3614,10 @@
         "github_url": "https://github.com/ada333/mcp-server-rhoai-workbenches",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.474066+00:00",
+        "updated": "2026-04-14T02:16:07.107276+00:00",
         "logoUrl": "https://github.com/ada333.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.474067+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.107278+00:00"
       }
     },
     {
@@ -3632,7 +3632,7 @@
         "github_url": "https://www.adadvisor.ai",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.474097+00:00",
+        "updated": "2026-04-14T02:16:07.107307+00:00",
         "logoUrl": null,
         "logoSource": null,
         "logoCachedAt": null
@@ -3650,10 +3650,10 @@
         "github_url": "https://github.com/adamamer20/paper-search-mcp-openai",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.474108+00:00",
+        "updated": "2026-04-14T02:16:07.107319+00:00",
         "logoUrl": "https://github.com/adamamer20.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.474110+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.107321+00:00"
       }
     },
     {
@@ -3668,10 +3668,10 @@
         "github_url": "https://github.com/adamescj/pokemcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.474141+00:00",
+        "updated": "2026-04-14T02:16:07.107351+00:00",
         "logoUrl": "https://github.com/adamescj.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.474142+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.107353+00:00"
       }
     },
     {
@@ -3686,10 +3686,10 @@
         "github_url": "https://github.com/adamikhq/adamik-mcp-server",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.474174+00:00",
+        "updated": "2026-04-14T02:16:07.107383+00:00",
         "logoUrl": "https://github.com/adamikhq.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.474176+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.107385+00:00"
       }
     },
     {
@@ -3704,10 +3704,10 @@
         "github_url": "https://github.com/adamisrael/mcp-fastmail",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.474199+00:00",
+        "updated": "2026-04-14T02:16:07.107407+00:00",
         "logoUrl": "https://github.com/adamisrael.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.474200+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.107409+00:00"
       }
     },
     {
@@ -3722,10 +3722,10 @@
         "github_url": "https://github.com/adamosk/mysql-mcp-server",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.474209+00:00",
+        "updated": "2026-04-14T02:16:07.107418+00:00",
         "logoUrl": "https://github.com/adamosk.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.474211+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.107420+00:00"
       }
     },
     {
@@ -3740,10 +3740,10 @@
         "github_url": "https://github.com/adam-paterson/mcp-crew-ai",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.474237+00:00",
+        "updated": "2026-04-14T02:16:07.107441+00:00",
         "logoUrl": "https://github.com/adam-paterson.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.474239+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.107443+00:00"
       }
     },
     {
@@ -3758,10 +3758,10 @@
         "github_url": "https://github.com/adampippert/multi-service-mcp-server",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.474264+00:00",
+        "updated": "2026-04-14T02:16:07.107468+00:00",
         "logoUrl": "https://github.com/adampippert.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.474266+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.107470+00:00"
       }
     },
     {
@@ -3776,10 +3776,10 @@
         "github_url": "https://github.com/adamrtalbot/mcp-nextflow",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.474293+00:00",
+        "updated": "2026-04-14T02:16:07.107495+00:00",
         "logoUrl": "https://github.com/adamrtalbot.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.474295+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.107497+00:00"
       }
     },
     {
@@ -3794,10 +3794,10 @@
         "github_url": "https://github.com/adamshannag/api-mcp-server",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.474334+00:00",
+        "updated": "2026-04-14T02:16:07.107532+00:00",
         "logoUrl": "https://github.com/adamshannag.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.474336+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.107534+00:00"
       }
     },
     {
@@ -3812,10 +3812,10 @@
         "github_url": "https://github.com/adamsilverstein/lighthouse-mcp-server",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.474384+00:00",
+        "updated": "2026-04-14T02:16:07.107577+00:00",
         "logoUrl": "https://github.com/adamsilverstein.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.474386+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.107579+00:00"
       }
     },
     {
@@ -3830,10 +3830,10 @@
         "github_url": "https://github.com/adamsmaka/flutter-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.474397+00:00",
+        "updated": "2026-04-14T02:16:07.107590+00:00",
         "logoUrl": "https://github.com/adamsmaka.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.474398+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.107591+00:00"
       }
     },
     {
@@ -3848,10 +3848,10 @@
         "github_url": "https://github.com/adamwattis/resource-hub-server",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.474432+00:00",
+        "updated": "2026-04-14T02:16:07.107625+00:00",
         "logoUrl": "https://github.com/adamwattis.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.474434+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.107627+00:00"
       }
     },
     {
@@ -3866,10 +3866,10 @@
         "github_url": "https://github.com/adamwattis/mcp-proxy-server",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.474486+00:00",
+        "updated": "2026-04-14T02:16:07.107671+00:00",
         "logoUrl": "https://github.com/adamwattis.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.474488+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.107673+00:00"
       }
     },
     {
@@ -3884,10 +3884,10 @@
         "github_url": "https://github.com/adancurusul/embedded-debugger-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.474525+00:00",
+        "updated": "2026-04-14T02:16:07.107709+00:00",
         "logoUrl": "https://github.com/adancurusul.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.474527+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.107711+00:00"
       }
     },
     {
@@ -3902,10 +3902,10 @@
         "github_url": "https://github.com/adancurusul/serial-mcp-server",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.474564+00:00",
+        "updated": "2026-04-14T02:16:07.107742+00:00",
         "logoUrl": "https://github.com/adancurusul.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.474565+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.107743+00:00"
       }
     },
     {
@@ -3920,10 +3920,10 @@
         "github_url": "https://github.com/augmentedivan/fabric-mcp-server",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.474596+00:00",
+        "updated": "2026-04-14T02:16:07.107771+00:00",
         "logoUrl": "https://github.com/augmentedivan.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.474598+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.107773+00:00"
       }
     },
     {
@@ -3938,10 +3938,10 @@
         "github_url": "https://github.com/saptadey/adaptive-graph-of-thoughts-mcp-server",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.474632+00:00",
+        "updated": "2026-04-14T02:16:07.107803+00:00",
         "logoUrl": "https://github.com/saptadey.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.474634+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.107804+00:00"
       }
     },
     {
@@ -3956,10 +3956,10 @@
         "github_url": "https://github.com/adarshp14/google-form-mcp-server",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.474685+00:00",
+        "updated": "2026-04-14T02:16:07.107886+00:00",
         "logoUrl": "https://github.com/adarshp14.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.474687+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.107890+00:00"
       }
     },
     {
@@ -3974,10 +3974,10 @@
         "github_url": "https://github.com/adawalli/nexus",
         "npm_package": "nexus-mcp",
         "downloads": 2601,
-        "updated": "2026-04-14T02:10:41.474723+00:00",
+        "updated": "2026-04-14T02:16:07.107924+00:00",
         "logoUrl": "https://github.com/adawalli.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.474725+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.107926+00:00"
       }
     },
     {
@@ -3992,10 +3992,10 @@
         "github_url": "https://github.com/adelelo13/neurohive",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.474757+00:00",
+        "updated": "2026-04-14T02:16:07.107959+00:00",
         "logoUrl": "https://github.com/adelelo13.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.474758+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.107961+00:00"
       }
     },
     {
@@ -4010,10 +4010,10 @@
         "github_url": "https://github.com/adelelo13/neuromcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.474788+00:00",
+        "updated": "2026-04-14T02:16:07.107988+00:00",
         "logoUrl": "https://github.com/adelelo13.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.474789+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.107990+00:00"
       }
     },
     {
@@ -4028,10 +4028,10 @@
         "github_url": "https://github.com/adelie-ai/geocode-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.474808+00:00",
+        "updated": "2026-04-14T02:16:07.108007+00:00",
         "logoUrl": "https://github.com/adelie-ai.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.474809+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.108009+00:00"
       }
     },
     {
@@ -4046,10 +4046,10 @@
         "github_url": "https://github.com/adelpro/quran-search-engine-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.474836+00:00",
+        "updated": "2026-04-14T02:16:07.108030+00:00",
         "logoUrl": "https://github.com/adelpro.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.474838+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.108032+00:00"
       }
     },
     {
@@ -4064,10 +4064,10 @@
         "github_url": "https://github.com/adenot/mcp-google-search",
         "npm_package": "@adenot/mcp-google-search",
         "downloads": 45930,
-        "updated": "2026-04-14T02:10:41.474868+00:00",
+        "updated": "2026-04-14T02:16:07.108063+00:00",
         "logoUrl": "https://github.com/adenot.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.474869+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.108065+00:00"
       }
     },
     {
@@ -4082,10 +4082,10 @@
         "github_url": "https://github.com/adeosec/mcp-shodan",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.474923+00:00",
+        "updated": "2026-04-14T02:16:07.108112+00:00",
         "logoUrl": "https://github.com/adeosec.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.474924+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.108114+00:00"
       }
     },
     {
@@ -4100,10 +4100,10 @@
         "github_url": "https://github.com/adepanges/teamretro-mcp-server",
         "npm_package": "teamretro-mcp-server",
         "downloads": 2007,
-        "updated": "2026-04-14T02:10:41.474987+00:00",
+        "updated": "2026-04-14T02:16:07.108160+00:00",
         "logoUrl": "https://github.com/adepanges.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.474989+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.108162+00:00"
       }
     },
     {
@@ -4118,10 +4118,10 @@
         "github_url": "https://github.com/aderix/vantagate-mcp-server",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.475019+00:00",
+        "updated": "2026-04-14T02:16:07.108186+00:00",
         "logoUrl": "https://github.com/aderix.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.475020+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.108188+00:00"
       }
     },
     {
@@ -4136,10 +4136,10 @@
         "github_url": "https://github.com/adexltd/mcp-google-suite",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.475065+00:00",
+        "updated": "2026-04-14T02:16:07.108228+00:00",
         "logoUrl": "https://github.com/adexltd.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.475067+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.108229+00:00"
       }
     },
     {
@@ -4154,10 +4154,10 @@
         "github_url": "https://github.com/adeze/raindrop-mcp",
         "npm_package": "@adeze/raindrop-mcp",
         "downloads": 8714,
-        "updated": "2026-04-14T02:10:41.475099+00:00",
+        "updated": "2026-04-14T02:16:07.108260+00:00",
         "logoUrl": "https://github.com/adeze.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.475101+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.108262+00:00"
       }
     },
     {
@@ -4172,10 +4172,10 @@
         "github_url": "https://github.com/adfin-engineering/mcp-server-adfin",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.475155+00:00",
+        "updated": "2026-04-14T02:16:07.108311+00:00",
         "logoUrl": "https://github.com/adfin-engineering.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.475157+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.108313+00:00"
       }
     },
     {
@@ -4190,10 +4190,10 @@
         "github_url": "https://github.com/adhikasp/mcp-linkedin",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.475183+00:00",
+        "updated": "2026-04-14T02:16:07.108337+00:00",
         "logoUrl": "https://github.com/adhikasp.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.475184+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.108339+00:00"
       }
     },
     {
@@ -4208,10 +4208,10 @@
         "github_url": "https://github.com/adhikasp/mcp-git-ingest",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.475212+00:00",
+        "updated": "2026-04-14T02:16:07.108364+00:00",
         "logoUrl": "https://github.com/adhikasp.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.475214+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.108368+00:00"
       }
     },
     {
@@ -4226,10 +4226,10 @@
         "github_url": "https://github.com/adhikasp/mcp-twikit",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.475263+00:00",
+        "updated": "2026-04-14T02:16:07.108410+00:00",
         "logoUrl": "https://github.com/adhikasp.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.475265+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.108412+00:00"
       }
     },
     {
@@ -4244,10 +4244,10 @@
         "github_url": "https://github.com/adhikasp/mcp-reddit",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.475318+00:00",
+        "updated": "2026-04-14T02:16:07.108459+00:00",
         "logoUrl": "https://github.com/adhikasp.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.475319+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.108461+00:00"
       }
     },
     {
@@ -4262,10 +4262,10 @@
         "github_url": "https://github.com/zo-valentine/mcp-twikit",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.475358+00:00",
+        "updated": "2026-04-14T02:16:07.108496+00:00",
         "logoUrl": "https://github.com/zo-valentine.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.475360+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.108497+00:00"
       }
     },
     {
@@ -4280,10 +4280,10 @@
         "github_url": "https://github.com/adhikasp/mcp-youtube",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.475390+00:00",
+        "updated": "2026-04-14T02:16:07.108524+00:00",
         "logoUrl": "https://github.com/adhikasp.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.475392+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.108526+00:00"
       }
     },
     {
@@ -4298,10 +4298,10 @@
         "github_url": "https://github.com/adi2011/cln-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.475429+00:00",
+        "updated": "2026-04-14T02:16:07.108557+00:00",
         "logoUrl": "https://github.com/adi2011.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.475431+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.108559+00:00"
       }
     },
     {
@@ -4316,10 +4316,10 @@
         "github_url": "https://github.com/adiking117/orthanc-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.475472+00:00",
+        "updated": "2026-04-14T02:16:07.108597+00:00",
         "logoUrl": "https://github.com/adiking117.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.475474+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.108599+00:00"
       }
     },
     {
@@ -4334,10 +4334,10 @@
         "github_url": "https://github.com/adiletd/feature-request-collection-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.475487+00:00",
+        "updated": "2026-04-14T02:16:07.108610+00:00",
         "logoUrl": "https://github.com/adiletd.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.475489+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.108612+00:00"
       }
     },
     {
@@ -4352,10 +4352,10 @@
         "github_url": "https://github.com/adiom-data/grpcmcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.475517+00:00",
+        "updated": "2026-04-14T02:16:07.108637+00:00",
         "logoUrl": "https://github.com/adiom-data.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.475518+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.108639+00:00"
       }
     },
     {
@@ -4370,10 +4370,10 @@
         "github_url": "https://github.com/adird/hilanet-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.475573+00:00",
+        "updated": "2026-04-14T02:16:07.108689+00:00",
         "logoUrl": "https://github.com/adird.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.475575+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.108691+00:00"
       }
     },
     {
@@ -4388,10 +4388,10 @@
         "github_url": "https://github.com/aditya2755/video-edit-mcp",
         "npm_package": "video-edit-mcp",
         "downloads": 1710,
-        "updated": "2026-04-14T02:10:41.475613+00:00",
+        "updated": "2026-04-14T02:16:07.108724+00:00",
         "logoUrl": "https://github.com/aditya2755.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.475616+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.108726+00:00"
       }
     },
     {
@@ -4406,10 +4406,10 @@
         "github_url": "https://github.com/adityak74/mcp-scholarly",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.475626+00:00",
+        "updated": "2026-04-14T02:16:07.108736+00:00",
         "logoUrl": "https://github.com/adityak74.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.475627+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.108738+00:00"
       }
     },
     {
@@ -4424,10 +4424,10 @@
         "github_url": "https://github.com/adityamparikh/solr-mcp-server",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.475657+00:00",
+        "updated": "2026-04-14T02:16:07.108765+00:00",
         "logoUrl": "https://github.com/adityamparikh.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.475659+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.108766+00:00"
       }
     },
     {
@@ -4442,10 +4442,10 @@
         "github_url": "https://github.com/adityasasidhar/browsercontrol",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.475690+00:00",
+        "updated": "2026-04-14T02:16:07.108794+00:00",
         "logoUrl": "https://github.com/adityasasidhar.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.475692+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.108796+00:00"
       }
     },
     {
@@ -4460,10 +4460,10 @@
         "github_url": "https://github.com/adityasugandhi/skillsync-mcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.475715+00:00",
+        "updated": "2026-04-14T02:16:07.108871+00:00",
         "logoUrl": "https://github.com/adityasugandhi.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.475716+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.108876+00:00"
       }
     },
     {
@@ -4478,10 +4478,10 @@
         "github_url": "https://github.com/adjia/mail-mcp-server",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.475742+00:00",
+        "updated": "2026-04-14T02:16:07.108907+00:00",
         "logoUrl": "https://github.com/adjia.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.475743+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.108910+00:00"
       }
     },
     {
@@ -4496,10 +4496,10 @@
         "github_url": "https://github.com/admica/autobuildmcp",
         "npm_package": null,
         "downloads": 0,
-        "updated": "2026-04-14T02:10:41.475783+00:00",
+        "updated": "2026-04-14T02:16:07.108944+00:00",
         "logoUrl": "https://github.com/admica.png?size=128",
         "logoSource": "github",
-        "logoCachedAt": "2026-04-14T02:10:41.475784+00:00"
+        "logoCachedAt": "2026-04-14T02:16:07.108946+00:00"
       }
     }
   ]
