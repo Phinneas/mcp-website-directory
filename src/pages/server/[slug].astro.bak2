@@ -1,0 +1,863 @@
+---
+export const prerender = true;
+/**
+ * Static MCP Server Reference Page
+ * URL: /server/[slug]
+ * Pre-rendered at build time using the same PulseMCP data as index.astro
+ */
+import '../../styles/global.css';
+import ServerHeader from '../../components/ServerHeader.astro';
+import ServerInstallation from '../../components/ServerInstallation.astro';
+import ServerConfiguration from '../../components/ServerConfiguration.astro';
+import ServerTools from '../../components/ServerTools.astro';
+import ServerMetadata from '../../components/ServerMetadata.astro';
+import RelatedServers from '../../components/RelatedServers.astro';
+import EmailSignup from '../../components/EmailSignup.astro';
+import GitHubHealthVitals from '../../components/GitHubHealthVitals';
+import Navbar from '../../components/Navbar.astro';
+import { getRelatedServers, getCategoryDisplayName } from '../../utils/serverData.js';
+import { slugify } from '../../utils/slugify.js';
+
+import { readFileSync, existsSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
+
+// Import static servers from shared data file
+import { staticServers as sharedStaticServers } from '../../data/staticServers.js';
+import { fetchAllMCPServers, transformPulseMCPData } from '../../utils/pulsemcpApi.js';
+import { resolveServerLogo } from '../../utils/logoResolver.js';
+
+// Define the MCPServer interface
+interface MCPServer {
+  id: string;
+  slug?: string;
+  fields: {
+    name: string;
+    description: string;
+    version?: string;
+    status?: string;
+    author?: string;
+    category?: string;
+    language?: string;
+    stars?: number;
+    github_url?: string;
+    npm_package?: string;
+    downloads?: number;
+    updated?: string;
+    license?: string;
+    homepage_url?: string;
+    documentation_url?: string;
+    tags?: string[];
+    prerequisites?: string[];
+    logoUrl?: string;
+    logoSource?: string;
+    logoCachedAt?: string;
+    available_tools?: Array<{
+      name: string;
+      description: string;
+      category?: string;
+    }>;
+    environment_variables?: Array<{
+      name: string;
+      description: string;
+      required: boolean;
+      default?: string;
+    }>;
+  };
+}
+
+export async function getStaticPaths() {
+  // Try to load pre-fetched servers from Prefect flow (servers.json), fall back to live API
+  const _serversJsonPath = join(dirname(fileURLToPath(import.meta.url)), '../../data/servers.json');
+  let allServers: MCPServer[] = [];
+
+  try {
+    if (existsSync(_serversJsonPath)) {
+      const cached = JSON.parse(readFileSync(_serversJsonPath, 'utf-8'));
+      if (Array.isArray(cached.servers) && cached.servers.length > 0) {
+        console.log(`[slug].astro: Loaded ${cached.servers.length} servers from servers.json (generated ${cached.generated_at})`);
+        allServers = cached.servers as MCPServer[];
+      }
+    }
+  } catch (e: any) {
+    console.warn('[slug].astro: Could not read servers.json:', e.message);
+  }
+
+  if (allServers.length === 0) {
+    allServers = sharedStaticServers as MCPServer[];
+    try {
+      const apiServers = await fetchAllMCPServers();
+      if (apiServers && apiServers.length > 0) {
+        allServers = transformPulseMCPData(apiServers) as MCPServer[];
+      }
+    } catch (error) {
+      console.error('getStaticPaths: PulseMCP fetch failed, using static servers:', error);
+    }
+  }
+
+  // Build slug map with deduplication (same logic as buildSlugToServerMap)
+  const usedSlugs = new Set<string>();
+  const paths = [];
+
+  for (const server of allServers) {
+    const name = server.fields?.name || server.id;
+    let slug = slugify(name);
+
+    // Skip servers with no usable name
+    if (!slug) continue;
+
+    // Deduplicate exactly as serverData.js does
+    if (usedSlugs.has(slug)) {
+      let counter = 2;
+      while (usedSlugs.has(`${slug}-${counter}`)) counter++;
+      slug = `${slug}-${counter}`;
+    }
+    usedSlugs.add(slug);
+
+    // Enrich with logo at build time
+    let enrichedServer = { ...server, slug };
+    if (!server.fields?.logoUrl && server.fields?.github_url) {
+      try {
+        const logoData = await resolveServerLogo(server);
+        if (logoData?.url) {
+          enrichedServer = {
+            ...enrichedServer,
+            fields: {
+              ...enrichedServer.fields,
+              logoUrl: logoData.url,
+              logoSource: logoData.source,
+              logoCachedAt: logoData.cachedAt,
+            },
+          };
+        }
+      } catch {
+        // Logo enrichment is best-effort
+      }
+    }
+
+    paths.push({ params: { slug }, props: { server: enrichedServer, allServers } });
+  }
+
+  return paths;
+}
+
+// Props come from getStaticPaths — no runtime fetch needed
+const { server, allServers } = Astro.props as { server: MCPServer; allServers: MCPServer[] };
+const { slug } = Astro.params;
+
+// Get related servers
+const relatedServers = getRelatedServers(server, allServers, 5);
+
+// Prepare SEO data
+const serverName = server.fields.name;
+const serverDescription = server.fields.description || `Learn about ${serverName} MCP server`;
+const truncatedDescription = serverDescription.length > 160 
+  ? serverDescription.substring(0, 157) + '...' 
+  : serverDescription;
+const canonicalUrl = `https://www.mymcpshelf.com/server/${slug}`;
+const categoryDisplay = getCategoryDisplayName(server.fields.category);
+
+// Structured data for SEO with enhanced deployment and enterprise metadata
+const deploymentCategoryMap = {
+  local_stdio: "DesktopApplication",
+  cloud_native: "WebApplication", 
+  self_hosted: "WebApplication",
+  enterprise_saas: "BusinessApplication",
+  hybrid: "DeveloperApplication"
+};
+
+const deploymentCategoryNameMap = {
+  local_stdio: "Local Deployment",
+  cloud_native: "Cloud-Native Application",
+  self_hosted: "Self-Hosted Software",
+  enterprise_saas: "Enterprise SaaS Software",
+  hybrid: "Multi-Deployment Software"
+};
+
+const currentDeployment = server.deployment || 'hybrid';
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": serverName,
+  "alternateName": `${serverName} MCP Server`,
+  "description": serverDescription,
+  "url": canonicalUrl,
+  
+  // Enhanced application categorization
+  "applicationCategory": deploymentCategoryMap[currentDeployment] || "DeveloperApplication",
+  "applicationSubCategory": deploymentCategoryNameMap[currentDeployment] || "Development Tools",
+  
+  // Operating systems
+  "operatingSystem": ["Any", "Cross-platform"],
+  "requirements": getDeploymentRequirements(currentDeployment),
+  
+  // Author and repository
+  ...(server.fields.author && {
+    "author": {
+      "@type": "Person",
+      "name": server.fields.author.replace('@', '')
+    }
+  }),
+  ...(server.fields.github_url && { "codeRepository": server.fields.github_url }),
+  
+  // Technical details
+  "programmingLanguage": server.fields.language || "Unknown",
+  ...(server.fields.license && { "license": server.fields.license }),
+  "softwareVersion": server.fields.version || "1.0.0",
+  
+  // Feature list from capabilities
+  "featureList": server.deployment_metadata?.capabilities || ["MCP Protocol"],
+  
+  // Deployment and hosting info
+  "deployment_type": currentDeployment,
+  "offers": {
+    "@type": "Offer",
+    "category": deploymentCategoryNameMap[currentDeployment] || "Development Tools",
+    "availability": "https://schema.org/InStock",
+    "seller": {
+      "@type": "Organization",
+      "name": server.fields.author || "Community"
+    }
+  },
+  
+  // Enterprise features
+  ...(server.enterprise_features && server.enterprise_features.length > 0 && {
+    "hasFeature": server.enterprise_features.map(feature => ({
+      "@type": "SoftwareApplicationFeature",
+      "name": feature
+    }))
+  }),
+  
+  // Aggregate rating based on stars (simulated ratings)
+  ...(server.fields.stars && { 
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": calculateRatingFromStars(server.fields.stars),
+      "reviewCount": Math.max(1, Math.floor(server.fields.stars / 10)),
+      "bestRating": "5",
+      "worstRating": "1"
+    }
+  }),
+  
+  // Download/purchase stats
+  ...(server.fields.downloads && {
+    "interactionStatistic": {
+      "@type": "InteractionCounter",
+      "interactionType": "https://schema.org/DownloadAction",
+      "userInteractionCount": server.fields.downloads
+    }
+  }),
+  
+  // Software category
+  "softwareCategory": categoryDisplay,
+  
+  // Date published/updated
+  "datePublished": server.fields.updated || new Date().toISOString(),
+  "dateModified": server.fields.updated || new Date().toISOString(),
+  
+  // If it has tools, add application suite
+  ...(server.fields.available_tools && server.fields.available_tools.length > 0 && {
+    "applicationSuite": {
+      "@type": "SoftwareApplication",
+      "name": `${serverName} Tools`,
+      "applicationSubCategory": "MCP Tools",
+      "featureList": server.fields.available_tools.map(tool => tool.name)
+    }
+  })
+};
+
+// Helper function to calculate rating from stars
+function calculateRatingFromStars(stars) {
+  if (!stars) return "3.0";
+  // Normalize: 0-100 stars -> 1-5 rating
+  const rating = Math.max(1, Math.min(5, 1 + (stars / 100) * 4));
+  return rating.toFixed(1);
+}
+
+// Helper function to get deployment requirements
+function getDeploymentRequirements(deploymentType) {
+  const requirements = {
+    local_stdio: "Local CLI access and runtime environment (Node.js/Python)",
+    cloud_native: "Internet access and cloud provider credentials",
+    self_hosted: "Server infrastructure with Docker/Kubernetes support",
+    enterprise_saas: "Enterprise subscription and SSO integration",
+    hybrid: "Depends on selected deployment mode"
+  };
+  return requirements[deploymentType] || "Cross-platform compatible";
+}
+</script>
+
+<!-- Note: If this is an MCP server that offers commercial features, consider adding:
+"offers": {
+  "@type": "Offer", 
+  "price": "Contact sales",
+  "priceCurrency": "USD",
+  "availability": "https://schema.org/PreOrder"
+}
+-->}}
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{serverName} - MCP Server | MyMCPShelf</title>
+  <meta name="description" content={truncatedDescription}>
+  <meta name="keywords" content={`${server.fields.category || ''}, ${server.fields.language || ''}, MCP, Model Context Protocol, ${serverName}`}>
+  <meta name="robots" content="noindex">
+  <link rel="canonical" href={canonicalUrl}>
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/favicon.png" type="image/png">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content={`${serverName} - MCP Server`}>
+  <meta property="og:description" content={truncatedDescription}>
+  <meta property="og:url" content={canonicalUrl}>
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="MyMCPShelf">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content={`${serverName} - MCP Server`}>
+  <meta name="twitter:description" content={truncatedDescription}>
+
+  <!-- Structured Data -->
+  <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+
+  <!-- Dark mode flash prevention -->
+  <script>
+    (function() {
+      const theme = localStorage.getItem('theme');
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark-mode');
+        document.body?.classList.add('dark-mode');
+      }
+    })();
+  </script>
+
+  <style>
+    :root {
+      --bg-color: hsl(var(--background));
+      --text-primary: hsl(var(--foreground));
+      --text-secondary: hsl(var(--muted-foreground));
+      --card-bg: hsl(var(--card));
+      --border-color: hsl(var(--border));
+      --accent-color: hsl(var(--primary));
+      --hero-bg: hsl(220, 40%, 12%);
+    }
+
+    body.dark-mode {
+      --bg-color: hsl(var(--background));
+      --text-primary: hsl(var(--foreground));
+      --text-secondary: hsl(var(--muted-foreground));
+      --card-bg: hsl(var(--card));
+      --border-color: hsl(var(--border));
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Libre Franklin', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.7;
+      color: var(--text-primary);
+      background: var(--bg-color);
+      min-height: 100vh;
+    }
+
+    .page-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Navigation */
+    .nav-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+    }
+
+    .nav-links a:hover {
+      color: var(--accent-color);
+      border-color: var(--accent-color);
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      flex-wrap: wrap;
+    }
+
+    .breadcrumb a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .breadcrumb a:hover {
+      color: var(--accent-color);
+    }
+
+    .breadcrumb-separator {
+      color: var(--text-secondary);
+      opacity: 0.5;
+    }
+
+    .breadcrumb-current {
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    /* Theme toggle */
+    .theme-toggle {
+      position: fixed;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .theme-toggle:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .theme-toggle svg {
+      width: 20px;
+      height: 20px;
+      fill: var(--text-primary);
+    }
+
+    /* Main content layout */
+    .content-layout {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 2rem;
+      margin-top: 1.5rem;
+    }
+
+    .main-content {
+      min-width: 0;
+    }
+
+    .sidebar {
+      /* Sidebar container */
+    }
+
+    /* Description section */
+    .description-section {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--border-color);
+    }
+
+    .description-section h2 {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0 0 1rem 0;
+    }
+
+    .description-section h2 svg {
+      color: var(--text-secondary);
+    }
+
+    .description-text {
+      color: var(--text-secondary);
+      line-height: 1.8;
+      font-size: 1rem;
+    }
+
+    /* Prerequisites section */
+    .prerequisites-section {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--border-color);
+    }
+
+    .prerequisites-section h2 {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0 0 1rem 0;
+    }
+
+    .prerequisites-section h2 svg {
+      color: var(--text-secondary);
+    }
+
+    .prerequisites-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .prerequisites-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.5rem 0;
+      color: var(--text-secondary);
+    }
+
+    .prerequisites-list li::before {
+      content: '•';
+      color: var(--accent-color);
+      font-weight: bold;
+      font-size: 1.2rem;
+      line-height: 1;
+    }
+
+    /* Environment variables table */
+    .env-vars-section {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--border-color);
+    }
+
+    .env-vars-section h2 {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0 0 1rem 0;
+    }
+
+    .env-vars-section h2 svg {
+      color: var(--text-secondary);
+    }
+
+    .env-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    .env-table th {
+      text-align: left;
+      padding: 0.75rem;
+      background: hsl(var(--muted));
+      border-bottom: 1px solid var(--border-color);
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .env-table td {
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-secondary);
+    }
+
+    .env-table code {
+      background: hsl(var(--muted));
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+      font-size: 0.85rem;
+      color: hsl(var(--primary));
+    }
+
+    .required-badge {
+      display: inline-block;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .required-badge.yes {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+    }
+
+    .required-badge.no {
+      background: rgba(34, 197, 94, 0.1);
+      color: #22c55e;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .content-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        order: -1;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .page-container {
+        padding: 1rem;
+      }
+
+      .nav-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .nav-links {
+        width: 100%;
+      }
+
+      .nav-links a {
+        flex: 1;
+        justify-content: center;
+        padding: 0.4rem 0.5rem;
+        font-size: 0.8rem;
+      }
+
+      .breadcrumb {
+        font-size: 0.8rem;
+      }
+
+      .theme-toggle {
+        top: 1rem;
+        right: 1rem;
+        width: 40px;
+        height: 40px;
+      }
+
+      .env-table {
+        display: block;
+        overflow-x: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <Navbar />
+  <!-- Dark Mode Toggle -->
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+    <svg id="sunIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="5"/>
+      <line x1="12" y1="1" x2="12" y2="3" stroke="currentColor" stroke-width="2"/>
+      <line x1="12" y1="21" x2="12" y2="23" stroke="currentColor" stroke-width="2"/>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="currentColor" stroke-width="2"/>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="currentColor" stroke-width="2"/>
+      <line x1="1" y1="12" x2="3" y2="12" stroke="currentColor" stroke-width="2"/>
+      <line x1="21" y1="12" x2="23" y2="12" stroke="currentColor" stroke-width="2"/>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="currentColor" stroke-width="2"/>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="currentColor" stroke-width="2"/>
+    </svg>
+    <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="display: none;">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    </svg>
+  </button>
+
+  <div class="page-container">
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span class="breadcrumb-separator">/</span>
+      <a href="/#serversGrid">Servers</a>
+      {server.fields.category && (
+        <>
+          <span class="breadcrumb-separator">/</span>
+          <a href={`/#serversGrid?category=${server.fields.category}`}>{categoryDisplay}</a>
+        </>
+      )}
+      <span class="breadcrumb-separator">/</span>
+      <span class="breadcrumb-current">{serverName}</span>
+    </nav>
+
+    <!-- Server Header -->
+    <ServerHeader 
+      name={serverName}
+      author={server.fields.author}
+      stars={server.fields.stars}
+      updated={server.fields.updated}
+      status={server.fields.status as 'official' | 'community' | 'beta' | 'deprecated' || 'community'}
+      githubUrl={server.fields.github_url}
+      logoUrl={server.fields.logoUrl}
+    />
+
+    <!-- Main Content Layout -->
+    <div class="content-layout">
+      <main class="main-content">
+        <!-- Description -->
+        <section class="description-section">
+          <h2>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            Description
+          </h2>
+          <p class="description-text">{server.fields.description}</p>
+        </section>
+
+        <!-- Installation -->
+        <ServerInstallation server={server} />
+
+        <!-- Configuration -->
+        <ServerConfiguration server={server} />
+
+        <!-- Available Tools -->
+        {server.fields.available_tools && server.fields.available_tools.length > 0 && (
+          <ServerTools tools={server.fields.available_tools} />
+        )}
+
+        <!-- Prerequisites -->
+        {server.fields.prerequisites && server.fields.prerequisites.length > 0 && (
+          <section class="prerequisites-section">
+            <h2>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 11 12 14 22 4"></polyline>
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+              </svg>
+              Prerequisites
+            </h2>
+            <ul class="prerequisites-list">
+              {server.fields.prerequisites.map(prereq => (
+                <li>{prereq}</li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        <!-- Environment Variables -->
+        {server.fields.environment_variables && server.fields.environment_variables.length > 0 && (
+          <section class="env-vars-section">
+            <h2>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+              </svg>
+              Environment Variables
+            </h2>
+            <table class="env-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Description</th>
+                  <th>Required</th>
+                  <th>Default</th>
+                </tr>
+              </thead>
+              <tbody>
+                {server.fields.environment_variables.map(envVar => (
+                  <tr>
+                    <td><code>{envVar.name}</code></td>
+                    <td>{envVar.description}</td>
+                    <td>
+                      <span class={`required-badge ${envVar.required ? 'yes' : 'no'}`}>
+                        {envVar.required ? 'Yes' : 'No'}
+                      </span>
+                    </td>
+                    <td>{envVar.default || '-'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
+        )}
+
+        <!-- Email Signup -->
+        <EmailSignup />
+      </main>
+
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <ServerMetadata server={server} />
+        {server.fields.github_url && (
+          <GitHubHealthVitals 
+            client:load
+            githubUrl={server.fields.github_url}
+            token={import.meta.env.GITHUB_TOKEN}
+          />
+        )}
+        <RelatedServers servers={relatedServers} currentServerId={server.id} />
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    // Dark mode toggle
+    const themeToggle = document.getElementById('themeToggle');
+    const sunIcon = document.getElementById('sunIcon');
+    const moonIcon = document.getElementById('moonIcon');
+    const body = document.body;
+
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    if (currentTheme === 'dark') {
+      body.classList.add('dark-mode');
+      if (sunIcon) sunIcon.style.display = 'none';
+      if (moonIcon) moonIcon.style.display = 'block';
+    }
+
+    themeToggle?.addEventListener('click', () => {
+      body.classList.toggle('dark-mode');
+      if (body.classList.contains('dark-mode')) {
+        localStorage.setItem('theme', 'dark');
+        if (sunIcon) sunIcon.style.display = 'none';
+        if (moonIcon) moonIcon.style.display = 'block';
+      } else {
+        localStorage.setItem('theme', 'light');
+        if (sunIcon) sunIcon.style.display = 'block';
+        if (moonIcon) moonIcon.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
