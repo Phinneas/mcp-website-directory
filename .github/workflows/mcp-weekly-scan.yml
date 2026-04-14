@@ -21,12 +21,9 @@ jobs:
       - name: Run Weekly Scan
         env:
           TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
-        run: node scripts/tavily/weekly-scan.js
-      - name: Commit Results
-        if: success()
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add data/
-          git diff --staged --quiet || git commit -m "Weekly MCP scan results $(date +'%Y-%m-%d')"
-          git push
+          node scripts/tavily/weekly-scan.js
+          # Upsert results to D1 (assuming weekly-scan outputs to data/servers.json)
+          node scripts/upsert-to-d1.js data/servers.json servers
