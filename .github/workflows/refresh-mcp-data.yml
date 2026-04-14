@@ -1,5 +1,9 @@
 name: Refresh MCP Server Data
 
+permissions:
+  contents: write
+  pull-requests: write
+
 # ─────────────────────────────────────────────────────────────────────────────
 # Fallback / CI runner for the Prefect data-refresh pipeline.
 #
