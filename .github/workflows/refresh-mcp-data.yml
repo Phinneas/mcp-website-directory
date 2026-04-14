@@ -92,6 +92,14 @@ jobs:
         with:
           fetch-depth: 0
 
+      # ── 1.1 Pre-flight Check ────────────────────────────────────────────────
+      - name: Pre-flight Check
+        run: |
+          echo "System path: $PATH"
+          which python3 || echo "python3 not found"
+          which git || echo "git not found"
+          whoami
+          pwd
 
       # ── 2. Python ───────────────────────────────────────────────────────────
       - name: Set up Python ${{ env.PYTHON_VERSION }}
