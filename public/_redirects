@@ -1,8 +1,8 @@
 # Cloudflare Pages Redirects for MCP Directory
 # Maintains SEO while transitioning to deployment-based navigation
 
-# Redirect homepage to default deployment (Local is primary use case)
-/ /local-stdio 301
+# Homepage - no redirect (serves index.html)
+# / /local-stdio 301
 
 # Preserve old URLs (no redirects needed for these - they remain valid)
 # /mcp-clients - stays as is
