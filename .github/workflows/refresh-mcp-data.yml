@@ -62,6 +62,7 @@ concurrency:
 
 env:
   PYTHON_VERSION: "3.12"
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 jobs:
   refresh:
@@ -125,6 +126,14 @@ jobs:
           python scripts/prefect_refresh.py \
             --max-servers "${{ github.event.inputs.max_servers || '5000' }}" \
             $EXTRA_FLAGS
+
+      - name: Debug on Failure
+        if: failure()
+        run: |
+          echo "Pipeline failed. Current directory: $(pwd)"
+          ls -la
+          echo "Data directory contents:"
+          ls -la src/data/ || echo "src/data/ does not exist"
 
       # ── 5. Verify output ──────────────────────────────────────────────────────
       - name: Verify servers.json
