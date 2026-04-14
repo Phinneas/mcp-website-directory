@@ -170,7 +170,7 @@ jobs:
             echo "servers.json already up-to-date (committed by flow) — nothing to do"
           else
             git commit -m "chore(data): refresh MCP server catalogue — ${{ env.SERVER_COUNT }} servers [$(date -u +'%Y-%m-%d')]"
-            git push
+            git push origin "${{ github.ref_name }}"
             echo "Committed servers.json via fallback git push"
           fi
 
