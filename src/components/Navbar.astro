@@ -63,12 +63,14 @@ const functionalCategories = [
 
 // Utility nav items
 const utilityNavItems = [
-  { href: '/agent-skills', label: 'Agent Skills' },
-  { href: '/cursor-skills', label: 'Cursor Skills' },
-  { href: '/mcp-clients', label: 'MCP Clients' },
-  { href: '/mcp-tools', label: 'Tools' },
-  { href: '/blog', label: 'Blog' },
-  { href: '/submit-server', label: 'Submit' }
+  { href: '/mcp-tools', label: 'MCP Tools', icon: '🧰' },
+  { href: '/mcp-config-generator', label: 'Config Generator', icon: '⚙️' },
+  { href: '/blog', label: 'Blog', icon: '📝' },
+  { href: '/faq', label: 'FAQ', icon: '❓' },
+  { href: '/submit-server', label: 'Submit Server', icon: '📤' },
+  { href: '/agent-skills', label: 'Agent Skills', icon: '🤖' },
+  { href: '/cursor-skills', label: 'Cursor Skills', icon: '✏️' },
+  { href: '/mcp-clients', label: 'MCP Clients', icon: '💻' },
 ];
 ---
 <nav class="site-navbar">
@@ -115,10 +117,19 @@ const utilityNavItems = [
       <!-- Tertiary: Resources -->
       <div class="nav-section">
         <span class="nav-section-label">Resources</span>
-        <div class="nav-links-row">
-          {utilityNavItems.slice(0, 3).map(item => (
-            <a href={item.href} class:list={['nav-link', { active: isActive(item.href) }]}>{item.label}</a>
-          ))}
+        <div class="nav-dropdown">
+          <button class="nav-dropdown-trigger" aria-haspopup="true" aria-expanded="false">
+            <span>Resources</span>
+            <span class="dropdown-arrow">▼</span>
+          </button>
+          <div class="nav-dropdown-menu">
+            {utilityNavItems.map(item => (
+              <a href={item.href} class:list={['nav-dropdown-item', { active: isActive(item.href) }]}>
+                <span class="nav-icon">{item.icon}</span>
+                <span>{item.label}</span>
+              </a>
+            ))}
+          </div>
         </div>
       </div>
 

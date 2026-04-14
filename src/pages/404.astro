@@ -2,7 +2,7 @@
 /**
  * 404 Not Found Page
  */
-import { FolderIcon, ToolboxIcon, ComputerIcon, VintageIcon } from '../components/VintageIcon';
+import Navbar from '../components/Navbar.astro';
 import '../styles/global.css';
 ---
 
@@ -45,33 +45,6 @@ import '../styles/global.css';
       text-align: center;
     }
 
-    .nav-links {
-      position: fixed;
-      top: 2rem;
-      left: 2rem;
-      display: flex;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-    }
-
-    .nav-links a {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      color: hsl(var(--muted-foreground));
-      text-decoration: none;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      transition: all 0.2s ease;
-      background: hsl(var(--card));
-      border: 1px solid hsl(var(--border));
-    }
-
-    .nav-links a:hover {
-      color: hsl(var(--primary));
-      border-color: hsl(var(--primary));
-    }
 
     .error-code {
       font-size: 8rem;
@@ -221,12 +194,7 @@ import '../styles/global.css';
   </style>
 </head>
 <body>
-  <nav class="nav-links">
-    <a href="/"><FolderIcon client:load size={16} /> Shelf</a>
-    <a href="/agent-skills"><ToolboxIcon client:load size={16} /> Agent Skills</a>
-    <a href="/mcp-clients"><ComputerIcon client:load size={16} /> MCP Clients</a>
-    <a href="/blog"><VintageIcon client:load name="Windows95TextFile" size={16} /> Blog</a>
-  </nav>
+  <Navbar />
 
   <div class="container">
     <div class="error-code">404</div>

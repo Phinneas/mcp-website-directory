@@ -10,7 +10,20 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   site: 'https://www.mymcpshelf.com',
   output: 'server',
-  adapter: cloudflare(),
+  adapter: cloudflare({
+    routes: {
+      extend: {
+        include: [
+          { pattern: '/local-stdio' },
+          { pattern: '/cloud-native' },
+          { pattern: '/self-hosted' },
+          { pattern: '/enterprise-saas' },
+          { pattern: '/enterprise-readiness' },
+          { pattern: '/category/*' },
+        ]
+      }
+    }
+  }),
   trailingSlash: 'never',  // Disable automatic trailing slashes
   integrations: [react(), mdx(), sitemap({
     filter: (page) => !page.includes('/server/'),
