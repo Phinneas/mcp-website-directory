@@ -15,10 +15,12 @@ export interface MCPServerRow {
   downloads: number;
   logo_url: string | null;
   updated_at: string | null;
+  deployment_type: string | null;
 }
 
 export interface MCPServer {
   id: string;
+  deployment: string;
   fields: {
     name: string;
     description: string;
@@ -44,6 +46,7 @@ export interface ServersPage {
 function rowToServer(row: MCPServerRow): MCPServer {
   return {
     id: row.id,
+    deployment: row.deployment_type || 'local_stdio',
     fields: {
       name: row.name,
       description: row.description || '',

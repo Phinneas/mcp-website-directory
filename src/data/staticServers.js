@@ -7,6 +7,7 @@ export const staticServers = [
   // Official Servers
   {
     id: 'github',
+    deployment: 'local_stdio',
     fields: {
       name: 'GitHub MCP Server',
       description: 'Access GitHub repositories, issues, and pull requests directly through MCP. Perfect for AI assistants that need to interact with code repositories.',
@@ -20,6 +21,7 @@ export const staticServers = [
   },
   {
     id: 'filesystem-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'File System MCP',
       description: 'Cross-platform file system operations with comprehensive file management tools including copy, move, delete, read, write, search, and system information retrieval.',
@@ -33,6 +35,7 @@ export const staticServers = [
   },
   {
     id: 'puppeteer-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Puppeteer MCP Server',
       description: 'Browser automation and web scraping using Puppeteer with screenshot capture, JavaScript execution, form filling, and smart Chrome management.',
@@ -46,6 +49,7 @@ export const staticServers = [
   },
   {
     id: 'postgres-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'PostgreSQL MCP Server',
       description: 'Advanced PostgreSQL MCP server with performance analysis, index tuning, query optimization, database health monitoring, and safe SQL execution modes.',
@@ -59,6 +63,7 @@ export const staticServers = [
   },
   {
     id: 'sqlite-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'SQLite MCP Server',
       description: 'Comprehensive SQLite database interaction with full CRUD operations, schema introspection, custom SQL query execution, and database exploration tools.',
@@ -72,6 +77,7 @@ export const staticServers = [
   },
   {
     id: 'gdrive-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Google Workspace MCP Server',
       description: 'Google Workspace integration supporting Google Drive file operations, Gmail, and Calendar with OAuth2 authentication and multiple account support.',
@@ -87,6 +93,7 @@ export const staticServers = [
   // Aggregators & Platforms
   {
     id: 'mindsdb-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'MindsDB MCP Server',
       description: 'AI query engine - Platform for building AI that can answer questions over large scale federated data. The only MCP Server you\'ll ever need.',
@@ -100,6 +107,7 @@ export const staticServers = [
   },
   {
     id: 'activepieces-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Activepieces MCP',
       description: 'AI Agents & MCPs & AI Workflow Automation with 280+ MCP servers for AI agents. Complete workflow automation platform.',
@@ -113,6 +121,7 @@ export const staticServers = [
   },
   {
     id: 'fastmcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'FastMCP',
       description: 'The fast, Pythonic way to build MCP servers and clients. Framework for rapid MCP development with Python.',
@@ -126,6 +135,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-use',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Use',
       description: 'The easiest way to interact with MCP servers with custom agents. Simplifies MCP server interaction and management.',
@@ -139,6 +149,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-agent',
+    deployment: 'local_stdio',
     fields: {
       name: '1MCP Agent',
       description: 'A unified Model Context Protocol server implementation that aggregates multiple MCP servers into one powerful interface.',
@@ -152,6 +163,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-jungle',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCPJungle',
       description: 'Self-hosted MCP Server registry for enterprise AI Agents. Discover, manage, and deploy MCP servers at scale.',
@@ -165,6 +177,7 @@ export const staticServers = [
   },
   {
     id: 'anyquery-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'AnyQuery',
       description: 'Query more than 40 apps with one binary using SQL. Connect to PostgreSQL, MySQL, SQLite and countless APIs through SQL.',
@@ -178,6 +191,7 @@ export const staticServers = [
   },
   {
     id: 'metatool-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'MetaTool MCP',
       description: 'The unified middleware MCP server that manages your MCP connections with a powerful GUI interface.',
@@ -191,6 +205,7 @@ export const staticServers = [
   },
   {
     id: 'pipedream-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Pipedream MCP',
       description: 'Connect with 2,500+ APIs using 8,000+ prebuilt tools. Manage servers for your users in your own applications.',
@@ -204,6 +219,7 @@ export const staticServers = [
   },
   {
     id: 'magg-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Magg MCP',
       description: 'Meta-MCP server acting as universal hub, allowing LLMs to autonomously discover, install, and orchestrate multiple MCP servers.',
@@ -219,6 +235,7 @@ export const staticServers = [
   // Cloud Platforms & System Management
   {
     id: 'awslabs-mcp-official',
+    deployment: 'local_stdio',
     fields: {
       name: 'AWS MCP Servers',
       description: 'Official AWS MCP Servers helping you get the most out of AWS, wherever you use MCP. Complete AWS integration.',
@@ -232,6 +249,7 @@ export const staticServers = [
   },
   {
     id: 'googleapis-genai-toolbox',
+    deployment: 'local_stdio',
     fields: {
       name: 'Google GenAI Toolbox',
       description: 'Official Google MCP Toolbox for Databases. Open source MCP server for databases with GenAI integration.',
@@ -245,6 +263,7 @@ export const staticServers = [
   },
   {
     id: 'panel-1panel',
+    deployment: 'local_stdio',
     fields: {
       name: '1Panel MCP Server',
       description: 'Intuitive web interface and MCP Server to manage websites, files, containers, databases, and LLMs on a Linux server.',
@@ -258,6 +277,7 @@ export const staticServers = [
   },
   {
     id: 'zen-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Zen MCP Server',
       description: 'The power of Claude Code + [Gemini / OpenAI / Grok / OpenRouter / Ollama / Custom Model / All Of The Above] working as one.',
@@ -271,6 +291,7 @@ export const staticServers = [
   },
   {
     id: 'jetbrains-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'JetBrains MCP Server',
       description: 'Official JetBrains MCP server to work with IDEs: IntelliJ, PyCharm, WebStorm, Android Studio. Complete IDE integration.',
@@ -284,6 +305,7 @@ export const staticServers = [
   },
   {
     id: 'elevenlabs-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'ElevenLabs MCP Server',
       description: 'The official ElevenLabs MCP server for advanced text-to-speech capabilities and voice synthesis.',
@@ -297,6 +319,7 @@ export const staticServers = [
   },
   {
     id: 'minimax-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'MiniMax MCP Server',
       description: 'Official MiniMax MCP server enabling powerful Text to Speech, image generation and video generation capabilities.',
@@ -310,6 +333,7 @@ export const staticServers = [
   },
   {
     id: 'aws-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'AWS MCP Server',
       description: 'Official AWS MCP servers for seamless integration with AWS services and resources. Manage EC2, S3, and more.',
@@ -323,6 +347,7 @@ export const staticServers = [
   },
   {
     id: 'cloudflare-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Cloudflare MCP Server',
       description: 'Integration with Cloudflare services including Workers, KV, R2, and D1. Manage your edge infrastructure through AI.',
@@ -336,6 +361,7 @@ export const staticServers = [
   },
   {
     id: 'kubernetes-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Kubernetes MCP Server',
       description: 'Manage Kubernetes clusters through natural language. Deploy, scale, and monitor applications with AI assistance.',
@@ -349,6 +375,7 @@ export const staticServers = [
   },
   {
     id: 'pulumi-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Pulumi MCP Server',
       description: 'Interact with Pulumi using Automation API and Cloud API. Preview changes, deploy updates, manage infrastructure as code.',
@@ -364,6 +391,7 @@ export const staticServers = [
   // Communication & Enterprise
   {
     id: 'slack-mcp-korotovsky',
+    deployment: 'local_stdio',
     fields: {
       name: 'Slack MCP Server Pro',
       description: 'The most powerful MCP Slack Server with no permission requirements, Apps support, multiple transports, and smart history.',
@@ -377,6 +405,7 @@ export const staticServers = [
   },
   {
     id: 'azure-devops-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Microsoft Azure DevOps MCP',
       description: 'Official Microsoft MCP server for Azure DevOps, bringing the power of Azure DevOps directly to your agents.',
@@ -390,6 +419,7 @@ export const staticServers = [
   },
   {
     id: 'line-bot-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'LINE Bot MCP Server',
       description: 'Official LINE MCP server that integrates LINE Messaging API to connect AI Agent to LINE Official Account.',
@@ -403,6 +433,7 @@ export const staticServers = [
   },
   {
     id: 'slack-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Slack MCP Server',
       description: 'The most powerful MCP Slack server with no permission requirements, Apps support, multiple transports, and smart history.',
@@ -416,6 +447,7 @@ export const staticServers = [
   },
   {
     id: 'discord-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Discord MCP Server',
       description: 'Interact with Discord servers, channels, and messages. Send messages, manage channels, and monitor activity.',
@@ -429,6 +461,7 @@ export const staticServers = [
   },
   {
     id: 'gmail-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Gmail MCP Server',
       description: 'Access Gmail inbox, send emails, manage labels and filters. Complete email management through AI conversations.',
@@ -442,6 +475,7 @@ export const staticServers = [
   },
   {
     id: 'whatsapp-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'WhatsApp MCP Server',
       description: 'High-quality WhatsApp MCP server for AI-powered WhatsApp automation and messaging integration.',
@@ -457,6 +491,7 @@ export const staticServers = [
   // Browser Automation & Official Servers
   {
     id: 'microsoft-playwright-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Microsoft Playwright MCP',
       description: 'Official Microsoft Playwright MCP server enabling LLMs to interact with web pages through structured accessibility snapshots.',
@@ -470,6 +505,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-playwright-executeautomation',
+    deployment: 'local_stdio',
     fields: {
       name: 'Playwright MCP Server',
       description: 'Playwright Model Context Protocol Server - Tool to automate Browsers and APIs in Claude Desktop, Cline, Cursor IDE and More.',
@@ -483,6 +519,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-chrome-hangwin',
+    deployment: 'local_stdio',
     fields: {
       name: 'Chrome MCP Server',
       description: 'Chrome extension-based Model Context Protocol server that exposes Chrome browser functionality to AI assistants.',
@@ -496,6 +533,7 @@ export const staticServers = [
   },
   {
     id: 'chrome-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Chrome Browser Automation',
       description: 'Provides browser automation and semantic search capabilities through Chrome extension integration with high-performance web control.',
@@ -509,6 +547,7 @@ export const staticServers = [
   },
   {
     id: 'notte-browser-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Notte Browser MCP',
       description: 'Provides a bridge between AI and Notte cloud browser technology, enabling scalable web automation in the cloud.',
@@ -522,6 +561,7 @@ export const staticServers = [
   },
   {
     id: 'browserbase-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Browserbase MCP Server',
       description: 'Automate browser interactions in the cloud including web navigation, data extraction, form filling, and more.',
@@ -535,6 +575,7 @@ export const staticServers = [
   },
   {
     id: 'browser-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Browser MCP Server',
       description: 'Automate your local Chrome browser with comprehensive browser control and web automation capabilities.',
@@ -550,6 +591,7 @@ export const staticServers = [
   // Databases
   {
     id: 'database-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Database Server',
       description: 'Connect to SQLite, SQL Server, and PostgreSQL databases. Execute queries and manage database operations.',
@@ -563,6 +605,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-alchemy',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Alchemy',
       description: 'Access relational databases like SQLite, PostgreSQL, MySQL, MariaDB, Oracle, and MS-SQL through SQLAlchemy.',
@@ -576,6 +619,7 @@ export const staticServers = [
   },
   {
     id: 'dbhub-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'DBHub MCP Server',
       description: 'Universal database MCP server connecting to MySQL, PostgreSQL, SQL Server, and MariaDB with comprehensive tooling.',
@@ -589,6 +633,7 @@ export const staticServers = [
   },
   {
     id: 'mongodb-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'MongoDB MCP Server',
       description: 'Official MongoDB MCP server providing a bridge between MongoDB databases and conversational interfaces with full CRUD operations.',
@@ -602,6 +647,7 @@ export const staticServers = [
   },
   {
     id: 'supabase-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Supabase MCP Server',
       description: 'Official Supabase MCP server for managing databases, executing SQL queries, and real-time data operations.',
@@ -615,6 +661,7 @@ export const staticServers = [
   },
   {
     id: 'google-db-toolbox-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Google Database Toolbox',
       description: 'Official Google MCP server providing secure, configurable interface for executing pre-defined queries against multiple database systems.',
@@ -630,6 +677,7 @@ export const staticServers = [
   // Development Tools & Official Servers
   {
     id: 'github-official-mcp-new',
+    deployment: 'local_stdio',
     fields: {
       name: 'GitHub Official MCP Server',
       description: 'GitHub\'s official MCP Server for seamless integration with GitHub repositories, issues, and pull requests.',
@@ -643,6 +691,7 @@ export const staticServers = [
   },
   {
     id: 'upstash-context7',
+    deployment: 'local_stdio',
     fields: {
       name: 'Context7 MCP Server',
       description: 'Up-to-date code documentation for LLMs and AI code editors. Provides intelligent code context and documentation.',
@@ -656,6 +705,7 @@ export const staticServers = [
   },
   {
     id: 'git-mcp-idosal',
+    deployment: 'local_stdio',
     fields: {
       name: 'GitMCP',
       description: 'Put an end to code hallucinations! GitMCP is a free, open-source, remote MCP server for any GitHub project.',
@@ -669,6 +719,7 @@ export const staticServers = [
   },
   {
     id: 'serena-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Serena MCP',
       description: 'A powerful coding agent toolkit providing semantic retrieval and editing capabilities. MCP server & Agno integration.',
@@ -682,6 +733,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-inspector',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Inspector',
       description: 'Official visual testing tool for MCP servers. Debug and test MCP server implementations with ease.',
@@ -695,6 +747,7 @@ export const staticServers = [
   },
   {
     id: 'ghidra-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'GhidraMCP',
       description: 'MCP Server for Ghidra reverse engineering platform. Integrate Ghidra analysis capabilities with AI assistants.',
@@ -708,6 +761,7 @@ export const staticServers = [
   },
   {
     id: 'figma-context-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Figma Context MCP',
       description: 'MCP server to provide Figma layout information to AI coding agents like Cursor. Bridge design and development.',
@@ -721,6 +775,7 @@ export const staticServers = [
   },
   {
     id: 'git-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Git MCP Server',
       description: 'Complete Git operations through MCP. Clone, commit, push, pull, branch management, and repository operations.',
@@ -734,6 +789,7 @@ export const staticServers = [
   },
   {
     id: 'docker-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Docker MCP Server',
       description: 'Manage Docker containers, images, and networks. Build, run, and deploy containerized applications through AI.',
@@ -747,6 +803,7 @@ export const staticServers = [
   },
   {
     id: 'vscode-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'VS Code MCP Server',
       description: 'Control Visual Studio Code through MCP. Open files, run commands, manage extensions, and automate development workflows.',
@@ -760,6 +817,7 @@ export const staticServers = [
   },
   {
     id: 'desktop-commander-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Desktop Commander MCP',
       description: 'MCP server for Claude that gives it terminal control, file system search and diff file editing capabilities.',
@@ -773,6 +831,7 @@ export const staticServers = [
   },
   {
     id: 'xcode-build-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Xcode Build MCP',
       description: 'A Model Context Protocol server that provides Xcode-related tools for integration with AI assistants and other MCP clients.',
@@ -786,6 +845,7 @@ export const staticServers = [
   },
   {
     id: 'unity-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Unity MCP Server',
       description: 'A Unity MCP server that allows MCP clients like Claude Desktop or Cursor to perform Unity Editor actions.',
@@ -799,6 +859,7 @@ export const staticServers = [
   },
   {
     id: 'playwright-browser-automation',
+    deployment: 'local_stdio',
     fields: {
       name: 'Playwright Browser Automation',
       description: 'Official Microsoft Playwright MCP server enabling LLMs to interact with web pages through structured accessibility snapshots and vision-based screenshots.',
@@ -812,6 +873,7 @@ export const staticServers = [
   },
   {
     id: 'mastra-docs',
+    deployment: 'local_stdio',
     fields: {
       name: 'Mastra Docs',
       description: 'Official Mastra.ai MCP server providing direct access to complete documentation, code examples, blog posts, and technical guides for the Mastra ecosystem.',
@@ -825,6 +887,7 @@ export const staticServers = [
   },
   {
     id: 'ida-pro-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'IDA Pro MCP Server',
       description: 'MCP Server for IDA Pro reverse engineering platform. Advanced malware analysis and reverse engineering capabilities.',
@@ -838,6 +901,7 @@ export const staticServers = [
   },
   {
     id: 'github-official-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'GitHub Official MCP',
       description: 'Official GitHub MCP server for Issues, Pull Requests, and repository management. Direct integration with GitHub platform.',
@@ -851,6 +915,7 @@ export const staticServers = [
   },
   {
     id: 'gitmcp-documentation',
+    deployment: 'local_stdio',
     fields: {
       name: 'GitMCP Documentation Hub',
       description: 'Transform any GitHub project into a comprehensive documentation hub with AI-powered analysis and organization.',
@@ -866,6 +931,7 @@ export const staticServers = [
   // File Systems
   {
     id: 's3-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'S3 MCP Server',
       description: 'Access Amazon S3 buckets with seamless integration. Upload, download, manage files with streaming capabilities for large files.',
@@ -879,6 +945,7 @@ export const staticServers = [
   },
   {
     id: 'google-drive-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Google Drive MCP',
       description: 'Comprehensive Google Drive integration. Search, upload, download, share, and manage files and folders.',
@@ -894,6 +961,7 @@ export const staticServers = [
   // AI Tools
   {
     id: 'openai-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'OpenAI MCP Server',
       description: 'OpenAI GPT image generation and editing MCP server. Generate high-quality images from text prompts.',
@@ -907,6 +975,7 @@ export const staticServers = [
   },
   {
     id: 'anthropic-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Anthropic Claude MCP',
       description: 'Give your AI assistant its own AI assistants. Ask Claude to generate content, analyze data, and more.',
@@ -922,6 +991,7 @@ export const staticServers = [
   // Security & Analysis
   {
     id: 'semgrep-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Semgrep MCP Server',
       description: 'Official Semgrep MCP server for using Semgrep to scan code for security vulnerabilities and code quality issues.',
@@ -935,6 +1005,7 @@ export const staticServers = [
   },
   {
     id: 'reverse-engineering-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Reverse Engineering Assistant',
       description: 'MCP server for reverse engineering tasks in Ghidra and BinaryNinja. Advanced malware analysis and security research.',
@@ -948,6 +1019,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-security-tools',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Security Tools',
       description: 'Collection of MCP servers for security tools like SQLMap, FFUF, NMAP, Masscan. Comprehensive cybersecurity toolkit.',
@@ -961,6 +1033,7 @@ export const staticServers = [
   },
   {
     id: 'sentry-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Sentry MCP Server',
       description: 'Official Sentry MCP server for interacting with Sentry error monitoring and performance tracking via LLMs.',
@@ -974,6 +1047,7 @@ export const staticServers = [
   },
   {
     id: 'netskope-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Netskope MCP Server',
       description: 'Access all Netskope Private Access components within environments including detailed setup information and usage examples.',
@@ -989,6 +1063,7 @@ export const staticServers = [
   // Finance
   {
     id: 'binance-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Binance MCP Server',
       description: 'Access Binance cryptocurrency exchange data. Get market prices, trading pairs, and account information.',
@@ -1002,6 +1077,7 @@ export const staticServers = [
   },
   {
     id: 'aws-pricing-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'AWS Pricing MCP',
       description: 'Get up-to-date EC2 pricing information with one call. Fast access to AWS pricing catalog data.',
@@ -1017,6 +1093,7 @@ export const staticServers = [
   // Media & Multimedia
   {
     id: 'youtube-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'YouTube MCP Server',
       description: 'Fully functional MCP server and CLI for YouTube automation. Fetch transcripts, manage playlists, and control playback.',
@@ -1030,6 +1107,7 @@ export const staticServers = [
   },
   {
     id: 'powerpoint-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'PowerPoint MCP Server',
       description: 'A MCP server for PowerPoint manipulation using python-pptx. Create, edit, and manage presentations programmatically.',
@@ -1043,6 +1121,7 @@ export const staticServers = [
   },
   {
     id: 'word-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Microsoft Word MCP Server',
       description: 'MCP server for creating, reading, and manipulating Microsoft Word documents. Complete document automation for AI.',
@@ -1056,6 +1135,7 @@ export const staticServers = [
   },
   {
     id: 'gmail-mcp-gong',
+    deployment: 'local_stdio',
     fields: {
       name: 'Gmail MCP Server Pro',
       description: 'Enhanced Gmail MCP Server with auto authentication support. Complete Gmail integration for AI assistants.',
@@ -1069,6 +1149,7 @@ export const staticServers = [
   },
   {
     id: 'jupyter-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Jupyter MCP Server',
       description: 'Official Jupyter Model Context Protocol server for notebook operations, data science workflows, and interactive computing.',
@@ -1082,6 +1163,7 @@ export const staticServers = [
   },
   {
     id: 'video-editing-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Video Editing MCP',
       description: 'Add, analyze, search, and generate video edits from your video collection. Complete video processing toolkit.',
@@ -1097,6 +1179,7 @@ export const staticServers = [
   // Productivity & Office Tools
   {
     id: 'notion-mcp-official',
+    deployment: 'local_stdio',
     fields: {
       name: 'Official Notion MCP Server',
       description: 'Official Notion MCP Server for seamless integration with Notion workspaces, databases, and pages.',
@@ -1110,6 +1193,7 @@ export const staticServers = [
   },
   {
     id: 'excel-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Excel MCP Server',
       description: 'A Model Context Protocol server for Excel file manipulation with automation and AI integration capabilities.',
@@ -1123,6 +1207,7 @@ export const staticServers = [
   },
   {
     id: 'obsidian-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Obsidian MCP Server',
       description: 'MCP server that interacts with Obsidian via the Obsidian REST API community plugin for knowledge management.',
@@ -1136,6 +1221,7 @@ export const staticServers = [
   },
   {
     id: 'atlassian-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Atlassian MCP Server',
       description: 'MCP server for Atlassian tools (Confluence, Jira) providing comprehensive project management and documentation.',
@@ -1149,6 +1235,7 @@ export const staticServers = [
   },
   {
     id: 'apple-reminders-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Apple Reminders MCP',
       description: 'Interact with Apple Reminders on macOS. Create, update, complete, and manage your reminders and lists.',
@@ -1162,6 +1249,7 @@ export const staticServers = [
   },
   {
     id: 'apple-shortcuts-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Apple Shortcuts MCP',
       description: 'Integration with Apple Shortcuts on macOS and iOS. Run shortcuts and automate workflows through AI conversations.',
@@ -1175,6 +1263,7 @@ export const staticServers = [
   },
   {
     id: 'apple-health-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Apple Health MCP Server',
       description: 'MCP server for querying Apple Health data with natural language and SQL. Complete health data integration.',
@@ -1188,6 +1277,7 @@ export const staticServers = [
   },
   {
     id: 'macos-automator-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'macOS Automator MCP',
       description: 'MCP server to run AppleScript and JXA (JavaScript for Automation) to macOS. Complete Mac automation toolkit.',
@@ -1201,6 +1291,7 @@ export const staticServers = [
   },
   {
     id: 'homeassistant-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Home Assistant MCP',
       description: 'MCP server for Home Assistant smart home automation. Control lights, sensors, and IoT devices through AI.',
@@ -1216,6 +1307,7 @@ export const staticServers = [
   // Search & Web Scraping
   {
     id: 'web-search-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Web Search MCP',
       description: 'Free web searching using Google search results with no API keys required. Get real-time search results.',
@@ -1229,6 +1321,7 @@ export const staticServers = [
   },
   {
     id: 'brave-search-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Brave Search MCP',
       description: 'Official Anthropic server to retrieve web pages, news, and local business results via Brave Search API.',
@@ -1242,6 +1335,7 @@ export const staticServers = [
   },
   {
     id: 'firecrawl-mcp-official',
+    deployment: 'local_stdio',
     fields: {
       name: 'FireCrawl MCP Server',
       description: 'Official Firecrawl MCP Server - Adds powerful web scraping to Cursor, Claude and any other LLM clients.',
@@ -1255,6 +1349,7 @@ export const staticServers = [
   },
   {
     id: 'tavily-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Tavily Search MCP',
       description: 'Advanced web search and research capabilities powered by Tavily API. Get comprehensive search results with analysis.',
@@ -1270,6 +1365,7 @@ export const staticServers = [
   // System Automation
   {
     id: 'windows-desktop-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Windows Desktop Control',
       description: 'Enables AI to control Windows desktop applications through UIAutomation and PyAutoGUI for comprehensive system automation.',
@@ -1285,6 +1381,7 @@ export const staticServers = [
   // AI & ML Tools
   {
     id: 'aws-bedrock-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'AWS Bedrock Knowledge Base',
       description: 'Official AWS MCP server providing bridge to access Amazon Bedrock Knowledge Bases for AI-powered document retrieval.',
@@ -1298,6 +1395,7 @@ export const staticServers = [
   },
   {
     id: 'knowledge-graph-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Knowledge Graph Memory',
       description: 'Official Anthropic server to build and query persistent semantic networks for advanced data management and relationships.',
@@ -1311,6 +1409,7 @@ export const staticServers = [
   },
   {
     id: 'sequential-thinking-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Sequential Thinking MCP',
       description: 'Official Anthropic server implementing structured sequential thinking processes for enhanced AI reasoning capabilities.',
@@ -1326,6 +1425,7 @@ export const staticServers = [
   // Documentation & Knowledge
   {
     id: 'aws-docs-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'AWS Documentation MCP',
       description: 'Official AWS MCP server providing tools to access AWS documentation, search content, and get service recommendations.',
@@ -1341,6 +1441,7 @@ export const staticServers = [
   // Additional High-Quality Servers - Batch 3
   {
     id: 'aws-secrets-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'AWS Secrets Manager MCP',
       description: 'MCP server for securely accessing and managing secrets stored in AWS Secrets Manager.',
@@ -1354,6 +1455,7 @@ export const staticServers = [
   },
   {
     id: 'todo-txt-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Todo.txt MCP Server',
       description: 'MCP server for managing todo.txt files - the simple, text-based task management system.',
@@ -1367,6 +1469,7 @@ export const staticServers = [
   },
   {
     id: 'pandoc-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Pandoc MCP Server',
       description: 'Document conversion server using Pandoc - convert between dozens of markup formats including Markdown, LaTeX, HTML, and more.',
@@ -1380,6 +1483,7 @@ export const staticServers = [
   },
   {
     id: 'rubygems-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'RubyGems MCP Server',
       description: 'Search and retrieve information from RubyGems.org - package details, versions, dependencies, and statistics.',
@@ -1393,6 +1497,7 @@ export const staticServers = [
   },
   {
     id: 'neon-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Neon MCP Server',
       description: 'Serverless PostgreSQL database operations with Neon - manage databases, run queries, and handle migrations.',
@@ -1406,6 +1511,7 @@ export const staticServers = [
   },
   {
     id: 'obsidian-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Obsidian MCP Server',
       description: 'Connect to Obsidian vaults - read, search, and manage notes in the popular knowledge management tool.',
@@ -1419,6 +1525,7 @@ export const staticServers = [
   },
   {
     id: 'gitlab-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'GitLab MCP Server',
       description: 'GitLab integration for managing repositories, issues, merge requests, and CI/CD pipelines.',
@@ -1432,6 +1539,7 @@ export const staticServers = [
   },
   {
     id: 'spotify-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Spotify MCP Server',
       description: 'Control Spotify playback, search music, manage playlists, and retrieve track information through the Spotify Web API.',
@@ -1445,6 +1553,7 @@ export const staticServers = [
   },
   {
     id: 'docker-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Docker MCP Server',
       description: 'Manage Docker containers, images, networks, and volumes. Run containers, check status, and handle Docker operations.',
@@ -1458,6 +1567,7 @@ export const staticServers = [
   },
   {
     id: 'tmux-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Tmux MCP Server',
       description: 'Terminal multiplexer control - manage tmux sessions, windows, and panes programmatically.',
@@ -1471,6 +1581,7 @@ export const staticServers = [
   },
   {
     id: 'filesystem-tree-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Filesystem Tree MCP',
       description: 'Generate and visualize directory structures as tree diagrams. Perfect for understanding project layouts.',
@@ -1484,6 +1595,7 @@ export const staticServers = [
   },
   {
     id: 'kubernetes-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Kubernetes MCP Server',
       description: 'Kubernetes cluster management - deploy pods, manage services, check cluster health, and handle K8s resources.',
@@ -1497,6 +1609,7 @@ export const staticServers = [
   },
   {
     id: 'homebrew-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Homebrew MCP Server',
       description: 'Package management for macOS/Linux with Homebrew - install, update, and manage software packages.',
@@ -1510,6 +1623,7 @@ export const staticServers = [
   },
   {
     id: 'jenkins-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Jenkins MCP Server',
       description: 'CI/CD automation with Jenkins - trigger builds, check job status, manage pipelines and deployments.',
@@ -1523,6 +1637,7 @@ export const staticServers = [
   },
   {
     id: 'terraform-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Terraform MCP Server',
       description: 'Infrastructure as Code management - plan, apply, and manage Terraform configurations and state.',
@@ -1536,6 +1651,7 @@ export const staticServers = [
   },
   {
     id: 'firebase-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Firebase MCP Server',
       description: 'Google Firebase integration - manage Firestore, Authentication, Cloud Functions, and other Firebase services.',
@@ -1549,6 +1665,7 @@ export const staticServers = [
   },
   {
     id: 'redis-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Redis MCP Server',
       description: 'In-memory data structure store - manage Redis keys, sets, hashes, and perform caching operations.',
@@ -1562,6 +1679,7 @@ export const staticServers = [
   },
   {
     id: 'elasticsearch-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Elasticsearch MCP Server',
       description: 'Search and analytics engine - index documents, perform complex searches, and analyze data at scale.',
@@ -1575,6 +1693,7 @@ export const staticServers = [
   },
   {
     id: 'supabase-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Supabase MCP Server',
       description: 'Open-source Firebase alternative - manage PostgreSQL databases, authentication, real-time subscriptions.',
@@ -1588,6 +1707,7 @@ export const staticServers = [
   },
   {
     id: 'vercel-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Vercel MCP Server',
       description: 'Frontend deployment platform - deploy projects, manage domains, check deployment status and analytics.',
@@ -1601,6 +1721,7 @@ export const staticServers = [
   },
   {
     id: 'netlify-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Netlify MCP Server',
       description: 'Web development platform - deploy sites, manage forms, handle functions, and configure DNS settings.',
@@ -1614,6 +1735,7 @@ export const staticServers = [
   },
   {
     id: 'mongodb-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'MongoDB MCP Server',
       description: 'NoSQL database operations - manage collections, perform queries, aggregations, and handle document operations.',
@@ -1629,6 +1751,7 @@ export const staticServers = [
   // Additional High-Quality Servers - Batch 4
   {
     id: 'aws-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'AWS MCP Server',
       description: 'Talk with your AWS using Claude. Model Context Protocol server for AWS - better Amazon Q alternative.',
@@ -1642,6 +1765,7 @@ export const staticServers = [
   },
   {
     id: 'interactive-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Interactive MCP',
       description: 'Vibe coding should have human in the loop! Local, cross-platform MCP server for interact with your AI Agent.',
@@ -1655,6 +1779,7 @@ export const staticServers = [
   },
   {
     id: 'applescript-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'AppleScript MCP',
       description: 'A macOS AppleScript MCP server for automation and system control.',
@@ -1668,6 +1793,7 @@ export const staticServers = [
   },
   {
     id: 'davinci-resolve-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'DaVinci Resolve MCP',
       description: 'MCP server integration for DaVinci Resolve video editing and color grading.',
@@ -1681,6 +1807,7 @@ export const staticServers = [
   },
   {
     id: 'spec-driven-development-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Spec-Driven Development MCP',
       description: 'Spec-Driven Development MCP Server, no just Vibe Coding - structured development approach.',
@@ -1694,6 +1821,7 @@ export const staticServers = [
   },
   {
     id: 'linkedin-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'LinkedIn MCP Server',
       description: 'Access LinkedIn profiles and companies. Scrape LinkedIn data for AI assistants.',
@@ -1707,6 +1835,7 @@ export const staticServers = [
   },
   {
     id: 'meGPT',
+    deployment: 'local_stdio',
     fields: {
       name: 'meGPT',
       description: 'Process many kinds of content by an author into an MCP server for personalized AI responses.',
@@ -1720,6 +1849,7 @@ export const staticServers = [
   },
   {
     id: 'mcprouter',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Router',
       description: 'API router for MCP Servers - route and manage multiple MCP server connections.',
@@ -1733,6 +1863,7 @@ export const staticServers = [
   },
   {
     id: 'aider-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Aider MCP Server',
       description: 'Minimal MCP Server for Aider - AI-powered coding assistant integration.',
@@ -1746,6 +1877,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-webresearch',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Web Research',
       description: 'MCP web research server - give Claude real-time info from the web.',
@@ -1759,6 +1891,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-servers-hub',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Servers Hub',
       description: 'Comprehensive collection of MCP servers - centralized hub for discovering MCP servers.',
@@ -1772,6 +1905,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-hub',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Hub',
       description: 'Centralized manager for MCP servers with dynamic server management and monitoring.',
@@ -1785,6 +1919,7 @@ export const staticServers = [
   },
   {
     id: 'base-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Base MCP',
       description: 'MCP server for Base network and Coinbase onchain tools for LLMs.',
@@ -1798,6 +1933,7 @@ export const staticServers = [
   },
   {
     id: 'twitter-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Twitter MCP',
       description: 'MCP server for Twitter interactions - posting tweets and searching Twitter.',
@@ -1811,6 +1947,7 @@ export const staticServers = [
   },
   {
     id: 'jinni',
+    deployment: 'local_stdio',
     fields: {
       name: 'Jinni',
       description: 'Bring your project into LLM context - tool and MCP server for project analysis.',
@@ -1824,6 +1961,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-git-ingest',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Git Ingest',
       description: 'MCP server that helps read GitHub repository structure and important files.',
@@ -1837,6 +1975,7 @@ export const staticServers = [
   },
   {
     id: 'deepseek-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'DeepSeek MCP Server',
       description: 'Model Context Protocol server for DeepSeek R1 and advanced language models.',
@@ -1850,6 +1989,7 @@ export const staticServers = [
   },
   {
     id: 'db-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Multi-Database MCP Server',
       description: 'Powerful multi-database server providing AI assistants with structured database access.',
@@ -1863,6 +2003,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-mongo-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'MongoDB MCP Server',
       description: 'A Model Context Protocol Server for MongoDB database operations.',
@@ -1876,6 +2017,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-manager',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Manager',
       description: 'Simple web UI to manage MCP servers in the Claude app.',
@@ -1889,6 +2031,7 @@ export const staticServers = [
   },
   {
     id: 'aws-lambda-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'AWS Lambda MCP',
       description: 'Run existing MCP stdio-based servers in AWS Lambda functions.',
@@ -1902,6 +2045,7 @@ export const staticServers = [
   },
   {
     id: 'code-sandbox-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Code Sandbox MCP',
       description: 'Secure code sandbox environment for executing code within Docker containers.',
@@ -1915,6 +2059,7 @@ export const staticServers = [
   },
   {
     id: 'apple-doc-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Apple Documentation MCP',
       description: 'MCP server providing seamless access to Apple Developer Documentation with smart search.',
@@ -1928,6 +2073,7 @@ export const staticServers = [
   },
   {
     id: 'dify-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Dify MCP Server',
       description: 'Model Context Protocol server for Dify workflows and automation.',
@@ -1941,6 +2087,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-graphql',
+    deployment: 'local_stdio',
     fields: {
       name: 'GraphQL MCP',
       description: 'Model Context Protocol server for GraphQL API interactions.',
@@ -1954,6 +2101,7 @@ export const staticServers = [
   },
   {
     id: 'atlas-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'ATLAS MCP Server',
       description: 'Neo4j-powered task management system for LLM Agents with three-tier architecture.',
@@ -1967,6 +2115,7 @@ export const staticServers = [
   },
   {
     id: 'airtable-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Airtable MCP Server',
       description: 'Airtable Model Context Protocol Server for AI systems to interact with Airtable bases.',
@@ -1980,6 +2129,7 @@ export const staticServers = [
   },
   {
     id: 'freecad-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'FreeCAD MCP',
       description: 'FreeCAD MCP server for 3D CAD modeling and design automation.',
@@ -1993,6 +2143,7 @@ export const staticServers = [
   },
   {
     id: 'kicad-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'KiCad MCP',
       description: 'Model Context Protocol server for KiCad on Mac, Windows, and Linux.',
@@ -2006,6 +2157,7 @@ export const staticServers = [
   },
   {
     id: 'claude-modular',
+    deployment: 'local_stdio',
     fields: {
       name: 'Claude Modular',
       description: 'Production-ready modular Claude framework with 30+ commands and MCP server integration.',
@@ -2019,6 +2171,7 @@ export const staticServers = [
   },
   {
     id: 'mcpsvr',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCPSVR',
       description: 'Discover exceptional MCP servers - curated collection and discovery platform.',
@@ -2032,6 +2185,7 @@ export const staticServers = [
   },
   {
     id: 'o3-search-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'O3 Search MCP',
       description: 'MCP server for OpenAI O3 web search capabilities.',
@@ -2045,6 +2199,7 @@ export const staticServers = [
   },
   {
     id: 'mapbox-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Mapbox MCP Server',
       description: 'Official Mapbox Model Context Protocol server for location and mapping services.',
@@ -2058,6 +2213,7 @@ export const staticServers = [
   },
   {
     id: 'mysql-mcp-pro',
+    deployment: 'local_stdio',
     fields: {
       name: 'MySQL MCP Server Pro',
       description: 'Advanced MySQL MCP server with OAuth2 security and anomaly analysis capabilities.',
@@ -2071,6 +2227,7 @@ export const staticServers = [
   },
   {
     id: 'unreal-genai-support',
+    deployment: 'local_stdio',
     fields: {
       name: 'Unreal GenAI Support',
       description: 'Unreal Engine plugin for LLM/GenAI models with MCP UE5 server support.',
@@ -2084,6 +2241,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-reasoner',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Reasoner',
       description: 'Systematic reasoning MCP server with beam search and thought evaluation.',
@@ -2097,6 +2255,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-resources',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Resources',
       description: 'Practical guides, clients, and servers for learning Model Context Protocol.',
@@ -2110,6 +2269,7 @@ export const staticServers = [
   },
   {
     id: 'aci-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'ACI MCP',
       description: 'MCP server for Aipolabs ACI.dev platform integration.',
@@ -2123,6 +2283,7 @@ export const staticServers = [
   },
   {
     id: 'playwright-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Playwright MCP Server',
       description: 'MCP server for browser automation using Playwright for web testing and scraping.',
@@ -2136,6 +2297,7 @@ export const staticServers = [
   },
   {
     id: 'redbook-search-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Redbook Search MCP 2.0',
       description: 'Xiaohongshu (Little Red Book) automation tool for search and comment via Playwright.',
@@ -2151,6 +2313,7 @@ export const staticServers = [
   // Additional High-Quality Servers - Batch 5
   {
     id: 'kmcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'KMCP',
       description: 'CLI tool and Kubernetes Controller for building, testing and deploying MCP servers.',
@@ -2164,6 +2327,7 @@ export const staticServers = [
   },
   {
     id: 'f2c-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'F2C MCP Server',
       description: 'F2C MCP Server for comprehensive AI-powered development workflows.',
@@ -2177,6 +2341,7 @@ export const staticServers = [
   },
   {
     id: 'win-cli-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Windows CLI MCP Server',
       description: 'Model Context Protocol server for secure command-line interactions on Windows systems.',
@@ -2190,6 +2355,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-nixos',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP-NixOS',
       description: 'Model Context Protocol Server for NixOS resources and package management.',
@@ -2203,6 +2369,7 @@ export const staticServers = [
   },
   {
     id: 'burp-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Burp Suite MCP Server',
       description: 'Official PortSwigger MCP Server for Burp Suite security testing integration.',
@@ -2216,6 +2383,7 @@ export const staticServers = [
   },
   {
     id: 'perplexity-mcp-dainfernal',
+    deployment: 'local_stdio',
     fields: {
       name: 'Perplexity MCP (Research)',
       description: 'MCP server for research and documentation assistance using Perplexity AI. Won 1st @ Cline Hackathon.',
@@ -2229,6 +2397,7 @@ export const staticServers = [
   },
   {
     id: 'laravel-claude-setup',
+    deployment: 'local_stdio',
     fields: {
       name: 'Laravel Claude Code Setup',
       description: 'One-command setup for AI-powered Laravel development with Claude Code and MCP servers.',
@@ -2242,6 +2411,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-trader',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Trader',
       description: 'A Model Context Protocol server for stock traders with pandas integration.',
@@ -2255,6 +2425,7 @@ export const staticServers = [
   },
   {
     id: 'alpaca-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Alpaca MCP Server',
       description: 'Official Alpaca MCP server for trading stocks and options using plain English.',
@@ -2268,6 +2439,7 @@ export const staticServers = [
   },
   {
     id: 'perplexity-mcp-jsonallen',
+    deployment: 'local_stdio',
     fields: {
       name: 'Perplexity MCP (Search)',
       description: 'MCP server providing web search functionality using Perplexity AI API.',
@@ -2281,6 +2453,7 @@ export const staticServers = [
   },
   {
     id: 'weather-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Weather MCP Server',
       description: 'Lightweight MCP server for real-time weather data retrieval and interpretation.',
@@ -2294,6 +2467,7 @@ export const staticServers = [
   },
   {
     id: 'douyin-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Douyin MCP Server',
       description: 'Extract watermark-free video links and captions from Douyin (TikTok China).',
@@ -2307,6 +2481,7 @@ export const staticServers = [
   },
   {
     id: 'gptr-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'GPT Researcher MCP',
       description: 'MCP server for deep research via web search and GPT-researcher integration.',
@@ -2320,6 +2495,7 @@ export const staticServers = [
   },
   {
     id: 'ios-simulator-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'iOS Simulator MCP',
       description: 'MCP server for interacting with iOS simulators through natural language commands.',
@@ -2333,6 +2509,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-12306',
+    deployment: 'local_stdio',
     fields: {
       name: '12306 MCP Server',
       description: 'High-performance train ticket query system with real-time 12306 data services.',
@@ -2346,6 +2523,7 @@ export const staticServers = [
   },
   {
     id: 'lyraios',
+    deployment: 'local_stdio',
     fields: {
       name: 'LYRAI Operating System',
       description: 'Model Context Protocol operating system for multi-AI agents and extended AI functionality.',
@@ -2359,6 +2537,7 @@ export const staticServers = [
   },
   {
     id: 'meta-ads-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Meta Ads MCP',
       description: 'MCP server to manage Facebook and Instagram Ads through Meta Ads platform.',
@@ -2372,6 +2551,7 @@ export const staticServers = [
   },
   {
     id: 'ddddocr-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'DDDDOCR MCP',
       description: 'OCR API server with AI MCP support - simple deployment without OpenCV dependencies.',
@@ -2385,6 +2565,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-router',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Router App',
       description: 'Unified MCP Server Management App with UI for LLMOps and AI integration.',
@@ -2398,6 +2579,7 @@ export const staticServers = [
   },
   {
     id: 'osp-marketing-tools',
+    deployment: 'local_stdio',
     fields: {
       name: 'OSP Marketing Tools',
       description: 'MCP server with Open Strategy Partners core writing and product marketing techniques.',
@@ -2411,6 +2593,7 @@ export const staticServers = [
   },
   {
     id: 'ms-365-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Microsoft 365 MCP',
       description: 'MCP server for Microsoft 365 and Office services integration through Graph API.',
@@ -2424,6 +2607,7 @@ export const staticServers = [
   },
   {
     id: 'lambda-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Lambda MCP Server',
       description: 'Simple MCP tool server with streaming HTTP for AWS Lambda functions.',
@@ -2437,6 +2621,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-connect',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Connect',
       description: 'Enables cloud-based AI services to access local stdio MCP servers via HTTP requests.',
@@ -2450,6 +2635,7 @@ export const staticServers = [
   },
   {
     id: 'mcpcontrol',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCPControl',
       description: 'MCP server for Windows OS automation with computer vision capabilities.',
@@ -2463,6 +2649,7 @@ export const staticServers = [
   },
   {
     id: 'mssql-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Microsoft SQL Server MCP',
       description: 'MCP server for Microsoft SQL Server with secure database interactions.',
@@ -2476,6 +2663,7 @@ export const staticServers = [
   },
   {
     id: 'pdf-reader-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'PDF Reader MCP',
       description: 'Node.js/TypeScript MCP server for secure PDF reading with text and metadata extraction.',
@@ -2489,6 +2677,7 @@ export const staticServers = [
   },
   {
     id: 'argocd-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Argo CD MCP',
       description: 'Official Argo CD MCP server for continuous delivery and Kubernetes DevOps.',
@@ -2502,6 +2691,7 @@ export const staticServers = [
   },
   {
     id: 'armor-crypto-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Armor Crypto MCP',
       description: 'MCP server for blockchain interactions, swaps, strategic planning and cryptocurrency wallets.',
@@ -2515,6 +2705,7 @@ export const staticServers = [
   },
   {
     id: 'redis-mcp-official',
+    deployment: 'local_stdio',
     fields: {
       name: 'Redis MCP Server (Official)',
       description: 'Official Redis MCP Server - natural language interface for managing and searching Redis data.',
@@ -2528,6 +2719,7 @@ export const staticServers = [
   },
   {
     id: 'gibber-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Gibber MCP',
       description: 'Tiny MCP server with cryptography tools for end-to-end encryption between LLM agents.',
@@ -2541,6 +2733,7 @@ export const staticServers = [
   },
   {
     id: 'project-nova',
+    deployment: 'local_stdio',
     fields: {
       name: 'Project NOVA',
       description: 'Multi-agent AI architecture connecting 25+ specialized agents through n8n and MCP servers.',
@@ -2554,6 +2747,7 @@ export const staticServers = [
   },
   {
     id: 'gemini-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Gemini MCP Server',
       description: 'MCP server implementation for Google Gemini API integration.',
@@ -2567,6 +2761,7 @@ export const staticServers = [
   },
   {
     id: 'razorpay-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Razorpay MCP Server',
       description: 'Official Razorpay MCP Server for payment processing and financial transactions.',
@@ -2580,6 +2775,7 @@ export const staticServers = [
   },
   {
     id: 'microsoft-copilot-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Microsoft Copilot Studio MCP',
       description: 'Official Microsoft lab for creating MCP servers and using them in Copilot Studio.',
@@ -2593,6 +2789,7 @@ export const staticServers = [
   },
   {
     id: 'human-in-the-loop-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Human-in-the-Loop MCP',
       description: 'MCP server allowing AI assistants to ask questions to humans via Discord.',
@@ -2606,6 +2803,7 @@ export const staticServers = [
   },
   {
     id: 'puppeteer-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Puppeteer MCP Server',
       description: 'Browser automation through Puppeteer with MCP integration for new and existing browser instances.',
@@ -2619,6 +2817,7 @@ export const staticServers = [
   },
   {
     id: 'yutu',
+    deployment: 'local_stdio',
     fields: {
       name: 'Yutu',
       description: 'Fully functional MCP server and CLI for YouTube automation and management.',
@@ -2632,6 +2831,7 @@ export const staticServers = [
   },
   {
     id: 'consult7',
+    deployment: 'local_stdio',
     fields: {
       name: 'Consult7',
       description: 'MCP server to consult a language model with large context size capabilities.',
@@ -2647,6 +2847,7 @@ export const staticServers = [
   // Additional High-Quality Servers - Batch 6
   {
     id: 'firebase-mcp-gannonh',
+    deployment: 'local_stdio',
     fields: {
       name: 'Firebase MCP Server',
       description: 'Model Context Protocol server for Firebase integration and real-time database operations.',
@@ -2660,6 +2861,7 @@ export const staticServers = [
   },
   {
     id: 'vscode-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'VS Code MCP Server',
       description: 'MCP server to expose VS Code editing features to LLMs for AI-powered coding assistance.',
@@ -2673,6 +2875,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-rb',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP.rb',
       description: 'Lightweight Ruby framework for building MCP servers with a Sinatra-like DSL.',
@@ -2686,6 +2889,7 @@ export const staticServers = [
   },
   {
     id: 'remote-mcp-auth',
+    deployment: 'local_stdio',
     fields: {
       name: 'Remote MCP Server with Auth',
       description: 'Template for remote MCP server with GitHub OAuth following best practices.',
@@ -2699,6 +2903,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-reddit-adhikasp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Reddit MCP Server',
       description: 'MCP server for fetching and analyzing Reddit content with comprehensive API coverage.',
@@ -2712,6 +2917,7 @@ export const staticServers = [
   },
   {
     id: 'image-gen-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Image Generation MCP',
       description: 'Image generation MCP server with Cursor integration using reverse API calls.',
@@ -2725,6 +2931,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-twikit',
+    deployment: 'local_stdio',
     fields: {
       name: 'Twitter MCP (Twikit)',
       description: 'MCP server for comprehensive Twitter interactions using Twikit library.',
@@ -2738,6 +2945,7 @@ export const staticServers = [
   },
   {
     id: 'xiyan-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Xiyan MCP Server',
       description: 'MCP server for natural language database queries with text-to-SQL capabilities.',
@@ -2751,6 +2959,7 @@ export const staticServers = [
   },
   {
     id: 'code-runner-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Code Runner MCP Server',
       description: 'MCP server for executing code snippets in various programming languages.',
@@ -2764,6 +2973,7 @@ export const staticServers = [
   },
   {
     id: 'g-search-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Google Search MCP',
       description: 'Powerful MCP server for Google search with parallel multi-keyword searching capabilities.',
@@ -2777,6 +2987,7 @@ export const staticServers = [
   },
   {
     id: 'minecraft-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Minecraft MCP Server',
       description: 'Minecraft MCP server with Mineflayer API for real-time character control and building.',
@@ -2790,6 +3001,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-odoo',
+    deployment: 'local_stdio',
     fields: {
       name: 'Odoo MCP Server',
       description: 'MCP server for Odoo ERP system integration and business process automation.',
@@ -2803,6 +3015,7 @@ export const staticServers = [
   },
   {
     id: 'elasticsearch-mcp-cr7258',
+    deployment: 'local_stdio',
     fields: {
       name: 'Elasticsearch MCP (Enhanced)',
       description: 'Enhanced MCP server for Elasticsearch and OpenSearch with advanced querying capabilities.',
@@ -2816,6 +3029,7 @@ export const staticServers = [
   },
   {
     id: 'apktool-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'APKTool MCP Server',
       description: 'MCP server for Android APK analysis and reverse engineering toolkit.',
@@ -2829,6 +3043,7 @@ export const staticServers = [
   },
   {
     id: 'code-reasoning-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Code Reasoning MCP',
       description: 'Code reasoning MCP server with sequential thinking capabilities.',
@@ -2842,6 +3057,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-commands',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Commands Server',
       description: 'Model Context Protocol server for running system commands securely.',
@@ -2855,6 +3071,7 @@ export const staticServers = [
   },
   {
     id: 'foundry-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Foundry MCP Server',
       description: 'Experimental MCP server for Foundry blockchain development and Solidity testing.',
@@ -2868,6 +3085,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-forge',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Forge',
       description: 'Universal development framework for building enterprise-grade MCP servers.',
@@ -2881,6 +3099,7 @@ export const staticServers = [
   },
   {
     id: 'aws-mcp-samples',
+    deployment: 'local_stdio',
     fields: {
       name: 'AWS MCP Samples',
       description: 'Official AWS sample implementations of MCP servers for various AWS services.',
@@ -2894,6 +3113,7 @@ export const staticServers = [
   },
   {
     id: 'prometheus-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Prometheus MCP Server',
       description: 'MCP server for querying and analyzing Prometheus metrics with AI assistance.',
@@ -2907,6 +3127,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-documentation-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Documentation Server',
       description: 'Document management with AI-powered semantic search, file uploads, and smart indexing.',
@@ -2920,6 +3141,7 @@ export const staticServers = [
   },
   {
     id: 'easy-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Easy MCP',
       description: 'Absurdly easy framework for building Model Context Protocol servers in TypeScript.',
@@ -2933,6 +3155,7 @@ export const staticServers = [
   },
   {
     id: 'cognition-wheel',
+    deployment: 'local_stdio',
     fields: {
       name: 'Cognition Wheel',
       description: 'Wisdom of crowds MCP server consulting multiple AI models for enhanced reasoning.',
@@ -2946,6 +3169,7 @@ export const staticServers = [
   },
   {
     id: 'litemcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'LiteMCP',
       description: 'Elegant TypeScript framework for building MCP servers with type safety.',
@@ -2959,6 +3183,7 @@ export const staticServers = [
   },
   {
     id: 'azure-ai-foundry-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Azure AI Foundry MCP',
       description: 'Official Microsoft Azure AI Foundry MCP server for enterprise AI workflows.',
@@ -2972,6 +3197,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-proxy',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Proxy',
       description: 'TypeScript SSE proxy for MCP servers using stdio transport with real-time communication.',
@@ -2985,6 +3211,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-compass',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Compass',
       description: 'MCP Discovery & Recommendation Service for finding the right MCP server for your needs.',
@@ -2998,6 +3225,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-code-executor',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Code Executor',
       description: 'Execute Python code within specified Conda environments through MCP protocol.',
@@ -3011,6 +3239,7 @@ export const staticServers = [
   },
   {
     id: 'mathom',
+    deployment: 'local_stdio',
     fields: {
       name: 'Mathom',
       description: 'Run and monitor MCP servers locally with comprehensive management capabilities.',
@@ -3024,6 +3253,7 @@ export const staticServers = [
   },
   {
     id: 'rag-web-browser-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'RAG Web Browser MCP',
       description: 'Official Apify MCP server for RAG-enabled web browsing and content extraction.',
@@ -3037,6 +3267,7 @@ export const staticServers = [
   },
   {
     id: 'mongodb-lens',
+    deployment: 'local_stdio',
     fields: {
       name: 'MongoDB Lens',
       description: 'Full-featured MCP server for MongoDB databases with comprehensive query capabilities.',
@@ -3050,6 +3281,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-gdrive',
+    deployment: 'local_stdio',
     fields: {
       name: 'Google Drive MCP',
       description: 'MCP server for reading Google Drive files and editing Google Sheets.',
@@ -3063,6 +3295,7 @@ export const staticServers = [
   },
   {
     id: 'mindmap-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Mindmap MCP Server',
       description: 'Create interactive mindmaps and artifacts through MCP protocol integration.',
@@ -3076,6 +3309,7 @@ export const staticServers = [
   },
   {
     id: 'ctx-generator',
+    deployment: 'local_stdio',
     fields: {
       name: 'CTX Generator',
       description: 'Generate structured documentation from files, repos, diffs, and URLs with modular architecture.',
@@ -3089,6 +3323,7 @@ export const staticServers = [
   },
   {
     id: 'doris-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Apache Doris MCP',
       description: 'Official Apache Doris MCP server for real-time OLAP queries and analytics.',
@@ -3102,6 +3337,7 @@ export const staticServers = [
   },
   {
     id: 'searxng-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'SearXNG MCP Server',
       description: 'MCP server for SearXNG privacy-focused search engine integration.',
@@ -3115,6 +3351,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-maigret',
+    deployment: 'local_stdio',
     fields: {
       name: 'Maigret MCP Server',
       description: 'OSINT tool for collecting user account information from various public sources.',
@@ -3128,6 +3365,7 @@ export const staticServers = [
   },
   {
     id: 'apollo-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Apollo MCP Server',
       description: 'Official Apollo GraphQL MCP server for GraphQL schema and operations management.',
@@ -3141,6 +3379,7 @@ export const staticServers = [
   },
   {
     id: 'mcpbench',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCPBench',
       description: 'Comprehensive evaluation benchmark suite for testing MCP server performance.',
@@ -3154,6 +3393,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-flutter',
+    deployment: 'local_stdio',
     fields: {
       name: 'Flutter MCP Server',
       description: 'MCP server for Dart VM and Flutter mobile development workflows.',
@@ -3167,6 +3407,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-omni-connect',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCPOmni Connect',
       description: 'Complete AI agent platform with OmniAgent builder and local tools system.',
@@ -3180,6 +3421,7 @@ export const staticServers = [
   },
   {
     id: 'rust-docs-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Rust Docs MCP Server',
       description: 'Prevents outdated Rust suggestions by fetching current crate docs with embeddings.',
@@ -3195,6 +3437,7 @@ export const staticServers = [
   // Batch 7: 60 Premium Servers (123-146 stars)
   {
     id: 'mcp-scholarly',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Scholarly',
       description: 'A MCP server to search for accurate academic articles and research papers.',
@@ -3208,6 +3451,7 @@ export const staticServers = [
   },
   {
     id: 'protoc-gen-go-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Protoc Gen Go MCP',
       description: 'Go protobuf compiler extension to turn any gRPC service into an MCP server.',
@@ -3221,6 +3465,7 @@ export const staticServers = [
   },
   {
     id: 'quarkus-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Quarkus MCP Server',
       description: 'This extension enables developers to implement the MCP server features easily.',
@@ -3234,6 +3479,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-server-metamcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Server MetaMCP',
       description: 'MCP Server MetaMCP manages all your other MCPs in one MCP.',
@@ -3247,6 +3493,7 @@ export const staticServers = [
   },
   {
     id: 'outlook-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Outlook MCP',
       description: 'MCP server for Claude to access Outlook data via Microsoft Graph API.',
@@ -3260,6 +3507,7 @@ export const staticServers = [
   },
   {
     id: 'jadx-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'JADX MCP Server',
       description: 'MCP server for JADX-AI Plugin for reverse engineering and application security.',
@@ -3273,6 +3521,7 @@ export const staticServers = [
   },
   {
     id: 'aws-finops-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'AWS FinOps MCP Server',
       description: 'An MCP server that brings powerful AWS FinOps capabilities directly into your AI assistant. Analyze cloud costs and optimize spending.',
@@ -3286,6 +3535,7 @@ export const staticServers = [
   },
   {
     id: 'volcengine-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Volcengine MCP Server',
       description: 'Volcengine MCP Servers for cloud platform integration.',
@@ -3299,6 +3549,7 @@ export const staticServers = [
   },
   {
     id: 'bazi-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Bazi MCP',
       description: 'MCP server for Bazi (八字) information and Chinese astrology.',
@@ -3312,6 +3563,7 @@ export const staticServers = [
   },
   {
     id: 'unity-natural-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Unity Natural MCP',
       description: 'UnityNaturalMCP is an MCP server implementation for Unity that aims for a "natural" user experience.',
@@ -3325,6 +3577,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-pinecone',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Pinecone',
       description: 'Model Context Protocol server to allow for reading and writing from Pinecone. Rudimentary RAG implementation.',
@@ -3338,6 +3591,7 @@ export const staticServers = [
   },
   {
     id: 'ida-mcp-server-plugin',
+    deployment: 'local_stdio',
     fields: {
       name: 'IDA MCP Server Plugin',
       description: 'IDA Pro Plugin for serving MCP SSE server for cursor / claude.',
@@ -3351,6 +3605,7 @@ export const staticServers = [
   },
   {
     id: 'any-chat-completions-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Any Chat Completions MCP',
       description: 'MCP Server for using any LLM as a Tool.',
@@ -3364,6 +3619,7 @@ export const staticServers = [
   },
   {
     id: 'jmap-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'JMAP MCP',
       description: 'A Model Context Protocol server that provides tools for interacting with JMAP (JSON Meta Application Protocol) email servers.',
@@ -3377,6 +3633,7 @@ export const staticServers = [
   },
   {
     id: 'imagesorcery-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'ImageSorcery MCP',
       description: 'An MCP server providing tools for image processing operations using OpenCV and OCR.',
@@ -3390,6 +3647,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-gateway-lightcone',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Gateway (Lightcone)',
       description: 'A gateway demo for MCP SSE Server.',
@@ -3403,6 +3661,7 @@ export const staticServers = [
   },
   {
     id: '1panel',
+    deployment: 'local_stdio',
     fields: {
       name: '1Panel MCP',
       description: 'mcp-1panel is an implementation of the Model Context Protocol server for 1Panel server management.',
@@ -3416,6 +3675,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-montano-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Montano Server',
       description: 'Simple MCP Server Implementation.',
@@ -3429,6 +3689,7 @@ export const staticServers = [
   },
   {
     id: 'quickchart-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Quickchart MCP Server',
       description: 'A Model Context Protocol server for generating charts using QuickChart.io. Create various types of charts through MCP tools.',
@@ -3442,6 +3703,7 @@ export const staticServers = [
   },
   {
     id: 'awesome-a2a',
+    deployment: 'local_stdio',
     fields: {
       name: 'Awesome Agent2Agent (A2A)',
       description: 'Agent2Agent (A2A) – awesome A2A agents, tools, servers & clients, all in one place.',
@@ -3455,6 +3717,7 @@ export const staticServers = [
   },
   {
     id: 'magicui-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Magic UI MCP',
       description: 'Official Magic UI MCP server for UI component generation.',
@@ -3468,6 +3731,7 @@ export const staticServers = [
   },
   {
     id: 'figma-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Figma MCP Server',
       description: 'Model Context Protocol server implementation for Figma API.',
@@ -3481,6 +3745,7 @@ export const staticServers = [
   },
   {
     id: 'servers-archived',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Servers Archived',
       description: 'Reference MCP servers that are no longer maintained. Public archive.',
@@ -3494,6 +3759,7 @@ export const staticServers = [
   },
   {
     id: 'datagov-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'DataGov MCP',
       description: 'MCP server for Israel Government Data access.',
@@ -3507,6 +3773,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-client-go',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Client Go',
       description: 'mcp client for Go (Golang). Integrate multiple Model Context Protocol servers.',
@@ -3520,6 +3787,7 @@ export const staticServers = [
   },
   {
     id: 'chanakya-local-friend',
+    deployment: 'local_stdio',
     fields: {
       name: 'Chanakya Local Friend',
       description: 'Chanakya is an advanced, open-source, and self-hostable voice assistant designed for privacy, power, and flexibility.',
@@ -3533,6 +3801,7 @@ export const staticServers = [
   },
   {
     id: 'notion-mcp-server-awkoy',
+    deployment: 'local_stdio',
     fields: {
       name: 'Notion MCP Server',
       description: 'Notion MCP Server is a Model Context Protocol server implementation that enables AI assistants to interact with Notion\'s API.',
@@ -3546,6 +3815,7 @@ export const staticServers = [
   },
   {
     id: 'python-mcp-server-client',
+    deployment: 'local_stdio',
     fields: {
       name: 'Python MCP Server Client',
       description: '支持查询主流agent框架技术文档的MCP server（支持stdio和sse两种传输协议）, 支持 langchain、llama-index、autogen等框架。',
@@ -3559,6 +3829,7 @@ export const staticServers = [
   },
   {
     id: 'mcphub-desktop',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCPHub Desktop',
       description: 'Desktop APP for Discover and Install MCP Servers.',
@@ -3572,6 +3843,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-telegram-sparfenyuk',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Telegram (Sparfenyuk)',
       description: 'MCP server to work with Telegram through MTProto.',
@@ -3585,6 +3857,7 @@ export const staticServers = [
   },
   {
     id: 'mkinf-sdk',
+    deployment: 'local_stdio',
     fields: {
       name: 'mkinf SDK',
       description: 'mkinf SDK to interact with mkinf hub MCP servers.',
@@ -3598,6 +3871,7 @@ export const staticServers = [
   },
   {
     id: 'django-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Django MCP Server',
       description: 'Django MCP Server is a Django extensions to easily enable AI Agents to interact with Django Apps through the Model Context Protocol.',
@@ -3611,6 +3885,7 @@ export const staticServers = [
   },
   {
     id: 'website-downloader',
+    deployment: 'local_stdio',
     fields: {
       name: 'Website Downloader',
       description: 'MCP server to download entire websites.',
@@ -3624,6 +3899,7 @@ export const staticServers = [
   },
   {
     id: 'google-analytics-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Google Analytics MCP',
       description: 'Google Analytics 4 MCP Server for Claude, Cursor, Windsurf etc - Access GA4 data through natural language with 200+ dimensions & metrics.',
@@ -3637,6 +3913,7 @@ export const staticServers = [
   },
   {
     id: 'nano-agent',
+    deployment: 'local_stdio',
     fields: {
       name: 'Nano Agent',
       description: 'A MCP Server for a small scale engineering agents with multi-provider LLM support.',
@@ -3650,6 +3927,7 @@ export const staticServers = [
   },
   {
     id: 'vibe-check-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Vibe Check MCP Server',
       description: 'The definitive Vibe Coder\'s sanity check MCP server: Prevent cascading errors in AI workflows by implementing strategic pattern interrupts.',
@@ -3663,6 +3941,7 @@ export const staticServers = [
   },
   {
     id: 'awesome-mcp-registry',
+    deployment: 'local_stdio',
     fields: {
       name: 'Awesome MCP Registry',
       description: 'Awesome MCP Servers and Packages Registry and Database with Structured JSON configurations.',
@@ -3676,6 +3955,7 @@ export const staticServers = [
   },
   {
     id: 'dbt-llm-agent',
+    deployment: 'local_stdio',
     fields: {
       name: 'dbt LLM Agent',
       description: 'LLM based AI Agent to automate Data Analysis for dbt projects with remote MCP server.',
@@ -3689,6 +3969,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-gateway-acehoss',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Gateway (Acehoss)',
       description: 'A flexible gateway server that bridges Model Context Protocol STDIO servers to MCP HTTP+SSE and REST API, enabling multi-instance MCP.',
@@ -3702,6 +3983,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-server-langfuse',
+    deployment: 'local_stdio',
     fields: {
       name: 'Langfuse MCP Server',
       description: 'Model Context Protocol server for Langfuse Prompt Management. Access and manage your Langfuse prompts through MCP.',
@@ -3715,6 +3997,7 @@ export const staticServers = [
   },
   {
     id: 'sqrl-datasqrl',
+    deployment: 'local_stdio',
     fields: {
       name: 'SQRL (DataSQRL)',
       description: 'Data Pipeline Automation Framework to build MCP servers, data APIs, and data lakes with SQL.',
@@ -3728,6 +4011,7 @@ export const staticServers = [
   },
   {
     id: 'anytype-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Anytype MCP',
       description: 'An MCP server enabling AI assistants to interact with Anytype - a local and collaborative wiki - to organize objects, lists, and more.',
@@ -3741,6 +4025,7 @@ export const staticServers = [
   },
   {
     id: 'discordmcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Discord MCP',
       description: 'Discord MCP Server for Claude Integration.',
@@ -3754,6 +4039,7 @@ export const staticServers = [
   },
   {
     id: 'flights-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Flights MCP',
       description: 'An MCP server to search for flights.',
@@ -3767,6 +4053,7 @@ export const staticServers = [
   },
   {
     id: 'facebook-ads-library-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Facebook Ads Library MCP',
       description: 'MCP Server for Facebook ADs Library - Get instant answers from FB\'s ad library.',
@@ -3780,6 +4067,7 @@ export const staticServers = [
   },
   {
     id: 'pipedream-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Pipedream MCP',
       description: 'Examples of using Pipedream\'s MCP server in your app or AI agent.',
@@ -3793,6 +4081,7 @@ export const staticServers = [
   },
   {
     id: 'make-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Make MCP Server',
       description: 'Make MCP Server for automation workflows.',
@@ -3806,6 +4095,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-telegram-dryeab',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Telegram (Dryeab)',
       description: 'MCP Server for Telegram bot integration.',
@@ -3819,6 +4109,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-server-aws-rishika',
+    deployment: 'local_stdio',
     fields: {
       name: 'AWS MCP Server (Rishika)',
       description: 'A Model Context Protocol server implementation for operations on AWS resources.',
@@ -3832,6 +4123,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-think-tool',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Think Tool',
       description: 'An MCP server implementing the think tool for Claude.',
@@ -3845,6 +4137,7 @@ export const staticServers = [
   },
   {
     id: 'meilisearch-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Meilisearch MCP',
       description: 'A Model Context Protocol server for interacting with Meilisearch through LLM interfaces.',
@@ -3858,6 +4151,7 @@ export const staticServers = [
   },
   {
     id: 'kom-k8s',
+    deployment: 'local_stdio',
     fields: {
       name: 'kom (Kubernetes Operations Manager)',
       description: 'kom 是一个用于 Kubernetes 操作的工具，SDK级的kubectl、client-go的使用封装。并且支持作为管理k8s 的 MCP server。',
@@ -3871,6 +4165,7 @@ export const staticServers = [
   },
   {
     id: 'servicenow-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'ServiceNow MCP',
       description: 'MCP Server for ServiceNow integration.',
@@ -3884,6 +4179,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-server-example',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Server Example',
       description: 'A simple MCP server to search for documentation (tutorial).',
@@ -3897,6 +4193,7 @@ export const staticServers = [
   },
   {
     id: 'powerpoint-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'PowerPoint MCP',
       description: 'A MCP Server for creating PowerPoint Presentations.',
@@ -3910,6 +4207,7 @@ export const staticServers = [
   },
   {
     id: 'postman-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Postman MCP Server',
       description: 'An MCP server that provides access to Postman API testing and management.',
@@ -3923,6 +4221,7 @@ export const staticServers = [
   },
   {
     id: 'openapi-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'OpenAPI MCP',
       description: 'Dockerized MCP Server to allow your AI agent to access any API with existing api docs.',
@@ -3936,6 +4235,7 @@ export const staticServers = [
   },
   {
     id: 'lsp-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'LSP MCP',
       description: 'An Model Context Protocol server that provides LLMs/AI Agents with the capabilities of a language server protocol server.',
@@ -3949,6 +4249,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-simple-pubmed',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Simple PubMed',
       description: 'MCP server for searching and querying PubMed medical papers/research database.',
@@ -3962,6 +4263,7 @@ export const staticServers = [
   },
   {
     id: 'solon-ai',
+    deployment: 'local_stdio',
     fields: {
       name: 'Solon AI',
       description: 'Java AI（智能体） 全场景应用开发框架（LLM，Function Call，RAG，Embedding，Reranking，Flow，MCP Server，Mcp Client，Mcp Proxy）。',
@@ -3977,6 +4279,7 @@ export const staticServers = [
   // Batch 8: 80 Premium Servers (104-122 stars)
   {
     id: 'jetbrains-mcp-server-plugin',
+    deployment: 'local_stdio',
     fields: {
       name: 'JetBrains MCP Server Plugin',
       description: 'JetBrains MCP Server Plugin for IDE integration.',
@@ -3990,6 +4293,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-client-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Client Server',
       description: 'An MCP Server that\'s also an MCP Client. Useful for letting Claude develop and test MCPs without needing to reset the application.',
@@ -4003,6 +4307,7 @@ export const staticServers = [
   },
   {
     id: 'summon-app',
+    deployment: 'local_stdio',
     fields: {
       name: 'Summon App',
       description: 'Postman for MCP servers - archived but useful reference.',
@@ -4016,6 +4321,7 @@ export const staticServers = [
   },
   {
     id: 'aws-cost-explorer-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'AWS Cost Explorer MCP Server',
       description: 'MCP server for understanding AWS spend and cost optimization.',
@@ -4029,6 +4335,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-k8s',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP K8s',
       description: 'A Kubernetes MCP server that enables interaction with Kubernetes clusters through MCP tools.',
@@ -4042,6 +4349,7 @@ export const staticServers = [
   },
   {
     id: 'salesforce-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Salesforce MCP',
       description: 'MCP Server for interacting with Salesforce instances.',
@@ -4055,6 +4363,7 @@ export const staticServers = [
   },
   {
     id: 'solana-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Solana MCP',
       description: 'A Model Context Protocol server for interacting with the Solana blockchain, powered by the Solana Agent Kit.',
@@ -4068,6 +4377,7 @@ export const staticServers = [
   },
   {
     id: 'quick-data-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Quick Data MCP',
       description: 'Prompt focused MCP Server for .json and .csv agentic data analytics for Claude Code.',
@@ -4081,6 +4391,7 @@ export const staticServers = [
   },
   {
     id: 'laravel-loop',
+    deployment: 'local_stdio',
     fields: {
       name: 'Laravel Loop',
       description: 'Laravel Loop is a powerful Model Context Protocol server designed specifically for Laravel applications.',
@@ -4094,6 +4405,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-discord-hanweg',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Discord (Hanweg)',
       description: 'MCP server for discord bot integration.',
@@ -4107,6 +4419,7 @@ export const staticServers = [
   },
   {
     id: 'terraform-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Terraform MCP Server',
       description: 'Terraform Registry MCP Server - archived but useful reference.',
@@ -4120,6 +4433,7 @@ export const staticServers = [
   },
   {
     id: 'dynatrace-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Dynatrace MCP',
       description: 'MCP server for Dynatrace Observability and monitoring.',
@@ -4133,6 +4447,7 @@ export const staticServers = [
   },
   {
     id: 'ticktick-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'TickTick MCP',
       description: 'MCP server that interacts with TickTick (Dida 365) via the TickTick Open API.',
@@ -4146,6 +4461,7 @@ export const staticServers = [
   },
   {
     id: 'linear-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Linear MCP',
       description: 'A private MCP server for accessing Linear project management.',
@@ -4159,6 +4475,7 @@ export const staticServers = [
   },
   {
     id: 'buttplug-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Buttplug MCP',
       description: 'Buttplug.io Model Context Protocol server.',
@@ -4172,6 +4489,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-client-and-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Client and Server',
       description: 'MCP Client and Server demo implementation.',
@@ -4185,6 +4503,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-summarizer',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Summarizer',
       description: 'MCP Server for AI Summarization of books and ebooks.',
@@ -4198,6 +4517,7 @@ export const staticServers = [
   },
   {
     id: 'secure-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'SecureMCP',
       description: 'SecureMCP is a security auditing tool designed to detect vulnerabilities and misconfigurations in applications using the Model Context Protocol.',
@@ -4211,6 +4531,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-server-bigquery-lucas',
+    deployment: 'local_stdio',
     fields: {
       name: 'BigQuery MCP Server (Lucas)',
       description: 'A Model Context Protocol server that provides access to BigQuery.',
@@ -4224,6 +4545,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-bigquery-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'BigQuery MCP Server (Ergut)',
       description: 'A Model Context Protocol server that provides secure, read-only access to BigQuery datasets.',
@@ -4237,6 +4559,7 @@ export const staticServers = [
   },
   {
     id: 'strava-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Strava MCP',
       description: 'A Model Context Protocol server that connects to Strava API, providing tools to access Strava data through LLMs.',
@@ -4250,6 +4573,7 @@ export const staticServers = [
   },
   {
     id: 'mcpeserver',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCPEServer',
       description: 'A Minecraft Server Launcher Written by Golang - archived but historical reference.',
@@ -4263,6 +4587,7 @@ export const staticServers = [
   },
   {
     id: 'microsoft-mcp-gateway',
+    deployment: 'local_stdio',
     fields: {
       name: 'Microsoft MCP Gateway',
       description: 'MCP Gateway is a reverse proxy and management layer for MCP servers, enabling scalable, session-aware routing and lifecycle management.',
@@ -4276,6 +4601,7 @@ export const staticServers = [
   },
   {
     id: 'google-search-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Google Search MCP Server',
       description: 'MCP Server built for use with VS Code / Cline / Anthropic - enable google search and ability to follow links and research websites.',
@@ -4289,6 +4615,7 @@ export const staticServers = [
   },
   {
     id: 'modelfetch',
+    deployment: 'local_stdio',
     fields: {
       name: 'ModelFetch',
       description: 'Runtime-agnostic TypeScript/JavaScript SDK for MCP Servers.',
@@ -4302,6 +4629,7 @@ export const staticServers = [
   },
   {
     id: 'dart-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Dart MCP Server',
       description: 'Dart AI Model Context Protocol server.',
@@ -4315,6 +4643,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-package-version',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Package Version',
       description: 'An MCP server that provides LLMs with the latest stable package versions when coding.',
@@ -4328,6 +4657,7 @@ export const staticServers = [
   },
   {
     id: 'mcpgod-cli',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCPGod CLI',
       description: 'Fine-grained control over model context protocol clients, servers, and tools. Context is God.',
@@ -4341,6 +4671,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-servers-nix',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Servers Nix',
       description: 'A Nix-based configuration framework for Model Control Protocol servers with ready-to-use packages.',
@@ -4354,6 +4685,7 @@ export const staticServers = [
   },
   {
     id: 'gitingest-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Gitingest MCP',
       description: 'MCP server for gitingest - extract and analyze GitHub repositories.',
@@ -4367,6 +4699,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-access-point',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Access Point',
       description: 'Turn a web server into an MCP server in one click without making any code changes.',
@@ -4380,6 +4713,7 @@ export const staticServers = [
   },
   {
     id: 'ha-mcp-for-xiaozhi',
+    deployment: 'local_stdio',
     fields: {
       name: 'Home Assistant MCP for Xiaozhi',
       description: 'Home Assistant MCP server for 小智AI integration.',
@@ -4393,6 +4727,7 @@ export const staticServers = [
   },
   {
     id: 'browser-control-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Browser Control MCP',
       description: 'MCP server paired with a browser extension that enables AI agents to control the user\'s browser.',
@@ -4406,6 +4741,7 @@ export const staticServers = [
   },
   {
     id: 'notion-mcp-ccabanillas',
+    deployment: 'local_stdio',
     fields: {
       name: 'Notion MCP (ccabanillas)',
       description: 'A Model Context Protocol server implementation for Notion integration, providing a standardized interface.',
@@ -4419,6 +4755,7 @@ export const staticServers = [
   },
   {
     id: 'muppet',
+    deployment: 'local_stdio',
     fields: {
       name: 'Muppet',
       description: 'MCP Servers SDK for TypeScript.',
@@ -4432,6 +4769,7 @@ export const staticServers = [
   },
   {
     id: 'google-scholar-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Google Scholar MCP Server',
       description: 'A MCP Server for Google Scholar: Enable AI assistants to search and access Google Scholar papers through a simple MCP interface.',
@@ -4445,6 +4783,7 @@ export const staticServers = [
   },
   {
     id: 'scopecraft-command',
+    deployment: 'local_stdio',
     fields: {
       name: 'Scopecraft Command',
       description: 'Scopecraft Command - A CLI and MCP server for Markdown-Driven Task Management (MDTM).',
@@ -4458,6 +4797,7 @@ export const staticServers = [
   },
   {
     id: 'xero-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Xero MCP Server',
       description: 'An MCP server that integrates with the MCP protocol for Xero accounting.',
@@ -4471,6 +4811,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-php',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP PHP',
       description: 'The fast, PHP way to build MCP servers.',
@@ -4484,6 +4825,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-server-trello',
+    deployment: 'local_stdio',
     fields: {
       name: 'Trello MCP Server',
       description: 'A Model Context Protocol server that provides tools for interacting with Trello boards.',
@@ -4497,6 +4839,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-server-calculator',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Server Calculator',
       description: 'A Model Context Protocol server for calculating.',
@@ -4510,6 +4853,7 @@ export const staticServers = [
   },
   {
     id: 'mssql-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'MSSQL MCP',
       description: 'MSSQL Server MCP implementation written in C#.',
@@ -4523,6 +4867,7 @@ export const staticServers = [
   },
   {
     id: 'yahoo-finance-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Yahoo Finance MCP',
       description: 'A Model Context Protocol server that provides comprehensive financial data from Yahoo Finance.',
@@ -4536,6 +4881,7 @@ export const staticServers = [
   },
   {
     id: 'composer-trade-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Composer Trade MCP',
       description: 'Composer\'s MCP server lets MCP-enabled LLMs like Claude backtest trading ideas and automatically invest in them for you.',
@@ -4549,6 +4895,7 @@ export const staticServers = [
   },
   {
     id: 'log-analyzer-with-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Log Analyzer with MCP',
       description: 'A Model Context Protocol server that provides AI assistants access to AWS CloudWatch Logs for analysis, searching, and correlation.',
@@ -4562,6 +4909,7 @@ export const staticServers = [
   },
   {
     id: 'minesweeper-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Minesweeper MCP Server',
       description: 'An MCP server for playing Minesweeper.',
@@ -4575,6 +4923,7 @@ export const staticServers = [
   },
   {
     id: 'unity-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Unity MCP',
       description: 'Unity Editor integration with Model Context Protocol enabling AI assistants like Claude to interact with Unity projects.',
@@ -4588,6 +4937,7 @@ export const staticServers = [
   },
   {
     id: 'posthog-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'PostHog MCP',
       description: 'Official PostHog MCP Server for analytics and feature flags.',
@@ -4601,6 +4951,7 @@ export const staticServers = [
   },
   {
     id: 'awesome-crypto-mcp-servers',
+    deployment: 'local_stdio',
     fields: {
       name: 'Awesome Crypto MCP Servers',
       description: 'A collection of crypto MCP servers.',
@@ -4614,6 +4965,7 @@ export const staticServers = [
   },
   {
     id: 'n8n-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'n8n MCP Server',
       description: 'MCP server implementation for n8n workflow automation.',
@@ -4627,6 +4979,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-use-ts',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Use TypeScript',
       description: 'TypeScript library that makes it easy to connect LangChain.js-compatible LLMs with MCP servers.',
@@ -4640,6 +4993,7 @@ export const staticServers = [
   },
   {
     id: 'deepseek-thinking-claude-cline-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'DeepSeek Thinking Claude MCP',
       description: 'MCP server implementing RAT (Retrieval Augmented Thinking) - combines DeepSeek\'s reasoning with GPT-4/Claude/Mistral responses.',
@@ -4653,6 +5007,7 @@ export const staticServers = [
   },
   {
     id: 'windows-mcp-net',
+    deployment: 'local_stdio',
     fields: {
       name: 'Windows MCP.Net',
       description: 'A .NET-based Windows desktop automation MCP server that provides AI assistants with the ability to interact with Windows.',
@@ -4666,6 +5021,7 @@ export const staticServers = [
   },
   {
     id: 'ffmpeg-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'FFmpeg MCP',
       description: 'An MCP server for FFmpeg video processing.',
@@ -4679,6 +5035,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-chat',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Chat',
       description: 'Open Source Generic MCP Client for testing & evaluating mcp servers and agents.',
@@ -4692,6 +5049,7 @@ export const staticServers = [
   },
   {
     id: 'anki-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Anki MCP Server',
       description: 'A Model Context Protocol server that enables LLMs to interact with Anki flashcard software through AnkiConnect.',
@@ -4705,6 +5063,7 @@ export const staticServers = [
   },
   {
     id: 'zotero-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Zotero MCP',
       description: 'Model Context Protocol server for the Zotero API, in Python.',
@@ -4718,6 +5077,7 @@ export const staticServers = [
   },
   {
     id: 'utcp-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'UTCP MCP',
       description: 'All-in-one MCP server that can connect your AI agents to any native endpoint, powered by UTCP.',
@@ -4731,6 +5091,7 @@ export const staticServers = [
   },
   {
     id: 'git-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Git MCP Server',
       description: 'An MCP server enabling LLMs and AI agents to interact with Git repositories. Provides tools for comprehensive Git operations.',
@@ -4744,6 +5105,7 @@ export const staticServers = [
   },
   {
     id: 'things-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Things MCP',
       description: 'Things.app MCP Server for task management.',
@@ -4757,6 +5119,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-jfrog',
+    deployment: 'local_stdio',
     fields: {
       name: 'JFrog MCP',
       description: 'Model Context Protocol Server for the JFrog Platform API, enabling repository management, build tracking, release lifecycle management.',
@@ -4770,6 +5133,7 @@ export const staticServers = [
   },
   {
     id: 'keyboard-local',
+    deployment: 'local_stdio',
     fields: {
       name: 'Keyboard Local',
       description: 'One MCP Server, All Your Apps, Privacy First.',
@@ -4783,6 +5147,7 @@ export const staticServers = [
   },
   {
     id: 'systemprompt-code-orchestrator',
+    deployment: 'local_stdio',
     fields: {
       name: 'SystemPrompt Code Orchestrator',
       description: 'MCP server for orchestrating AI coding agents (Claude Code CLI & Gemini CLI). Features task management, process execution, Git integration.',
@@ -4796,6 +5161,7 @@ export const staticServers = [
   },
   {
     id: 'studio-rust-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Roblox Studio Rust MCP Server',
       description: 'Standalone Roblox Studio MCP Server.',
@@ -4809,6 +5175,7 @@ export const staticServers = [
   },
   {
     id: 'slack-mcp-client',
+    deployment: 'local_stdio',
     fields: {
       name: 'Slack MCP Client',
       description: 'A Slack bot and MCP client acts as a bridge between Slack and Model Context Protocol servers.',
@@ -4822,6 +5189,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-solver',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Solver',
       description: 'Model Context Protocol server for constraint optimization and solving.',
@@ -4835,6 +5203,7 @@ export const staticServers = [
   },
   {
     id: 'codeql-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'CodeQL MCP',
       description: 'This project runs a Model Context Protocol server that wraps the CodeQL query server.',
@@ -4848,6 +5217,7 @@ export const staticServers = [
   },
   {
     id: 'cursor-notebook-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Cursor Notebook MCP',
       description: 'Model Context Protocol server designed to allow AI agents within Cursor to interact with Jupyter Notebook (.ipynb) files.',
@@ -4861,6 +5231,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-svelte-docs',
+    deployment: 'local_stdio',
     fields: {
       name: 'Svelte Docs MCP',
       description: 'MCP server that lets you search and access Svelte documentation with built-in caching.',
@@ -4874,6 +5245,7 @@ export const staticServers = [
   },
   {
     id: 'lmstudio-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'LM Studio MCP',
       description: 'A Model Control Protocol server that allows Claude to communicate with locally running LLM models via LM Studio.',
@@ -4889,6 +5261,7 @@ export const staticServers = [
   // Batch 9: 30 Premium Servers (95-104 stars)
   {
     id: 'smiley-coin',
+    deployment: 'local_stdio',
     fields: {
       name: 'SmileyCoin MCP Manager',
       description: 'Simple web UI to manage MCP (Model Context Protocol) servers in the Claude app.',
@@ -4902,6 +5275,7 @@ export const staticServers = [
   },
   {
     id: 'photoshop-python-api-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Photoshop Python API MCP Server',
       description: 'A Model Context Protocol server that interfaces with Adobe Photoshop\'s Python API. Enables LLMs to execute image editing operations.',
@@ -4915,6 +5289,7 @@ export const staticServers = [
   },
   {
     id: 'play-store-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Play Store MCP',
       description: 'An MCP server that connects to Play Store Console and release new App versions from an MCP Client.',
@@ -4928,6 +5303,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-server-starrocks',
+    deployment: 'local_stdio',
     fields: {
       name: 'StarRocks MCP Server',
       description: 'StarRocks MCP (Model Context Protocol) Server for database operations.',
@@ -4941,6 +5317,7 @@ export const staticServers = [
   },
   {
     id: 'sec-edgar-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'SEC EDGAR MCP',
       description: 'A SEC EDGAR MCP (Model Context Protocol) Server for financial data access.',
@@ -4954,6 +5331,7 @@ export const staticServers = [
   },
   {
     id: 'solana-mcp-solanamcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Solana Agent Kit MCP Server',
       description: 'Solana Agent Kit MCP Server for blockchain interactions.',
@@ -4967,6 +5345,7 @@ export const staticServers = [
   },
   {
     id: 'agentql-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'AgentQL MCP',
       description: 'Model Context Protocol server that integrates AgentQL\'s data extraction capabilities.',
@@ -4980,6 +5359,7 @@ export const staticServers = [
   },
   {
     id: 'remote-mcp-functions-dotnet',
+    deployment: 'local_stdio',
     fields: {
       name: 'Azure Remote MCP Functions .NET',
       description: 'Quickstart template to easily build and deploy a custom remote MCP server to the cloud using Azure functions.',
@@ -4993,6 +5373,7 @@ export const staticServers = [
   },
   {
     id: 'mcpp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCppServer',
       description: 'Fast and super efficient Minecraft Server written in C++.',
@@ -5006,6 +5387,7 @@ export const staticServers = [
   },
   {
     id: 'modex',
+    deployment: 'local_stdio',
     fields: {
       name: 'Modex',
       description: 'Modex is a Clojure MCP Library to augment your AI models with Tools, Resources & Prompts using Clojure (Model Context Protocol).',
@@ -5019,6 +5401,7 @@ export const staticServers = [
   },
   {
     id: 'erickwendel-contributions-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Erick Wendel Contributions MCP',
       description: 'A Model Context Protocol server that provides tools to query Erick Wendel\'s contributions across different platforms.',
@@ -5032,6 +5415,7 @@ export const staticServers = [
   },
   {
     id: 'ultimate-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Ultimate MCP Server',
       description: 'The Ultimate Model Context Protocol server, providing unified access to a wide variety of useful and powerful tools.',
@@ -5045,6 +5429,7 @@ export const staticServers = [
   },
   {
     id: 'crawl4ai-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Crawl4AI MCP Server',
       description: '用于提供给本地开发者的 LLM的高效互联网搜索&内容获取的MCP Server， 节省你的token.',
@@ -5058,6 +5443,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-opennutrition',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP OpenNutrition',
       description: 'MCP server providing access to the comprehensive OpenNutrition food database with 300,000+ food items, nutritional data, and barcode lookups.',
@@ -5071,6 +5457,7 @@ export const staticServers = [
   },
   {
     id: 'aws-lambda-mcp-cookbook',
+    deployment: 'local_stdio',
     fields: {
       name: 'AWS Lambda MCP Cookbook',
       description: 'This repository provides a working, deployable, open source-based, serverless MCP server blueprint with an AWS Lambda function.',
@@ -5084,6 +5471,7 @@ export const staticServers = [
   },
   {
     id: 'livebook-tools',
+    deployment: 'local_stdio',
     fields: {
       name: 'Livebook Tools',
       description: 'Powertools for livebook.dev — AI Code Editing, MCP Servers, and Running Livebooks from the CLI.',
@@ -5097,6 +5485,7 @@ export const staticServers = [
   },
   {
     id: 'aries-autoops',
+    deployment: 'local_stdio',
     fields: {
       name: 'ARIES AutoOPS',
       description: '顺便一提，我们支持 RWKV | 「Intel 2025 人工智能创新大赛」🚀AutoOPS: Provide the chaos brought by language models to the operation and maintenance industry!',
@@ -5110,6 +5499,7 @@ export const staticServers = [
   },
   {
     id: 'qu3-app',
+    deployment: 'local_stdio',
     fields: {
       name: 'Qu3 App',
       description: 'Quantum-proof MCP Server and Client Interactions.',
@@ -5123,6 +5513,7 @@ export const staticServers = [
   },
   {
     id: 'frida-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Frida MCP',
       description: 'MCP stdio server for frida dynamic instrumentation toolkit.',
@@ -5136,6 +5527,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-mysql-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'MySQL MCP Server',
       description: 'A Model Context Protocol server for MySQL database operations.',
@@ -5149,6 +5541,7 @@ export const staticServers = [
   },
   {
     id: 'logfire-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Logfire MCP',
       description: 'The Logfire MCP Server is here! 🎉',
@@ -5162,6 +5555,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-server-serper',
+    deployment: 'local_stdio',
     fields: {
       name: 'Serper MCP Server',
       description: 'Serper MCP Server supporting search and webpage scraping.',
@@ -5175,6 +5569,7 @@ export const staticServers = [
   },
   {
     id: 'comfyui-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'ComfyUI MCP Server',
       description: 'Lightweight Python-based MCP server for local ComfyUI.',
@@ -5188,6 +5583,7 @@ export const staticServers = [
   },
   {
     id: 'open-streetmap-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'OpenStreetMap MCP',
       description: 'An OpenStreetMap MCP server implementation that enhances LLM capabilities with location-based services and geospatial data.',
@@ -5201,6 +5597,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-linear-tacticlaunch',
+    deployment: 'local_stdio',
     fields: {
       name: 'Linear MCP (TacticLaunch)',
       description: 'MCP server that enables AI assistants to interact with Linear project management system through natural language.',
@@ -5214,6 +5611,7 @@ export const staticServers = [
   },
   {
     id: 'pywss',
+    deployment: 'local_stdio',
     fields: {
       name: 'PyWSS',
       description: '一个轻量级的 Python Web 框架，一站式集成 MCP SSE、StreamHTTP 和 MCPO 协议，助你轻松构建MCP Server🔥',
@@ -5227,6 +5625,7 @@ export const staticServers = [
   },
   {
     id: 'interviewready-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'InterviewReady MCP Server',
       description: 'An MCP server for InterviewReady platform integration.',
@@ -5240,6 +5639,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-hubspot',
+    deployment: 'local_stdio',
     fields: {
       name: 'HubSpot MCP',
       description: 'A Model Context Protocol server that enables AI assistants to interact with HubSpot CRM data, providing built-in vector storage.',
@@ -5253,6 +5653,7 @@ export const staticServers = [
   },
   {
     id: 'memory-bank-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Memory Bank MCP',
       description: 'Memory Bank is an MCP server that helps teams create, manage, and access structured project documentation.',
@@ -5266,6 +5667,7 @@ export const staticServers = [
   },
   {
     id: 'swagger-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Swagger MCP',
       description: 'Swagger to MCP server conversion tool.',
@@ -5281,6 +5683,7 @@ export const staticServers = [
   // Batch 10: 40 Premium Servers (83-94 stars) - 500+ MILESTONE ACHIEVED! 🎉
   {
     id: 'remote-mcp-apim-functions-python',
+    deployment: 'local_stdio',
     fields: {
       name: 'Azure APIM Functions Python',
       description: 'Azure API Management as AI Gateway to Remote MCP servers.',
@@ -5294,6 +5697,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-server-wazuh',
+    deployment: 'local_stdio',
     fields: {
       name: 'Wazuh SIEM MCP Server',
       description: 'MCP Server for Wazuh SIEM security operations and monitoring.',
@@ -5307,6 +5711,7 @@ export const staticServers = [
   },
   {
     id: 'one-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'One MCP',
       description: 'A centralized proxy platform for MCP servers, accessible via a single HTTP server, featuring a web-based management interface.',
@@ -5320,6 +5725,7 @@ export const staticServers = [
   },
   {
     id: 'chronulus-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Chronulus MCP',
       description: 'MCP Server for Chronulus AI Forecasting and Prediction Agents.',
@@ -5333,6 +5739,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-searxng',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP SearXNG',
       description: 'MCP server for connecting agentic systems to search systems via searXNG.',
@@ -5346,6 +5753,7 @@ export const staticServers = [
   },
   {
     id: 'teslamate-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'TeslaMate MCP',
       description: 'A Model Context Protocol server that provides access to your TeslaMate database, allowing AI assistants to query Tesla vehicle data.',
@@ -5359,6 +5767,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-mianshiya-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'MianShiYa MCP Server',
       description: '基于 Spring AI 的面试鸭搜索题目的 MCP Server 服务，快速让 AI 搜索企业面试真题和答案.',
@@ -5372,6 +5781,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-sse-demo',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP SSE Demo',
       description: 'Claude MCP SSE demo with server and client (CLI & web).',
@@ -5385,6 +5795,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-hono-stateless',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Hono Stateless',
       description: 'An example Hono MCP server using Streamable HTTP.',
@@ -5398,6 +5809,7 @@ export const staticServers = [
   },
   {
     id: 'punkpeye-awesome-mcp-servers',
+    deployment: 'local_stdio',
     fields: {
       name: 'Awesome MCP Servers Mirror',
       description: 'Mirror of https://github.com/punkpeye/awesome-mcp-servers.',
@@ -5411,6 +5823,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-server-typescript-dataforseo',
+    deployment: 'local_stdio',
     fields: {
       name: 'DataForSEO MCP Server',
       description: 'DataForSEO API model context protocol server for SEO optimization.',
@@ -5424,6 +5837,7 @@ export const staticServers = [
   },
   {
     id: 'slack-mcp-server-ubie',
+    deployment: 'local_stdio',
     fields: {
       name: 'Slack MCP Server (Ubie)',
       description: 'A Slack MCP server integration.',
@@ -5437,6 +5851,7 @@ export const staticServers = [
   },
   {
     id: 'flyworks-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Flyworks MCP',
       description: 'Fast and free zeroshot lipsync MCP server.',
@@ -5450,6 +5865,7 @@ export const staticServers = [
   },
   {
     id: 'unreal-analyzer-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Unreal Analyzer MCP',
       description: 'MCP server for Unreal Engine 5 analysis and integration.',
@@ -5463,6 +5879,7 @@ export const staticServers = [
   },
   {
     id: 'ghost-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Ghost MCP',
       description: 'A Model Context Protocol server for interacting with Ghost CMS through LLM interfaces like Claude.',
@@ -5476,6 +5893,7 @@ export const staticServers = [
   },
   {
     id: 'google-workspace-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Google Workspace MCP',
       description: 'A Model Context Protocol server that provides authenticated access to Google Workspace APIs, offering integrated Authentication, Gmail integration.',
@@ -5489,6 +5907,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-server-reddit',
+    deployment: 'local_stdio',
     fields: {
       name: 'Reddit MCP Server',
       description: 'A Model Context Protocol server that provides tools for fetching Reddit content, including frontpage posts, subreddit information.',
@@ -5502,6 +5921,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-logseq-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'LogSeq MCP Server',
       description: 'MCP server to interact with LogSeq via its Local HTTP API - enabling AI assistants like Claude to seamlessly read, write, and manage notes.',
@@ -5515,6 +5935,7 @@ export const staticServers = [
   },
   {
     id: 'vectorize-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Vectorize MCP Server',
       description: 'Official Vectorize MCP Server for vector databases.',
@@ -5528,6 +5949,7 @@ export const staticServers = [
   },
   {
     id: 'xcodeproj-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Xcode Project MCP Server',
       description: 'A Model Context Protocol Server to manipulate *.xcodeproj files.',
@@ -5541,6 +5963,7 @@ export const staticServers = [
   },
   {
     id: 'google-slides-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Google Slides MCP',
       description: 'MCP Server for Google Slides presentation management.',
@@ -5554,6 +5977,7 @@ export const staticServers = [
   },
   {
     id: 'autocad-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'AutoCAD MCP',
       description: 'AutoCAD LT AutoLISP MCP Server for CAD automation.',
@@ -5567,6 +5991,7 @@ export const staticServers = [
   },
   {
     id: 'mcpy-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'McPy Server',
       description: 'A open source Minecraft server written 100% in Python - archived but historically significant.',
@@ -5580,6 +6005,7 @@ export const staticServers = [
   },
   {
     id: 'rust-mcp-sdk',
+    deployment: 'local_stdio',
     fields: {
       name: 'Rust MCP SDK',
       description: 'A high-performance, asynchronous toolkit for building MCP servers and clients in Rust.',
@@ -5593,6 +6019,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-windows-desktop-automation',
+    deployment: 'local_stdio',
     fields: {
       name: 'Windows Desktop Automation MCP',
       description: 'A Model Context Protocol server for Windows desktop automation using AutoIt.',
@@ -5606,6 +6033,7 @@ export const staticServers = [
   },
   {
     id: 'node-code-sandbox-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Node Code Sandbox MCP',
       description: 'A Node.js–based Model Context Protocol server that spins up disposable Docker containers to execute arbitrary JavaScript.',
@@ -5619,6 +6047,7 @@ export const staticServers = [
   },
   {
     id: 'mevzuat-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Mevzuat MCP',
       description: 'MCP Server for Searching Turkish Legislation.',
@@ -5632,6 +6061,7 @@ export const staticServers = [
   },
   {
     id: 'google-sheets-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Google Sheets MCP',
       description: 'Google Sheets MCP Server 📊🤖 for spreadsheet automation.',
@@ -5645,6 +6075,7 @@ export const staticServers = [
   },
   {
     id: 'all-in-one-model-context-protocol',
+    deployment: 'local_stdio',
     fields: {
       name: 'All-in-One MCP',
       description: 'All-in-one MCP server with AI search, RAG, and multi-service integrations (GitLab/Jira/Confluence/YouTube) for AI-enhanced development.',
@@ -5658,6 +6089,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-server-salesforce-tsmztech',
+    deployment: 'local_stdio',
     fields: {
       name: 'Salesforce MCP Server (TSMZTech)',
       description: 'Salesforce MCP Server for CRM integration and automation.',
@@ -5671,6 +6103,7 @@ export const staticServers = [
   },
   {
     id: 'browserstack-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'BrowserStack MCP Server',
       description: 'BrowserStack\'s Official MCP Server for testing automation and quality assurance.',
@@ -5684,6 +6117,7 @@ export const staticServers = [
   },
   {
     id: 'fabric-analytics-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Fabric Analytics MCP',
       description: 'A Model Context Protocol server that enables AI assistants to securely access and analyze Microsoft Fabric Analytics data.',
@@ -5697,6 +6131,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-server-and-gw',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Server and Gateway',
       description: 'An MCP stdio to HTTP SSE transport gateway with example server and MCP client.',
@@ -5710,6 +6145,7 @@ export const staticServers = [
   },
   {
     id: 'laravel-croft',
+    deployment: 'local_stdio',
     fields: {
       name: 'Laravel Croft MCP',
       description: 'MCP server for all of your Laravel projects - better AI pair programming.',
@@ -5723,6 +6159,7 @@ export const staticServers = [
   },
   {
     id: 'tmux-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Tmux MCP',
       description: 'A MCP server for our beloved terminal multiplexer tmux.',
@@ -5736,6 +6173,7 @@ export const staticServers = [
   },
   {
     id: 'tsgram-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'TSGram MCP',
       description: 'TSGram - Telegram MCP Server for local Claude Code integration - debug and vibe code on the go!',
@@ -5749,6 +6187,7 @@ export const staticServers = [
   },
   {
     id: 'wikipedia-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Wikipedia MCP',
       description: 'A Model Context Protocol server that retrieves information from Wikipedia to provide context to LLMs.',
@@ -5762,6 +6201,7 @@ export const staticServers = [
   },
   {
     id: 'superset-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Superset MCP',
       description: 'Connect to 50+ data stores via superset mcp server. Can use with OpenAI agent SDK, Claude app, cursor, windsurf.',
@@ -5775,6 +6215,7 @@ export const staticServers = [
   },
   {
     id: 'sonarqube-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'SonarQube MCP Server',
       description: 'Model Context Protocol server for SonarQube code quality analysis.',
@@ -5788,6 +6229,7 @@ export const staticServers = [
   },
   {
     id: 'ebook-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'eBook MCP',
       description: 'A MCP server that supports mainstream eBook formats including EPUB, PDF and more. Simplify your eBook user experience with LLM.',
@@ -5803,6 +6245,7 @@ export const staticServers = [
   // Batch 11: 70 Premium Servers (70-83 stars) - 600+ SERVERS ACHIEVED! 🚀
   {
     id: 'google-docs-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Google Docs MCP',
       description: 'Google Docs MCP is an MCP server that gains full access to your google docs and allows claude to manage documents.',
@@ -5816,6 +6259,7 @@ export const staticServers = [
   },
   {
     id: 'lapras-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Lapras MCP Server',
       description: 'lapras.com 公式MCP Server for professional networking and recruitment.',
@@ -5829,6 +6273,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-replicate',
+    deployment: 'local_stdio',
     fields: {
       name: 'Replicate MCP',
       description: 'Model Context Protocol server for Replicate\'s AI model API.',
@@ -5842,6 +6287,7 @@ export const staticServers = [
   },
   {
     id: 'binary-ninja-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Binary Ninja MCP',
       description: 'A Binary Ninja plugin containing an MCP server that enables seamless integration with your favorite LLM/MCP client.',
@@ -5855,6 +6301,7 @@ export const staticServers = [
   },
   {
     id: 'sqlite-explorer-fastmcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'SQLite Explorer FastMCP',
       description: 'An MCP server that provides safe, read-only access to SQLite databases through Model Context Protocol.',
@@ -5868,6 +6315,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-web-ui',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Web UI',
       description: 'MCP Web UI is a web-based user interface that serves as a Host within the Model Context Protocol architecture.',
@@ -5881,6 +6329,7 @@ export const staticServers = [
   },
   {
     id: 'bitwarden-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Bitwarden MCP Server',
       description: 'Official MCP server for interaction with the Bitwarden vault.',
@@ -5894,6 +6343,7 @@ export const staticServers = [
   },
   {
     id: 'coincap-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'CoinCap MCP',
       description: 'A coincap mcp server to access crypto data from coincap API.',
@@ -5907,6 +6357,7 @@ export const staticServers = [
   },
   {
     id: 'penpot-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Penpot MCP',
       description: 'Penpot MCP server for open-source design and prototyping.',
@@ -5920,6 +6371,7 @@ export const staticServers = [
   },
   {
     id: 'node-candidate-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Node Candidate MCP Server',
       description: 'A Model Context Protocol server library that gives LLMs access to information about a candidate.',
@@ -5933,6 +6385,7 @@ export const staticServers = [
   },
   {
     id: 'jina-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Jina AI MCP',
       description: 'Official Jina AI Remote MCP Server for embeddings and search.',
@@ -5946,6 +6399,7 @@ export const staticServers = [
   },
   {
     id: 'oracle-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Oracle MCP Server',
       description: 'MCP Server for working with large Oracle databases.',
@@ -5959,6 +6413,7 @@ export const staticServers = [
   },
   {
     id: 'metasploit-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Metasploit MCP',
       description: 'MCP Server for Metasploit penetration testing framework.',
@@ -5972,6 +6427,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-server-llamacloud',
+    deployment: 'local_stdio',
     fields: {
       name: 'LlamaCloud MCP Server',
       description: 'A MCP server connecting to managed indexes on LlamaCloud.',
@@ -5985,6 +6441,7 @@ export const staticServers = [
   },
   {
     id: 'weather-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Weather MCP Server',
       description: 'A robust Weather MCP Server in TypeScript.',
@@ -5998,6 +6455,7 @@ export const staticServers = [
   },
   {
     id: 'browser-mcp-djyde',
+    deployment: 'local_stdio',
     fields: {
       name: 'Browser MCP (djyde)',
       description: 'A browser extension and MCP server that allows you to interact with the browser you are using.',
@@ -6011,6 +6469,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-evals',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Evals',
       description: 'A Node.js package and GitHub Action for evaluating MCP tool implementations using LLM-based scoring.',
@@ -6024,6 +6483,7 @@ export const staticServers = [
   },
   {
     id: 'zin-mcp-client',
+    deployment: 'local_stdio',
     fields: {
       name: 'Zin MCP Client',
       description: 'MCP Client which serves as bridge between mcp servers and local LLMs running on Ollama.',
@@ -6037,6 +6497,7 @@ export const staticServers = [
   },
   {
     id: 'godoc-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Go Doc MCP',
       description: 'go doc mcp server for Go documentation access.',
@@ -6050,6 +6511,7 @@ export const staticServers = [
   },
   {
     id: 'molecule-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Molecule MCP',
       description: 'A model-context-protocol server for molecules and chemistry.',
@@ -6063,6 +6525,7 @@ export const staticServers = [
   },
   {
     id: 'game-asset-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Game Asset MCP',
       description: 'An MCP server for creating 2D/3D game assets from text using Hugging Face AI models.',
@@ -6076,6 +6539,7 @@ export const staticServers = [
   },
   {
     id: 'touchdesigner-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'TouchDesigner MCP',
       description: 'MCP server for TouchDesigner creative coding platform.',
@@ -6089,6 +6553,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-watch',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Watch',
       description: 'A comprehensive security scanner for Model Context Protocol servers that detects vulnerabilities and security issues.',
@@ -6102,6 +6567,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-rs-template',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Rust Template',
       description: 'Model Context Protocol CLI server template for Rust.',
@@ -6115,6 +6581,7 @@ export const staticServers = [
   },
   {
     id: 'zettelkasten-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Zettelkasten MCP',
       description: 'A Model Context Protocol server that implements the Zettelkasten knowledge management methodology.',
@@ -6128,6 +6595,7 @@ export const staticServers = [
   },
   {
     id: 'a2a-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'A2A MCP Server',
       description: 'A mcp server that bridges the Model Context Protocol with the Agent-to-Agent protocol.',
@@ -6141,6 +6609,7 @@ export const staticServers = [
   },
   {
     id: 'allaboutai-mcp-servers',
+    deployment: 'local_stdio',
     fields: {
       name: 'All About AI MCP Servers',
       description: 'All About AI MCP Servers collection.',
@@ -6154,6 +6623,7 @@ export const staticServers = [
   },
   {
     id: 'azure-remote-mcp-functions',
+    deployment: 'local_stdio',
     fields: {
       name: 'Azure Remote MCP Functions',
       description: 'Landing page for Remote MCP Server efforts in Azure Functions with links to all language stack specific repos.',
@@ -6167,6 +6637,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-virustotal',
+    deployment: 'local_stdio',
     fields: {
       name: 'VirusTotal MCP',
       description: 'A Model Context Protocol server for querying the VirusTotal API.',
@@ -6180,6 +6651,7 @@ export const staticServers = [
   },
   {
     id: 'claude-c2',
+    deployment: 'local_stdio',
     fields: {
       name: 'Claude C2',
       description: 'Utilizing an MCP Server to communicate with your C2 framework.',
@@ -6193,6 +6665,7 @@ export const staticServers = [
   },
   {
     id: 'frappe-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Frappe MCP Server',
       description: 'A server that implements the Anthropic Model Control Protocol server for accessing Frappe.',
@@ -6206,6 +6679,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-dotnet-samples',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP .NET Samples',
       description: 'A comprehensive set of samples of creating and using MCP servers and clients with .NET.',
@@ -6219,6 +6693,7 @@ export const staticServers = [
   },
   {
     id: 'pentest-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Pentest MCP',
       description: 'An MCP server for professional penetration testers including STDIO/HTTP/SSE support, nmap, go/dirbuster, nikto integration.',
@@ -6232,6 +6707,7 @@ export const staticServers = [
   },
   {
     id: 'mcphub-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCPHub Server',
       description: 'MCPHub is an embeddable Model Context Protocol solution for AI services. Seamlessly integrate MCP servers with OpenAI Agents.',
@@ -6245,6 +6721,7 @@ export const staticServers = [
   },
   {
     id: 'http-oauth-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'HTTP OAuth MCP Server',
       description: 'Remote MCP server (SEE + Streamable HTTP) implementing the MCP spec\'s authorization extension.',
@@ -6258,6 +6735,7 @@ export const staticServers = [
   },
   {
     id: 'payloadcms-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Payload CMS MCP',
       description: 'Payload CMS MCP Server for content management integration.',
@@ -6271,6 +6749,7 @@ export const staticServers = [
   },
   {
     id: 'gtasks-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Google Tasks MCP',
       description: 'A Google Tasks Model Context Protocol Server for Claude.',
@@ -6284,6 +6763,7 @@ export const staticServers = [
   },
   {
     id: 'claude-prompts-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Claude Prompts MCP',
       description: 'Claude MCP Server - Intelligent Prompt Engineering & Management.',
@@ -6297,6 +6777,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-postman',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Postman',
       description: 'MCP Server for running Postman Collections with Newman.',
@@ -6310,6 +6791,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-nextjs',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Next.js',
       description: 'Example MCP server with OAuth integration.',
@@ -6323,6 +6805,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-server-stability-ai',
+    deployment: 'local_stdio',
     fields: {
       name: 'Stability AI MCP Server',
       description: 'MCP Server integrating MCP Clients with Stability AI-powered image manipulation functionalities.',
@@ -6336,6 +6819,7 @@ export const staticServers = [
   },
   {
     id: 'square-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Square MCP Server',
       description: 'A Model Context Protocol server for Square payment processing.',
@@ -6349,6 +6833,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-dockmaster',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Dockmaster',
       description: 'MCP Dockmaster allows you to easily install and manage MCP servers. Available for Mac, Windows and Linux.',
@@ -6362,6 +6847,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-package-docs',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Package Docs',
       description: 'An MCP server that provides LLMs with efficient access to package documentation across multiple programming languages - archived.',
@@ -6375,6 +6861,7 @@ export const staticServers = [
   },
   {
     id: 'kodit',
+    deployment: 'local_stdio',
     fields: {
       name: 'Kodit',
       description: 'MCP server to index external repositories for AI code generation and analysis.',
@@ -6388,6 +6875,7 @@ export const staticServers = [
   },
   {
     id: 'terminal-controller-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Terminal Controller MCP',
       description: 'A Model Context Protocol server that enables secure terminal command execution, directory navigation, and file system operations.',
@@ -6401,6 +6889,7 @@ export const staticServers = [
   },
   {
     id: 'private-journal-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Private Journal MCP',
       description: 'A lightweight MCP server that provides Claude with a private journaling capability to process feelings and thoughts.',
@@ -6414,6 +6903,7 @@ export const staticServers = [
   },
   {
     id: 'radare2-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Radare2 MCP',
       description: 'MCP stdio server for radare2 reverse engineering framework.',
@@ -6427,6 +6917,7 @@ export const staticServers = [
   },
   {
     id: 'needle-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Needle MCP',
       description: 'Needle MCP Server for easy RAG. Long-term memory for LLMs.',
@@ -6440,6 +6931,7 @@ export const staticServers = [
   },
   {
     id: 'aseprite-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Aseprite MCP',
       description: 'MCP server for interacting with the Aseprite pixel art API.',
@@ -6453,6 +6945,7 @@ export const staticServers = [
   },
   {
     id: 'paiml-mcp-agent-toolkit',
+    deployment: 'local_stdio',
     fields: {
       name: 'PAIML MCP Agent Toolkit',
       description: 'Pragmatic AI Labs MCP Agent Toolkit - An MCP Server designed to make code with agents more deterministic.',
@@ -6466,6 +6959,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-ts-template',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP TypeScript Template',
       description: 'A production-grade TypeScript template for building robust Model Context Protocol servers, featuring built-in observability.',
@@ -6479,6 +6973,7 @@ export const staticServers = [
   },
   {
     id: 'web-search-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Web Search MCP',
       description: 'A simple, locally hosted Web Search MCP server for use with Local LLMs.',
@@ -6492,6 +6987,7 @@ export const staticServers = [
   },
   {
     id: 'notes-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Apple Notes MCP',
       description: 'An MCP server that connects with your Apple Notes on macOS.',
@@ -6505,6 +7001,7 @@ export const staticServers = [
   },
   {
     id: 'claude-settings',
+    deployment: 'local_stdio',
     fields: {
       name: 'Claude Settings',
       description: 'My personal Claude Code/Desktop setup with battle-tested commands and MCP servers that I use daily.',
@@ -6518,6 +7015,7 @@ export const staticServers = [
   },
   {
     id: 'awesome-claude-mcp-servers',
+    deployment: 'local_stdio',
     fields: {
       name: 'Awesome Claude MCP Servers',
       description: 'A curated list of Model Context Protocol servers optimized for Claude AI assistants.',
@@ -6531,6 +7029,7 @@ export const staticServers = [
   },
   {
     id: 'agentcare-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'AgentCare MCP',
       description: 'MCP Server for EMRs with FHIR healthcare integration.',
@@ -6544,6 +7043,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-azure-devops',
+    deployment: 'local_stdio',
     fields: {
       name: 'Azure DevOps MCP',
       description: 'A Model Context Protocol server enabling AI assistants to interact with Azure DevOps services via Python SDK.',
@@ -6557,6 +7057,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-streamable-http',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Streamable HTTP',
       description: 'Example implementation of MCP Streamable HTTP client/server in Python and TypeScript.',
@@ -6570,6 +7071,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-codex-keeper',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Codex Keeper',
       description: 'An intelligent MCP server that serves as a guardian of development knowledge, providing Cline assistants with curated access to latest docs.',
@@ -6583,6 +7085,7 @@ export const staticServers = [
   },
   {
     id: 'deep-code-reasoning-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Deep Code Reasoning MCP',
       description: 'A Model Context Protocol server that provides advanced code analysis and reasoning capabilities powered by Google\'s Gemini AI.',
@@ -6596,6 +7099,7 @@ export const staticServers = [
   },
   {
     id: 'library-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Library MCP',
       description: 'MCP server for operating on Markdown knowledge bases.',
@@ -6609,6 +7113,7 @@ export const staticServers = [
   },
   {
     id: 'server-google-news',
+    deployment: 'local_stdio',
     fields: {
       name: 'Google News MCP Server',
       description: 'Model Context Protocol server implementation providing Google News search capabilities via SerpAPI.',
@@ -6622,6 +7127,7 @@ export const staticServers = [
   },
   {
     id: 'vantage-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Vantage MCP Server',
       description: 'MCP Server to fetch costs and usage data from your Vantage account.',
@@ -6635,6 +7141,7 @@ export const staticServers = [
   },
   {
     id: 'mighty-security',
+    deployment: 'local_stdio',
     fields: {
       name: 'Mighty Security',
       description: 'Don\'t Simply Trust MCP Server Code, Validate and Scan for security vulnerabilities.',
@@ -6648,6 +7155,7 @@ export const staticServers = [
   },
   {
     id: 'gimp-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'GIMP MCP',
       description: 'GIMP MCP Server for image editing automation.',
@@ -6661,6 +7169,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-deepwebresearch',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Deep Web Research',
       description: 'Enhanced MCP server for deep web research capabilities.',
@@ -6674,6 +7183,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-browser-use',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Browser Use',
       description: 'MCP server for browser-use automation.',
@@ -6687,6 +7197,7 @@ export const staticServers = [
   },
   {
     id: 'mcpgen',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCPGen',
       description: 'Generate Go MCP server boilerplate from OpenAPI 3 specifications.',
@@ -6700,6 +7211,7 @@ export const staticServers = [
   },
   {
     id: 'sandbox-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Sandbox MCP',
       description: 'A Model Context Protocol server that enables LLMs to run ANY code safely in isolated Docker containers.',
@@ -6713,6 +7225,7 @@ export const staticServers = [
   },
   {
     id: 'brave-search-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Brave Search MCP',
       description: 'An MCP Server implementation that integrates the Brave Search API, providing Web Search, Local POI Search, Image Search.',
@@ -6726,6 +7239,7 @@ export const staticServers = [
   },
   {
     id: 'aws-security-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'AWS Security MCP',
       description: 'A Model Context Protocol server that connects AI assistants like Claude to AWS security services.',
@@ -6739,6 +7253,7 @@ export const staticServers = [
   },
   {
     id: 'ffmpeg-mcp-videocreator',
+    deployment: 'local_stdio',
     fields: {
       name: 'FFmpeg MCP (Video Creator)',
       description: 'Using ffmpeg command line to achieve an mcp server, can be very convenient, through dialogue to achieve local video search, tailoring.',
@@ -6752,6 +7267,7 @@ export const staticServers = [
   },
   {
     id: 'systemprompt-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'SystemPrompt MCP Server',
       description: 'A complete, production-ready implementation of a Model Context Protocol server demonstrating OAuth 2.1, tools, prompts, resources.',
@@ -6765,6 +7281,7 @@ export const staticServers = [
   },
   {
     id: 'open-mcp-auth-proxy',
+    deployment: 'local_stdio',
     fields: {
       name: 'Open MCP Auth Proxy',
       description: 'Authentication and Authorization Proxy for MCP Servers.',
@@ -6778,6 +7295,7 @@ export const staticServers = [
   },
   {
     id: 'isaac-sim-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Isaac Sim MCP',
       description: 'Isaac Simulation MCP Extension and Server for robotics.',
@@ -6791,6 +7309,7 @@ export const staticServers = [
   },
   {
     id: 'unified-mcp-agent',
+    deployment: 'local_stdio',
     fields: {
       name: 'Unified MCP Agent',
       description: 'A unified Model Context Protocol server implementation that aggregates multiple MCP servers into one.',
@@ -6804,6 +7323,7 @@ export const staticServers = [
   },
   {
     id: 'mysql-mcp-server-sse',
+    deployment: 'local_stdio',
     fields: {
       name: 'MySQL MCP Server SSE',
       description: 'MySQL query server based on the MCP sse. Multi-level SQL risk control & injection protection Docker support.',
@@ -6817,6 +7337,7 @@ export const staticServers = [
   },
   {
     id: 'claude-code-mcp-enhanced',
+    deployment: 'local_stdio',
     fields: {
       name: 'Claude Code MCP Enhanced',
       description: 'Enhanced Claude Code MCP server with orchestration capabilities, reliability improvements, and self-contained execution patterns.',
@@ -6830,6 +7351,7 @@ export const staticServers = [
   },
   {
     id: 'openscad-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'OpenSCAD MCP Server',
       description: 'Devin\'s attempt at creating an OpenSCAD MCP Server that takes a user prompt and generates a preview image and 3d file.',
@@ -6843,6 +7365,7 @@ export const staticServers = [
   },
   {
     id: 'github-stars-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'GitHub Stars MCP',
       description: 'A Cloudflare-powered MCP Server that allows you to search and query your GitHub starred repositories using natural language.',
@@ -6856,6 +7379,7 @@ export const staticServers = [
   },
   {
     id: 'algolia-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Algolia MCP',
       description: 'MCP server for interacting with Algolia search.',
@@ -6869,6 +7393,7 @@ export const staticServers = [
   },
   {
     id: 'wordpress-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'WordPress MCP Server',
       description: 'This MCP server let you automate interactions with WordPress.',
@@ -6882,6 +7407,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-shodan',
+    deployment: 'local_stdio',
     fields: {
       name: 'Shodan MCP',
       description: 'MCP server for querying the Shodan API for security research.',
@@ -6895,6 +7421,7 @@ export const staticServers = [
   },
   {
     id: 'yt-dlp-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'yt-dlp MCP',
       description: 'A Model Context Protocol server that bridges Video & Audio content with Large Language Models using yt-dlp.',
@@ -6908,6 +7435,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-google-map',
+    deployment: 'local_stdio',
     fields: {
       name: 'Google Maps MCP',
       description: 'A powerful Model Context Protocol server providing comprehensive Google Maps API integration with LLM processing capabilities.',
@@ -6921,6 +7449,7 @@ export const staticServers = [
   },
   {
     id: 'maxmsp-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Max/MSP MCP Server',
       description: 'MCP Server for Max (Max/MSP/Jitter) creative coding platform.',
@@ -6934,6 +7463,7 @@ export const staticServers = [
   },
   {
     id: 'human-in-the-loop-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Human-in-the-Loop MCP',
       description: 'A powerful MCP Server that enables AI assistants like Claude to interact with humans through intuitive GUI dialogs.',
@@ -6947,6 +7477,7 @@ export const staticServers = [
   },
   {
     id: 'taskade-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Taskade MCP',
       description: 'Taskade MCP · Official MCP server and OpenAPI to MCP codegen. Build AI agent tools from any OpenAPI API.',
@@ -6960,6 +7491,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-email-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Email MCP Server',
       description: 'IMAP and SMTP via MCP Server for email automation.',
@@ -6973,6 +7505,7 @@ export const staticServers = [
   },
   {
     id: 'paperless-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Paperless MCP',
       description: 'An MCP server for interacting with a Paperless-NGX API server. This server provides tools for managing documents.',
@@ -6986,6 +7519,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-server-multiverse',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Server Multiverse',
       description: 'A middleware server that enables multiple isolated instances of the same MCP servers to coexist independently.',
@@ -6999,6 +7533,7 @@ export const staticServers = [
   },
   {
     id: 'shopify-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Shopify MCP',
       description: 'MCP server for Shopify api, usable on mcp hosts such as Claude and Cursor.',
@@ -7012,6 +7547,7 @@ export const staticServers = [
   },
   {
     id: 'json-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'JSON MCP Server',
       description: 'JSON handling and processing mcp server.',
@@ -7025,6 +7561,7 @@ export const staticServers = [
   },
   {
     id: 'tiny-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'TinyMCP',
       description: 'A lightweight C++ SDK for implementing the MCP Server.',
@@ -7038,6 +7575,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-prompts',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Prompts',
       description: 'Model Context Protocol server for managing, storing, and providing prompts and prompt templates for LLM interactions.',
@@ -7051,6 +7589,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-local-rag',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Local RAG',
       description: '"primitive" RAG-like web search model context protocol server that runs locally. ✨ no APIs ✨',
@@ -7064,6 +7603,7 @@ export const staticServers = [
   },
   {
     id: 'digitalocean-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'DigitalOcean MCP',
       description: 'DigitalOcean MCP Server for deploying and managing apps on App Platform - archived.',
@@ -7077,6 +7617,7 @@ export const staticServers = [
   },
   {
     id: 'specs-workflow-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Specs Workflow MCP',
       description: 'Intelligent spec workflow management MCP server.',
@@ -7090,6 +7631,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-operator',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Operator',
       description: 'Kubernetes-native MCP server deployment & validation. Deploy MCP servers to Kubernetes with automatic protocol validation, scaling, and monitoring.',
@@ -7103,6 +7645,7 @@ export const staticServers = [
   },
   {
     id: 'jetski',
+    deployment: 'local_stdio',
     fields: {
       name: 'Jetski',
       description: 'MCP Analytics and Authentication Platform. Gateway layer adding authentication, analytics, and real-time visibility to MCP servers with zero code changes.',
@@ -7115,6 +7658,7 @@ export const staticServers = [
   },
   {
     id: 'semiotic',
+    deployment: 'local_stdio',
     fields: {
       name: 'Semiotic',
       description: 'AI-native React data visualization library with a built-in MCP server. Five tools give AI assistants live prop schemas, chart recommendations from real data, server-side SVG rendering, config diagnostics, and bug reporting — no API keys, runs locally via stdio.',
@@ -7129,6 +7673,7 @@ export const staticServers = [
   // === NEW SERVERS FROM TAVILY SCAN (2026-02-27) ===
   {
     id: 'drawio-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Draw.io MCP Server',
       description: 'Renders draw.io diagrams inline in AI chat interfaces using the MCP Apps protocol. Diagrams appear directly in conversations instead of opening browser tabs.',
@@ -7141,6 +7686,7 @@ export const staticServers = [
   },
   {
     id: 'context-engineering-kit',
+    deployment: 'local_stdio',
     fields: {
       name: 'Context Engineering Kit',
       description: 'Context engineering toolkit for AI development with documentation management and concise writing tools.',
@@ -7153,6 +7699,7 @@ export const staticServers = [
   },
   {
     id: 'codemap',
+    deployment: 'local_stdio',
     fields: {
       name: 'Codemap',
       description: 'A project brain for your AI - gives AI assistants persistent memory of your codebase structure and relationships.',
@@ -7165,6 +7712,7 @@ export const staticServers = [
   },
   {
     id: 'task-orchestrator',
+    deployment: 'local_stdio',
     fields: {
       name: 'Task Orchestrator MCP',
       description: 'Multi-agent task orchestration with MCP support for coordinating complex workflows.',
@@ -7177,6 +7725,7 @@ export const staticServers = [
   },
   {
     id: 'neurolink',
+    deployment: 'local_stdio',
     fields: {
       name: 'Neurolink MCP',
       description: 'AI development framework with MCP integration for building intelligent applications.',
@@ -7189,6 +7738,7 @@ export const staticServers = [
   },
   {
     id: 'oh-my-pi',
+    deployment: 'local_stdio',
     fields: {
       name: 'Oh My Pi MCP',
       description: 'Raspberry Pi management and monitoring via MCP protocol.',
@@ -7201,6 +7751,7 @@ export const staticServers = [
   },
   {
     id: 'logicstamp-context',
+    deployment: 'local_stdio',
     fields: {
       name: 'LogicStamp Context',
       description: 'Context management system with MCP integration for data pipelines.',
@@ -7213,6 +7764,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-ssh-manager',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP SSH Manager',
       description: 'SSH connection management through MCP protocol for secure remote server access.',
@@ -7225,6 +7777,7 @@ export const staticServers = [
   },
   {
     id: 'codev',
+    deployment: 'local_stdio',
     fields: {
       name: 'Codev MCP',
       description: 'Development tools and utilities exposed via MCP protocol.',
@@ -7237,6 +7790,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-adr-analysis-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'ADR Analysis MCP Server',
       description: 'Architecture Decision Records analysis and management via MCP.',
@@ -7249,6 +7803,7 @@ export const staticServers = [
   },
   {
     id: 'cloudflare-mcp-official',
+    deployment: 'local_stdio',
     fields: {
       name: 'Cloudflare MCP Server (Official)',
       description: 'Official Cloudflare MCP server for Cloudflare API integration.',
@@ -7261,6 +7816,7 @@ export const staticServers = [
   },
   {
     id: 'datagouv-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Data.gouv MCP Server',
       description: 'French government open data platform integration via MCP.',
@@ -7273,6 +7829,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-lifecycle-operator',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Lifecycle Operator',
       description: 'Kubernetes operator for managing MCP server lifecycles.',
@@ -7285,6 +7842,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-gateway-registry',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Gateway Registry',
       description: 'AWS gateway registry for MCP server discovery and management.',
@@ -7297,6 +7855,7 @@ export const staticServers = [
   },
   {
     id: 'fastmcp-prefect',
+    deployment: 'local_stdio',
     fields: {
       name: 'FastMCP (PrefectHQ)',
       description: 'Fast MCP server framework with Prefect workflow integration.',
@@ -7309,6 +7868,7 @@ export const staticServers = [
   },
   {
     id: 'neo4j-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Neo4j MCP Server',
       description: 'Graph database integration via MCP protocol for Neo4j.',
@@ -7321,6 +7881,7 @@ export const staticServers = [
   },
   {
     id: 'stitch-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Stitch MCP Server',
       description: 'Google Cloud Stitch data integration via MCP.',
@@ -7333,6 +7894,7 @@ export const staticServers = [
   },
   {
     id: 'atlassian-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Atlassian MCP Server',
       description: 'Integration with Atlassian products (Jira, Confluence) via MCP.',
@@ -7345,6 +7907,7 @@ export const staticServers = [
   },
   {
     id: 'windows-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Windows MCP Server',
       description: 'Windows system integration via MCP protocol.',
@@ -7357,6 +7920,7 @@ export const staticServers = [
   },
   {
     id: 'drawio-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Draw.io MCP Server (Alternative)',
       description: 'Alternative draw.io diagram rendering via MCP.',
@@ -7369,6 +7933,7 @@ export const staticServers = [
   },
   {
     id: 'insights-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Red Hat Insights MCP',
       description: 'Red Hat Lightspeed and insights integration via MCP.',
@@ -7381,6 +7946,7 @@ export const staticServers = [
   },
   {
     id: 'alpha-vantage-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Alpha Vantage MCP Server',
       description: 'Financial market data via Alpha Vantage API through MCP.',
@@ -7393,6 +7959,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-gitlab-server-alt',
+    deployment: 'local_stdio',
     fields: {
       name: 'GitLab MCP Server',
       description: 'GitLab integration via MCP protocol.',
@@ -7405,6 +7972,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-cron',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Cron',
       description: 'Scheduled task management via MCP protocol.',
@@ -7417,6 +7985,7 @@ export const staticServers = [
   },
   {
     id: 'notebooklm-mcp-cli',
+    deployment: 'local_stdio',
     fields: {
       name: 'NotebookLM MCP CLI',
       description: 'Google NotebookLM integration via MCP command-line interface.',
@@ -7429,6 +7998,7 @@ export const staticServers = [
   },
   {
     id: 'postman-mcp-server',
+    deployment: 'local_stdio',
     fields: {
       name: 'Postman MCP Server',
       description: 'Connect AI to Postman collections and APIs via MCP.',
@@ -7441,6 +8011,7 @@ export const staticServers = [
   },
   {
     id: 'ghidra-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Ghidra MCP Server',
       description: 'Reverse engineering with Ghidra via MCP protocol.',
@@ -7453,6 +8024,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-server-shortcut',
+    deployment: 'local_stdio',
     fields: {
       name: 'Shortcut MCP Server',
       description: 'Shortcut (formerly Clubhouse) project management via MCP.',
@@ -7465,6 +8037,7 @@ export const staticServers = [
   },
   {
     id: 'mcp-image',
+    deployment: 'local_stdio',
     fields: {
       name: 'MCP Image Server',
       description: 'Image processing and manipulation via MCP protocol.',
@@ -7477,6 +8050,7 @@ export const staticServers = [
   },
   {
     id: 'appium-mcp',
+    deployment: 'local_stdio',
     fields: {
       name: 'Appium MCP Server',
       description: 'Mobile app testing automation via Appium through MCP.',
