@@ -1,0 +1,208 @@
+---
+title: "Deploying MCP Servers Locally and via CLI"
+description: "Complete guide to deploying MCP servers for local development, stdio-based communication, and CLI workflows."
+pubDate: 2026-04-13
+author: "MCP Directory Team"
+tags: ["deployment", "local", "stdio", "tutorial"]
+category: "deployment-guides"
+draft: false
+---
+
+Local deployment is the simplest and most common way to get started with MCP servers. This guide covers everything you need to know about deploying MCP servers locally using stdio-based communication.
+
+## What is Local Deployment?
+
+Local deployment runs MCP servers directly on your machine, communicating via stdin/stdout (stdio). This approach offers:
+
+✅ **Zero network dependencies** - Works completely offline  
+✅ **Easy debugging** - Direct process inspection and logging  
+✅ **Full data control** - No data leaves your machine  
+✅ **Fast iteration** - Immediate feedback during development  
+
+## Prerequisites
+
+Before deploying MCP servers locally, ensure you have:
+
+- **Node.js** (v16+) or **Python** (v3.8+) runtime environment
+- **CLI access** and basic command-line skills
+- **MCP client** (Claude Desktop, Cursor, Cline, etc.)
+
+## Quick Start
+
+### 1. Install an MCP Server
+
+Most MCP servers are available via npm or pip:
+
+```bash
+# Via npx (easiest)
+npx -y github-mcp-server
+
+# Via npm install
+npm install -g postgres-mcp
+
+# Via pip (Python)
+pip install sqlite-mcp-server
+```
+
+### 2. Configure Your MCP Client
+
+Add the server to your MCP client configuration (e.g., Claude Desktop):
+
+**claude_desktop_config.json:**
+```json
+{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "github-mcp-server"],
+      "env": {
+        "GITHUB_TOKEN": "your-token-here"
+      }
+    },
+    "postgres": {
+      "command": "postgres-mcp",
+      "env": {
+        "DATABASE_URL": "postgresql://localhost/mydb"
+      }
+    }
+  }
+}
+```
+
+### 3. Restart and Verify
+
+Restart your MCP client and verify the servers are available in your interface.
+
+## Best Practices
+
+### Environment Variables
+
+Use `.env` files or secure vaults for sensitive data:
+
+```bash
+# .env file
+GITHUB_TOKEN=ghp_xxxxxxxxxxxx
+DATABASE_URL=postgresql://user:pass@localhost:5432/mydb
+```
+
+### Process Management
+
+Use tools like `pm2` or `systemd` for production local deployment:
+
+```bash
+# Using pm2 for background processes
+pm2 start postgres-mcp --name="postgres-mcp"
+pm2 save
+```
+
+### Debugging
+
+Enable verbose logging for troubleshooting:
+
+```bash
+# Most servers support DEBUG mode
+DEBUG=* npx github-mcp-server
+```
+
+## Common Use Cases
+
+### Local Development
+Perfect for developing MCP tools, testing integrations, and iterating quickly.
+
+**Use when:**
+- Building new MCP servers
+- Testing tool functionality
+- Developing locally before cloud deployment
+
+### CI/CD Integration
+Run MCP servers in your CI/CD pipelines for automation and testing.
+
+**Example GitHub Actions:**
+```yaml
+- name: Setup MCP Server
+  run: |
+    npm install -g postgres-mcp
+    echo "DATABASE_URL=${{ secrets.DB_URL }}" >> .env
+```
+
+### Offline Development
+Work without internet access using locally installed servers.
+
+**Useful for:**
+- Air-gapped environments
+- Secure development
+- Debugging without network variables
+
+## Security Considerations
+
+### Token Management
+- Never commit tokens to version control
+- Use environment variables or secret managers
+- Rotate tokens regularly
+
+### Process Isolation
+- Run servers with minimal permissions
+- Use containers or sandboxes for untrusted code
+- Monitor process logs for suspicious activity
+
+## Deployment Examples
+
+### Single Server
+```bash
+# Clone and run
+npm install
+npm run dev
+```
+
+### Multiple Servers
+```bash
+# Docker Compose for local orchestration
+version: '3'
+services:
+  postgres:
+    image: postgres:15
+    ports: ["5432:5432"]
+  mcp-server:
+    build: .
+    env_file: .env
+```
+
+## Troubleshooting
+
+### Server Not Starting
+- Check runtime dependencies
+- Verify environment variables
+- Review logs for error messages
+
+### Connection Issues
+- Ensure stdin/stdout is available
+- Check for port conflicts
+- Verify client configuration syntax
+
+### Performance Problems
+- Monitor CPU and memory usage
+- Consider background process management
+- Check for resource leaks
+
+## Next Steps
+
+Ready to scale beyond local deployment? Explore these options:
+
+- [Cloud-Native Deployment](/blog/deploying-mcp-servers-cloud-native) - Scale with SSE/WebSocket
+- [Self-Hosted Deployment](/blog/deploying-mcp-servers-self-hosted-vpc) - Deploy in your VPC
+- [Enterprise SaaS](/blog/deploying-mcp-servers-enterprise-saas) - Production-ready with SLAs
+
+## Summary
+
+Local deployment is ideal for:
+- ✓ Development and testing
+- ✓ Offline and air-gapped environments
+- ✓ CI/CD pipeline integration
+- ✓ Learning and experimentation
+- ✓ Full data control requirements
+
+Start local, scale when ready!
+
+---
+
+*Need help? Check our [FAQ](/faq) or [submit a server](/submit-server) to get listed.*

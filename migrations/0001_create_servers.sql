@@ -1,19 +1,10 @@
--- MCP Directory: servers table
-CREATE TABLE IF NOT EXISTS servers (
-  id TEXT PRIMARY KEY,
-  name TEXT NOT NULL,
-  description TEXT,
-  author TEXT,
-  category TEXT DEFAULT 'development',
-  language TEXT DEFAULT 'Unknown',
-  stars INTEGER DEFAULT 0,
-  github_url TEXT,
-  npm_package TEXT,
-  downloads INTEGER DEFAULT 0,
-  logo_url TEXT,
-  updated_at TEXT,
-  created_at TEXT DEFAULT (datetime('now'))
-);
+-- Health monitoring columns
+ALTER TABLE servers 
+ADD COLUMN last_commit_date TEXT,
+ADD COLUMN sdk_version TEXT,
+ADD COLUMN open_issues_count INTEGER,
+ADD COLUMN health_status TEXT,
+ADD COLUMN health_updated_at TEXT;
 
 -- Indexes for common query patterns
 CREATE INDEX IF NOT EXISTS idx_servers_category ON servers(category);

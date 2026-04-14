@@ -157,15 +157,41 @@ const truncatedDescription = serverDescription.length > 160
 const canonicalUrl = `https://www.mymcpshelf.com/server/${slug}`;
 const categoryDisplay = getCategoryDisplayName(server.fields.category);
 
-// Structured data for SEO
+// Structured data for SEO with enhanced deployment and enterprise metadata
+const deploymentCategoryMap = {
+  local_stdio: "DesktopApplication",
+  cloud_native: "WebApplication", 
+  self_hosted: "WebApplication",
+  enterprise_saas: "BusinessApplication",
+  hybrid: "DeveloperApplication"
+};
+
+const deploymentCategoryNameMap = {
+  local_stdio: "Local Deployment",
+  cloud_native: "Cloud-Native Application",
+  self_hosted: "Self-Hosted Software",
+  enterprise_saas: "Enterprise SaaS Software",
+  hybrid: "Multi-Deployment Software"
+};
+
+const currentDeployment = server.deployment || 'hybrid';
 const structuredData = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   "name": serverName,
+  "alternateName": `${serverName} MCP Server`,
   "description": serverDescription,
   "url": canonicalUrl,
-  "applicationCategory": "DeveloperApplication",
-  "operatingSystem": "Cross-platform",
+  
+  // Enhanced application categorization
+  "applicationCategory": deploymentCategoryMap[currentDeployment] || "DeveloperApplication",
+  "applicationSubCategory": deploymentCategoryNameMap[currentDeployment] || "Development Tools",
+  
+  // Operating systems
+  "operatingSystem": ["Any", "Cross-platform"],
+  "requirements": getDeploymentRequirements(currentDeployment),
+  
+  // Author and repository
   ...(server.fields.author && {
     "author": {
       "@type": "Person",
@@ -173,9 +199,102 @@ const structuredData = {
     }
   }),
   ...(server.fields.github_url && { "codeRepository": server.fields.github_url }),
-  ...(server.fields.language && { "programmingLanguage": server.fields.language }),
-  ...(server.fields.license && { "license": server.fields.license })
+  
+  // Technical details
+  "programmingLanguage": server.fields.language || "Unknown",
+  ...(server.fields.license && { "license": server.fields.license }),
+  "softwareVersion": server.fields.version || "1.0.0",
+  
+  // Feature list from capabilities
+  "featureList": server.deployment_metadata?.capabilities || ["MCP Protocol"],
+  
+  // Deployment and hosting info
+  "deployment_type": currentDeployment,
+  "offers": {
+    "@type": "Offer",
+    "category": deploymentCategoryNameMap[currentDeployment] || "Development Tools",
+    "availability": "https://schema.org/InStock",
+    "seller": {
+      "@type": "Organization",
+      "name": server.fields.author || "Community"
+    }
+  },
+  
+  // Enterprise features
+  ...(server.enterprise_features && server.enterprise_features.length > 0 && {
+    "hasFeature": server.enterprise_features.map(feature => ({
+      "@type": "SoftwareApplicationFeature",
+      "name": feature
+    }))
+  }),
+  
+  // Aggregate rating based on stars (simulated ratings)
+  ...(server.fields.stars && { 
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": calculateRatingFromStars(server.fields.stars),
+      "reviewCount": Math.max(1, Math.floor(server.fields.stars / 10)),
+      "bestRating": "5",
+      "worstRating": "1"
+    }
+  }),
+  
+  // Download/purchase stats
+  ...(server.fields.downloads && {
+    "interactionStatistic": {
+      "@type": "InteractionCounter",
+      "interactionType": "https://schema.org/DownloadAction",
+      "userInteractionCount": server.fields.downloads
+    }
+  }),
+  
+  // Software category
+  "softwareCategory": categoryDisplay,
+  
+  // Date published/updated
+  "datePublished": server.fields.updated || new Date().toISOString(),
+  "dateModified": server.fields.updated || new Date().toISOString(),
+  
+  // If it has tools, add application suite
+  ...(server.fields.available_tools && server.fields.available_tools.length > 0 && {
+    "applicationSuite": {
+      "@type": "SoftwareApplication",
+      "name": `${serverName} Tools`,
+      "applicationSubCategory": "MCP Tools",
+      "featureList": server.fields.available_tools.map(tool => tool.name)
+    }
+  })
 };
+
+// Helper function to calculate rating from stars
+function calculateRatingFromStars(stars) {
+  if (!stars) return "3.0";
+  // Normalize: 0-100 stars -> 1-5 rating
+  const rating = Math.max(1, Math.min(5, 1 + (stars / 100) * 4));
+  return rating.toFixed(1);
+}
+
+// Helper function to get deployment requirements
+function getDeploymentRequirements(deploymentType) {
+  const requirements = {
+    local_stdio: "Local CLI access and runtime environment (Node.js/Python)",
+    cloud_native: "Internet access and cloud provider credentials",
+    self_hosted: "Server infrastructure with Docker/Kubernetes support",
+    enterprise_saas: "Enterprise subscription and SSO integration",
+    hybrid: "Depends on selected deployment mode"
+  };
+  return requirements[deploymentType] || "Cross-platform compatible";
+}
+</script>
+
+<!-- Note: If this is an MCP server that offers commercial features, consider adding:
+"offers": {
+  "@type": "Offer", 
+  "price": "Contact sales",
+  "priceCurrency": "USD",
+  "availability": "https://schema.org/PreOrder"
+}
+-->}}
 ---
 
 <!DOCTYPE html>

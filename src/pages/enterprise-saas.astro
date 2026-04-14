@@ -1,0 +1,190 @@
+---
+import { getServersPage } from '../utils/d1';
+import type { MCPServer } from '../utils/d1';
+import EmailSignup from '../components/EmailSignup.astro';
+import ServerGrid from '../components/ServerGrid';
+import Navbar from '../components/Navbar.astro';
+import { filterServersByDeployment } from '../utils/serverData.js';
+import { staticServers } from '../data/staticServers.js';
+import '../styles/global.css';
+
+const DEPLOYMENT_CONFIG = {
+  deploymentType: 'enterprise_saas',
+  title: 'Enterprise SaaS MCP Servers',
+  subtitle: 'Secure managed SaaS with SLAs',
+  description: 'Production-ready MCP servers with enterprise features like SSO, audit logs, SLAs, and dedicated support. Perfect for mission-critical applications requiring compliance, security, and scalability guarantees.',
+  heroTitle: 'Enterprise SaaS MCP Servers',
+  heroDescription: 'Deploy production-ready MCP servers with enterprise-grade security, compliance, and support. Perfect for mission-critical applications requiring reliability and scalability at scale.',
+  tagline: 'Enterprise-ready from day one',
+  features: [
+    'SSO and SAML authentication support',
+    'Enterprise-grade audit logs and compliance',
+    '99.9%+ SLA guarantees',
+    'Dedicated support and onboarding',
+    'SOC 2 Type II certified infrastructure',
+    'Automatic scaling and load balancing',
+    'Advanced security and threat detection',
+    'Role-based access control (RBAC)',
+    'Custom SLAs and enterprise contracts'
+  ],
+  requirements: [
+    'Enterprise contract and agreement',
+    'SSO/SAML identity provider configuration',
+    'Dedicated infrastructure provisioning',
+    'Security and compliance review',
+    'Support agreement and SLA definition'
+  ],
+  useCases: [
+    'Mission-critical business applications',
+    'Large-scale enterprise deployments',
+    'Regulated industries (finance, healthcare, gov)',
+    'Multi-tenant SaaS platforms',
+    'Global distributed teams',
+    'High-availability requirements'
+  ]
+};
+
+const db = (Astro.locals as any).runtime?.env?.DB as D1Database | undefined;
+let initialServers: MCPServer[] = [];
+let total = 0;
+
+if (db) {
+  try {
+    const result = await getServersPage(db, { limit: 48 });
+    const allServers = result.servers;
+    const filteredServers = filterServersByDeployment(allServers, DEPLOYMENT_CONFIG.deploymentType);
+    
+    initialServers = filteredServers.slice(0, 48);
+    total = filteredServers.length;
+  } catch (error) {
+    console.error(`Error fetching servers:`, error);
+    initialServers = [];
+    total = 0;
+  }
+} else {
+  const allServers = staticServers as any[] as MCPServer[];
+  const filteredServers = filterServersByDeployment(allServers, DEPLOYMENT_CONFIG.deploymentType);
+  initialServers = filteredServers.slice(0, 48);
+  total = filteredServers.length;
+}
+
+const deploymentMeta = {
+  deployment: DEPLOYMENT_CONFIG.deploymentType,
+  totalServers: total,
+  filters: [],
+  page: 1
+};
+
+const canonicalUrl = `https://www.mymcpshelf.com/enterprise-saas`;
+
+function slugify(text: string): string {
+  return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+}
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": DEPLOYMENT_CONFIG.title,
+  "description": `${DEPLOYMENT_CONFIG.description} Browse ${total}+ MCP servers.`
+};
+---
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{DEPLOYMENT_CONFIG.title} | MCP Directory</title>
+    <meta name="description" content={`${DEPLOYMENT_CONFIG.description} Browse ${total}+ MCP servers.`}>
+    <link rel="canonical" href={canonicalUrl}>
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+</head>
+<body>
+    <div class="page-wrapper">
+        <Navbar />
+        <section class="hero-section">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1 class="page-title">{DEPLOYMENT_CONFIG.heroTitle}</h1>
+                    <p class="page-subtitle">{DEPLOYMENT_CONFIG.heroDescription}</p>
+                    <div class="tagline-badge">
+                        <span>⚡</span>
+                        {DEPLOYMENT_CONFIG.tagline}
+                    </div>
+                </div>
+                <div class="hero-badges">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <span class="stat-value">{total}</span>
+                            <span class="stat-label">Enterprise</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-value">99.9%</span>
+                            <span class="stat-label">SLA</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-value">🔐</span>
+                            <span class="stat-label">SOC 2</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <main class="page-container">
+            <section class="deployment-info">
+                <h2>About {DEPLOYMENT_CONFIG.title}</h2>
+                <p>{DEPLOYMENT_CONFIG.description}</p>
+                <div class="info-grid">
+                    <div class="info-section">
+                        <h3>✨ Enterprise Features</h3>
+                        <ul class="info-list">
+                            {DEPLOYMENT_CONFIG.features.slice(0, 6).map(feature => <li>{feature}</li>)}
+                        </ul>
+                    </div>
+                    <div class="info-section">
+                        <h3>⚙️ Requirements</h3>
+                        <ul class="info-list">
+                            {DEPLOYMENT_CONFIG.requirements.map(req => <li>{req}</li>)}
+                        </ul>
+                    </div>
+                    <div class="info-section">
+                        <h3>💡 Use Cases</h3>
+                        <ul class="info-list">
+                            {DEPLOYMENT_CONFIG.useCases.map(useCase => <li>{useCase}</li>)}
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="grid-section">
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">{initialServers.length > 0 ? `${initialServers.length}+ Enterprise-Ready Servers` : 'Browse Enterprise Servers'}</h2>
+                        <p class="section-description">
+                            {initialServers.length > 0 
+                                ? `Discover enterprise SaaS MCP servers with ${DEPLOYMENT_CONFIG.features.length}+ enterprise features`
+                                : 'Filter and browse MCP servers by deployment type'}
+                        </p>
+                    </div>
+                </div>
+                
+                {initialServers.length > 0 ? (
+                    <ServerGrid 
+                        client:load
+                        initialServers={initialServers}
+                        total={total}
+                        meta={deploymentMeta}
+                    />
+                ) : (
+                    <div class="no-results">
+                        <h3>No enterprise servers found yet</h3>
+                        <p>Check back soon or <a href="/submit-server">submit an enterprise-ready server</a>.</p>
+                    </div>
+                )}
+            </section>
+        </main>
+        
+        <EmailSignup />
+    </div>
+</body>
+</html>

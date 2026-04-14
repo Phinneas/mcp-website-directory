@@ -126,3 +126,155 @@
     font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
 }
+
+/* Deployment Filter and Badge Styles */
+
+.deployment-filters {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.filter-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  margin-bottom: 0.75rem;
+  display: block;
+}
+
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.deployment-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--muted-foreground);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.deployment-chip:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: rgba(238, 123, 48, 0.1);
+}
+
+.deployment-chip.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+.chip-icon {
+  font-size: 0.875rem;
+  line-height: 1;
+}
+
+.chip-label {
+  line-height: 1;
+}
+
+/* Deployment Badge in Server Cards */
+.deployment-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  border: 1px solid;
+  margin-left: auto;
+}
+
+.deployment-badge .badge-icon {
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+.deployment-badge .badge-text {
+  line-height: 1;
+}
+
+.deployment-badge .badge-secondary {
+  font-size: 0.55rem;
+  opacity: 0.8;
+}
+
+/* Individual deployment badge colors */
+.deployment-badge.deployment-gray {
+  background: rgba(107, 114, 128, 0.1);
+  border-color: rgba(107, 114, 128, 0.3);
+  color: #9ca3af;
+}
+
+.deployment-badge.deployment-blue {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.3);
+  color: #60a5fa;
+}
+
+.deployment-badge.deployment-purple {
+  background: rgba(147, 51, 234, 0.1);
+  border-color: rgba(147, 51, 234, 0.3);
+  color: #a78bfa;
+}
+
+.deployment-badge.deployment-green {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.3);
+  color: #34d399;
+}
+
+.deployment-badge.deployment-yellow {
+  background: rgba(245, 158, 11, 0.1);
+  border-color: rgba(245, 158, 11, 0.3);
+  color: #fbbf24;
+}
+
+.enterprise-tag {
+  background: rgba(16, 185, 129, 0.1) !important;
+  border-color: rgba(16, 185, 129, 0.3) !important;
+  color: #34d399 !important;
+}
+
+/* Server card header adjustment */
+.server-header {
+  position: relative;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .deployment-filters {
+    margin-top: 1rem;
+  }
+  
+  .filter-chips {
+    justify-content: center;
+  }
+  
+  .deployment-chip {
+    font-size: 0.7rem;
+    padding: 0.4rem 0.6rem;
+  }
+  
+  .deployment-badge {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+}

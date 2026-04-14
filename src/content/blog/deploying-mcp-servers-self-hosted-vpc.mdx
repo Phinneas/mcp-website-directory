@@ -1,0 +1,571 @@
+---
+title: "Deploying MCP Servers in Self-Hosted and VPC Environments"
+description: "Complete guide to deploying MCP servers in your own infrastructure, VPC, or data center for complete data control and compliance."
+pubDate: 2026-04-13
+author: "MCP Directory Team"
+tags: ["deployment", "self-hosted", "vpc", "compliance", "security"]
+category: "deployment-guides"
+draft: false
+---
+
+Self-hosted deployment gives you complete control over your MCP servers, data, and infrastructure—perfect for enterprises with strict compliance requirements.
+
+## What is Self-Hosted Deployment?
+
+Self-hosted deployment runs MCP servers in **your infrastructure**:
+- On-premise data centers
+- Virtual Private Clouds (VPC)
+- Private clouds (OpenStack, VMware)
+- Dedicated servers or colocation
+
+✅ **Complete data control** - All data stays in your environment  
+✅ **Custom compliance** - Meet any regulatory requirements (HIPAA, SOC2, etc.)  
+✅ **No vendor lock-in** - Full ownership of infrastructure  
+✅ **Custom security** - Implement your own security policies  
+
+## Prerequisites
+
+Before self-hosting MCP servers, ensure you have:
+
+- **Server infrastructure** (bare metal, VMs, or private cloud)
+- **Docker** or **Kubernetes** for container orchestration
+- **Load balancer** (HAProxy, nginx, cloud LB)
+- **SSL/TLS certificate** for encrypted communication
+- **Network security** expertise (firewalls, VPNs, access controls)
+
+## Infrastructure Options
+
+### Option 1: VMs/Bare Metal (Traditional)
+
+**Best for:** Legacy environments, maximum control
+
+```bash
+# Ubuntu/Debian setup
+sudo apt update
+sudo apt install -y docker.io docker-compose
+
+# CentOS/RHEL setup
+sudo yum install -y docker docker-compose
+
+# Start Docker
+sudo systemctl start docker
+sudo systemctl enable docker
+```
+
+### Option 2: Docker Swarm
+
+**Best for:** Simple orchestration, no Kubernetes complexity
+
+```bash
+# Initialize Docker Swarm
+docker swarm init --advertise-addr <MANAGER-IP>
+
+# Deploy stack
+docker stack deploy -c docker-compose.yml mcp-stack
+
+# View services
+docker service ls
+```
+
+**docker-compose.yml:**
+```yaml
+version: '3.8'
+services:
+  postgres-mcp:
+    image: your-registry/postgres-mcp:latest
+    environment:
+      - DATABASE_URL=postgresql://user:pass@postgres:5432/mcp
+      - SSE_ENABLED=true
+    ports:
+      - "8080:8080"
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
+        
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: mcp
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      
+volumes:
+  postgres-data:
+```
+
+### Option 3: Kubernetes (Self-Managed)
+
+**Best for:** Full orchestration, auto-scaling, multi-region
+
+**Cluster Setup:**
+```bash
+# Install kubeadm, kubelet, kubectl
+sudo apt-get update
+sudo apt-get install -y apt-transport-https ca-certificates curl gpg
+curl -fsSL https://pkgs.k8s.io/core/stable/v1.29/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core/stable/v1.29/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+sudo apt-get update
+sudo apt-get install -y kubelet kubeadm kubectl
+```
+
+**Init Cluster:**
+```bash
+sudo kubeadm init --pod-network-cidr=192.168.0.0/16
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+```
+
+**Install Calico:**
+```bash
+kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+```
+
+## Network Security
+
+### Firewall Configuration
+
+```bash
+# UFW (Ubuntu)
+ufw allow 22/tcp      # SSH
+ufw allow 80/tcp      # HTTP
+ufw allow 443/tcp     # HTTPS
+ufw allow 6443/tcp    # Kubernetes API
+ufw enable
+
+# firewalld (CentOS)
+firewall-cmd --permanent --add-port=22/tcp
+firewall-cmd --permanent --add-port=80/tcp
+firewall-cmd --permanent --add-port=443/tcp
+firewall-cmd --reload
+```
+
+### VPN Setup
+
+**WireGuard (Recommended):**
+```bash
+# Install WireGuard
+sudo apt install -y wireguard
+
+# Generate keys
+wg genkey | tee privatekey | wg pubkey > publickey
+
+# Configure
+sudo nano /etc/wireguard/wg0.conf
+```
+
+**wg0.conf:**
+```ini
+[Interface]
+Address = 10.0.0.1/24
+SaveConfig = true
+PrivateKey = <SERVER_PRIVATE_KEY>
+ListenPort = 51820
+
+[Peer]
+PublicKey = <CLIENT_PUBLIC_KEY>
+AllowedIPs = 10.0.0.2/32
+```
+
+### Zero Trust Network
+
+**Use Tailscale or similar for secure mesh networking:**
+
+```bash
+# Install Tailscale
+curl -fsSL https://tailscale.com/install.sh | sh
+
+# Connect to your network
+tailscale up --authkey=tskey-auth-xxxx
+
+# Access controls (ACL)
+# tailscale ACL configuration
+{
+  "acls": [
+    {
+      "action": "accept",
+      "src": ["group:engineering"],
+      "dst": ["tag:mcp-server:8080"]
+    }
+  ]
+}
+```
+
+## Deployment Patterns
+
+### Pattern 1: Single Server per Host
+
+Simpler but less efficient:
+```yaml
+# docker-compose.yml
+version: '3.8'
+services:
+  github-mcp:
+    image: github-mcp:latest
+    container_name: github-mcp
+    restart: unless-stopped
+    environment:
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+    ports:
+      - "8081:8080"
+      
+  postgres-mcp:
+    image: postgres-mcp:latest
+    container_name: postgres-mcp
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+    ports:
+      - "8082:8080"
+```
+
+### Pattern 2: Multi-Server per Host (Recommended)
+
+More efficient resource usage:
+```yaml
+# docker-compose.yml
+version: '3.8'
+services:
+  mcp-gateway:
+    image: mcp-gateway:latest
+    ports:
+      - "80:8080"
+      - "443:8443"
+    volumes:
+      - ./config:/app/config
+      
+  github-mcp:
+    image: github-mcp:latest
+    expose:
+      - "8080"
+      
+  postgres-mcp:
+    image: postgres-mcp:latest
+    expose:
+      - "8080"
+```
+
+### Pattern 3: Kubernetes with Ingress
+
+Production-ready with load balancing:
+```yaml
+# kubernetes-deployment.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mcp-servers
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mcp-ingress-controller
+  namespace: mcp-servers
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mcp-ingress
+  template:
+    metadata:
+      labels:
+        app: mcp-ingress
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+        - containerPort: 443
+        volumeMounts:
+        - name: config
+          mountPath: /etc/nginx/conf.d
+      volumes:
+      - name: config
+        configMap:
+          name: nginx-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: mcp-servers
+data:
+  default.conf: |
+    upstream github-mcp {
+      server github-mcp:8080;
+    }
+    
+    upstream postgres-mcp {
+      server postgres-mcp:8080;
+    }
+    
+    server {
+      listen 80;
+      server_name mcp.internal.company.com;
+      
+      location /github {
+        proxy_pass http://github-mcp;
+        proxy_set_header Host $host;
+      }
+      
+      location /postgres {
+        proxy_pass http://postgres-mcp;
+        proxy_set_header Host $host;
+      }
+    }
+```
+
+## SSL/TLS Configuration
+
+### Let's Encrypt (Free SSL)
+
+```bash
+# Install certbot
+sudo apt install -y certbot python3-certbot-nginx
+
+# Obtain certificate
+sudo certbot --nginx -d mcp.internal.company.com
+
+# Auto-renewal
+echo "0 3 * * * /usr/bin/certbot renew --quiet" | sudo tee -a /etc/crontab
+```
+
+### Self-Signed Certificates (Internal)
+
+```bash
+# Generate CA
+openssl genrsa -out ca.key 4096
+openssl req -new -x509 -days 3650 -key ca.key -out ca.crt
+
+# Generate server certificate
+openssl genrsa -out server.key 4096
+openssl req -new -key server.key -out server.csr
+openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt -days 3650
+```
+
+**nginx configuration:**
+```nginx
+server {
+  listen 443 ssl http2;
+  server_name mcp.internal.company.com;
+  
+  ssl_certificate /etc/ssl/certs/server.crt;
+  ssl_certificate_key /etc/ssl/private/server.key;
+  ssl_protocols TLSv1.2 TLSv1.3;
+  ssl_ciphers HIGH:!aNULL:!MD5;
+  ssl_prefer_server_ciphers on;
+  
+  # ... rest of config
+}
+```
+
+## Observability
+
+### Prometheus & Grafana
+
+```yaml
+# prometheus.yml
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'mcp-servers'
+    static_configs:
+      - targets: 
+        - 'github-mcp:8080'
+        - 'postgres-mcp:8080'
+```
+
+**Dashboard Metrics:**
+- Request rate and latency
+- Error rates and types
+- Resource usage (CPU, memory)
+- Active connections
+
+### ELK Stack (Logging)
+
+```yaml
+# docker-compose for ELK
+version: '3.8'
+services:
+  elasticsearch:
+    image: elasticsearch:8.11.0
+    environment:
+      - xpack.security.enabled=false
+      - discovery.type=single-node
+    ports:
+      - "9200:9200"
+      
+  logstash:
+    image: logstash:8.11.0
+    volumes:
+      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    ports:
+      - "5000:5000"
+      
+  kibana:
+    image: kibana:8.11.0
+    ports:
+      - "5601:5601"
+```
+
+## Backup & Disaster Recovery
+
+### Database Backups
+```bash
+#!/bin/bash
+# backup.sh
+DATE=$(date +%Y%m%d_%H%M%S)
+docker exec postgres pg_dump -U user mcp > /backups/mcp_backup_$DATE.sql
+gzip /backups/mcp_backup_$DATE.sql
+find /backups -name "mcp_backup_*.sql.gz" -mtime +7 -delete
+```
+
+### Configuration Backup
+```bash
+# Backup all configs
+tar -czf /backups/mcp-configs-$(date +%Y%m%d).tar.gz \
+  /etc/docker-compose \
+  /etc/kubernetes/manifests \
+  /etc/nginx/conf.d
+```
+
+## Security Best Practices
+
+### 1. Network Segmentation
+- Isolate MCP servers in dedicated VLAN
+- Use private subnets for backends
+- Only expose load balancers publicly
+
+### 2. Secrets Management
+```bash
+# Use Docker secrets (Swarm)
+echo "your-secret" | docker secret create db_password -
+
+# Use Kubernetes secrets
+kubectl create secret generic db-password --from-literal=password=your-secret
+```
+
+### 3. Runtime Security
+```bash
+# Use distroless images
+FROM gcr.io/distroless/nodejs:18
+COPY --from=builder /app /app
+CMD ["/app/server.js"]
+
+# Scan for vulnerabilities
+docker scan your-registry/mcp-server:latest
+```
+
+### 4. Access Control
+- Implement RBAC in Kubernetes
+- Use service accounts with minimal permissions
+- Regular access reviews
+
+## Compliance
+
+### SOC 2 Type II
+- Document all infrastructure changes
+- Implement audit logging
+- Regular penetration testing
+- Access control reviews
+
+### HIPAA (Healthcare)
+- Encrypt data at rest and in transit
+- Implement audit trails
+- Business Associate Agreements (BAAs)
+- Access logging and monitoring
+
+### GDPR (EU)
+- Data processing agreements
+- Right to be forgotten implementation
+- Data portability features
+- Consent management
+
+## Cost Optimization
+
+### Right-Sizing
+```bash
+# Monitor resource usage
+kubectl top pods -n mcp-servers
+
+# Adjust requests/limits
+resources:
+  requests:
+    cpu: "100m"
+    memory: "128Mi"
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+```
+
+### Spot Instances
+```yaml
+# Kubernetes node selector
+nodeSelector:
+ -cloud.google.com/gke-spot: "true"
+```
+
+## Monitoring & Alerting
+
+### Key Metrics
+- **Availability:** 99.9%+ uptime
+- **Latency:** < 100ms p99
+- **Error Rate:** < 0.1%
+- **Resource:** CPU < 70%, Memory < 80%
+
+### Alerting Rules (Prometheus)
+```yaml
+groups:
+- name: mcp-alerts
+  rules:
+  - alert: HighErrorRate
+    expr: rate(http_requests_total{status=~"5.."}[5m]) > 0.01
+    for: 5m
+    labels:
+      severity: warning
+  
+  - alert: InstanceDown
+    expr: up == 0
+    for: 1m
+    labels:
+      severity: critical
+```
+
+## Troubleshooting
+
+### Common Issues
+
+**1. Container Won't Start:**
+- Check logs: `docker logs container-name`
+- Verify environment variables
+- Check port conflicts
+
+**2. Network Connectivity:**
+- Test with `curl` inside container
+- Check firewall rules
+- Verify DNS resolution
+
+**3. Performance Degradation:**
+- Monitor resource usage
+- Check for memory leaks
+- Scale horizontally
+
+**4. SSL/TLS Errors:**
+- Verify certificate validity
+- Check certificate chain
+- Ensure proper cipher configuration
+
+## Next Steps
+
+Ready to add enterprise features? Check out:
+- [Enterprise SaaS Deployment](/blog/deploying-mcp-servers-enterprise-saas)
+- [Multi-Region Deployment](/blog/multi-region-mcp-deployment)
+- [Zero Trust Architecture](/blog/zero-trust-mcp)
+
+---
+
+*Need enterprise support? [Contact our team](/enterprise-readiness) for custom deployment assistance.*

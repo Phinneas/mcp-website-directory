@@ -366,77 +366,45 @@ def write_servers_json(servers: list[dict]) -> Path:
 
 
 @task(
-    name="commit-and-push-to-github",
+    name="write-to-d1",
     retries=2,
     retry_delay_seconds=10,
-    tags=["github", "io"],
+    tags=["d1", "io"],
 )
-def commit_and_push_to_github(path: Path, server_count: int) -> str:
-    """Commit servers.json to GitHub via the Contents REST API.
-
-    No git binary required — authenticates with GITHUB_TOKEN.
-    Returns the new commit SHA, or an empty string if credentials are missing.
+def write_to_d1(servers: list[dict]) -> bool:
+    """Batch insert servers into Cloudflare D1 database.
+    
+    Uses `wrangler d1 execute` for direct DB updates.
     """
     logger = get_run_logger()
-    token  = os.environ.get("GITHUB_TOKEN")
-    repo   = os.environ.get("GITHUB_REPO")
-    branch = os.environ.get("GITHUB_BRANCH", "main")
+    
+    # We use a batch insert approach. For 5000 servers, we'll chunk it
+    # to avoid command line argument limits.
+    chunk_size = 50
+    for i in range(0, len(servers), chunk_size):
+        chunk = servers[i:i + chunk_size]
+        
+        # Prepare SQL values
+        values = []
+        for s in chunk:
+            fields = s["fields"]
+            # Escape strings to prevent SQL injection
+            name = fields["name"].replace("'", "''")
+            desc = fields["description"].replace("'", "''")
+            values.append(f"('{s['id']}', '{name}', '{desc}', '{fields['author']}', '{fields['category']}', '{fields.get('language', 'Unknown')}', {fields['stars']}, '{fields['github_url']}', NULL, {fields['downloads']}, '{fields.get('logoUrl', '')}', '{fields['updated']}')")
+            
+        sql = f"INSERT OR REPLACE INTO servers (id, name, description, author, category, language, stars, github_url, npm_package, downloads, logo_url, updated_at) VALUES {','.join(values)};"
+        
+        # Execute via wrangler
+        # Note: assumes wrangler is configured in the environment
+        cmd = f"npx wrangler d1 execute mcp-directory --command=\"{sql}\""
+        exit_code = os.system(cmd)
+        
+        if exit_code != 0:
+            raise RuntimeError(f"Failed to write to D1 at chunk {i}")
 
-    if not token or not repo:
-        logger.warning(
-            "GITHUB_TOKEN or GITHUB_REPO not set — skipping GitHub commit.\n"
-            "Export both env vars to enable automatic data commits."
-        )
-        return ""
-
-    api_url = f"https://api.github.com/repos/{repo}/contents/{GITHUB_FILE_PATH}"
-    headers = {
-        "Authorization":        f"Bearer {token}",
-        "Accept":               "application/vnd.github+json",
-        "X-GitHub-Api-Version": "2022-11-28",
-    }
-
-    with httpx.Client(timeout=30, headers=headers) as client:
-        # 1. Retrieve the current file SHA (required by the API to update a file)
-        sha: str | None = None
-        get_resp = client.get(api_url, params={"ref": branch})
-
-        if get_resp.status_code == 200:
-            sha = get_resp.json().get("sha")
-            logger.info(f"Existing file SHA: {sha[:12]}…")
-        elif get_resp.status_code == 404:
-            logger.info("servers.json not yet in repo — will create it")
-        else:
-            raise RuntimeError(
-                f"Unexpected status fetching file SHA: {get_resp.status_code} {get_resp.text[:200]}"
-            )
-
-        # 2. Build the commit payload
-        content_b64 = base64.b64encode(path.read_bytes()).decode("utf-8")
-        commit_msg  = (
-            f"chore(data): refresh MCP server catalogue — {server_count:,} servers "
-            f"[{datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}]"
-        )
-        body: dict[str, Any] = {
-            "message": commit_msg,
-            "content": content_b64,
-            "branch":  branch,
-        }
-        if sha:
-            body["sha"] = sha   # required for updates; omit for new files
-
-        # 3. Commit
-        put_resp = client.put(api_url, json=body)
-
-        if put_resp.status_code in (200, 201):
-            commit_sha = put_resp.json()["commit"]["sha"]
-            action     = "Updated" if sha else "Created"
-            logger.info(f"{action} servers.json on {branch} → commit {commit_sha[:12]}…")
-            return commit_sha
-        else:
-            raise RuntimeError(
-                f"GitHub API error {put_resp.status_code}: {put_resp.text[:400]}"
-            )
+    logger.info(f"Successfully wrote {len(servers):,} servers to D1")
+    return True
 
 
 @task(
@@ -543,7 +511,6 @@ def refresh_server_data(
     logger    = get_run_logger()
     started   = datetime.now(timezone.utc)
     commit_sha = ""
-    error_msg  = ""
 
     try:
         logger.info(
@@ -569,11 +536,11 @@ def refresh_server_data(
         # 4 ── Write ────────────────────────────────────────────────────────
         path = write_servers_json(servers)
 
-        # 5 ── GitHub commit ─────────────────────────────────────────────────
+        # 5 ── D1 database write ──────────────────────────────────────────────
         if not dry_run:
-            commit_sha = commit_and_push_to_github(path, len(servers))
+            write_to_d1(servers)
         else:
-            logger.info("dry_run=True — skipping GitHub commit")
+            logger.info("dry_run=True — skipping D1 database write")
 
         # 6 ── Cloudflare rebuild ────────────────────────────────────────────
         if not dry_run:
@@ -586,7 +553,6 @@ def refresh_server_data(
         result  = {
             "success":         True,
             "servers_written": len(servers),
-            "commit_sha":      commit_sha,
             "elapsed_seconds": round(elapsed, 1),
             "generated_at":    _now(),
         }
@@ -594,7 +560,7 @@ def refresh_server_data(
 
         # 7 ── Notify ────────────────────────────────────────────────────────
         if notify:
-            notify_slack(len(servers), commit_sha, elapsed, success=True)
+            notify_slack(len(servers), "D1_WRITE", elapsed, success=True)
 
         return result
 

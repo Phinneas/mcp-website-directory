@@ -165,24 +165,11 @@ jobs:
           echo "::notice::servers.json contains ${COUNT} servers"
           echo "SERVER_COUNT=${COUNT}" >> "$GITHUB_ENV"
 
-      # ── 6. Commit servers.json (belt-and-suspenders fallback) ─────────────────
-      # The Prefect flow already commits via the GitHub API when GITHUB_TOKEN is
-      # set.  This step catches any edge case where that commit was skipped
-      # (e.g. transient API error, first-time file creation race).
-      - name: Commit servers.json (fallback)
-        if: env.IS_DRY_RUN == 'false'
+    # ── 6. Commit servers.json (fallback) ─────────────────
+      # The flow now writes directly to D1.
+      - name: Notify Status
         run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name  "github-actions[bot]"
-          git pull --rebase origin "${{ github.ref_name }}"
-          git add src/data/servers.json
-          if git diff --staged --quiet; then
-            echo "servers.json already up-to-date (committed by flow) — nothing to do"
-          else
-            git commit -m "chore(data): refresh MCP server catalogue — ${{ env.SERVER_COUNT }} servers [$(date -u +'%Y-%m-%d')]"
-            git push origin "${{ github.ref_name }}"
-            echo "Committed servers.json via fallback git push"
-          fi
+          echo "Data refresh to D1 complete"
 
       # ── 7. Job summary ─────────────────────────────────────────────────────────
       - name: Write job summary

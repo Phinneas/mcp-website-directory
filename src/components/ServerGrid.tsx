@@ -1,9 +1,14 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import type { MCPServer } from '../utils/d1';
+import { getDeploymentBadge } from '../utils/serverData.js';
 
 interface Props {
   initialServers: MCPServer[];
   total: number;
+  meta?: {
+    deployment?: string;
+    [key: string]: any;
+  };
 }
 
 const CATEGORIES = [
@@ -68,6 +73,10 @@ function ServerCard({ server }: { server: MCPServer }) {
   const slug = slugify(server.fields.name);
   const logoUrl = server.fields.logoUrl || null;
   const [logoFailed, setLogoFailed] = useState(false);
+  
+  // Get deployment badge info
+  const deploymentInfo = server.deployment ? getDeploymentBadge(server.deployment) : null;
+  const secondaryDeployments = server.deployment_metadata?.secondary_deployments || [];
 
   return (
     <div className="server-card" data-category={server.fields.category || 'other'}>
@@ -96,12 +105,26 @@ function ServerCard({ server }: { server: MCPServer }) {
             <h3>{server.fields.name}</h3>
             <div className="server-author">{server.fields.author || ''}</div>
           </div>
+          
+          {/* Deployment Badge */}
+          {deploymentInfo && (
+            <div className={`deployment-badge deployment-${deploymentInfo.color}`} 
+                 title={`Deployment: ${deploymentInfo.tooltip}`}>
+              <span className="badge-icon">{deploymentInfo.icon}</span>
+              <span className="badge-text">{deploymentInfo.label}</span>
+              {secondaryDeployments.length > 0 && (
+                <span className="badge-secondary">+{secondaryDeployments.length}</span>
+              )}
+            </div>
+          )}
         </div>
+        
         <div className="server-description">
           {(server.fields.description || '').length > 120
             ? (server.fields.description || '').slice(0, 120).trimEnd() + '…'
             : server.fields.description}
         </div>
+        
         <div className="server-meta">
           {server.fields.language && <span className="meta-tag">{server.fields.language}</span>}
           {server.fields.author && (
@@ -110,8 +133,16 @@ function ServerCard({ server }: { server: MCPServer }) {
             </span>
           )}
           {server.fields.stars ? <span className="meta-tag">{formatStars(server.fields.stars)}</span> : null}
+          
+          {/* Enterprise Features Badge */}
+          {server.enterprise_features && server.enterprise_features.includes('enterprise_ready') && (
+            <span className="meta-tag enterprise-tag" title="Enterprise Ready">
+              🏢 Enterprise
+            </span>
+          )}
         </div>
       </a>
+      
       <div className="server-actions">
         <a href={`/server/${slug}`} className="btn btn-primary">
           🔗 View Details
@@ -136,11 +167,12 @@ function ServerCard({ server }: { server: MCPServer }) {
   );
 }
 
-export default function ServerGrid({ initialServers, total: initialTotal }: Props) {
+export default function ServerGrid({ initialServers, total: initialTotal, meta }: Props) {
   const [servers, setServers] = useState<MCPServer[]>(initialServers);
   const [total, setTotal] = useState(initialTotal);
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
+  const [deployment, setDeployment] = useState(meta?.deployment || 'all');
   const [offset, setOffset] = useState(initialServers.length);
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -149,6 +181,7 @@ export default function ServerGrid({ initialServers, total: initialTotal }: Prop
   const fetchServers = useCallback(async (
     q: string,
     cat: string,
+    dep: string,
     off: number,
     append: boolean
   ) => {
@@ -158,6 +191,7 @@ export default function ServerGrid({ initialServers, total: initialTotal }: Prop
     try {
       const params = new URLSearchParams({ offset: String(off), limit: '24' });
       if (cat && cat !== 'all') params.set('category', cat);
+      if (dep && dep !== 'all') params.set('deployment', dep);
       if (q.trim()) params.set('search', q.trim());
 
       const res = await fetch(`/api/servers?${params}`);
@@ -179,14 +213,14 @@ export default function ServerGrid({ initialServers, total: initialTotal }: Prop
     }
   }, []);
 
-  // On search/category change, debounce and reset
+  // On search/category/deployment change, debounce and reset
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
-      fetchServers(search, category, 0, false);
+      fetchServers(search, category, deployment, 0, false);
     }, 300);
     return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
-  }, [search, category, fetchServers]);
+  }, [search, category, deployment, fetchServers]);
 
   const hasMore = offset < total;
 
@@ -223,13 +257,38 @@ export default function ServerGrid({ initialServers, total: initialTotal }: Prop
             </span>
           ))}
         </div>
+        
+        {/* Deployment Type Filters - Show only when not already on a deployment page */}
+        {!meta?.deployment && (
+          <div className="deployment-filters">
+            <div className="filter-label">Deployment:</div>
+            <div className="filter-chips">
+              {[
+                { value: 'all', label: 'All Deployments', icon: '⚡' },
+                { value: 'local_stdio', label: 'Local & CLI', icon: '💻' },
+                { value: 'cloud_native', label: 'Cloud-Native', icon: '☁️' },
+                { value: 'self_hosted', label: 'Self-Hosted', icon: '🏢' },
+                { value: 'enterprise_saas', label: 'Enterprise', icon: '🔐' }
+              ].map(dep => (
+                <span
+                  key={dep.value}
+                  className={`deployment-chip${deployment === dep.value ? ' active' : ''}`}
+                  data-deployment={dep.value}
+                  onClick={() => setDeployment(dep.value)}
+                >
+                  <span className="chip-icon">{dep.icon}</span>
+                  <span className="chip-label">{dep.label}</span>
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="servers-grid" id="serversGrid">
         {loading
           ? Array.from({ length: 24 }).map((_, i) => <SkeletonCard key={i} />)
-          : servers.map(server => <ServerCard key={server.id} server={server} />)
-        }
+          : servers.map(server => <ServerCard key={server.id} server={server} />)}
       </div>
 
       {!loading && hasMore && (
@@ -237,7 +296,7 @@ export default function ServerGrid({ initialServers, total: initialTotal }: Prop
           <button
             className="btn btn-primary"
             style={{ padding: '0.75rem 2rem', fontSize: '1rem' }}
-            onClick={() => fetchServers(search, category, offset, true)}
+            onClick={() => fetchServers(search, category, deployment, offset, true)}
             disabled={loadingMore}
           >
             {loadingMore ? 'Loading…' : `Load More (${total - offset} remaining)`}

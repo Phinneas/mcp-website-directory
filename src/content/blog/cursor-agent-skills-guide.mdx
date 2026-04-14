@@ -1,0 +1,407 @@
+---
+title: "Cursor Agent Skills: Complete Guide for 2026 (Skills vs Rules Explained)"
+description: "Learn how Cursor Agent Skills work, how they compare to Rules, and why skills built in Cursor work across 30+ AI coding tools including VS Code, GitHub Copilot, and Claude Code."
+pubDate: 2026-04-17
+draft: false
+tags: ["cursor", "agent-skills", "cursor-skills", "ai-coding-tools"]
+---
+
+Most guides treat Cursor Agent Skills as a Cursor feature. They are not. Skills implement the open **Agent Skills standard** at [agentskills.io](https://agentskills.io) — originally developed by Anthropic, now adopted by more than 30 AI coding tools including VS Code, GitHub Copilot, Claude Code, OpenAI Codex, Gemini CLI, Roo Code, and Databricks. A skill you write today in Cursor works in any compatible agent tomorrow, with no rewrite required.
+
+That changes how you should think about the investment. Unlike `.cursor/rules`, which are Cursor-specific, a well-written `SKILL.md` travels with your team's workflows across whatever toolchain you're using in six months. For teams evaluating multiple AI coding tools, that portability is worth understanding before you spend time building out a library of rules that only one tool can read.
+
+This guide covers what skills are, how to build them, how to choose between Skills and Rules, and the one dimension every other tutorial skips: what to check before installing a third-party skill that has the ability to execute scripts on your machine.
+
+---
+
+## What Are Cursor Agent Skills
+
+A Cursor Agent Skill is a folder containing a `SKILL.md` file that gives the agent domain-specific instructions, scripts, and references for a particular task. Unlike Rules, Skills are based on the open Agent Skills standard and work across any compatible AI coding tool.
+
+Three properties make skills distinct from rules:
+
+**Portable.** Skills follow the Agent Skills open standard. The same `SKILL.md` you write for Cursor is valid in VS Code with GitHub Copilot, Claude Code, OpenAI Codex, and any other compatible agent. Rules are Cursor-only.
+
+**Executable.** Skills can include a `scripts/` directory with shell scripts, Python, JavaScript, or any other executable format. The agent reads the skill instructions and runs those scripts as part of the workflow. Rules cannot include or reference executable code.
+
+**Context-efficient.** Skills load resources progressively — only when the agent determines they are relevant. A skill's `references/` directory content isn't injected into every session. Rules included via `alwaysApply: true` are always in context, regardless of relevance.
+
+### Where Cursor Looks for Skills
+
+Cursor automatically discovers skills from these directories at startup:
+
+| Location | Scope |
+|---|---|
+| `.agents/skills/` | Project-level |
+| `.cursor/skills/` | Project-level |
+| `~/.cursor/skills/` | User-global (all projects) |
+| `.claude/skills/` | Cross-tool compatibility |
+| `.codex/skills/` | Cross-tool compatibility |
+
+The `.claude/skills/` and `.codex/skills/` paths are intentional. Cursor reads them so skills created by or for other tools are automatically available — a concrete implementation of the cross-tool portability story.
+
+---
+
+## SKILL.md File Structure
+
+Every skill is a folder. The only required file is `SKILL.md`. Everything else is optional.
+
+### Minimal Skill
+
+```
+.agents/
+└── skills/
+    └── code-review/
+        └── SKILL.md
+```
+
+A minimal `SKILL.md` looks like this:
+
+```markdown
+---
+name: code-review
+description: >
+  Review code for quality, security issues, and style consistency.
+  Use when the user asks for a code review, mentions PR feedback,
+  or asks to check a diff.
+---
+
+# Code Review
+
+Review the provided code and check for:
+
+## What to Look For
+
+- Security issues: unvalidated input, hardcoded secrets, unsafe deserialization
+- Logic errors and edge cases
+- Naming consistency and readability
+- Missing error handling
+
+## Output Format
+
+Provide feedback as a numbered list grouped by severity: Critical, Warning, Suggestion.
+For each issue, include the line reference, what the problem is, and a concrete fix.
+```
+
+### Frontmatter Fields
+
+| Field | Required | What It Does |
+|---|---|---|
+| `name` | Yes | Skill identifier. Lowercase, numbers, hyphens only. Must match the folder name. |
+| `description` | Yes | What the agent reads to decide relevance. Write it as trigger conditions, not a title. |
+| `license` | No | License name or reference to a bundled file. |
+| `compatibility` | No | Documents environment requirements (system packages, network access, etc.). |
+| `metadata` | No | Arbitrary key-value pairs for additional context. |
+| `disable-model-invocation` | No | When `true`, skill only activates via explicit `/skill-name` invocation. Never auto-applied. |
+
+The `description` field deserves extra attention. It is doing the semantic matching. The agent reads your description and decides whether the current task is a fit. Write it like a trigger condition: "Use when the user asks to deploy, mentions a release, or references staging/production environments." A description that just says "deployment" gives the agent much less signal.
+
+### Skills with Scripts and References
+
+For workflows that need to execute code or include detailed reference material, the full folder structure looks like this:
+
+```
+.agents/
+└── skills/
+    └── deploy-app/
+        ├── SKILL.md
+        ├── scripts/
+        │   ├── deploy.sh
+        │   └── validate.py
+        ├── references/
+        │   └── ENVIRONMENTS.md
+        └── assets/
+            └── config-template.json
+```
+
+| Directory | Purpose |
+|---|---|
+| `scripts/` | Executable code the agent can run as part of the workflow |
+| `references/` | Additional documentation loaded on demand, not always in context |
+| `assets/` | Static resources: templates, config files, data files |
+
+The `references/` directory is worth using deliberately. If your skill has 2,000 words of detailed runbook content, putting it in `references/RUNBOOK.md` and pointing to it from `SKILL.md` keeps the main file focused. The agent loads reference files when it needs them, not on every invocation.
+
+### A Real-World Example Skill
+
+Here is a `lint-and-fix` skill that runs a lint script and provides instructions for the agent:
+
+```markdown
+---
+name: lint-and-fix
+description: >
+  Run the project linter and fix issues. Use when the user asks to lint,
+  mentions lint errors, or asks to clean up code style before committing.
+---
+
+# Lint and Fix
+
+Run the project linter and address any issues found.
+
+## Steps
+
+1. Run the validation script to check current lint status: `scripts/lint-check.sh`
+2. Review the output for errors vs warnings
+3. Auto-fix what can be fixed automatically: `scripts/lint-fix.sh`
+4. Report remaining issues that require manual review, grouped by file
+
+## Notes
+
+- Do not auto-fix files with critical errors until the user reviews them
+- If the project has no lint config, ask the user before proceeding
+```
+
+With `scripts/lint-check.sh` and `scripts/lint-fix.sh` in the `scripts/` directory, the agent has executable tools to work with rather than just general instructions.
+
+---
+
+## Skills vs Rules: The Decision Framework
+
+**Should I use a Skill or a Rule?**
+
+Use a Skill when you have a domain workflow — especially one with multiple steps, scripts, or reference material — and you want it portable across tools. Use a Rule when you need always-on context injection, file-glob scoping, or team-wide enforcement through the Cursor dashboard.
+
+| Dimension | Rules | Skills |
+|---|---|---|
+| File format | `.mdc` / `.md` files | Folders with `SKILL.md` |
+| Storage path | `.cursor/rules/` | `.agents/skills/` or `.cursor/skills/` |
+| Can include executable scripts | No | Yes |
+| Context loading behavior | Injected at prompt start | Progressive, loaded on demand |
+| Tool portability | Cursor only | 30+ tools (open standard) |
+| Trigger options | Always / Intelligent / File glob / Manual @-mention | Context-intelligent or explicit `/skill-name` |
+| Team enforcement via dashboard | Yes (Team/Enterprise plans) | Not currently |
+| Migration path | N/A | `/migrate-to-skills` converts eligible rules |
+
+### Use Rules When
+
+- You need the content in context for every single session (`alwaysApply: true`)
+- You need file-glob scoping — the instruction should only apply when specific file types are open (e.g., `**/*.test.ts`)
+- You're on a Team or Enterprise plan and need to enforce standards org-wide through the dashboard
+- The content is simple style or convention guidance with no workflow logic, no scripts, no branching steps
+
+### Use Skills When
+
+- The workflow has multiple steps or decisions (deploy, review, generate docs, run migrations)
+- You want the agent to recognize and apply the workflow contextually without you prompting it
+- You need to include executable scripts as part of the workflow
+- You want the workflow portable to other tools in your stack
+- You're converting existing dynamic rules or slash commands (the migration tooling expects skills as the target format)
+
+One pattern worth calling out: some teams end up with skills and rules doing complementary work. A rule might always enforce TypeScript strict mode and Zod for validation — always in context, enforced via dashboard. A skill handles the "generate a new API endpoint" workflow — contextually triggered, with scripts, and portable to Claude Code for the developers who prefer it. Neither replaces the other.
+
+---
+
+## Creating Your First Skill
+
+Here is the full workflow from nothing to an active, testable skill.
+
+**Step 1: Create the skill directory**
+
+```bash
+mkdir -p .agents/skills/my-first-skill
+```
+
+You can also use `.cursor/skills/` if you prefer that path. Both work. `.agents/skills/` is the cross-tool standard path.
+
+**Step 2: Create the SKILL.md**
+
+```markdown
+---
+name: my-first-skill
+description: >
+  Describe what this skill does and when to use it.
+  Write this as trigger conditions: "Use when the user asks to X or mentions Y."
+---
+
+# My First Skill
+
+Write your agent instructions here. Be specific and actionable.
+
+## When to Use
+
+- Use this skill when...
+
+## Instructions
+
+1. First step
+2. Second step
+3. Third step
+```
+
+**Step 3: Verify Cursor discovered it**
+
+Open Cursor Settings with `Cmd+Shift+J` (Mac) or `Ctrl+Shift+J` (Windows/Linux). Navigate to **Rules**. Look for the **Agent Decides** section. Your skill should appear there with its name and description.
+
+If it does not appear, check that the folder name matches the `name` field in your frontmatter exactly. Mismatches cause the skill to be skipped.
+
+**Step 4: Test manual invocation**
+
+In Agent chat, type `/my-first-skill`. The agent should load the skill and apply its instructions to the current context.
+
+**Step 5: Test contextual auto-invoke**
+
+Describe a task in chat that matches your `description` trigger conditions without using the slash command. If the description is well-written, the agent will apply the skill automatically. If it does not, refine the `description` field to be more specific about the trigger conditions.
+
+The description is the only lever you have for contextual triggering. If auto-invoke is not working reliably, the description is almost always the cause.
+
+---
+
+## Auto-Invoke vs Manual Invoke
+
+By default, skills are contextually intelligent. Cursor presents available skills to the agent at the start of each session. The agent decides which skills are relevant based on your `description` field and applies them automatically.
+
+Setting `disable-model-invocation: true` in the frontmatter changes this completely. The skill becomes slash-command-only — it will never auto-apply, only activate when you explicitly type `/skill-name` in chat.
+
+```yaml
+---
+name: production-deploy
+description: Deploy the application to the production environment.
+disable-model-invocation: true
+---
+```
+
+### When to Use Each Mode
+
+**Auto-invoke (default):** Use for workflows you want the agent to recognize from context. Code review skills, documentation generation skills, test writing skills — these are tasks the agent can reasonably infer from what you're doing. Low risk if the agent applies them when not intended, because they're just adding instructions to context.
+
+**Manual-only (`disable-model-invocation: true`):** Use for any workflow that executes scripts, touches production systems, modifies data, or has meaningful consequences if triggered unintentionally. A deployment skill, a database migration skill, a file-cleanup skill — these should always require explicit invocation. You want to be in the loop before the agent reaches for these.
+
+This is also the right mode for skills you've installed from third-party repositories that you haven't fully audited yet. More on that in the security section below.
+
+---
+
+## Migrating Rules and Commands to Skills
+
+If you have an existing library of `.cursor/rules` dynamic rules or slash commands, Cursor 2.4 shipped a built-in migration tool. Type `/migrate-to-skills` in Agent chat and it will identify eligible items and convert them.
+
+### What Gets Migrated
+
+The migration tool converts two things:
+
+**Dynamic rules** — rules with `alwaysApply: false` (or undefined) and no `globs` patterns defined. These are the "Apply Intelligently" rules that Cursor was already triggering contextually. They become standard skills.
+
+**Slash commands** — both user-level and workspace-level commands. They become skills with `disable-model-invocation: true` automatically, preserving their explicit-invocation behavior.
+
+### What Does Not Get Migrated
+
+**`alwaysApply: true` rules** will not be migrated. Their behavior — always in context, every session — is fundamentally different from how skills work. Skills are not the right format for always-on context injection. Keep these as rules.
+
+**Rules with glob patterns** will not be migrated. File-scoped rules (apply only when `**/*.py` files are open) have no equivalent in skills. Keep these as rules too.
+
+**User rules** are not stored on the file system, so the migration tool cannot access them.
+
+### After Migration
+
+Review the generated skills in `.cursor/skills/` before committing. The migration tool does reasonable work, but the `description` fields it generates are worth checking manually. A vague description means the agent will not know when to apply the skill contextually. Tighten any description that reads as a noun phrase ("code review") rather than a trigger condition ("Use when the user asks for a code review or mentions a PR diff").
+
+Commit the generated skills to git. Your whole team benefits from the library, and version control means you can track changes over time.
+
+---
+
+## Installing Skills from GitHub
+
+Cursor can import skills directly from GitHub repositories and keep them synced.
+
+**How to install:**
+
+1. Open **Cursor Settings → Rules**
+2. In the **Project Rules** section, click **Add Rule**
+3. Select **Remote Rule (GitHub)**
+4. Paste the GitHub repository URL
+
+Installed skills stay synced with the source repository. Updates to the remote repo are automatically reflected in your project. The Anthropic team maintains an official skills examples repository at `github.com/anthropics/skills`, and the agentskills.io site links to community-contributed collections.
+
+This is where the open standard becomes practically useful. A skills library written for Claude Code is immediately compatible with Cursor — same format, same directories, same frontmatter. The community is building across tool boundaries, not just within one vendor's ecosystem.
+
+---
+
+## Security: What to Check Before Installing a Third-Party Skill
+
+Every other guide skips this section. It is worth understanding before you install anything from a public repository.
+
+A Cursor Agent Skill can include a `scripts/` directory. When the agent invokes that skill, it reads the `SKILL.md` instructions and executes those scripts in your environment. That is a real execution surface. The analogy from infrastructure work is direct: installing a third-party skill with scripts is the same risk surface as a `postinstall` script in an npm package. Most are fine. Some are not. The check takes two minutes.
+
+### Before Installing Any Third-Party Skill
+
+**Read the `scripts/` directory before installing.** Any `.sh`, `.py`, or `.js` file in that directory can execute code on your machine when the agent invokes the skill. Open every script file and read it. This is the same diligence you apply to any dependency.
+
+**Pin to a specific commit hash.** When adding a remote GitHub skill via Cursor Settings, the URL you paste can reference a specific commit SHA rather than a branch. A branch reference (`/tree/main`) means the skill will update whenever the repo owner pushes changes — including changes you have not reviewed. A commit SHA reference locks the version you audited.
+
+```
+# Branch reference — updates automatically (risky for unreviewed repos)
+https://github.com/someuser/cursor-skills
+
+# Specific commit — locked to what you audited (safer)
+https://github.com/someuser/cursor-skills/tree/a3f8c21
+```
+
+**Understand the `compatibility` field, and what it does not do.** The `compatibility` frontmatter field is documentation. It describes environment requirements — system packages, network access, required tools. It does not sandbox execution or restrict what a script can do at runtime. A field that says `requires: [git]` does not prevent a script from also making network requests or reading files outside the project.
+
+**Use `disable-model-invocation: true` for unvetted skills.** Community-sourced skills you are less certain about should never auto-invoke. Setting `disable-model-invocation: true` means you must explicitly type `/skill-name` before anything runs. That one-second pause is enough to reconsider if the context seems off.
+
+**Keep internal skills in private repositories.** Workflows that reference internal tooling, assume specific environment variables, or embed organizational conventions should live in a private GitHub repo. A public skill repository exposes your toolchain assumptions to anyone who finds it.
+
+None of this should be alarming — the vast majority of community skills are exactly what they say they are. But the same hygiene you apply to package managers applies here. Scripts execute in your environment, and that is worth a two-minute audit before installation.
+
+---
+
+## The Open Standard: Skills Across Your Whole Toolchain
+
+Here is what makes the investment in building a skills library more durable than building a rules library.
+
+Agent Skills is an open standard hosted at [agentskills.io](https://agentskills.io), originally developed by Anthropic and now maintained as a multi-stakeholder open project. As of early 2026, more than 30 tools support it:
+
+- **Editors and IDEs:** Cursor, VS Code (via GitHub Copilot), JetBrains Junie
+- **AI coding agents:** Claude Code, OpenAI Codex, Gemini CLI, Roo Code, OpenHands, Amp, Factory
+- **Cloud and data platforms:** Databricks Genie Code, Snowflake Cortex Code
+- **Specialized tools:** Laravel Boost, Letta, Qodo, Goose, Kiro, Spring AI
+
+The `.claude/skills/` and `.codex/skills/` compatibility directories that Cursor reads are not accidents. They are a deliberate implementation of the standard: Cursor intentionally discovers skills written for other tools so your library is immediately available across agents.
+
+For teams, this matters at the organizational level. Skills libraries built to encode team knowledge — review standards, deployment workflows, documentation patterns — become infrastructure that works regardless of which individual developer's preferred tool is being used that day. The library is the asset, not the tool configuration.
+
+We track which AI coding tools support the Agent Skills standard, along with verified skills you can browse and install, in the [Cursor Skills section of the MyMCPShelf directory](/cursor-skills). If you have published a skill on GitHub, you can [submit it to the directory](/submit) to make it discoverable by the community.
+
+---
+
+## Frequently Asked Questions
+
+### Do Cursor Agent Skills replace Rules?
+
+No. Skills and Rules serve different purposes and are designed to be used together. Rules are better for always-on context, file-scoped instructions, and organization-wide enforcement through the Cursor dashboard. Skills are better for domain workflows, anything requiring executable scripts, and portable cross-tool workflows. Most production setups will use both — rules for standards, skills for workflows.
+
+### Can I share skills across multiple projects without committing them to each repo?
+
+Yes. Place skills in `~/.cursor/skills/` for user-global scope. They load in every project automatically without needing to be committed to any repository. This is the right location for personal workflow skills that are not project-specific.
+
+### What is the difference between a Cursor Skill and an MCP server?
+
+An MCP server extends the agent's tool capabilities at runtime — it adds new actions the agent can call as functions (querying a database, sending a Slack message, reading a file from Google Drive). A Skill provides domain knowledge and workflow instructions that the agent applies in context. MCP adds capability. Skills add expertise. They are complementary rather than competing: a skill might instruct the agent to use a particular MCP server tool as part of its workflow. You can browse verified MCP servers organized by category in the [MyMCPShelf directory](/directory).
+
+### Can skills run code?
+
+Yes. Skills can include a `scripts/` directory with executable files in any language — Bash, Python, JavaScript, or anything else the agent implementation supports. The agent is instructed by the `SKILL.md` to run those scripts as part of the workflow. This is why reviewing third-party skills before installation matters, as covered in the security section above.
+
+### How do I see which skills Cursor has discovered?
+
+Open Cursor Settings with `Cmd+Shift+J` (Mac) or `Ctrl+Shift+J` (Windows/Linux), navigate to **Rules**, and look for the **Agent Decides** section. Skills appear there with their name and description. If a skill is missing, verify that the folder name exactly matches the `name` field in the frontmatter.
+
+### What happened to Cursor slash commands?
+
+Slash commands are superseded by Skills with `disable-model-invocation: true`. The behavior is identical — the skill only activates when you explicitly type `/skill-name` — but the format is now compatible with the open Agent Skills standard. The `/migrate-to-skills` command in Cursor 2.4 and later converts your existing slash commands automatically.
+
+### What version of Cursor introduced Agent Skills?
+
+Agent Skills shipped in Cursor 2.4, alongside the `/migrate-to-skills` migration tool. The feature is available in all subsequent versions.
+
+---
+
+## Summary
+
+Cursor Agent Skills are worth investing in not because they are a Cursor feature, but because they are an open standard. The skills library you build today is portable infrastructure — it works in Cursor, it works in Claude Code, it works in GitHub Copilot, and it will work in whatever tools your team evaluates next year.
+
+The practical decision: use Rules for standards (always-on, enforced, file-scoped), use Skills for workflows (contextual, scriptable, portable). Build your skills library in `.agents/skills/` so it travels with your codebase. For user-global workflows, use `~/.cursor/skills/`. Before installing any third-party skill with scripts, spend two minutes reading the script files — same diligence as any executable dependency.
+
+If you are building or have already built skills for Cursor, [submit them to the MyMCPShelf Cursor Skills directory](/submit) to make them discoverable. We review each submission and only list skills that are actively maintained and documented.
+
+Stay current with the Cursor Skills ecosystem and the broader agent tooling landscape by subscribing to the [MyMCPShelf newsletter](/newsletter) — published weekly, no filler.

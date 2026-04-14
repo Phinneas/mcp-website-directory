@@ -298,3 +298,223 @@ export function getStatusBadge(status) {
   
   return badges[status] || badges['community'];
 }
+
+/**
+ * Deployment type mapping for display names and descriptions
+ */
+export const deploymentTypes = {
+  'local_stdio': {
+    key: 'local_stdio',
+    name: 'Local & CLI',
+    label: 'Local',
+    icon: '💻',
+    description: 'stdio-based local development tools',
+    tagline: 'Run locally on your machine',
+    badge_class: 'bg-gray-100 text-gray-800 border-gray-300',
+    setup_heading: 'Local Development Setup',
+    requirements: ['CLI access', 'Node.js/Python runtime', 'Local environment'],
+    use_cases: ['Development', 'Testing', 'CI/CD pipelines']
+  },
+  'cloud_native': {
+    key: 'cloud_native',
+    name: 'Cloud-Native',
+    label: 'Cloud',
+    icon: '☁️',
+    description: 'SSE/WebSocket cloud services',
+    tagline: 'Deploy in the cloud',
+    badge_class: 'bg-blue-100 text-blue-800 border-blue-300',
+    setup_heading: 'Cloud Deployment Setup', 
+    requirements: ['Internet access', 'Cloud provider account', 'API credentials'],
+    use_cases: ['SaaS applications', 'Distributed teams', 'Serverless architectures']
+  },
+  'self_hosted': {
+    key: 'self_hosted',
+    name: 'Self-Hosted/VPC',
+    label: 'Self-Hosted',
+    icon: '🏢',
+    description: 'On-premise or VPC deployment',
+    tagline: 'Deploy in your infrastructure',
+    badge_class: 'bg-purple-100 text-purple-800 border-purple-300',
+    setup_heading: 'Self-Hosted Setup',
+    requirements: ['Server access', 'Docker/Kubernetes', 'Network configuration'],
+    use_cases: ['Enterprise compliance', 'Data sovereignty', 'Custom infrastructure']
+  },
+  'enterprise_saas': {
+    key: 'enterprise_saas',
+    name: 'Enterprise SaaS',
+    label: 'Enterprise',
+    icon: '🔐',
+    description: 'Secure managed services with SLAs',
+    tagline: 'Production-ready enterprise deployment',
+    badge_class: 'bg-green-100 text-green-800 border-green-300',
+    setup_heading: 'Enterprise Deployment Setup',
+    requirements: ['Enterprise contract', 'SSO integration', 'Support agreement'],
+    use_cases: ['Mission-critical apps', 'Large-scale deployments', 'Regulated industries'],
+    enterprise_ready: true
+  },
+  'hybrid': {
+    key: 'hybrid',
+    name: 'Hybrid',
+    label: 'Hybrid',
+    icon: '⚡',
+    description: 'Supports multiple deployment options',
+    tagline: 'Flexible deployment options',
+    badge_class: 'bg-yellow-100 text-yellow-800 border-yellow-300',
+    setup_heading: 'Deployment Setup',
+    requirements: ['Depends on chosen deployment mode'],
+    use_cases: ['Multi-environment', 'Gradual migration', 'Development-to-production'],
+    hybrid: true
+  }
+};
+
+/**
+ * Get deployment type info for display
+ * @param {string} deploymentType - Deployment type key
+ * @returns {Object} Deployment type details or fallback
+ */
+export function getDeploymentType(deploymentType) {
+  return deploymentTypes[deploymentType] || deploymentTypes.hybrid;
+}
+
+/**
+ * Get deployment badge for display
+ * @param {string} deploymentType - Deployment type key
+ * @returns {Object} Badge color, label, and icon
+ */
+export function getDeploymentBadge(deploymentType) {
+  const deployment = getDeploymentType(deploymentType);
+  return {
+    color: deployment.badge_class.split(' ')[0].replace('bg-', ''),
+    label: deployment.label,
+    icon: deployment.icon,
+    tooltip: deployment.description
+  };
+}
+
+/**
+ * Sort servers by deployment type relevance and popularity
+ * @param {Array} servers - Array of servers
+ * @param {string} targetDeployment - Target deployment type to prioritize
+ * @returns {Array} Sorted servers
+ */
+export function sortServersByDeployment(servers, targetDeployment = null) {
+  if (!Array.isArray(servers)) return [];
+  
+  const sorted = [...servers].sort((a, b) => {
+    // Primary sort: Exact deployment match (if targeting a specific deployment)
+    if (targetDeployment) {
+      const aMatchesTarget = a.deployment === targetDeployment;
+      const bMatchesTarget = b.deployment === targetDeployment;
+      if (aMatchesTarget && !bMatchesTarget) return -1;
+      if (!aMatchesTarget && bMatchesTarget) return 1;
+    }
+    
+    // Secondary sort: Enterprise-ready servers first
+    const aEnterprise = a.enterprise_features?.includes('enterprise_ready');
+    const bEnterprise = b.enterprise_features?.includes('enterprise_ready');
+    if (aEnterprise && !bEnterprise) return -1;
+    if (!aEnterprise && bEnterprise) return 1;
+    
+    // Tertiary sort: By stars (popularity)
+    const aStars = a.fields?.stars || 0;
+    const bStars = b.fields?.stars || 0;
+    return bStars - aStars;
+  });
+  
+  return sorted;
+}
+
+/**
+ * Filter servers by deployment type
+ * @param {Array} servers - Array of servers
+ * @param {string} deploymentType - Deployment type to filter by
+ * @returns {Array} Filtered servers
+ */
+export function filterServersByDeployment(servers, deploymentType) {
+  if (!Array.isArray(servers) || !deploymentType) return [];
+  
+  return servers.filter(server => {
+    if (server.deployment === deploymentType) return true;
+    
+    // Hybrid servers match all deployment types
+    if (server.deployment === 'hybrid' && deploymentType !== 'hybrid') return true;
+    
+    // Check deployment_metadata for secondary deployments
+    const secondary = server.deployment_metadata?.secondary_deployments || [];
+    return secondary.includes(deploymentType);
+  });
+}
+
+/**
+ * Get deployment setup instructions for a server
+ * @param {Object} server - Server object
+ * @param {string} targetDeployment - Target deployment type
+ * @returns {Object} Setup instructions
+ */
+export function getDeploymentSetup(server, targetDeployment) {
+  const deployment = getDeploymentType(targetDeployment);
+  const commands = getInstallationCommands(server);
+  
+  const setup = {
+    heading: deployment.setup_heading,
+    requirements: deployment.requirements,
+    use_cases: deployment.use_cases,
+    primary_command: commands.npx || commands.npm || commands.manual,
+    environment_setup: [],
+    post_install_steps: []
+  };
+  
+  // Add environment variable setup if present
+  const envVars = server.fields?.environment_variables || [];
+  if (envVars.length > 0) {
+    setup.environment_setup.push({
+      type: 'env',
+      variables: envVars.map(env => ({
+        name: env.name,
+        value: env.default || `<YOUR_${env.name}>`,
+        description: env.description || ''
+      }))
+    });
+  }
+  
+  // Add deployment-specific post-install steps
+  if (targetDeployment === 'local_stdio') {
+    if (server.fields?.category === 'databases') {
+      setup.post_install_steps.push('Ensure database is running locally');
+    }
+    setup.post_install_steps.push('Add to your MCP client configuration');
+    
+  } else if (targetDeployment === 'cloud_native') {
+    setup.environment_setup.push({
+      type: 'cloud_credentials',
+      description: 'Configure cloud provider credentials'
+    });
+    setup.post_install_steps.push(
+      'Deploy to your cloud provider',
+      'Configure domain and SSL',
+      'Set up monitoring and logging'
+    );
+    
+  } else if (targetDeployment === 'self_hosted') {
+    setup.environment_setup.push({
+      type: 'server_access',
+      description: 'SSH or console access to target server'
+    });
+    setup.post_install_steps.push(
+      'Install dependencies on server',
+      'Configure firewall rules',
+      'Set up reverse proxy (nginx/caddy)',
+      'Configure systemd service for auto-start'
+    );
+    
+  } else if (targetDeployment === 'enterprise_saas') {
+    setup.post_install_steps.push(
+      'Contact vendor for enterprise onboarding',
+      'Complete security and compliance review',
+      'Configure SSO and user management',
+      'Set up billing and usage monitoring'
+    );
+  }
+  
+  return setup;
+}

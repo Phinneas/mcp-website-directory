@@ -108,6 +108,116 @@ export async function fetchAllMCPServers() {
 }
 
 /**
+ * Deployment type mapping from transport support to deployment targets
+ * This maps the technical transport (stdio/sse/websocket) to business deployment categories
+ */
+const deploymentTypeMapping = {
+  // stdio-only servers -> Local development and self-hosted
+  stdio_only: ['local_stdio', 'self_hosted'],
+  
+  // SSE-only servers -> Cloud-native and enterprise SaaS  
+  sse_only: ['cloud_native', 'enterprise_saas'],
+  
+  // Hybrid servers (stdio + SSE) -> All deployment types
+  hybrid: ['local_stdio', 'cloud_native', 'self_hosted', 'enterprise_saas'],
+  
+  // WebSocket servers -> Typically cloud/enterprise focused
+  websocket: ['cloud_native', 'enterprise_saas']
+};
+
+/**
+ * Infer deployment type from server capabilities
+ * @param {Object} server - Server with capabilities/transport metadata
+ * @returns {Object} Deployment type inference
+ */
+function inferDeploymentType(server) {
+  const name = server.name || '';
+  const description = server.short_description || '';
+  const text = `${name} ${description}`.toLowerCase();
+  
+  // Check for transport support flags first (most reliable)
+  const hasStdio = server.capabilities?.includes('stdio');
+  const hasSse = server.capabilities?.includes('sse');
+  const hasWebsocket = server.capabilities?.includes('websocket');
+  
+  let primaryDeployment, secondaryDeployments, enterpriseFeatures = [];
+  
+  // Priority 1: Use explicit transport support from capabilities
+  if (hasStdio && hasSse) {
+    // Hybrid servers support multiple deployment types
+    primaryDeployment = 'hybrid';
+    secondaryDeployments = ['local_stdio', 'cloud_native', 'self_hosted'];
+    
+    // Check for enterprise features
+    if (text.includes('auth') || text.includes('oauth') || text.includes('enterprise')) {
+      enterpriseFeatures.push('sso', 'audit_logs', 'enterprise_ready');
+    }
+    
+  } else if (hasStdio) {
+    // stdio-only servers are primarily local/self-hosted
+    primaryDeployment = 'local_stdio';
+    secondaryDeployments = ['self_hosted'];
+    
+    // CLI tools that could be self-hosted
+    if (text.includes('self-hosted') || text.includes('on-premise') || text.includes('vpc')) {
+      primaryDeployment = 'self_hosted';
+    }
+    
+  } else if (hasSse || hasWebsocket) {
+    // Cloud/SSE focused servers
+    primaryDeployment = 'cloud_native';
+    secondaryDeployments = ['enterprise_saas'];
+    
+    // Check for enterprise SaaS characteristics
+    const hasEnterpriseSignals = 
+      text.includes('enterprise') ||
+      text.includes('sl') ||
+      text.includes('auth') ||
+      text.includes('sso') ||
+      text.includes('managed') ||
+      server.github_stars > 1000 ||
+      server.package_download_count > 100000;
+    
+    if (hasEnterpriseSignals) {
+      primaryDeployment = 'enterprise_saas';
+      secondaryDeployments = ['cloud_native'];
+      enterpriseFeatures.push('sla', 'support', 'enterprise_ready');
+    }
+    
+  } else {
+    // Default fallback based on heuristics
+    const isCloudService = 
+      text.includes('saas') ||
+      text.includes('api') ||
+      text.includes('cloud');
+    
+    const isLocalTool = 
+      text.includes('cli') ||
+      text.includes('local') ||
+      text.includes('filesystem');
+    
+    if (isCloudService) {
+      primaryDeployment = 'cloud_native';
+      secondaryDeployments = ['self_hosted'];
+    } else if (isLocalTool) {
+      primaryDeployment = 'local_stdio';
+      secondaryDeployments = ['self_hosted'];
+    } else {
+      // Fallback to hybrid for unknown servers
+      primaryDeployment = 'hybrid';
+      secondaryDeployments = ['local_stdio', 'self_hosted'];
+    }
+  }
+  
+  return {
+    primaryDeployment,
+    secondaryDeployments,
+    enterpriseFeatures,
+    confidence: hasStdio || hasSse || hasWebsocket ? 'high' : 'medium'
+  };
+}
+
+/**
  * Transform PulseMCP API data to our internal format
  * @param {Array} apiServers - Raw servers from PulseMCP API 
  * @returns {Array} Servers in our internal format
@@ -128,6 +238,9 @@ export function transformPulseMCPData(apiServers) {
     
     // Infer category from name and description
     const category = inferCategory(server.name, server.short_description, server.EXPERIMENTAL_ai_generated_description);
+    
+    // Infer deployment type from server capabilities
+    const deployment = inferDeploymentType(server);
 
     return {
       id: server.id || slugifyId(server.name) || `pulsemcp-${index}`,
@@ -145,7 +258,16 @@ export function transformPulseMCPData(apiServers) {
         logoUrl: null,
         logoSource: null,
         logoCachedAt: null
-      }
+      },
+      // Add deployment metadata
+      deployment: deployment.primaryDeployment,
+      deployment_metadata: {
+        confidence: deployment.confidence,
+        secondary_deployments: deployment.secondaryDeployments,
+        capabilities: server.capabilities || [],
+        inferred_at: new Date().toISOString()
+      },
+      enterprise_features: deployment.enterpriseFeatures
     };
   });
 }

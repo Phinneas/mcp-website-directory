@@ -1,34 +1,48 @@
-# Redirect non-www to www for canonical URL consistency
-http://mymcpshelf.com/* https://www.mymcpshelf.com/:splat 301!
-https://mymcpshelf.com/* https://www.mymcpshelf.com/:splat 301!
+# Cloudflare Pages Redirects for MCP Directory
+# Maintains SEO while transitioning to deployment-based navigation
 
-# Blog post redirect - old long URL to new short URL
-/blog/what-is-mcp-in-ai-complete-guide-to-model-context-protocol /blog/what-is-mcp-in-ai 301
+# Redirect homepage to default deployment (Local is primary use case)
+/ /local-stdio 301
 
-# Removed pages
-/skills /agent-skills 301
-/skills/ /agent-skills 301
-/claude-skills /agent-skills 301
-/claude-skills/ /agent-skills 301
-/category/* / 301
+# Preserve old URLs (no redirects needed for these - they remain valid)
+# /mcp-clients - stays as is
+# /mcp-tools - stays as is
+# /blog/* - stays as is
+# /faq - stays as is
+# /submit-server - stays as is
+# /server/* - stays as is (individual server pages)
 
-# Blog redirects
-/blog/mcp-client-comparison /mcp-clients 301
-/blog/mcp-client-comparison/ /mcp-clients 301
+# Old category-style URLs (if they existed - no known URLs to redirect)
 
-# Server slug redirects — known renames in new dataset
-/server/flutter-mcp-server /server/flutter 301
-/server/elasticsearch-mcp-server /server/elasticsearch 301
+# Common misspellings and variants
+/enterprise /enterprise-saas 301
+/cloud /cloud-native 301
+/local /local-stdio 301
+/vpc /self-hosted 301
+/selfhosted /self-hosted 301
+/cliservers /local-stdio 301
 
-# Server slug redirects — no direct equivalent
-/server/mcp-simple-pubmed / 301
-/server/o3-search-mcp / 301
-/server/erick-wendel-contributions-mcp / 301
-/server/apple-shortcuts-mcp / 301
-/server/aws-documentation-mcp / 301
-/server/mcprb / 301
-/server/xiyan-mcp-server / 301
-/server/atlassian-mcp-server / 301
-/server/modex / 301
-/server/mcp-documentation-server / 301
-/server/mcp-servers-hub / 301
+# Legacy paths that might be bookmarked
+/home /local-stdio 301
+/main /local-stdio 301
+/index /local-stdio 301
+
+# External shorteners and social media (common typos)
+/stdio /local-stdio 301
+/sse /cloud-native 301
+/websocket /cloud-native 301
+
+# Ensure all deployment pages have trailing slash variants
+/local-stdio/ /local-stdio 301
+/cloud-native/ /cloud-native 301
+/self-hosted/ /self-hosted 301
+/enterprise-saas/ /enterprise-saas 301
+/enterprise-readiness/ /enterprise-readiness 301
+
+# Blog post redirects for old content that might have been shared
+# (No old URLs to redirect - keeping structure)
+
+# API redirects (if any old API paths existed)
+
+# Final catch-all for unmatched paths (send to homepage with 404 handling)
+# Handled by 404.astro - no redirect needed

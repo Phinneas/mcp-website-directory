@@ -1,0 +1,187 @@
+---
+import { getServersPage } from '../utils/d1';
+import type { MCPServer } from '../utils/d1';
+import EmailSignup from '../components/EmailSignup.astro';
+import ServerGrid from '../components/ServerGrid';
+import Navbar from '../components/Navbar.astro';
+import { filterServersByDeployment } from '../utils/serverData.js';
+import { staticServers } from '../data/staticServers.js';
+import '../styles/global.css';
+
+const DEPLOYMENT_CONFIG = {
+  deploymentType: 'cloud_native',
+  title: 'Cloud-Native MCP Servers',
+  subtitle: 'SSE/WebSocket cloud services',
+  description: 'Discover cloud-native MCP servers designed for scalable deployment. These servers use SSE (Server-Sent Events) or WebSocket protocols, perfect for cloud environments, distributed teams, and managed services.',
+  heroTitle: 'Cloud-Native MCP Servers',
+  heroDescription: 'Explore MCP servers built for the cloud with SSE and WebSocket support. Perfect for scalable deployments, remote teams, and distributed architectures.',
+  tagline: 'Deploy in the cloud, scale with ease',
+  features: [
+    'Real-time bidirectional communication',
+    'HTTP-based transport (SSE/WebSocket)',
+    'Scalable for cloud infrastructure',
+    'Perfect for remote teams',
+    'Managed service friendly',
+    'Auto-scaling capabilities'
+  ],
+  requirements: [
+    'Internet connectivity',
+    'Cloud provider account (AWS/GCP/Azure)',
+    'HTTP/HTTPS endpoint',
+    'SSL/TLS certificate for production'
+  ],
+  useCases: [
+    'Multi-user collaboration',
+    'Distributed team workflows',
+    'SaaS platform integration',
+    'Remote API services',
+    'Microservices architecture',
+    'Serverless deployment'
+  ]
+};
+
+const db = (Astro.locals as any).runtime?.env?.DB as D1Database | undefined;
+let initialServers: MCPServer[] = [];
+let total = 0;
+
+if (db) {
+  try {
+    const result = await getServersPage(db, { limit: 48 });
+    const allServers = result.servers;
+    const filteredServers = filterServersByDeployment(allServers, DEPLOYMENT_CONFIG.deploymentType);
+    
+    initialServers = filteredServers.slice(0, 48);
+    total = filteredServers.length;
+  } catch (error) {
+    console.error(`Error fetching servers:`, error);
+    initialServers = [];
+    total = 0;
+  }
+} else {
+  const allServers = staticServers as any[] as MCPServer[];
+  const filteredServers = filterServersByDeployment(allServers, DEPLOYMENT_CONFIG.deploymentType);
+  initialServers = filteredServers.slice(0, 48);
+  total = filteredServers.length;
+}
+
+const deploymentMeta = {
+  deployment: DEPLOYMENT_CONFIG.deploymentType,
+  totalServers: total,
+  filters: [],
+  page: 1
+};
+
+const canonicalUrl = `https://www.mymcpshelf.com/cloud-native`;
+
+function slugify(text: string): string {
+  return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+}
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": DEPLOYMENT_CONFIG.title,
+  "description": `${DEPLOYMENT_CONFIG.description} Browse ${total}+ MCP servers.`,
+  "url": canonicalUrl
+};
+---
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{DEPLOYMENT_CONFIG.title} | MCP Directory</title>
+    <meta name="description" content={`${DEPLOYMENT_CONFIG.description} Browse ${total}+ MCP servers.`}>
+    <link rel="canonical" href={canonicalUrl}>
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+</head>
+<body>
+    <div class="page-wrapper">
+        <Navbar />
+        <section class="hero-section">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1 class="page-title">{DEPLOYMENT_CONFIG.heroTitle}</h1>
+                    <p class="page-subtitle">{DEPLOYMENT_CONFIG.heroDescription}</p>
+                    <div class="tagline-badge">
+                        <span>⚡</span>
+                        {DEPLOYMENT_CONFIG.tagline}
+                    </div>
+                </div>
+                <div class="hero-badges">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <span class="stat-value">{total}</span>
+                            <span class="stat-label">Servers</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-value">{Math.floor(total * 0.4)}</span>
+                            <span class="stat-label">Scalable</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-value">SSE</span>
+                            <span class="stat-label">Protocol</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <main class="page-container">
+            <section class="deployment-info">
+                <h2>About {DEPLOYMENT_CONFIG.title}</h2>
+                <p>{DEPLOYMENT_CONFIG.description}</p>
+                <div class="info-grid">
+                    <div class="info-section">
+                        <h3>✨ Key Features</h3>
+                        <ul class="info-list">
+                            {DEPLOYMENT_CONFIG.features.map(feature => <li>{feature}</li>)}
+                        </ul>
+                    </div>
+                    <div class="info-section">
+                        <h3>⚙️ Requirements</h3>
+                        <ul class="info-list">
+                            {DEPLOYMENT_CONFIG.requirements.map(req => <li>{req}</li>)}
+                        </ul>
+                    </div>
+                    <div class="info-section">
+                        <h3>💡 Use Cases</h3>
+                        <ul class="info-list">
+                            {DEPLOYMENT_CONFIG.useCases.map(useCase => <li>{useCase}</li>)}
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="grid-section">
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">{initialServers.length > 0 ? `${initialServers.length}+ ${DEPLOYMENT_CONFIG.title}` : 'Browse Servers'}</h2>
+                        <p class="section-description">
+                            {initialServers.length > 0 
+                                ? `Discover cloud-native MCP servers optimized for ${DEPLOYMENT_CONFIG.subtitle.toLowerCase()}`
+                                : 'Filter and browse MCP servers by deployment type'}
+                        </p>
+                    </div>
+                </div>
+                
+                {initialServers.length > 0 ? (
+                    <ServerGrid 
+                        client:load
+                        initialServers={initialServers}
+                        total={total}
+                        meta={deploymentMeta}
+                    />
+                ) : (
+                    <div class="no-results">
+                        <h3>No servers found for this deployment type yet</h3>
+                        <p>Check back soon or <a href="/submit-server">submit a new server</a>.</p>
+                    </div>
+                )}
+            </section>
+        </main>
+        
+        <EmailSignup />
+    </div>
+</body>
+</html>
