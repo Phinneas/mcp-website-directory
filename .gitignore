@@ -56,3 +56,4 @@ linkcanary_*.json
 MCP_REPLACEMENTS_SUMMARY.md
 github_*.log
 github_*.json
+.gitnexus
