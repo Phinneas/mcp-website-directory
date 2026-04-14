@@ -86,10 +86,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          # Use the default GITHUB_TOKEN.  If you need the push to trigger
-          # Cloudflare's GitHub integration instead of the deploy hook, replace
-          # this with a PAT that has workflow scope.
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.MCPACTIONPAT }}
 
       # ── 2. Python ───────────────────────────────────────────────────────────
       - name: Set up Python ${{ env.PYTHON_VERSION }}
