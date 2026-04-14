@@ -184,16 +184,17 @@ const utilityNavItems = [
     padding: 0 1.5rem;
     height: auto;
     min-height: 70px;
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    justify-content: space-between;
     gap: 2rem;
-    flex-wrap: wrap;
   }
 
   .navbar-logo {
+    grid-column: 2;
+    justify-self: center;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 0.5rem;
     text-decoration: none;
     flex-shrink: 0;
@@ -217,10 +218,11 @@ const utilityNavItems = [
   }
 
   .navbar-links {
+    grid-column: 3;
+    justify-self: end;
     display: flex;
     align-items: center;
     gap: 2rem;
-    flex: 1;
     justify-content: flex-end;
   }
 
@@ -463,16 +465,21 @@ const utilityNavItems = [
     .navbar-inner {
       height: auto;
       padding: 0.75rem 1rem;
+      display: flex;
       flex-direction: column;
       align-items: stretch;
       gap: 1rem;
     }
 
     .navbar-logo {
+      grid-column: unset;
+      justify-self: unset;
       align-items: center;
     }
 
     .navbar-links {
+      grid-column: unset;
+      justify-self: unset;
       width: 100%;
       flex-direction: column;
       align-items: stretch;
