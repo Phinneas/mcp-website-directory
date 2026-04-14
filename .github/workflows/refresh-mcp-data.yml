@@ -85,8 +85,7 @@ jobs:
       # ── 1. Checkout ─────────────────────────────────────────────────────────
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.MCPACTIONPAT }}
+
 
       # ── 2. Python ───────────────────────────────────────────────────────────
       - name: Set up Python ${{ env.PYTHON_VERSION }}
