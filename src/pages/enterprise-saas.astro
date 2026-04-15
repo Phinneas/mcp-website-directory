@@ -1,17 +1,16 @@
 ---
 import { getServersPage } from '../utils/d1';
 import type { MCPServer } from '../utils/d1';
-import EmailSignup from '../components/EmailSignup.astro';
 import ServerGrid from '../components/ServerGrid';
-import Navbar from '../components/Navbar.astro';
 import { filterServersByDeployment } from '../utils/serverData.js';
 import { staticServers } from '../data/staticServers.js';
-import '../styles/global.css';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/deployment-page.css';
 
 const DEPLOYMENT_CONFIG = {
   deploymentType: 'enterprise_saas',
   title: 'Enterprise SaaS MCP Servers',
-  subtitle: 'Secure managed SaaS with SLAs',
+  subtitle: 'secure managed SaaS with SLAs',
   description: 'Production-ready MCP servers with enterprise features like SSO, audit logs, SLAs, and dedicated support. Perfect for mission-critical applications requiring compliance, security, and scalability guarantees.',
   heroTitle: 'Enterprise SaaS MCP Servers',
   heroDescription: 'Deploy production-ready MCP servers with enterprise-grade security, compliance, and support. Perfect for mission-critical applications requiring reliability and scalability at scale.',
@@ -25,14 +24,13 @@ const DEPLOYMENT_CONFIG = {
     'Automatic scaling and load balancing',
     'Advanced security and threat detection',
     'Role-based access control (RBAC)',
-    'Custom SLAs and enterprise contracts'
   ],
   requirements: [
     'Enterprise contract and agreement',
     'SSO/SAML identity provider configuration',
     'Dedicated infrastructure provisioning',
     'Security and compliance review',
-    'Support agreement and SLA definition'
+    'Support agreement and SLA definition',
   ],
   useCases: [
     'Mission-critical business applications',
@@ -40,8 +38,8 @@ const DEPLOYMENT_CONFIG = {
     'Regulated industries (finance, healthcare, gov)',
     'Multi-tenant SaaS platforms',
     'Global distributed teams',
-    'High-availability requirements'
-  ]
+    'High-availability requirements',
+  ],
 };
 
 const db = (Astro.locals as any).runtime?.env?.DB as D1Database | undefined;
@@ -54,378 +52,113 @@ if (db) {
     initialServers = result.servers;
     total = result.total;
   } catch (error) {
-    console.error(`Error fetching servers:`, error);
-    initialServers = [];
-    total = 0;
+    console.error(`Error fetching servers for ${DEPLOYMENT_CONFIG.deploymentType}:`, error);
   }
 } else {
-  const allServers = staticServers as any[] as MCPServer[];
-  const filteredServers = filterServersByDeployment(allServers, DEPLOYMENT_CONFIG.deploymentType);
+  const filteredServers = filterServersByDeployment(staticServers as any[] as MCPServer[], DEPLOYMENT_CONFIG.deploymentType);
   initialServers = filteredServers.slice(0, 48);
   total = filteredServers.length;
 }
 
-const deploymentMeta = {
-  deployment: DEPLOYMENT_CONFIG.deploymentType,
-  totalServers: total,
-  filters: [],
-  page: 1
-};
-
-const canonicalUrl = `https://www.mymcpshelf.com/enterprise-saas`;
-
-function slugify(text: string): string {
-  return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-}
+const canonicalUrl = 'https://www.mymcpshelf.com/enterprise-saas';
+const pageTitle = `${DEPLOYMENT_CONFIG.title} | My MCP Shelf`;
+const pageDescription = `${DEPLOYMENT_CONFIG.description} Browse ${total}+ enterprise MCP servers.`;
 
 const structuredData = {
-  "@context": "https://schema.org",
-  "@type": "CollectionPage",
-  "name": DEPLOYMENT_CONFIG.title,
-  "description": `${DEPLOYMENT_CONFIG.description} Browse ${total}+ MCP servers.`
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: DEPLOYMENT_CONFIG.title,
+  description: pageDescription,
+  url: canonicalUrl,
 };
 ---
 
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{DEPLOYMENT_CONFIG.title} | MCP Directory</title>
-    <meta name="description" content={`${DEPLOYMENT_CONFIG.description} Browse ${total}+ MCP servers.`}>
-    <link rel="canonical" href={canonicalUrl}>
-    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
-    <style>
-        :root {
-            --bg-color: hsl(var(--background));
-            --text-primary: hsl(var(--foreground));
-            --text-secondary: hsl(var(--muted-foreground));
-            --card-bg: hsl(var(--card));
-            --border-color: hsl(var(--border));
-            --accent-color: hsl(var(--primary));
-            --hero-bg: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-        }
-        
-        body.dark-mode {
-            --bg-color: #0f172a;
-            --text-primary: #f1f5f9;
-            --text-secondary: #94a3b8;
-            --card-bg: #1e293b;
-            --border-color: #334155;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Libre Franklin', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.7;
-            color: var(--text-primary);
-            background: var(--bg-color);
-            min-height: 100vh;
-        }
-        
-        .page-wrapper {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .hero-section {
-            background: var(--hero-bg);
-            padding: 3rem 0;
-            border-bottom: 1px solid var(--border-color);
-            margin-bottom: 2rem;
-        }
-        
-        .hero-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-            display: flex;
-            gap: 2rem;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        
-        .hero-text {
-            flex: 2;
-            min-width: 300px;
-        }
-        
-        .hero-badges {
-            flex: 1;
-            min-width: 250px;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .page-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            line-height: 1.2;
-            margin-bottom: 0.5rem;
-            color: white;
-        }
-        
-        .page-subtitle {
-            font-size: 1.25rem;
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
-            font-weight: 500;
-        }
-        
-        .tagline-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: rgba(255, 255, 255, 0.1);
-            color: #60a5fa;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 1rem;
-        }
-        
-        .stat-card {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 1rem;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center;
-        }
-        
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: white;
-            display: block;
-        }
-        
-        .stat-label {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        
-        .page-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-            flex: 1;
-        }
-        
-        .deployment-info {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 1.5rem;
-        }
-        
-        .info-section h3 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .info-list {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-        
-        .info-list li {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-        
-        .info-list li::before {
-            content: '✓';
-            color: #10b981;
-            font-weight: bold;
-            margin-top: 0.1rem;
-        }
-        
-        .grid-section {
-            margin-bottom: 3rem;
-        }
-        
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-        
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-        
-        .section-description {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-        }
-        
-        .no-results {
-            text-align: center;
-            padding: 3rem 0;
-            color: var(--text-secondary);
-        }
-        
-        .no-results h3 {
-            font-size: 1.2rem;
-            margin-bottom: 0.5rem;
-            color: var(--text-primary);
-        }
-        
-        @media (max-width: 768px) {
-            .hero-content {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .page-title {
-                font-size: 2rem;
-            }
-            
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .info-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-    <script>
-        (function() {
-            const theme = localStorage.getItem('theme');
-            if (theme === 'dark') {
-                document.documentElement.classList.add('dark-mode');
-                document.body?.classList.add('dark-mode');
-            }
-        })();
-    </script>
-</head>
-<body>
-    <div class="page-wrapper">
-        <Navbar />
-        <section class="hero-section">
-            <div class="hero-content">
-                <div class="hero-text">
-                    <h1 class="page-title">{DEPLOYMENT_CONFIG.heroTitle}</h1>
-                    <p class="page-subtitle">{DEPLOYMENT_CONFIG.heroDescription}</p>
-                    <div class="tagline-badge">
-                        <span>⚡</span>
-                        {DEPLOYMENT_CONFIG.tagline}
-                    </div>
-                </div>
-                <div class="hero-badges">
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <span class="stat-value">{total}</span>
-                            <span class="stat-label">Enterprise</span>
-                        </div>
-                        <div class="stat-card">
-                            <span class="stat-value">99.9%</span>
-                            <span class="stat-label">SLA</span>
-                        </div>
-                        <div class="stat-card">
-                            <span class="stat-value">🔐</span>
-                            <span class="stat-label">SOC 2</span>
-                        </div>
-                    </div>
-                </div>
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  canonical={canonicalUrl}
+  structuredData={structuredData}
+>
+  <div transition:name="main-content">
+    <section class="hero-section">
+      <div class="hero-content">
+        <div class="hero-text">
+          <h1 class="page-title">{DEPLOYMENT_CONFIG.heroTitle}</h1>
+          <p class="page-subtitle">{DEPLOYMENT_CONFIG.heroDescription}</p>
+          <div class="tagline-badge">
+            <span>🔐</span>
+            {DEPLOYMENT_CONFIG.tagline}
+          </div>
+        </div>
+        <div class="hero-badges">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <span class="stat-value">{total}</span>
+              <span class="stat-label">Servers</span>
             </div>
-        </section>
-        
-        <main class="page-container">
-            <section class="deployment-info">
-                <h2>About {DEPLOYMENT_CONFIG.title}</h2>
-                <p>{DEPLOYMENT_CONFIG.description}</p>
-                <div class="info-grid">
-                    <div class="info-section">
-                        <h3>✨ Enterprise Features</h3>
-                        <ul class="info-list">
-                            {DEPLOYMENT_CONFIG.features.slice(0, 6).map(feature => <li>{feature}</li>)}
-                        </ul>
-                    </div>
-                    <div class="info-section">
-                        <h3>⚙️ Requirements</h3>
-                        <ul class="info-list">
-                            {DEPLOYMENT_CONFIG.requirements.map(req => <li>{req}</li>)}
-                        </ul>
-                    </div>
-                    <div class="info-section">
-                        <h3>💡 Use Cases</h3>
-                        <ul class="info-list">
-                            {DEPLOYMENT_CONFIG.useCases.map(useCase => <li>{useCase}</li>)}
-                        </ul>
-                    </div>
-                </div>
-            </section>
-            
-            <section class="grid-section">
-                <div class="section-header">
-                    <div>
-                        <h2 class="section-title">{initialServers.length > 0 ? `${initialServers.length}+ Enterprise-Ready Servers` : 'Browse Enterprise Servers'}</h2>
-                        <p class="section-description">
-                            {initialServers.length > 0 
-                                ? `Discover enterprise SaaS MCP servers with ${DEPLOYMENT_CONFIG.features.length}+ enterprise features`
-                                : 'Filter and browse MCP servers by deployment type'}
-                        </p>
-                    </div>
-                </div>
-                
-                {initialServers.length > 0 ? (
-                    <ServerGrid 
-                        client:load
-                        initialServers={initialServers}
-                        total={total}
-                        meta={deploymentMeta}
-                    />
-                ) : (
-                    <div class="no-results">
-                        <h3>No enterprise servers found yet</h3>
-                        <p>Check back soon or <a href="/submit-server">submit an enterprise-ready server</a>.</p>
-                    </div>
-                )}
-            </section>
-        </main>
-        
-        <EmailSignup />
-    </div>
-</body>
-</html>
+            <div class="stat-card">
+              <span class="stat-value">SOC2</span>
+              <span class="stat-label">Certified</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-value">99.9%</span>
+              <span class="stat-label">SLA</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <main class="page-container">
+      <section class="deployment-info">
+        <h2>About {DEPLOYMENT_CONFIG.title}</h2>
+        <p>{DEPLOYMENT_CONFIG.description}</p>
+        <div class="info-grid">
+          <div class="info-section">
+            <h3>✨ Key Features</h3>
+            <ul class="info-list">
+              {DEPLOYMENT_CONFIG.features.map(f => <li>{f}</li>)}
+            </ul>
+          </div>
+          <div class="info-section">
+            <h3>⚙️ Requirements</h3>
+            <ul class="info-list">
+              {DEPLOYMENT_CONFIG.requirements.map(r => <li>{r}</li>)}
+            </ul>
+          </div>
+          <div class="info-section">
+            <h3>💡 Use Cases</h3>
+            <ul class="info-list">
+              {DEPLOYMENT_CONFIG.useCases.map(u => <li>{u}</li>)}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid-section">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">{initialServers.length > 0 ? `${total}+ ${DEPLOYMENT_CONFIG.title}` : 'Browse Servers'}</h2>
+            <p class="section-description">Discover the best MCP servers optimized for {DEPLOYMENT_CONFIG.subtitle}</p>
+          </div>
+        </div>
+        {initialServers.length > 0 ? (
+          <ServerGrid client:load initialServers={initialServers} total={total} meta={{ deployment: DEPLOYMENT_CONFIG.deploymentType }} />
+        ) : (
+          <div class="no-results">
+            <h3>No servers found for this deployment type yet</h3>
+            <p>Check back soon or <a href="/submit-server">submit a new server</a>.</p>
+          </div>
+        )}
+      </section>
+
+      <section class="comparison-section">
+        <h2>Not sure which deployment is right for you?</h2>
+        <p>Compare deployment options and find the best fit for your infrastructure needs.</p>
+        <div class="comparison-cta">
+          <a href="/enterprise-readiness" class="btn">Compare Deployment Options →</a>
+        </div>
+      </section>
+    </main>
+  </div>
+</BaseLayout>

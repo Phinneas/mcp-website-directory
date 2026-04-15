@@ -11,7 +11,8 @@ export default defineConfig({
   site: 'https://www.mymcpshelf.com',
   output: 'server',
   adapter: cloudflare(),
-  trailingSlash: 'never',  // Disable automatic trailing slashes
+  trailingSlash: 'never',
+  prefetch: { prefetchAll: true, defaultStrategy: 'hover' },
   integrations: [react(), mdx(), sitemap({
     filter: (page) => !page.includes('/server/'),
   })],

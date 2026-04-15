@@ -1,19 +1,12 @@
 ---
-/**
- * Local & CLI Deployment MCP Servers Page
- * Description: stdio-based local development tools
- */
-
 import { getServersPage } from '../utils/d1';
 import type { MCPServer } from '../utils/d1';
-import EmailSignup from '../components/EmailSignup.astro';
 import ServerGrid from '../components/ServerGrid';
-import Navbar from '../components/Navbar.astro';
 import { filterServersByDeployment } from '../utils/serverData.js';
 import { staticServers } from '../data/staticServers.js';
-import '../styles/global.css';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/deployment-page.css';
 
-// Configuration for Local & CLI deployment page
 const DEPLOYMENT_CONFIG = {
   deploymentType: 'local_stdio',
   title: 'Local & CLI MCP Servers',
@@ -28,12 +21,12 @@ const DEPLOYMENT_CONFIG = {
     'Perfect for development and testing',
     'Easy debugging and troubleshooting',
     'Full control over data and execution',
-    'Works offline and in air-gapped environments'
+    'Works offline and in air-gapped environments',
   ],
   requirements: [
     'Local runtime environment (Node.js/Python)',
     'CLI access and command-line tools',
-    'Basic understanding of process management'
+    'Basic understanding of process management',
   ],
   useCases: [
     'Local development workflows',
@@ -41,12 +34,11 @@ const DEPLOYMENT_CONFIG = {
     'Testing and debugging MCP tools',
     'Offline or air-gapped environments',
     'Self-hosted deployment scenarios',
-    'Data-sensitive operations'
-  ]
+    'Data-sensitive operations',
+  ],
 };
 
 const db = (Astro.locals as any).runtime?.env?.DB as D1Database | undefined;
-
 let initialServers: MCPServer[] = [];
 let total = 0;
 
@@ -57,498 +49,112 @@ if (db) {
     total = result.total;
   } catch (error) {
     console.error(`Error fetching servers for ${DEPLOYMENT_CONFIG.deploymentType}:`, error);
-    initialServers = [];
-    total = 0;
   }
 } else {
-  // Fallback for static builds
-  const allServers = staticServers as any[] as MCPServer[];
-  const filteredServers = filterServersByDeployment(allServers, DEPLOYMENT_CONFIG.deploymentType);
+  const filteredServers = filterServersByDeployment(staticServers as any[] as MCPServer[], DEPLOYMENT_CONFIG.deploymentType);
   initialServers = filteredServers.slice(0, 48);
   total = filteredServers.length;
 }
 
-const deploymentMeta = {
-  deployment: DEPLOYMENT_CONFIG.deploymentType,
-  totalServers: total,
-  filters: [],
-  page: 1
-};
+const canonicalUrl = 'https://www.mymcpshelf.com/local-stdio';
+const pageTitle = `${DEPLOYMENT_CONFIG.title} | My MCP Shelf`;
+const pageDescription = `${DEPLOYMENT_CONFIG.description} Browse ${total}+ MCP servers optimized for local stdio deployment.`;
 
-const pageTitle = `${DEPLOYMENT_CONFIG.title} | MCP Directory`;
-const pageDescription = `${DEPLOYMENT_CONFIG.description} Browse ${total}+ MCP servers optimized for ${DEPLOYMENT_CONFIG.deploymentType} deployment.`;
-const canonicalUrl = `https://www.mymcpshelf.com/local-stdio`;
-const ogImage = 'https://www.mymcpshelf.com/og-image.jpg';
-
-// Structured data for SEO
 const structuredData = {
-  "@context": "https://schema.org",
-  "@type": "CollectionPage",
-  "name": DEPLOYMENT_CONFIG.title,
-  "description": pageDescription,
-  "url": canonicalUrl,
-  "about": {
-    "@type": "Thing",
-    "name": "Local MCP Servers"
-  },
-  "mainEntity": {
-    "@type": "ItemList",
-    "itemListElement": initialServers.slice(0, 10).map((server, index) => ({
-      "@type": "ListItem",
-      "position": index + 1,
-      "item": {
-        "@type": "SoftwareApplication",
-        "name": server.fields?.name,
-        "url": `https://www.mymcpshelf.com/server/${slugify(server.fields?.name || '')}`,
-        "applicationCategory": "DeveloperApplication"
-      }
-    }))
-  },
-  "breadcrumb": {
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": "https://www.mymcpshelf.com"
-      },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "name": DEPLOYMENT_CONFIG.title,
-        "item": canonicalUrl
-      }
-    ]
-  }
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: DEPLOYMENT_CONFIG.title,
+  description: pageDescription,
+  url: canonicalUrl,
 };
-
-function slugify(text: string): string {
-  return text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-}
 ---
 
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{pageTitle}</title>
-    <meta name="description" content={pageDescription}>
-    
-    <link rel="canonical" href={canonicalUrl}>
-    
-    <!-- Open Graph -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content={canonicalUrl}>
-    <meta property="og:title" content={pageTitle}>
-    <meta property="og:description" content={pageDescription}>
-    <meta property="og:image" content={ogImage}>
-    
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content={canonicalUrl}>
-    <meta name="twitter:title" content={pageTitle}>
-    <meta name="twitter:description" content={pageDescription}>
-    <meta name="twitter:image" content={ogImage}>
-    
-    <!-- Structured Data -->
-    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
-    
-    <style>
-        :root {
-            --bg-color: hsl(var(--background));
-            --text-primary: hsl(var(--foreground));
-            --text-secondary: hsl(var(--muted-foreground));
-            --card-bg: hsl(var(--card));
-            --border-color: hsl(var(--border));
-            --accent-color: hsl(var(--primary));
-            --hero-bg: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-        }
-        
-        body.dark-mode {
-            --bg-color: #0f172a;
-            --text-primary: #f1f5f9;
-            --text-secondary: #94a3b8;
-            --card-bg: #1e293b;
-            --border-color: #334155;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Libre Franklin', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.7;
-            color: var(--text-primary);
-            background: var(--bg-color);
-            min-height: 100vh;
-        }
-        
-        .page-wrapper {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .hero-section {
-            background: var(--hero-bg);
-            padding: 3rem 0;
-            border-bottom: 1px solid var(--border-color);
-            margin-bottom: 2rem;
-        }
-        
-        .hero-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-            display: flex;
-            gap: 2rem;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        
-        .hero-text {
-            flex: 2;
-            min-width: 300px;
-        }
-        
-        .hero-badges {
-            flex: 1;
-            min-width: 250px;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .page-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            line-height: 1.2;
-            margin-bottom: 0.5rem;
-            color: white;
-        }
-        
-        .page-subtitle {
-            font-size: 1.25rem;
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
-            font-weight: 500;
-        }
-        
-        .tagline-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: rgba(255, 255, 255, 0.1);
-            color: #60a5fa;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 1rem;
-        }
-        
-        .stat-card {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 1rem;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center;
-        }
-        
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: white;
-            display: block;
-        }
-        
-        .stat-label {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        
-        .page-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-            flex: 1;
-        }
-        
-        .deployment-info {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 1.5rem;
-        }
-        
-        .info-section h3 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .info-list {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-        
-        .info-list li {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.5rem;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-        
-        .info-list li::before {
-            content: '✓';
-            color: #10b981;
-            font-weight: bold;
-            margin-top: 0.1rem;
-        }
-        
-        .grid-section {
-            margin-bottom: 3rem;
-        }
-        
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-        
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-        
-        .section-description {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-        }
-        
-        .no-results {
-            text-align: center;
-            padding: 3rem 0;
-            color: var(--text-secondary);
-        }
-        
-        .no-results h3 {
-            font-size: 1.2rem;
-            margin-bottom: 0.5rem;
-            color: var(--text-primary);
-        }
-        
-        .comparison-section {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 2rem;
-            margin: 2rem 0;
-            text-align: center;
-        }
-        
-        .comparison-section h2 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-        
-        .comparison-section p {
-            color: var(--text-secondary);
-            margin-bottom: 1.5rem;
-        }
-        
-        .comparison-cta .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.5rem;
-            background: linear-gradient(135deg, var(--accent-color) 0%, #3b82f6 100%);
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.15s ease;
-        }
-        
-        .comparison-cta .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
-        }
-        
-        @media (max-width: 768px) {
-            .hero-content {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .page-title {
-                font-size: 2rem;
-            }
-            
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .info-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-    
-    <script>
-        // Dark mode flash prevention
-        (function() {
-            const theme = localStorage.getItem('theme');
-            if (theme === 'dark') {
-                document.documentElement.classList.add('dark-mode');
-                document.body?.classList.add('dark-mode');
-            }
-        })();
-    </script>
-</head>
-<body>
-    <div class="page-wrapper">
-        <Navbar />
-        
-        <!-- Hero Section -->
-        <section class="hero-section">
-            <div class="hero-content">
-                <div class="hero-text">
-                    <h1 class="page-title">{DEPLOYMENT_CONFIG.heroTitle}</h1>
-                    <p class="page-subtitle">{DEPLOYMENT_CONFIG.heroDescription}</p>
-                    <div class="tagline-badge">
-                        <span>⚡</span>
-                        {DEPLOYMENT_CONFIG.tagline}
-                    </div>
-                </div>
-                
-                <div class="hero-badges">
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <span class="stat-value">{total}</span>
-                            <span class="stat-label">Servers</span>
-                        </div>
-                        <div class="stat-card">
-                            <span class="stat-value">{Math.floor(total * 0.3)}</span>
-                            <span class="stat-label">Enterprise</span>
-                        </div>
-                        <div class="stat-card">
-                            <span class="stat-value">99.9%</span>
-                            <span class="stat-label">Uptime</span>
-                        </div>
-                    </div>
-                </div>
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  canonical={canonicalUrl}
+  structuredData={structuredData}
+>
+  <div transition:name="main-content">
+    <section class="hero-section">
+      <div class="hero-content">
+        <div class="hero-text">
+          <h1 class="page-title">{DEPLOYMENT_CONFIG.heroTitle}</h1>
+          <p class="page-subtitle">{DEPLOYMENT_CONFIG.heroDescription}</p>
+          <div class="tagline-badge">
+            <span>⚡</span>
+            {DEPLOYMENT_CONFIG.tagline}
+          </div>
+        </div>
+        <div class="hero-badges">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <span class="stat-value">{total}</span>
+              <span class="stat-label">Servers</span>
             </div>
-        </section>
-        
-        <main class="page-container">
-            <!-- Deployment Information -->
-            <section class="deployment-info">
-                <h2>About {DEPLOYMENT_CONFIG.title}</h2>
-                <p>{DEPLOYMENT_CONFIG.description}</p>
-                
-                <div class="info-grid">
-                    <div class="info-section">
-                        <h3>✨ Key Features</h3>
-                        <ul class="info-list">
-                            {DEPLOYMENT_CONFIG.features.map(feature => (
-                                <li>{feature}</li>
-                            ))}
-                        </ul>
-                    </div>
-                    
-                    <div class="info-section">
-                        <h3>⚙️ Requirements</h3>
-                        <ul class="info-list">
-                            {DEPLOYMENT_CONFIG.requirements.map(req => (
-                                <li>{req}</li>
-                            ))}
-                        </ul>
-                    </div>
-                    
-                    <div class="info-section">
-                        <h3>💡 Use Cases</h3>
-                        <ul class="info-list">
-                            {DEPLOYMENT_CONFIG.useCases.map(useCase => (
-                                <li>{useCase}</li>
-                            ))}
-                        </ul>
-                    </div>
-                </div>
-            </section>
-            
-            <!-- Server Grid -->
-            <section class="grid-section">
-                <div class="section-header">
-                    <div>
-                        <h2 class="section-title">{initialServers.length > 0 ? `${initialServers.length}+ ${DEPLOYMENT_CONFIG.title}` : 'Browse Servers'}</h2>
-                        <p class="section-description">
-                            {initialServers.length > 0 
-                                ? `Discover the best MCP servers optimized for ${DEPLOYMENT_CONFIG.subtitle.toLowerCase()}`
-                                : 'Filter and browse MCP servers by deployment type'}
-                        </p>
-                    </div>
-                </div>
-                
-                {initialServers.length > 0 ? (
-                    <ServerGrid 
-                        client:load
-                        initialServers={initialServers}
-                        total={total}
-                        meta={deploymentMeta}
-                    />
-                ) : (
-                    <div class="no-results">
-                        <h3>No servers found for this deployment type yet</h3>
-                        <p>Check back soon or <a href="/submit-server">submit a new server</a>.</p>
-                    </div>
-                )}
-            </section>
-            
-            <!-- Comparison Section -->
-            <section class="comparison-section">
-                <h2>Not sure which deployment is right for you?</h2>
-                <p>Compare deployment options and find the best fit for your infrastructure needs.</p>
-                <div class="comparison-cta">
-                    <a href="/enterprise-readiness" class="btn">Compare Deployment Options →</a>
-                </div>
-            </section>
-        </main>
-        
-        <EmailSignup />
-    </div>
-</body>
-</html>
+            <div class="stat-card">
+              <span class="stat-value">100%</span>
+              <span class="stat-label">Offline</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-value">Free</span>
+              <span class="stat-label">To Use</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <main class="page-container">
+      <section class="deployment-info">
+        <h2>About {DEPLOYMENT_CONFIG.title}</h2>
+        <p>{DEPLOYMENT_CONFIG.description}</p>
+        <div class="info-grid">
+          <div class="info-section">
+            <h3>✨ Key Features</h3>
+            <ul class="info-list">
+              {DEPLOYMENT_CONFIG.features.map(f => <li>{f}</li>)}
+            </ul>
+          </div>
+          <div class="info-section">
+            <h3>⚙️ Requirements</h3>
+            <ul class="info-list">
+              {DEPLOYMENT_CONFIG.requirements.map(r => <li>{r}</li>)}
+            </ul>
+          </div>
+          <div class="info-section">
+            <h3>💡 Use Cases</h3>
+            <ul class="info-list">
+              {DEPLOYMENT_CONFIG.useCases.map(u => <li>{u}</li>)}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid-section">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">{initialServers.length > 0 ? `${total}+ ${DEPLOYMENT_CONFIG.title}` : 'Browse Servers'}</h2>
+            <p class="section-description">Discover the best MCP servers optimized for {DEPLOYMENT_CONFIG.subtitle}</p>
+          </div>
+        </div>
+        {initialServers.length > 0 ? (
+          <ServerGrid client:load initialServers={initialServers} total={total} meta={{ deployment: DEPLOYMENT_CONFIG.deploymentType }} />
+        ) : (
+          <div class="no-results">
+            <h3>No servers found for this deployment type yet</h3>
+            <p>Check back soon or <a href="/submit-server">submit a new server</a>.</p>
+          </div>
+        )}
+      </section>
+
+      <section class="comparison-section">
+        <h2>Not sure which deployment is right for you?</h2>
+        <p>Compare deployment options and find the best fit for your infrastructure needs.</p>
+        <div class="comparison-cta">
+          <a href="/enterprise-readiness" class="btn">Compare Deployment Options →</a>
+        </div>
+      </section>
+    </main>
+  </div>
+</BaseLayout>

@@ -3,13 +3,10 @@ import { getServersPage } from '../../utils/d1';
 import type { MCPServer } from '../../utils/d1';
 import { getCategoryDisplayName } from '../../utils/serverData.js';
 import { staticServers } from '../../data/staticServers.js';
-import Navbar from '../../components/Navbar.astro';
-import EmailSignup from '../../components/EmailSignup.astro';
 import ServerGrid from '../../components/ServerGrid';
-import '../../styles/global.css';
+import BaseLayout from '../../layouts/BaseLayout.astro';
 
 const { slug } = Astro.params;
-
 const categoryName = getCategoryDisplayName(slug);
 const db = (Astro.locals as any).runtime?.env?.DB as D1Database | undefined;
 
@@ -30,157 +27,13 @@ if (db) {
   total = servers.length;
 }
 
-const pageTitle = `${categoryName} MCP Servers | MCP Directory`;
-const pageDescription = `Browse ${total}+ MCP servers in the ${categoryName} category. Find the best tools for your workflow.`;
 const canonicalUrl = `https://www.mymcpshelf.com/category/${slug}`;
+const pageTitle = `${categoryName} MCP Servers | My MCP Shelf`;
+const pageDescription = `Browse ${total}+ MCP servers in the ${categoryName} category. Find the best tools for your workflow.`;
 ---
 
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{pageTitle}</title>
-  <meta name="description" content={pageDescription}>
-  <link rel="canonical" href={canonicalUrl}>
-  <meta property="og:type" content="website">
-  <meta property="og:url" content={canonicalUrl}>
-  <meta property="og:title" content={pageTitle}>
-  <meta property="og:description" content={pageDescription}>
-  <link rel="icon" href="/favicon.ico" type="image/x-icon">
-  <link rel="icon" href="/favicon.png" type="image/png">
-  <style>
-    body {
-      font-family: 'Libre Franklin', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      line-height: 1.7;
-      color: #f1f5f9;
-      background: #0f172a;
-      min-height: 100vh;
-    }
-
-    .page-wrapper {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .hero-section {
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-      padding: 3rem 0 2rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .hero-content {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 1.5rem;
-    }
-
-    .breadcrumb {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      color: #64748b;
-      font-size: 0.85rem;
-      margin-bottom: 1rem;
-    }
-
-    .breadcrumb a {
-      color: #94a3b8;
-      text-decoration: none;
-    }
-
-    .breadcrumb a:hover {
-      color: #f59e0b;
-    }
-
-    .page-title {
-      font-size: 2.5rem;
-      font-weight: 700;
-      color: #ffffff;
-      line-height: 1.2;
-      margin-bottom: 0.5rem;
-    }
-
-    .page-subtitle {
-      font-size: 1.1rem;
-      color: #94a3b8;
-    }
-
-    .server-count {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: rgba(245, 158, 11, 0.15);
-      color: #f59e0b;
-      border: 1px solid rgba(245, 158, 11, 0.3);
-      padding: 0.4rem 0.9rem;
-      border-radius: 20px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      margin-top: 1rem;
-      display: inline-block;
-    }
-
-    .main-content {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 2rem 1.5rem;
-      flex: 1;
-    }
-
-    .category-nav {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-bottom: 2rem;
-    }
-
-    .category-link {
-      padding: 0.4rem 0.9rem;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      text-decoration: none;
-      color: #94a3b8;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      background: rgba(255, 255, 255, 0.03);
-      transition: all 0.15s ease;
-    }
-
-    .category-link:hover {
-      color: #f59e0b;
-      border-color: rgba(245, 158, 11, 0.4);
-      background: rgba(245, 158, 11, 0.08);
-    }
-
-    .category-link.active {
-      color: #f59e0b;
-      border-color: rgba(245, 158, 11, 0.4);
-      background: rgba(245, 158, 11, 0.12);
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 4rem 2rem;
-      color: #64748b;
-    }
-
-    .empty-state h2 {
-      font-size: 1.5rem;
-      color: #94a3b8;
-      margin-bottom: 0.75rem;
-    }
-
-    .empty-state a {
-      color: #f59e0b;
-      text-decoration: none;
-    }
-  </style>
-</head>
-<body>
-  <div class="page-wrapper">
-    <Navbar />
-
+<BaseLayout title={pageTitle} description={pageDescription} canonical={canonicalUrl}>
+  <div transition:name="main-content">
     <div class="hero-section">
       <div class="hero-content">
         <div class="breadcrumb">
@@ -197,7 +50,6 @@ const canonicalUrl = `https://www.mymcpshelf.com/category/${slug}`;
     </div>
 
     <div class="main-content">
-      <!-- Category quick nav -->
       <div class="category-nav">
         {[
           { slug: 'databases', label: 'Databases' },
@@ -234,8 +86,109 @@ const canonicalUrl = `https://www.mymcpshelf.com/category/${slug}`;
         </div>
       )}
     </div>
-
-    <EmailSignup />
   </div>
-</body>
-</html>
+</BaseLayout>
+
+<style>
+  .hero-section {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    padding: 3rem 0 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .hero-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #64748b;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+  }
+
+  .breadcrumb a {
+    color: #94a3b8;
+    text-decoration: none;
+  }
+
+  .breadcrumb a:hover { color: #f59e0b; }
+
+  .page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+  }
+
+  .page-subtitle {
+    font-size: 1.1rem;
+    color: #94a3b8;
+  }
+
+  .server-count {
+    display: inline-block;
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    padding: 0.4rem 0.9rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-top: 1rem;
+  }
+
+  .main-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+
+  .category-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .category-link {
+    padding: 0.4rem 0.9rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-decoration: none;
+    color: #94a3b8;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.03);
+    transition: all 0.15s ease;
+  }
+
+  .category-link:hover,
+  .category-link.active {
+    color: #f59e0b;
+    border-color: rgba(245, 158, 11, 0.4);
+    background: rgba(245, 158, 11, 0.1);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #64748b;
+  }
+
+  .empty-state h2 {
+    font-size: 1.5rem;
+    color: #94a3b8;
+    margin-bottom: 0.75rem;
+  }
+
+  .empty-state a {
+    color: #f59e0b;
+    text-decoration: none;
+  }
+</style>

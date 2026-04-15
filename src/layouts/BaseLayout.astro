@@ -1,0 +1,146 @@
+---
+/**
+ * BaseLayout.astro — shared shell for every page.
+ *
+ * Props:
+ *   title        — <title> tag (required)
+ *   description  — meta description
+ *   canonical    — canonical URL (defaults to current page)
+ *   ogImage      — Open Graph image URL
+ *   structuredData — JSON-LD object (optional)
+ */
+import { ViewTransitions } from 'astro:transitions';
+import Navbar from '../components/Navbar.astro';
+import EmailSignup from '../components/EmailSignup.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  canonical?: string;
+  ogImage?: string;
+  structuredData?: object;
+  bodyClass?: string;
+}
+
+const {
+  title,
+  description = 'Your curated collection of Model Context Protocol servers for enhanced AI capabilities',
+  canonical = Astro.url.href,
+  ogImage = 'https://www.mymcpshelf.com/og-image.jpg',
+  structuredData,
+  bodyClass = '',
+} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Dark mode flash prevention — must run before any styles -->
+  <script is:inline>
+    (function() {
+      if (localStorage.getItem('theme') === 'dark') {
+        document.documentElement.classList.add('dark-mode');
+      }
+    })();
+  </script>
+
+  <title>{title}</title>
+  <meta name="description" content={description}>
+  <link rel="canonical" href={canonical}>
+
+  <!-- Verification -->
+  <meta name="google-site-verification" content="qmL-eYN3ygqiuLXVWHuWWko8vIBJj3hAYizdpo7dDug">
+  <meta name="msvalidate.01" content="8AA5A1EBF656D16B95B78BE654843905">
+
+  <!-- Favicons -->
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/favicon.png" type="image/png">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content={canonical}>
+  <meta property="og:title" content={title}>
+  <meta property="og:description" content={description}>
+  <meta property="og:image" content={ogImage}>
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content={canonical}>
+  <meta name="twitter:title" content={title}>
+  <meta name="twitter:description" content={description}>
+  <meta name="twitter:image" content={ogImage}>
+
+  <!-- Structured Data -->
+  {structuredData && (
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  )}
+
+  <!-- Analytics -->
+  <script defer data-domain="mymcpshelf.com" src="https://plausible-analytics-ce-production-7165.up.railway.app/js/script.js"></script>
+
+  <!-- Smooth page transitions — eliminates flash on navigation -->
+  <ViewTransitions />
+
+  <!-- Per-page extra head content (additional styles, etc.) -->
+  <slot name="head" />
+</head>
+<body class={bodyClass}>
+  <Navbar />
+  <slot />
+  <EmailSignup />
+</body>
+</html>
+
+<style is:global>
+  /* ── Base reset & typography ───────────────────────────── */
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Libre Franklin', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.7;
+    color: #f1f5f9;
+    background: #0f172a;
+    min-height: 100vh;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  /* ── View transition animations ───────────────────────── */
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fade-out {
+    from { opacity: 1; transform: translateY(0); }
+    to   { opacity: 0; transform: translateY(-6px); }
+  }
+
+  ::view-transition-old(main-content) {
+    animation: 150ms ease-in fade-out;
+  }
+
+  ::view-transition-new(main-content) {
+    animation: 200ms ease-out fade-in;
+  }
+
+  /* ── Dark mode ─────────────────────────────────────────── */
+  html.dark-mode body {
+    background: #0f172a;
+    color: #f1f5f9;
+  }
+</style>
