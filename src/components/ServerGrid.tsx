@@ -172,7 +172,7 @@ export default function ServerGrid({ initialServers, total: initialTotal, meta }
   const [total, setTotal] = useState(initialTotal);
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
-  const [deployment, setDeployment] = useState(meta?.deployment || 'all');
+  const deployment = meta?.deployment || 'all';
   const [offset, setOffset] = useState(initialServers.length);
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -258,31 +258,6 @@ export default function ServerGrid({ initialServers, total: initialTotal, meta }
           ))}
         </div>
         
-        {/* Deployment Type Filters - Show only when not already on a deployment page */}
-        {!meta?.deployment && (
-          <div className="deployment-filters">
-            <div className="filter-label">Deployment:</div>
-            <div className="filter-chips">
-              {[
-                { value: 'all', label: 'All Deployments', icon: '⚡' },
-                { value: 'local_stdio', label: 'Local & CLI', icon: '💻' },
-                { value: 'cloud_native', label: 'Cloud-Native', icon: '☁️' },
-                { value: 'self_hosted', label: 'Self-Hosted', icon: '🏢' },
-                { value: 'enterprise_saas', label: 'Enterprise', icon: '🔐' }
-              ].map(dep => (
-                <span
-                  key={dep.value}
-                  className={`deployment-chip${deployment === dep.value ? ' active' : ''}`}
-                  data-deployment={dep.value}
-                  onClick={() => setDeployment(dep.value)}
-                >
-                  <span className="chip-icon">{dep.icon}</span>
-                  <span className="chip-label">{dep.label}</span>
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
 
       <div className="servers-grid" id="serversGrid">
