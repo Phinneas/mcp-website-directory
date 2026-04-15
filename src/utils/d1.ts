@@ -70,11 +70,13 @@ export async function getServersPage(
     limit = 24,
     category = '',
     search = '',
+    deployment = '',
   }: {
     offset?: number;
     limit?: number;
     category?: string;
     search?: string;
+    deployment?: string;
   } = {}
 ): Promise<ServersPage> {
   const conditions: string[] = [];
@@ -83,6 +85,11 @@ export async function getServersPage(
   if (category && category !== 'all') {
     conditions.push('category = ?');
     params.push(category);
+  }
+
+  if (deployment && deployment !== 'all') {
+    conditions.push('deployment_type = ?');
+    params.push(deployment);
   }
 
   if (search && search.trim()) {

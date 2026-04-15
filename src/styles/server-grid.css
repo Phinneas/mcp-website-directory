@@ -1,0 +1,219 @@
+/* ============================================================
+   Server Grid & Card — shared styles used by ServerGrid.tsx
+   Imported via global.css so every page gets these styles.
+   ============================================================ */
+
+/* ----- Grid layout ---------------------------------------- */
+.servers-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* ----- Card shell ----------------------------------------- */
+.server-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.server-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 16px 64px rgba(0, 0, 0, 0.15);
+}
+
+/* Dark mode card */
+html.dark-mode .server-card {
+  background: rgba(30, 41, 59, 0.95);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.server-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.server-card-link:hover {
+  text-decoration: none;
+}
+
+/* ----- Card header ---------------------------------------- */
+.server-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.icon-wrapper {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+}
+
+.server-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 0.75rem;
+  object-fit: cover;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  display: block;
+}
+
+.server-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.server-title {
+  flex: 1;
+}
+
+.server-title h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 0.25rem;
+}
+
+html.dark-mode .server-title h3 {
+  color: #f1f5f9;
+}
+
+.server-author {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+html.dark-mode .server-author {
+  color: #94a3b8;
+}
+
+/* ----- Card body ------------------------------------------ */
+.server-description {
+  color: #555;
+  line-height: 1.6;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+html.dark-mode .server-description {
+  color: #94a3b8;
+}
+
+.server-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.meta-tag {
+  background: rgba(102, 126, 234, 0.1);
+  color: #667eea;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+html.dark-mode .meta-tag {
+  background: rgba(102, 126, 234, 0.2);
+  color: #a5b4fc;
+}
+
+.enterprise-tag {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+/* ----- Card actions --------------------------------------- */
+.server-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.btn-primary {
+  background: hsl(var(--primary, 38 92% 50%));
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.3);
+}
+
+.btn-secondary {
+  background: rgba(0, 0, 0, 0.05);
+  color: #666;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+html.dark-mode .btn-secondary {
+  background: rgba(255, 255, 255, 0.05);
+  color: #94a3b8;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.btn-secondary:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+/* ----- Skeleton shimmer ----------------------------------- */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* ----- Responsive ----------------------------------------- */
+@media (max-width: 900px) {
+  .servers-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .servers-grid {
+    grid-template-columns: 1fr;
+  }
+}
