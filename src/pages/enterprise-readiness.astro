@@ -1,7 +1,5 @@
 ---
-import Navbar from '../components/Navbar.astro';
-import EmailSignup from '../components/EmailSignup.astro';
-import '../styles/global.css';
+import BaseLayout from '../layouts/BaseLayout.astro';
 
 const pageTitle = 'Enterprise Readiness | MCP Directory';
 const pageDescription = 'Compare MCP server deployment options and find the best solution for your enterprise infrastructure needs. Local, cloud-native, self-hosted, and SaaS options.';
@@ -103,409 +101,20 @@ const structuredData = {
 };
 ---
 
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{pageTitle}</title>
-    <meta name="description" content={pageDescription}>
-    <link rel="canonical" href={canonicalUrl}>
-    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
-    
-    <style>
-        :root {
-            --bg-color: hsl(var(--background));
-            --text-primary: hsl(var(--foreground));
-            --text-secondary: hsl(var(--muted-foreground));
-            --card-bg: hsl(var(--card));
-            --border-color: hsl(var(--border));
-            --accent-color: hsl(var(--primary));
-            --hero-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-        }
-        
-        body.dark-mode {
-            --bg-color: #0f172a;
-            --text-primary: #f1f5f9;
-            --text-secondary: #94a3b8;
-            --card-bg: #1e293b;
-            --border-color: #334155;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Libre Franklin', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.7;
-            color: var(--text-primary);
-            background: var(--bg-color);
-            min-height: 100vh;
-        }
-        
-        .page-wrapper {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .hero-section {
-            background: var(--hero-gradient);
-            padding: 4rem 0;
-            border-bottom: 1px solid var(--border-color);
-            text-align: center;
-        }
-        
-        .hero-content {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-        }
-        
-        .page-title {
-            font-size: 3rem;
-            font-weight: 700;
-            line-height: 1.1;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, #ffffff 0%, #60a5fa 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .page-subtitle {
-            font-size: 1.25rem;
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-            font-weight: 400;
-        }
-        
-        .page-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-            flex: 1;
-        }
-        
-        .section {
-            margin: 3rem 0;
-        }
-        
-        .section-title {
-            font-size: 2rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            text-align: center;
-        }
-        
-        .section-description {
-            font-size: 1.1rem;
-            color: var(--text-secondary);
-            text-align: center;
-            margin-bottom: 3rem;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        .deployment-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-        
-        .deployment-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            text-decoration: none;
-            color: inherit;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .deployment-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-            border-color: var(--accent-color);
-        }
-        
-        .card-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-        
-        .card-icon {
-            font-size: 2rem;
-            line-height: 1;
-        }
-        
-        .card-title-group {
-            flex: 1;
-        }
-        
-        .card-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-        
-        .card-subtitle {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-        }
-        
-        .card-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 1rem;
-        }
-        
-        .card-description {
-            color: var(--text-secondary);
-            margin-bottom: 1.5rem;
-            flex: 1;
-        }
-        
-        .card-features {
-            list-style: none;
-            margin-bottom: 1.5rem;
-        }
-        
-        .card-features li {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            margin-bottom: 0.5rem;
-        }
-        
-        .card-features li::before {
-            content: '✓';
-            color: #10b981;
-            font-weight: bold;
-            font-size: 0.75rem;
-        }
-        
-        .card-footer {
-            margin-top: auto;
-        }
-        
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.15s ease;
-            font-size: 0.875rem;
-            width: 100%;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, var(--accent-color) 0%, #3b82f6 100%);
-            color: white;
-            border: none;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
-        }
-        
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
-        }
-        
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: var(--accent-color);
-        }
-        
-        .comparison-table {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            overflow: hidden;
-            margin-bottom: 3rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        .table-wrapper {
-            overflow-x: auto;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.875rem;
-        }
-        
-        thead {
-            background: rgba(255, 255, 255, 0.05);
-        }
-        
-        th {
-            padding: 1rem;
-            text-align: left;
-            font-weight: 600;
-            color: var(--text-primary);
-            border-bottom: 1px solid var(--border-color);
-        }
-        
-        th:first-child {
-            position: sticky;
-            left: 0;
-            background: rgba(255, 255, 255, 0.05);
-            z-index: 1;
-        }
-        
-        td {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-        
-        td:first-child {
-            position: sticky;
-            left: 0;
-            background: var(--card-bg);
-            font-weight: 500;
-            z-index: 1;
-        }
-        
-        tr:hover {
-            background: rgba(255, 255, 255, 0.02);
-        }
-        
-        .check-icon {
-            color: #10b981;
-            font-weight: bold;
-        }
-        
-        .cross-icon {
-            color: #ef4444;
-        }
-        
-        .info-icon {
-            color: #f59e0b;
-        }
-        
-        .cta-section {
-            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
-            border-radius: 12px;
-            padding: 3rem;
-            text-align: center;
-            color: white;
-            margin: 3rem 0;
-        }
-        
-        .cta-title {
-            font-size: 2rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-        
-        .cta-description {
-            font-size: 1.1rem;
-            margin-bottom: 2rem;
-            opacity: 0.9;
-        }
-        
-        .cta-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        
-        .btn-white {
-            background: white;
-            color: #1e40af;
-            padding: 0.75rem 2rem;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.15s ease;
-        }
-        
-        .btn-white:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.25);
-        }
-        
-        .btn-outline-white {
-            background: transparent;
-            color: white;
-            border: 2px solid white;
-            padding: 0.75rem 2rem;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.15s ease;
-        }
-        
-        .btn-outline-white:hover {
-            background: white;
-            color: #1e40af;
-        }
-        
-        @media (max-width: 768px) {
-            .page-title {
-                font-size: 2rem;
-            }
-            
-            .deployment-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .table-wrapper {
-                font-size: 0.75rem;
-            }
-            
-            th, td {
-                padding: 0.75rem 0.5rem;
-            }
-            
-            .cta-buttons {
-                flex-direction: column;
-            }
-            
-            .btn-white, .btn-outline-white {
-                width: 100%;
-            }
-        }
-    </style>
-</head>
-<body>
+<BaseLayout
+    title={pageTitle}
+    description={pageDescription}
+    canonical={canonicalUrl}
+    structuredData={structuredData}
+>
     <div class="page-wrapper">
-        <Navbar />
-        
         <section class="hero-section">
             <div class="hero-content">
                 <h1 class="page-title">Choose Your Deployment Strategy</h1>
                 <p class="page-subtitle">Compare MCP server deployment options and find the perfect fit for your infrastructure, compliance, and scalability requirements.</p>
             </div>
         </section>
-        
+
         <main class="page-container">
             <!-- Deployment Options Grid -->
             <section class="section">
@@ -519,17 +128,17 @@ const structuredData = {
                                     <p class="card-subtitle">{option.subtitle || 'MCP Server Deployment'}</p>
                                 </div>
                             </div>
-                            
+
                             <div class:list={['card-badge', option.badgeClass]}>{option.badge}</div>
-                            
+
                             <p class="card-description">{option.description}</p>
-                            
+
                             <ul class="card-features">
                                 {option.features.slice(0, 4).map(feature => (
                                     <li>{feature}</li>
                                 ))}
                             </ul>
-                            
+
                             <div class="card-footer">
                                 <div class="btn btn-primary">
                                     {option.cta || `Explore ${option.name}`} →
@@ -539,14 +148,14 @@ const structuredData = {
                     ))}
                 </div>
             </section>
-            
+
             <!-- Detailed Comparison Table -->
             <section class="section">
                 <h2 class="section-title">Detailed Feature Comparison</h2>
                 <p class="section-description">
                     Compare all deployment options side-by-side to make the best decision for your infrastructure needs.
                 </p>
-                
+
                 <div class="comparison-table">
                     <div class="table-wrapper">
                         <table>
@@ -564,22 +173,22 @@ const structuredData = {
                                     <tr>
                                         <td>{row.feature}</td>
                                         <td>
-                                            {typeof row.local_stdio === 'boolean' 
+                                            {typeof row.local_stdio === 'boolean'
                                                 ? (row.local_stdio ? <span class="check-icon">✓</span> : <span class="cross-icon">✗</span>)
                                                 : row.local_stdio}
                                         </td>
                                         <td>
-                                            {typeof row.cloud_native === 'boolean' 
+                                            {typeof row.cloud_native === 'boolean'
                                                 ? (row.cloud_native ? <span class="check-icon">✓</span> : <span class="cross-icon">✗</span>)
                                                 : row.cloud_native}
                                         </td>
                                         <td>
-                                            {typeof row.self_hosted === 'boolean' 
+                                            {typeof row.self_hosted === 'boolean'
                                                 ? (row.self_hosted ? <span class="check-icon">✓</span> : <span class="cross-icon">✗</span>)
                                                 : row.self_hosted}
                                         </td>
                                         <td>
-                                            {typeof row.enterprise_saas === 'boolean' 
+                                            {typeof row.enterprise_saas === 'boolean'
                                                 ? (row.enterprise_saas ? <span class="check-icon">✓</span> : <span class="cross-icon">✗</span>)
                                                 : row.enterprise_saas}
                                         </td>
@@ -590,7 +199,7 @@ const structuredData = {
                     </div>
                 </div>
             </section>
-            
+
             <!-- CTA Section -->
             <section class="cta-section">
                 <h2 class="cta-title">Ready to Deploy?</h2>
@@ -606,7 +215,7 @@ const structuredData = {
                     </a>
                 </div>
             </section>
-            
+
             <!-- FAQ Section -->
             <section class="section">
                 <h2 class="section-title">Common Questions</h2>
@@ -615,12 +224,12 @@ const structuredData = {
                         <h3>Which deployment is best for a small team?</h3>
                         <p>For small teams, <strong>Local & CLI</strong> or <strong>Cloud-Native</strong> are typically best. Local is great for development, while Cloud-Native offers scalability as you grow.</p>
                     </div>
-                    
+
                     <div class="faq-item">
                         <h3>Do I need enterprise SaaS for compliance?</h3>
                         <p>If you need SOC 2, HIPAA, or other certifications without managing infrastructure yourself, Enterprise SaaS is the fastest path to compliance.</p>
                     </div>
-                    
+
                     <div class="faq-item">
                         <h3>Can I switch deployment types later?</h3>
                         <p>Many MCP servers support multiple deployment types. Start with Local development, then deploy to Cloud or Self-Hosted production environments using the same server.</p>
@@ -628,8 +237,389 @@ const structuredData = {
                 </div>
             </section>
         </main>
-        
-        <EmailSignup />
     </div>
-</body>
-</html>
+</BaseLayout>
+
+<style>
+    .page-wrapper {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .hero-section {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+        padding: 4rem 0;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        text-align: center;
+    }
+
+    .hero-content {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+    }
+
+    .page-title {
+        font-size: 3rem;
+        font-weight: 700;
+        line-height: 1.1;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #ffffff 0%, #60a5fa 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .page-subtitle {
+        font-size: 1.25rem;
+        color: #94a3b8;
+        margin-bottom: 2rem;
+        font-weight: 400;
+    }
+
+    .page-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+        flex: 1;
+    }
+
+    .section {
+        margin: 3rem 0;
+    }
+
+    .section-title {
+        font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        text-align: center;
+        color: #f1f5f9;
+    }
+
+    .section-description {
+        font-size: 1.1rem;
+        color: #94a3b8;
+        text-align: center;
+        margin-bottom: 3rem;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .deployment-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .deployment-card {
+        background: #1e293b;
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .deployment-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        border-color: #f59e0b;
+    }
+
+    .card-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .card-icon {
+        font-size: 2rem;
+        line-height: 1;
+    }
+
+    .card-title-group {
+        flex: 1;
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #f1f5f9;
+    }
+
+    .card-subtitle {
+        font-size: 0.875rem;
+        color: #94a3b8;
+    }
+
+    .card-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 1rem;
+        background: rgba(255,255,255,0.1);
+        color: #f1f5f9;
+    }
+
+    .card-description {
+        color: #94a3b8;
+        margin-bottom: 1.5rem;
+        flex: 1;
+    }
+
+    .card-features {
+        list-style: none;
+        margin-bottom: 1.5rem;
+    }
+
+    .card-features li {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        color: #94a3b8;
+        margin-bottom: 0.5rem;
+    }
+
+    .card-features li::before {
+        content: '✓';
+        color: #10b981;
+        font-weight: bold;
+        font-size: 0.75rem;
+    }
+
+    .card-footer {
+        margin-top: auto;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.15s ease;
+        font-size: 0.875rem;
+        width: 100%;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #f59e0b 0%, #3b82f6 100%);
+        color: white;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+    }
+
+    .btn-secondary {
+        background: rgba(255, 255, 255, 0.05);
+        color: #f1f5f9;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: #f59e0b;
+    }
+
+    .comparison-table {
+        background: #1e293b;
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 3rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.875rem;
+    }
+
+    thead {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    th {
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        color: #f1f5f9;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    th:first-child {
+        position: sticky;
+        left: 0;
+        background: rgba(255, 255, 255, 0.05);
+        z-index: 1;
+    }
+
+    td {
+        padding: 1rem;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        color: #94a3b8;
+    }
+
+    td:first-child {
+        position: sticky;
+        left: 0;
+        background: #1e293b;
+        font-weight: 500;
+        color: #f1f5f9;
+        z-index: 1;
+    }
+
+    tr:hover {
+        background: rgba(255, 255, 255, 0.02);
+    }
+
+    .check-icon {
+        color: #10b981;
+        font-weight: bold;
+    }
+
+    .cross-icon {
+        color: #ef4444;
+    }
+
+    .info-icon {
+        color: #f59e0b;
+    }
+
+    .cta-section {
+        background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+        border-radius: 12px;
+        padding: 3rem;
+        text-align: center;
+        color: white;
+        margin: 3rem 0;
+    }
+
+    .cta-title {
+        font-size: 2rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+    .cta-description {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+    }
+
+    .cta-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-white {
+        background: white;
+        color: #1e40af;
+        padding: 0.75rem 2rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.15s ease;
+    }
+
+    .btn-white:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(255, 255, 255, 0.25);
+    }
+
+    .btn-outline-white {
+        background: transparent;
+        color: white;
+        border: 2px solid white;
+        padding: 0.75rem 2rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.15s ease;
+    }
+
+    .btn-outline-white:hover {
+        background: white;
+        color: #1e40af;
+    }
+
+    .faq-grid {
+        display: grid;
+        gap: 1.5rem;
+    }
+
+    .faq-item {
+        background: #1e293b;
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 12px;
+        padding: 1.5rem;
+    }
+
+    .faq-item h3 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #f1f5f9;
+        margin-bottom: 0.75rem;
+    }
+
+    .faq-item p {
+        color: #94a3b8;
+        line-height: 1.7;
+    }
+
+    .faq-item strong {
+        color: #f1f5f9;
+    }
+
+    @media (max-width: 768px) {
+        .page-title {
+            font-size: 2rem;
+        }
+
+        .deployment-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .table-wrapper {
+            font-size: 0.75rem;
+        }
+
+        th, td {
+            padding: 0.75rem 0.5rem;
+        }
+
+        .cta-buttons {
+            flex-direction: column;
+        }
+
+        .btn-white, .btn-outline-white {
+            width: 100%;
+        }
+    }
+</style>

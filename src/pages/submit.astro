@@ -1,35 +1,25 @@
 ---
 export const prerender = true;
-import Navbar from '../components/Navbar.astro';
-import '../styles/global.css';
+import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Submit to My MCP Shelf</title>
-  <meta name="description" content="Submit your MCP servers or agent skills to share with the community">
-  <link rel="canonical" href="https://www.mymcpshelf.com/submit" />
-  <link rel="icon" href="/favicon.ico" type="image/x-icon">
-  <link rel="icon" href="/favicon.png" type="image/png">
-</head>
-<body>
-  <Navbar />
-  
+<BaseLayout
+  title="Submit to My MCP Shelf"
+  description="Submit your MCP servers or agent skills to share with the community"
+  canonical="https://www.mymcpshelf.com/submit"
+>
   <main class="submit-page">
     <div class="container">
       <h1>Submit to My MCP Shelf</h1>
       <p>Share your MCP servers and agent skills with the community.</p>
-      
+
       <div class="submit-options">
         <div class="submit-card">
           <h2>🚀 MCP Server</h2>
           <p>Submit an MCP server to the directory</p>
           <a href="/submit-server/" class="btn-primary">Submit Server</a>
         </div>
-        
+
         <div class="submit-card">
           <h2>🎯 Agent Skill</h2>
           <p>Submit an agent skill for Claude Code, Cursor, etc.</p>
@@ -38,13 +28,72 @@ import '../styles/global.css';
       </div>
     </div>
   </main>
-  
-  <style>
-    .submit-page { padding: 4rem 0; }
-    .submit-options { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 3rem; }
-    .submit-card { padding: 2rem; border: 1px solid hsl(var(--border)); border-radius: 12px; }
-    .btn-primary { display: inline-block; padding: 0.75rem 1.5rem; background: hsl(var(--primary)); color: white; text-decoration: none; border-radius: 6px; margin-top: 1rem; }
-    @media (max-width: 768px) { .submit-options { grid-template-columns: 1fr; } }
-  </style>
-</body>
-</html>
+</BaseLayout>
+
+<style>
+  .submit-page {
+    padding: 4rem 0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .submit-page h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin-bottom: 1rem;
+  }
+
+  .submit-page > .container > p {
+    color: #94a3b8;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+  }
+
+  .submit-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+
+  .submit-card {
+    padding: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  .submit-card h2 {
+    font-size: 1.5rem;
+    color: #f1f5f9;
+    margin-bottom: 0.75rem;
+  }
+
+  .submit-card p {
+    color: #94a3b8;
+    margin-bottom: 1rem;
+  }
+
+  .btn-primary {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background: #f59e0b;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    margin-top: 0.5rem;
+    font-weight: 500;
+    transition: background 0.15s ease;
+  }
+
+  .btn-primary:hover {
+    background: #d97706;
+  }
+
+  @media (max-width: 768px) {
+    .submit-options { grid-template-columns: 1fr; }
+  }
+</style>

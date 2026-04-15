@@ -1,7 +1,6 @@
 ---
 export const prerender = true;
-import '../styles/global.css';
-import Navbar from '../components/Navbar.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
 import HeaderNewsletter from '../components/HeaderNewsletter.astro';
 
 // Import skills data directly - this works with Cloudflare Pages
@@ -17,383 +16,7 @@ const description = 'Discover and install agent skills for Claude Code, Cursor, 
 const canonicalUrl = 'https://www.mymcpshelf.com/agent-skills';
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{title}</title>
-  <meta name="description" content="{description}">
-  <link rel="canonical" href="{canonicalUrl}">
-  <link rel="icon" href="/favicon.ico" type="image/x-icon">
-  <link rel="icon" href="/favicon.png" type="image/png">
-
-  <!-- Open Graph -->
-  <meta property="og:title" content="{title}">
-  <meta property="og:description" content="{description}">
-  <meta property="og:url" content="{canonicalUrl}">
-  <meta property="og:type" content="website">
-
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="{title}">
-  <meta name="twitter:description" content="{description}">
-
-  <style>
-    :root {
-      --bg-color: hsl(var(--background));
-      --text-primary: hsl(var(--foreground));
-      --text-secondary: hsl(var(--muted-foreground));
-      --card-bg: hsl(var(--card));
-      --border-color: hsl(var(--border));
-      --accent-color: hsl(var(--primary));
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Libre Franklin', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      line-height: 1.7;
-      color: var(--text-primary);
-      background: var(--bg-color);
-      min-height: 100vh;
-    }
-
-    .page-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 2rem;
-    }
-
-    .nav-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-
-    .nav-links {
-      margin-top: 1.5rem;
-      display: flex;
-      gap: 0.75rem;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .nav-links a {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      color: hsl(var(--muted-foreground));
-      text-decoration: none;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      transition: all 0.2s ease;
-      background: hsl(var(--card));
-      border: 1px solid hsl(var(--border));
-    }
-
-    .nav-links a:hover {
-      color: hsl(var(--primary));
-      border-color: hsl(var(--primary));
-    }
-
-    .hero-section {
-      text-align: center;
-      margin-bottom: 2rem;
-      padding: 2rem 0;
-    }
-
-    .hero-title {
-      font-size: 2.5rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 1rem;
-    }
-
-    .hero-subtitle {
-      font-size: 1.2rem;
-      color: hsl(var(--muted-foreground));
-      max-width: 600px;
-      margin: 0 auto 2rem;
-    }
-
-    .stats-bar {
-      display: flex;
-      justify-content: center;
-      gap: 2rem;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
-    }
-
-    .stat-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 0 1rem;
-    }
-
-    .stat-value {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: hsl(var(--primary));
-    }
-
-    .stat-label {
-      font-size: 0.9rem;
-      color: hsl(var(--muted-foreground));
-    }
-
-    .search-section {
-      margin-bottom: 2rem;
-    }
-
-    .search-input-wrapper {
-      position: relative;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    .search-input {
-      width: 100%;
-      padding: 1rem 1.5rem;
-      border: 2px solid var(--border-color);
-      border-radius: 12px;
-      font-size: 1rem;
-      outline: none;
-      transition: all 0.3s ease;
-      background: var(--card-bg);
-      color: var(--text-primary);
-    }
-
-    .search-input:focus {
-      border-color: var(--accent-color);
-      box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
-    }
-
-    .category-filters {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      margin-bottom: 2rem;
-      justify-content: center;
-    }
-
-    .category-pill {
-      padding: 0.5rem 1rem;
-      border-radius: 20px;
-      font-size: 0.9rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      border: 1px solid var(--border-color);
-      background: var(--card-bg);
-      color: var(--text-secondary);
-    }
-
-    .category-pill:hover {
-      background: var(--accent-color);
-      color: white;
-      border-color: var(--accent-color);
-    }
-
-    .category-pill.active {
-      background: var(--accent-color);
-      color: white;
-      border-color: var(--accent-color);
-      font-weight: 600;
-    }
-
-    .skills-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
-
-    .skill-card {
-      background: var(--card-bg);
-      border-radius: 12px;
-      padding: 1.5rem;
-      border: 1px solid var(--border-color);
-      transition: all 0.3s ease;
-      cursor: pointer;
-    }
-
-    .skill-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-      border-color: var(--accent-color);
-    }
-
-    .skill-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 1rem;
-    }
-
-    .skill-title {
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: var(--text-primary);
-    }
-
-    .skill-category {
-      background: rgba(var(--primary-rgb), 0.1);
-      color: var(--accent-color);
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
-      font-size: 0.75rem;
-      font-weight: 500;
-    }
-
-    .skill-description {
-      color: var(--text-secondary);
-      line-height: 1.6;
-      margin-bottom: 1rem;
-      font-size: 0.95rem;
-    }
-
-    .skill-actions {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      margin-bottom: 0.75rem;
-    }
-
-    .skill-link-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      color: var(--accent-color);
-      text-decoration: none;
-      font-size: 0.85rem;
-      font-weight: 500;
-      padding: 0.4rem 0.75rem;
-      border: 1px solid var(--accent-color);
-      border-radius: 6px;
-      width: fit-content;
-      transition: all 0.2s ease;
-    }
-
-    .skill-link-btn:hover {
-      background: var(--accent-color);
-      color: white;
-    }
-
-    .skill-meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-      gap: 0.5rem;
-    }
-
-    .skill-source {
-      background: rgba(var(--primary-rgb), 0.1);
-      color: var(--accent-color);
-      padding: 0.15rem 0.4rem;
-      border-radius: 4px;
-      font-size: 0.75rem;
-    }
-
-    .skill-install {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: var(--muted);
-      padding: 0.5rem 0.75rem;
-      border-radius: 6px;
-      font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
-      font-size: 0.8rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .skill-install:hover {
-      background: var(--accent-color);
-      color: white;
-    }
-
-    .copy-icon {
-      flex-shrink: 0;
-      transition: all 0.2s ease;
-    }
-
-    .copied-tooltip {
-      position: fixed;
-      bottom: 2rem;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--accent-color);
-      color: white;
-      padding: 0.75rem 1.5rem;
-      border-radius: 8px;
-      font-weight: 600;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-      z-index: 1000;
-      display: none;
-    }
-
-    .submit-cta {
-      text-align: center;
-      margin: 0 0 1.5rem 0;
-    }
-
-    .submit-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: var(--accent-color);
-      color: white;
-      padding: 0.75rem 1.5rem;
-      border-radius: 8px;
-      font-weight: 600;
-      text-decoration: none;
-      transition: all 0.3s ease;
-    }
-
-    .submit-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    @media (max-width: 768px) {
-      .page-container {
-        padding: 1rem;
-      }
-
-      .hero-title {
-        font-size: 2rem;
-      }
-
-      .nav-links a {
-        padding: 0.4rem 0.5rem;
-        font-size: 0.8rem;
-      }
-
-      .skills-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
-</head>
-<body>
-  <Navbar />
+<BaseLayout title={title} description={description} canonical={canonicalUrl}>
   <div class="page-container">
     <!-- Hero Section -->
     <section class="hero-section">
@@ -432,28 +55,24 @@ const canonicalUrl = 'https://www.mymcpshelf.com/agent-skills';
 
     <!-- Search -->
     <div class="search-section">
-        <div class="search-input-wrapper">
-          <input
-            type="text"
-            id="searchInput"
-            class="search-input"
-            placeholder="Search agent skills..."
-          />
-        </div>
+      <div class="search-input-wrapper">
+        <input
+          type="text"
+          id="searchInput"
+          class="search-input"
+          placeholder="Search agent skills..."
+        />
       </div>
+    </div>
 
-      <!-- Category Filters -->
-      <div class="category-filters" id="categoryFilters">
-        {categories.map(category => (
-          <div
-            class="category-pill"
-            data-category={category}
-          >
-            {category}
-          </div>
-        ))}
-      </div>
-    </section>
+    <!-- Category Filters -->
+    <div class="category-filters" id="categoryFilters">
+      {categories.map(category => (
+        <div class="category-pill" data-category={category}>
+          {category}
+        </div>
+      ))}
+    </div>
 
     <!-- Skills Grid -->
     <section class="skills-section">
@@ -500,63 +119,46 @@ const canonicalUrl = 'https://www.mymcpshelf.com/agent-skills';
   </div>
 
   <script>
-    // Search functionality
     const searchInput = document.getElementById('searchInput');
     const skillsGrid = document.getElementById('skillsGrid');
     const categoryFilters = document.getElementById('categoryFilters');
     const copiedTooltip = document.getElementById('copiedTooltip');
 
-    // Search skills
     function searchSkills() {
       const searchTerm = searchInput.value.toLowerCase();
       const selectedCategory = document.querySelector('.category-pill.active')?.dataset.category || 'All';
-
       const skillCards = skillsGrid.querySelectorAll('.skill-card');
-      
+
       skillCards.forEach(card => {
         const skillName = card.dataset.skill.toLowerCase();
         const skillCategory = card.dataset.category;
         const skillTitle = card.querySelector('.skill-title').textContent.toLowerCase();
         const skillDescription = card.querySelector('.skill-description').textContent.toLowerCase();
-        
+
         const matchesSearch = skillName.includes(searchTerm) ||
                               skillTitle.includes(searchTerm) ||
                               skillDescription.includes(searchTerm);
         const matchesCategory = selectedCategory === 'All' || skillCategory === selectedCategory;
-        
-        if (matchesSearch && matchesCategory) {
-          card.style.display = 'block';
-        } else {
-          card.style.display = 'none';
-        }
+
+        card.style.display = (matchesSearch && matchesCategory) ? 'block' : 'none';
       });
     }
 
-    // Category filtering
     function setupCategoryFilters() {
       const pills = categoryFilters.querySelectorAll('.category-pill');
-      
+
       pills.forEach(pill => {
         pill.addEventListener('click', function() {
-          // Remove active class from all pills
           pills.forEach(p => p.classList.remove('active'));
-          
-          // Add active class to clicked pill
           this.classList.add('active');
-          
-          // Search with new category filter
           searchSkills();
         });
       });
 
-      // Set 'All' as default active
       const allPill = Array.from(pills).find(p => p.textContent.trim() === 'All');
-      if (allPill) {
-        allPill.classList.add('active');
-      }
+      if (allPill) allPill.classList.add('active');
     }
 
-    // Copy to clipboard via data-install attribute
     function setupCopyButtons() {
       skillsGrid.addEventListener('click', function(e) {
         const installEl = e.target.closest('.skill-install');
@@ -574,13 +176,282 @@ const canonicalUrl = 'https://www.mymcpshelf.com/agent-skills';
       });
     }
 
-    // Event listeners
     searchInput.addEventListener('input', searchSkills);
-
-    // Initialize
     setupCategoryFilters();
     setupCopyButtons();
-    searchSkills(); // Initial filter
+    searchSkills();
   </script>
-</body>
-</html>
+</BaseLayout>
+
+<style>
+  .page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .hero-section {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 2rem 0;
+  }
+
+  .hero-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #f59e0b 0%, #3b82f6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.2rem;
+    color: #94a3b8;
+    max-width: 600px;
+    margin: 0 auto 2rem;
+  }
+
+  .stats-bar {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 1rem;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #f59e0b;
+  }
+
+  .stat-label {
+    font-size: 0.9rem;
+    color: #64748b;
+  }
+
+  .search-section { margin-bottom: 2rem; }
+
+  .search-input-wrapper {
+    position: relative;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.04);
+    color: #f1f5f9;
+  }
+
+  .search-input:focus {
+    border-color: #f59e0b;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+  }
+
+  .category-filters {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+    justify-content: center;
+  }
+
+  .category-pill {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+    color: #94a3b8;
+  }
+
+  .category-pill:hover, .category-pill.active {
+    background: #f59e0b;
+    color: white;
+    border-color: #f59e0b;
+  }
+
+  .category-pill.active { font-weight: 600; }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .skill-card {
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  .skill-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border-color: #f59e0b;
+  }
+
+  .skill-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+  }
+
+  .skill-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #f1f5f9;
+  }
+
+  .skill-category {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .skill-description {
+    color: #94a3b8;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+  }
+
+  .skill-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .skill-link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: #f59e0b;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.4rem 0.75rem;
+    border: 1px solid #f59e0b;
+    border-radius: 6px;
+    width: fit-content;
+    transition: all 0.2s ease;
+  }
+
+  .skill-link-btn:hover {
+    background: #f59e0b;
+    color: white;
+  }
+
+  .skill-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+    color: #64748b;
+    gap: 0.5rem;
+  }
+
+  .skill-source {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+  }
+
+  .skill-install {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.06);
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #94a3b8;
+  }
+
+  .skill-install:hover {
+    background: #f59e0b;
+    color: white;
+  }
+
+  .copy-icon { flex-shrink: 0; }
+
+  .copied-tooltip {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #f59e0b;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    display: none;
+  }
+
+  .submit-cta {
+    text-align: center;
+    margin: 0 0 1.5rem 0;
+  }
+
+  .submit-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #f59e0b;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(245, 158, 11, 0.3);
+  }
+
+  @media (max-width: 768px) {
+    .page-container { padding: 1rem; }
+    .hero-title { font-size: 2rem; }
+    .skills-grid { grid-template-columns: 1fr; }
+  }
+</style>

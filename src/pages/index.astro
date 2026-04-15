@@ -1,16 +1,14 @@
 ---
 import { getServersPage, getFeaturedServers } from '../utils/d1';
 import type { MCPServer } from '../utils/d1';
-import EmailSignup from '../components/EmailSignup.astro';
 import HeroSection from '../components/HeroSection.astro';
 import TrustSection from '../components/TrustSection.astro';
 import FeaturedArticles from '../components/FeaturedArticles.astro';
 import FeaturedMcpServers from '../components/FeaturedMcpServers.astro';
 import FAQSection from '../components/FAQSection.astro';
 import ServerGrid from '../components/ServerGrid';
-import Navbar from '../components/Navbar.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
 import { staticServers } from '../data/staticServers.js';
-import '../styles/global.css';
 
 const FEATURED_IDS = [
   'playwright-browser-automation', 
@@ -68,32 +66,13 @@ if (db) {
 }
 ---
 
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<BaseLayout
+  title="My MCP Shelf"
+  description="Your curated collection of 165+ premium Model Context Protocol servers for enhanced AI capabilities"
+  canonical="https://www.mymcpshelf.com/"
+>
 
-    <!-- Dark mode flash prevention - MUST run first, before any styles or resources -->
-    <script>
-        (function() {
-            const theme = localStorage.getItem('theme');
-            if (theme === 'dark') {
-                document.documentElement.classList.add('dark-mode');
-            }
-        })();
-    </script>
-
-    <title>My MCP Shelf</title>
-    <meta name="description" content="Your curated collection of 165+ premium Model Context Protocol servers for enhanced AI capabilities">
-    <link rel="canonical" href="https://www.mymcpshelf.com/" />
-    <meta name="google-site-verification" content="qmL-eYN3ygqiuLXVWHuWWko8vIBJj3hAYizdpo7dDug" />
-    <meta name="msvalidate.01" content="8AA5A1EBF656D16B95B78BE654843905" />
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
-    <link rel="icon" href="/favicon.png" type="image/png">
-    <!-- Plausible Analytics -->
-    <script defer data-domain="mymcpshelf.com" src="https://plausible-analytics-ce-production-7165.up.railway.app/js/script.js"></script>
-    <!-- End Plausible Analytics -->
-    <style is:global>
+<style is:global>
         :root {
             --bg-gradient-start: #f9f7f5;
             --bg-gradient-end: #f9f7f5;
@@ -620,27 +599,6 @@ if (db) {
             }
         }
     </style>
-</head>
-<body>
-    <Navbar />
-
-    <!-- Dark Mode Toggle -->
-    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
-        <svg id="sunIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="5"/>
-            <line x1="12" y1="1" x2="12" y2="3" stroke="currentColor" stroke-width="2"/>
-            <line x1="12" y1="21" x2="12" y2="23" stroke="currentColor" stroke-width="2"/>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="currentColor" stroke-width="2"/>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="currentColor" stroke-width="2"/>
-            <line x1="1" y1="12" x2="3" y2="12" stroke="currentColor" stroke-width="2"/>
-            <line x1="21" y1="12" x2="23" y2="12" stroke="currentColor" stroke-width="2"/>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="currentColor" stroke-width="2"/>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="currentColor" stroke-width="2"/>
-        </svg>
-        <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="display: none;">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-        </svg>
-    </button>
 
     <!-- Hero Section -->
     <HeroSection serverCount={total || 600} skillsCount={68} clientsCount={250} />
@@ -660,35 +618,4 @@ if (db) {
     <!-- FAQ Section -->
     <FAQSection />
 
-    <EmailSignup />
-
-    <script>
-        // Dark mode toggle
-        const themeToggle = document.getElementById('themeToggle');
-        const sunIcon = document.getElementById('sunIcon');
-        const moonIcon = document.getElementById('moonIcon');
-        const html = document.documentElement;
-
-        const currentTheme = localStorage.getItem('theme') || 'light';
-        if (currentTheme === 'dark') {
-            html.classList.add('dark-mode');
-            sunIcon.style.display = 'none';
-            moonIcon.style.display = 'block';
-        }
-
-        themeToggle.addEventListener('click', () => {
-            html.classList.toggle('dark-mode');
-
-            if (html.classList.contains('dark-mode')) {
-                localStorage.setItem('theme', 'dark');
-                sunIcon.style.display = 'none';
-                moonIcon.style.display = 'block';
-            } else {
-                localStorage.setItem('theme', 'light');
-                sunIcon.style.display = 'block';
-                moonIcon.style.display = 'none';
-            }
-        });
-    </script>
-</body>
-</html>
+</BaseLayout>

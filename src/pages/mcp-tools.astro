@@ -8,287 +8,16 @@ import { staticServers as importedStaticServers } from '../data/staticServers.js
 import MCPConfigGenerator from '../components/MCPConfigGenerator';
 import StackBuilder from '../components/StackBuilder';
 import CompatibilityMatrix from '../components/CompatibilityMatrix';
-import Navbar from '../components/Navbar.astro';
-import '../styles/global.css';
+import BaseLayout from '../layouts/BaseLayout.astro';
 
 const staticServers = importedStaticServers;
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MCP Tools | MyMCPShelf</title>
-  <meta name="description" content="MCP configuration tools: Config Generator, Docker Stack Builder, and Compatibility Matrix">
-  <link rel="canonical" href="https://www.mymcpshelf.com/mcp-tools" />
-  <link rel="icon" href="/favicon.ico" type="image/x-icon">
-  <link rel="icon" href="/favicon.png" type="image/png">
-  <!-- Dark mode flash prevention -->
-  <script>
-    (function() {
-      const theme = localStorage.getItem('theme');
-      if (theme === 'dark') {
-        document.documentElement.classList.add('dark-mode');
-        document.body.classList.add('dark-mode');
-      }
-    })();
-  </script>
-
-  <!-- Plausible Analytics -->
-  <script defer data-domain="mymcpshelf.com" src="https://plausible-analytics-ce-production-7165.up.railway.app/js/script.js"></script>
-
-  <style>
-    :root {
-      --bg-color: hsl(var(--background));
-      --text-primary: hsl(var(--foreground));
-      --text-secondary: hsl(var(--muted-foreground));
-      --card-bg: hsl(var(--card));
-      --border-color: hsl(var(--border));
-      --accent-color: hsl(var(--primary));
-      --hero-bg: hsl(220, 40%, 12%);
-    }
-
-    body.dark-mode {
-      --bg-color: hsl(var(--background));
-      --text-primary: hsl(var(--foreground));
-      --text-secondary: hsl(var(--muted-foreground));
-      --card-bg: hsl(var(--card));
-      --border-color: hsl(var(--border));
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Libre Franklin', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      line-height: 1.6;
-      color: var(--text-primary);
-      background: var(--bg-color);
-      min-height: 100vh;
-    }
-
-    .page-container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 2rem;
-    }
-
-    .hero {
-      text-align: center;
-      padding: 3rem 0;
-    }
-
-    .hero h1 {
-      font-size: 2.75rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-      background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .hero p {
-      font-size: 1.125rem;
-      color: var(--text-secondary);
-      max-width: 800px;
-      margin: 0 auto;
-      line-height: 1.7;
-    }
-
-    /* Navigation */
-    .nav-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-    }
-
-    .nav-links a {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      color: var(--text-secondary);
-      text-decoration: none;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      transition: all 0.2s ease;
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-    }
-
-    .nav-links a:hover {
-      color: var(--accent-color);
-      border-color: var(--accent-color);
-    }
-
-    /* Tool Tabs */
-    .tool-tabs {
-      display: flex;
-      gap: 0.75rem;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .tool-tab {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 1rem 1.5rem;
-      border: 2px solid var(--border-color);
-      border-radius: 12px;
-      background: var(--card-bg);
-      color: var(--text-secondary);
-      font-size: 1rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      flex: 1;
-      min-width: 200px;
-      justify-content: center;
-    }
-
-    .tool-tab:hover {
-      background: rgba(255, 255, 255, 0.05);
-      border-color: var(--accent-color);
-    }
-
-    .tool-tab.active {
-      background: linear-gradient(135deg, hsl(var(--primary), 0.1) 0%, hsl(var(--secondary), 0.1) 100%);
-      border-color: hsl(var(--primary));
-      color: hsl(var(--primary));
-    }
-
-    .tool-tab-icon {
-      font-size: 1.5rem;
-    }
-
-    .tool-tab-content {
-      display: none;
-    }
-
-    .tool-tab-content.active {
-      display: block;
-    }
-
-    /* Feature Cards */
-    .feature-overview {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
-
-    .feature-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 1.5rem;
-      transition: all 0.3s ease;
-    }
-
-    .feature-card:hover {
-      border-color: var(--accent-color);
-      transform: translateY(-4px);
-    }
-
-    .feature-card h3 {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      font-size: 1.25rem;
-      font-weight: 600;
-      margin-bottom: 0.75rem;
-    }
-
-    .feature-card p {
-      color: var(--text-secondary);
-      font-size: 0.95rem;
-      line-height: 1.6;
-      margin-bottom: 1rem;
-    }
-
-    .feature-card ul {
-      list-style: none;
-      padding: 0;
-    }
-
-    .feature-card li {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.25rem 0;
-      font-size: 0.9rem;
-      color: var(--text-secondary);
-    }
-
-    .feature-card li::before {
-      content: '✓';
-      color: hsl(142, 71%, 45%);
-      font-weight: 600;
-    }
-
-    /* Footer */
-    .page-footer {
-      margin-top: 4rem;
-      padding-top: 2rem;
-      border-top: 1px solid var(--border-color);
-      text-align: center;
-      color: var(--text-secondary);
-      font-size: 0.875rem;
-    }
-
-    @media (max-width: 768px) {
-      .page-container {
-        padding: 1rem;
-      }
-
-      .hero h1 {
-        font-size: 2rem;
-      }
-
-      .nav-header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .nav-links {
-        width: 100%;
-      }
-
-      .nav-links a {
-        flex: 1;
-        justify-content: center;
-        padding: 0.4rem 0.5rem;
-        font-size: 0.8rem;
-      }
-
-      .tool-tabs {
-        flex-direction: column;
-      }
-
-      .tool-tab {
-        min-width: auto;
-      }
-    }
-  </style>
-</head>
-<body>
-  <Navbar />
+<BaseLayout
+  title="MCP Tools Suite | MyMCPShelf"
+  description="MCP configuration tools: Config Generator, Docker Stack Builder, and Compatibility Matrix"
+  canonical="https://www.mymcpshelf.com/mcp-tools"
+>
   <div class="page-container">
     <!-- Hero -->
     <div class="hero">
@@ -350,21 +79,21 @@ const staticServers = importedStaticServers;
 
     <!-- Tool Content -->
     <div id="config-generator" class="tool-tab-content active">
-      <MCPConfigGenerator 
+      <MCPConfigGenerator
         client:load
         servers={staticServers}
       />
     </div>
 
     <div id="stack-builder" class="tool-tab-content">
-      <StackBuilder 
+      <StackBuilder
         client:load
         servers={staticServers}
       />
     </div>
 
     <div id="compatibility-matrix" class="tool-tab-content">
-      <CompatibilityMatrix 
+      <CompatibilityMatrix
         client:load
         servers={staticServers}
       />
@@ -380,16 +109,184 @@ const staticServers = importedStaticServers;
     // Tab switching functionality
     document.querySelectorAll('.tool-tab').forEach(tab => {
       tab.addEventListener('click', () => {
-        // Remove active class from all tabs and content
         document.querySelectorAll('.tool-tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.tool-tab-content').forEach(c => c.classList.remove('active'));
-        
-        // Add active class to clicked tab and corresponding content
         tab.classList.add('active');
         const targetId = tab.getAttribute('data-tab');
         document.getElementById(targetId)?.classList.add('active');
       });
     });
   </script>
-</body>
-</html>
+</BaseLayout>
+
+<style>
+  .page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .hero {
+    text-align: center;
+    padding: 3rem 0;
+  }
+
+  .hero h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #f59e0b 0%, #3b82f6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero p {
+    font-size: 1.125rem;
+    color: #94a3b8;
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
+  .tool-tabs {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .tool-tab {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    color: #94a3b8;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex: 1;
+    min-width: 200px;
+    justify-content: center;
+  }
+
+  .tool-tab:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: #f59e0b;
+  }
+
+  .tool-tab.active {
+    background: rgba(245, 158, 11, 0.1);
+    border-color: #f59e0b;
+    color: #f59e0b;
+  }
+
+  .tool-tab-icon {
+    font-size: 1.5rem;
+  }
+
+  .tool-tab-content {
+    display: none;
+  }
+
+  .tool-tab-content.active {
+    display: block;
+  }
+
+  .feature-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .feature-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+  }
+
+  .feature-card:hover {
+    border-color: #f59e0b;
+    transform: translateY(-4px);
+  }
+
+  .feature-card h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: #f1f5f9;
+  }
+
+  .feature-card p {
+    color: #94a3b8;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  .feature-card ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .feature-card li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0;
+    font-size: 0.9rem;
+    color: #94a3b8;
+  }
+
+  .feature-card li::before {
+    content: '✓';
+    color: #10b981;
+    font-weight: 600;
+  }
+
+  .page-footer {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+    color: #64748b;
+    font-size: 0.875rem;
+  }
+
+  .nav-links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: #94a3b8;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .nav-links a:hover {
+    color: #f59e0b;
+    border-color: #f59e0b;
+  }
+
+  @media (max-width: 768px) {
+    .page-container { padding: 1rem; }
+    .hero h1 { font-size: 2rem; }
+    .tool-tabs { flex-direction: column; }
+    .tool-tab { min-width: auto; }
+  }
+</style>

@@ -1,388 +1,212 @@
 ---
 export const prerender = true;
 import { getCollection } from 'astro:content';
-import EmailSignup from '../components/EmailSignup.astro';
 import HeaderNewsletter from '../components/HeaderNewsletter.astro';
-import Navbar from '../components/Navbar.astro';
-import '../styles/global.css';
+import BaseLayout from '../layouts/BaseLayout.astro';
 
 // Get all blog posts
 const blogPosts = await getCollection('blog');
 
 // Sort by date (newest first)
-const sortedPosts = blogPosts.sort((a, b) => 
+const sortedPosts = blogPosts.sort((a, b) =>
   new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
 );
 
 const pageTitle = "My MCP Shelf Blog";
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{pageTitle}</title>
-    <link rel="canonical" href="https://www.mymcpshelf.com/blog" />
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
-    <link rel="icon" href="/favicon.png" type="image/png">
+<BaseLayout
+  title={pageTitle}
+  description="Insights, updates, and guides for the MCP ecosystem"
+  canonical="https://www.mymcpshelf.com/blog"
+>
+  <div class="container">
+    <section class="hero-section">
+      <h1 class="hero-title">{pageTitle}</h1>
+      <p class="hero-subtitle">Insights, updates, and guides for the MCP ecosystem</p>
 
-    <!-- Dark mode flash prevention - must run before styles -->
-    <script>
-        (function() {
-            const theme = localStorage.getItem('theme');
-            if (theme === 'dark') {
-                document.documentElement.classList.add('dark-mode');
-                document.body.classList.add('dark-mode');
-            }
-        })();
-    </script>
-
-    <style>
-        :root {
-            --bg-gradient-start: hsl(var(--background));
-            --bg-gradient-end: hsl(var(--background));
-            --text-primary: hsl(var(--foreground));
-            --text-light: hsl(var(--foreground) / 0.9);
-            --card-bg: hsla(var(--card), 1);
-            --card-text: hsl(var(--card-foreground));
-            --card-shadow: hsla(0, 0%, 0%, 0.1);
-            --border-color: hsla(var(--border), 0.2);
-            --content-text: hsl(var(--foreground));
-            --content-heading: hsl(var(--foreground));
-            --hero-bg: hsl(220, 40%, 12%);
-            --hero-text: hsl(230, 25%, 82%);
-            --hero-subtext: hsl(270, 5%, 60%);
-            --cta-primary: hsl(var(--primary));
-            --cta-hover: hsl(var(--primary) / 90%);
-        }
-
-        body.dark-mode {
-            --bg-gradient-start: hsl(var(--background));
-            --bg-gradient-end: hsl(var(--background));
-            --text-primary: hsl(var(--foreground));
-            --text-light: hsl(var(--foreground) / 0.95);
-            --card-bg: hsla(var(--card), 1);
-            --card-text: hsl(var(--card-foreground));
-            --card-shadow: hsla(0, 0%, 0%, 0.3);
-            --border-color: hsla(var(--border), 0.1);
-            --hero-text: hsl(230, 25%, 82%);
-            --hero-subtext: hsl(270, 5%, 60%);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Libre Franklin', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.6;
-            color: var(--text-primary);
-            background: var(--bg-gradient-start);
-            min-height: 100vh;
-            transition: background 0.3s ease, color 0.3s ease;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        .hero-section {
-            text-align: center;
-            margin-bottom: 2rem;
-            padding: 2rem 0;
-        }
-
-        .hero-title {
-            font-size: 2.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 1rem;
-        }
-
-        .hero-subtitle {
-            font-size: 1.2rem;
-            color: hsl(var(--muted-foreground));
-            max-width: 600px;
-            margin: 0 auto 2rem;
-        }
-
-        .stats-bar {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .stat-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 0 1rem;
-        }
-
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: hsl(var(--primary));
-        }
-
-        .stat-label {
-            font-size: 0.9rem;
-            color: hsl(var(--muted-foreground));
-        }
-
-        .nav-links {
-            margin-top: 1.5rem;
-            display: flex;
-            gap: 0.75rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .nav-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            color: hsl(var(--muted-foreground));
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            transition: all 0.2s ease;
-            background: hsl(var(--card));
-            border: 1px solid hsl(var(--border));
-        }
-
-        .nav-link:hover {
-            color: hsl(var(--primary));
-            border-color: hsl(var(--primary));
-        }
-
-        .theme-toggle {
-            position: fixed;
-            top: 1.5rem;
-            right: 1.5rem;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 12px var(--card-shadow);
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
-
-        .theme-toggle:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px var(--card-shadow);
-        }
-
-        .theme-toggle svg {
-            width: 24px;
-            height: 24px;
-            fill: var(--card-text);
-        }
-
-        .blog-grid {
-            display: grid;
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-
-        .blog-card {
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 2rem;
-            box-shadow: 0 10px 30px var(--card-shadow);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .blog-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-        }
-
-        .blog-card h3 {
-            color: var(--card-text);
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
-        }
-
-        .blog-card h3 a {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .blog-card h3 a:hover {
-            color: hsl(var(--primary));
-        }
-
-        .blog-meta {
-            color: hsl(var(--muted-foreground));
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-
-        .blog-description {
-            color: hsl(var(--foreground));
-            margin-bottom: 1rem;
-        }
-
-        .blog-tags {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .tag {
-            background: hsl(var(--accent) / 0.15);
-            color: hsl(var(--primary));
-            padding: 0.25rem 0.75rem;
-            border-radius: 15px;
-            font-size: 0.8rem;
-        }
-
-        .no-posts {
-            text-align: center;
-            color: hsl(var(--foreground) / 0.8);
-            font-size: 1.1rem;
-            margin-top: 2rem;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
-            
-            h1 {
-                font-size: 2rem;
-            }
-        }
-    </style>
-</head>
-<body>
-    <Navbar />
-    <!-- Dark Mode Toggle -->
-    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
-        <svg id="sunIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="5"/>
-            <line x1="12" y1="1" x2="12" y2="3" stroke="currentColor" stroke-width="2"/>
-            <line x1="12" y1="21" x2="12" y2="23" stroke="currentColor" stroke-width="2"/>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="currentColor" stroke-width="2"/>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="currentColor" stroke-width="2"/>
-            <line x1="1" y1="12" x2="3" y2="12" stroke="currentColor" stroke-width="2"/>
-            <line x1="21" y1="12" x2="23" y2="12" stroke="currentColor" stroke-width="2"/>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="currentColor" stroke-width="2"/>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="currentColor" stroke-width="2"/>
-        </svg>
-        <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="display: none;">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-        </svg>
-    </button>
-
-    <div class="container">
-        <section class="hero-section">
-            <h1 class="hero-title">{pageTitle}</h1>
-            <p class="hero-subtitle">Insights, updates, and guides for the MCP ecosystem</p>
-
-            <div class="stats-bar">
-                <div class="stat-item">
-                    <div class="stat-value">{sortedPosts.length}</div>
-                    <div class="stat-label">Articles</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value">Weekly</div>
-                    <div class="stat-label">Updates</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value">Expert</div>
-                    <div class="stat-label">Authors</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Newsletter -->
-        <div style="margin-top: 1.5rem; display: flex; justify-content: center;">
-            <HeaderNewsletter />
+      <div class="stats-bar">
+        <div class="stat-item">
+          <div class="stat-value">{sortedPosts.length}</div>
+          <div class="stat-label">Articles</div>
         </div>
+        <div class="stat-item">
+          <div class="stat-value">Weekly</div>
+          <div class="stat-label">Updates</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">Expert</div>
+          <div class="stat-label">Authors</div>
+        </div>
+      </div>
+    </section>
 
-        <main>
-            {sortedPosts.length > 0 ? (
-                <div class="blog-grid">
-                    {sortedPosts.map((post) => (
-                        <article class="blog-card">
-                            <h3>
-                                <a href={`/blog/${post.slug}`}>
-                                    {post.data.title}
-                                </a>
-                            </h3>
-                            <div class="blog-meta">
-                                By {post.data.author} • {new Date(post.data.date).toLocaleDateString('en-US', {
-                                    year: 'numeric',
-                                    month: 'long', 
-                                    day: 'numeric'
-                                })}
-                            </div>
-                            <p class="blog-description">
-                                {post.data.description}
-                            </p>
-                            {post.data.tags && (
-                                <div class="blog-tags">
-                                    {post.data.tags.map((tag: string) => (
-                                        <span class="tag">#{tag}</span>
-                                    ))}
-                                </div>
-                            )}
-                        </article>
-                    ))}
-                </div>
-            ) : (
-                <p class="no-posts">No blog posts available yet. Check back soon!</p>
-            )}
-        </main>
-
-        <EmailSignup />
+    <!-- Newsletter -->
+    <div style="margin-top: 1.5rem; display: flex; justify-content: center;">
+      <HeaderNewsletter />
     </div>
 
-    <script>
-        // Dark mode toggle
-        const themeToggle = document.getElementById('themeToggle');
-        const sunIcon = document.getElementById('sunIcon');
-        const moonIcon = document.getElementById('moonIcon');
-        const body = document.body;
+    <main>
+      {sortedPosts.length > 0 ? (
+        <div class="blog-grid">
+          {sortedPosts.map((post) => (
+            <article class="blog-card">
+              <h3>
+                <a href={`/blog/${post.slug}`}>
+                  {post.data.title}
+                </a>
+              </h3>
+              <div class="blog-meta">
+                By {post.data.author} • {new Date(post.data.date).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </div>
+              <p class="blog-description">
+                {post.data.description}
+              </p>
+              {post.data.tags && (
+                <div class="blog-tags">
+                  {post.data.tags.map((tag: string) => (
+                    <span class="tag">#{tag}</span>
+                  ))}
+                </div>
+              )}
+            </article>
+          ))}
+        </div>
+      ) : (
+        <p class="no-posts">No blog posts available yet. Check back soon!</p>
+      )}
+    </main>
+  </div>
+</BaseLayout>
 
-        const currentTheme = localStorage.getItem('theme') || 'light';
-        if (currentTheme === 'dark') {
-            body.classList.add('dark-mode');
-            sunIcon.style.display = 'none';
-            moonIcon.style.display = 'block';
-        }
+<style>
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
 
-        themeToggle.addEventListener('click', () => {
-            body.classList.toggle('dark-mode');
-            if (body.classList.contains('dark-mode')) {
-                localStorage.setItem('theme', 'dark');
-                sunIcon.style.display = 'none';
-                moonIcon.style.display = 'block';
-            } else {
-                localStorage.setItem('theme', 'light');
-                sunIcon.style.display = 'block';
-                moonIcon.style.display = 'none';
-            }
-        });
-    </script>
-</body>
-</html>
+  .hero-section {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 2rem 0;
+  }
+
+  .hero-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #f59e0b 0%, #3b82f6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.2rem;
+    color: #94a3b8;
+    max-width: 600px;
+    margin: 0 auto 2rem;
+  }
+
+  .stats-bar {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 1rem;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #f59e0b;
+  }
+
+  .stat-label {
+    font-size: 0.9rem;
+    color: #64748b;
+  }
+
+  .blog-grid {
+    display: grid;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+
+  .blog-card {
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 20px;
+    padding: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .blog-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  }
+
+  .blog-card h3 {
+    color: #f1f5f9;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+  }
+
+  .blog-card h3 a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .blog-card h3 a:hover {
+    color: #f59e0b;
+  }
+
+  .blog-meta {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+
+  .blog-description {
+    color: #94a3b8;
+    margin-bottom: 1rem;
+  }
+
+  .blog-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+  }
+
+  .no-posts {
+    text-align: center;
+    color: #64748b;
+    font-size: 1.1rem;
+    margin-top: 2rem;
+  }
+
+  @media (max-width: 768px) {
+    .container { padding: 1rem; }
+    .hero-title { font-size: 2rem; }
+  }
+</style>

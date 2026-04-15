@@ -74,12 +74,16 @@ const utilityNavItems = [
 ];
 ---
 <nav class="site-navbar">
-  <div class="navbar-inner">
+  <!-- Row 1: Title -->
+  <div class="navbar-title-row">
     <a href="/" class="navbar-logo">
       <span class="logo-text">My MCP Shelf</span>
       <span class="navbar-subtitle">Deployment-Ready MCP Servers</span>
     </a>
-    
+  </div>
+
+  <!-- Row 2: Navigation -->
+  <div class="navbar-nav-row">
     <div class="navbar-links">
       <!-- Primary: Deployment Categories -->
       <div class="nav-section">
@@ -151,32 +155,26 @@ const utilityNavItems = [
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   }
 
-  .navbar-inner {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 1.5rem;
-    height: auto;
-    min-height: 70px;
-    display: grid !important;
-    grid-template-columns: 1fr auto 1fr !important;
+  /* Row 1: centered title */
+  .navbar-title-row {
+    display: flex;
+    justify-content: center;
     align-items: center;
-    gap: 2rem;
+    padding: 0.75rem 1.5rem 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   }
 
   .navbar-logo {
-    grid-column: 2 !important;
-    justify-self: center !important;
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    text-decoration: none;
-    flex-shrink: 0;
     flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    text-decoration: none;
   }
 
   .logo-text {
     color: #ffffff;
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     font-weight: 700;
     font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
     letter-spacing: -0.01em;
@@ -184,19 +182,25 @@ const utilityNavItems = [
   }
 
   .navbar-subtitle {
-    color: #94a3b8;
+    color: #64748b;
     font-size: 0.7rem;
     font-weight: 500;
     line-height: 1;
   }
 
+  /* Row 2: navigation links */
+  .navbar-nav-row {
+    display: flex;
+    justify-content: center;
+    padding: 0.5rem 1.5rem;
+  }
+
   .navbar-links {
-    grid-column: 3 !important;
-    justify-self: end !important;
     display: flex;
     align-items: center;
     gap: 2rem;
-    justify-content: flex-end;
+    flex-wrap: wrap;
+    justify-content: center;
   }
 
   .nav-section {
@@ -435,24 +439,15 @@ const utilityNavItems = [
   }
 
   @media (max-width: 768px) {
-    .navbar-inner {
-      height: auto;
-      padding: 0.75rem 1rem;
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      gap: 1rem;
+    .navbar-title-row {
+      padding: 0.75rem 1rem 0.5rem;
     }
 
-    .navbar-logo {
-      grid-column: unset;
-      justify-self: unset;
-      align-items: center;
+    .navbar-nav-row {
+      padding: 0.5rem 1rem;
     }
 
     .navbar-links {
-      grid-column: unset;
-      justify-self: unset;
       width: 100%;
       flex-direction: column;
       align-items: stretch;
