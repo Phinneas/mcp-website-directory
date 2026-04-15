@@ -13,7 +13,10 @@
     "test:tavily:watch": "cd scripts/tavily && npm test --watch",
     "test:tavily:coverage": "cd scripts/tavily && npm test --coverage",
     "weekly-scan": "node scripts/tavily/weekly-scan.js",
-    "monthly-review": "node scripts/tavily/monthly-review.js"
+    "monthly-review": "node scripts/tavily/monthly-review.js",
+    "set-deployment-types": "node scripts/set-deployment-types.js",
+    "set-deployment-types:preview": "node scripts/set-deployment-types.js --preview",
+    "set-deployment-types:apply": "node scripts/set-deployment-types.js --apply"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.12",
