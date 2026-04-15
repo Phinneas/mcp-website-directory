@@ -29,8 +29,27 @@ function escape(val) {
   return `'${String(val).replace(/'/g, "''")}'`;
 }
 
+// Infer deployment type from name/description/category keywords.
+// Order matters: most-specific types are checked first.
+function inferDeploymentType(server) {
+  const f = server.fields || server;
+  const text = `${f.name || ''} ${f.description || ''} ${f.category || ''}`.toLowerCase();
+
+  const rules = [
+    { type: 'enterprise_saas', keywords: ['enterprise', 'compliance', 'audit', ' sso', 'saml', 'okta', 'sla', 'rbac', 'white-glove', 'multi-tenant saas'] },
+    { type: 'self_hosted',     keywords: ['self-host', 'self host', 'on-premise', 'on premise', 'on-prem', ' vpc', 'private cloud', 'air-gap', 'air gap', 'byok', 'byoc'] },
+    { type: 'cloud_native',    keywords: ['cloud-native', 'cloud native', ' sse', 'server-sent', 'websocket', 'web socket', 'http transport', 'managed service', 'hosted service', 'serverless', 'cloud run', 'lambda', 'azure function', 'multi-user', 'saas platform'] },
+  ];
+
+  for (const { type, keywords } of rules) {
+    if (keywords.some(kw => text.includes(kw))) return type;
+  }
+  return 'local_stdio';
+}
+
 function serverToRow(server) {
   const f = server.fields || {};
+  const deploymentType = server.deployment || inferDeploymentType(server);
   return [
     escape(server.id),
     escape(f.name || 'Unknown Server'),
@@ -44,6 +63,7 @@ function serverToRow(server) {
     f.downloads || 0,
     escape(f.logoUrl || null),
     escape(f.updated || new Date().toISOString()),
+    escape(deploymentType),
   ].join(', ');
 }
 
@@ -81,7 +101,7 @@ for (let i = 0; i < servers.length; i += BATCH_SIZE) {
   const batch = servers.slice(i, i + BATCH_SIZE);
   const values = batch.map(s => `(${serverToRow(s)})`).join(',\n  ');
   lines.push(
-    `INSERT INTO servers (id, name, description, author, category, language, stars, github_url, npm_package, downloads, logo_url, updated_at) VALUES`,
+    `INSERT INTO servers (id, name, description, author, category, language, stars, github_url, npm_package, downloads, logo_url, updated_at, deployment_type) VALUES`,
     `  ${values};`,
     ''
   );

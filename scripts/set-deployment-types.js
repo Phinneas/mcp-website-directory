@@ -15,10 +15,11 @@
  *   npx wrangler d1 execute mcp-directory --remote --file=scripts/update.sql
  */
 
-import { execSync } from 'child_process';
-import { writeFileSync } from 'fs';
+import { execSync, spawnSync } from 'child_process';
+import { writeFileSync, unlinkSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { tmpdir } from 'os';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -63,14 +64,34 @@ const RULES = [
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function wranglerQuery(sql) {
-  const escaped = sql.replace(/"/g, '\\"');
-  const raw = execSync(
-    `npx wrangler d1 execute ${DB_NAME} --remote --json --command="${escaped}"`,
-    { encoding: 'utf8', maxBuffer: 50 * 1024 * 1024 }
-  );
-  const parsed = JSON.parse(raw);
-  // wrangler wraps results in an array
-  return (parsed[0]?.results) ?? [];
+  // Write SQL to a temp file to avoid shell escaping / newline issues
+  const tmpFile = join(tmpdir(), `d1-query-${Date.now()}.sql`);
+  writeFileSync(tmpFile, sql, 'utf8');
+  try {
+    // Use spawnSync so wrangler's progress spinner (stderr) doesn't pollute
+    // the JSON we need to parse (stdout)
+    const result = spawnSync(
+      'npx',
+      ['wrangler', 'd1', 'execute', DB_NAME, '--remote', '--json', `--file=${tmpFile}`],
+      {
+        encoding: 'utf8',
+        maxBuffer: 50 * 1024 * 1024,
+        env: { ...process.env, PAGER: 'cat', NO_COLOR: '1' },
+        shell: true,
+      }
+    );
+    if (result.error) throw result.error;
+    if (result.status !== 0) {
+      throw new Error(`wrangler exited ${result.status}:\n${result.stderr}`);
+    }
+    const stdout = result.stdout.trim();
+    if (!stdout) throw new Error(`wrangler returned empty stdout. stderr:\n${result.stderr}`);
+    const parsed = JSON.parse(stdout);
+    // wrangler wraps results in an array
+    return (parsed[0]?.results) ?? [];
+  } finally {
+    try { unlinkSync(tmpFile); } catch {}
+  }
 }
 
 function inferType(server) {
@@ -189,7 +210,7 @@ async function main() {
     try {
       execSync(
         `npx wrangler d1 execute ${DB_NAME} --remote --file="${OUTPUT_SQL}"`,
-        { stdio: 'inherit' }
+        { stdio: 'inherit', env: { ...process.env, PAGER: 'cat', NO_COLOR: '1' } }
       );
       console.log('\n✅  Done — deployment_type values updated in D1.');
     } catch (err) {
