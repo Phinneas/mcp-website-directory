@@ -43,10 +43,33 @@ export interface ServersPage {
   nextOffset: number;
 }
 
+// Infer deployment type from name/description/category when the DB column is NULL.
+// Checked in order — most specific first so enterprise/self-hosted aren't
+// swallowed by the broader cloud_native keywords.
+function inferDeploymentType(row: MCPServerRow): string {
+  if (row.deployment_type) return row.deployment_type;
+  const text = `${row.name} ${row.description ?? ''} ${row.category ?? ''}`.toLowerCase();
+  if ([
+    'enterprise', 'compliance', 'audit', ' sso', 'saml', 'okta', 'sla',
+    'rbac', 'white-glove', 'multi-tenant saas',
+  ].some(kw => text.includes(kw))) return 'enterprise_saas';
+  if ([
+    'self-host', 'self host', 'on-premise', 'on premise', 'on-prem',
+    ' vpc', 'private cloud', 'air-gap', 'byok', 'byoc',
+  ].some(kw => text.includes(kw))) return 'self_hosted';
+  if ([
+    'cloud-native', 'cloud native', ' sse', 'server-sent', 'websocket',
+    'web socket', 'http transport', 'managed service', 'hosted service',
+    'serverless', 'cloud run', 'lambda', 'azure function', 'multi-user',
+    'saas platform',
+  ].some(kw => text.includes(kw))) return 'cloud_native';
+  return 'local_stdio';
+}
+
 function rowToServer(row: MCPServerRow): MCPServer {
   return {
     id: row.id,
-    deployment: row.deployment_type || 'local_stdio',
+    deployment: inferDeploymentType(row),
     fields: {
       name: row.name,
       description: row.description || '',
