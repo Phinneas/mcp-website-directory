@@ -47,6 +47,8 @@ import base64
 import json
 import os
 import re
+import shlex
+import subprocess
 import time
 from collections import Counter
 from datetime import datetime, timezone
@@ -375,33 +377,106 @@ def write_to_d1(servers: list[dict]) -> bool:
     """Batch insert servers into Cloudflare D1 database.
     
     Uses `wrangler d1 execute` for direct DB updates.
+    Requires CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID env vars.
     """
     logger = get_run_logger()
-    
-    # We use a batch insert approach. For 5000 servers, we'll chunk it
-    # to avoid command line argument limits.
-    chunk_size = 50
+
+    api_token = os.environ.get("CLOUDFLARE_API_TOKEN")
+    account_id = os.environ.get("CLOUDFLARE_ACCOUNT_ID")
+
+    if not api_token or not account_id:
+        logger.warning(
+            "CLOUDFLARE_API_TOKEN or CLOUDFLARE_ACCOUNT_ID not set — "
+            "skipping D1 write. Set these secrets in GitHub Actions."
+        )
+        return False
+
+    # Infer deployment type per server (mirrors seed-d1.js logic)
+    def _infer_deployment(server: dict) -> str:
+        f = server.get("fields", server)
+        text = f"{f.get('name', '')} {f.get('description', '')} {f.get('category', '')}".lower()
+        rules = [
+            ("enterprise_saas", ["enterprise", "compliance", " sso", "saml", "okta", "sla", "rbac", "white-glove", "multi-tenant saas"]),
+            ("self_hosted", ["self-host", "self host", "on-premise", "on premise", "on-prem", " vpc", "private cloud", "air-gap", "air gap", "byok", "byoc"]),
+            ("cloud_native", ["cloud-native", "cloud native", " sse", "server-sent", "websocket", "web socket", "http transport", "managed service", "hosted service", "serverless", "cloud run", "lambda", "azure function", "multi-user", "saas platform"]),
+        ]
+        for dtype, keywords in rules:
+            if any(kw in text for kw in keywords):
+                return dtype
+        return "local_stdio"
+
+    def _sql_escape(val: Any) -> str:
+        """Escape a value for SQL insertion."""
+        if val is None or val == "":
+            return "NULL"
+        if isinstance(val, (int, float)):
+            return str(int(val)) if isinstance(val, int) else str(val)
+        s = str(val).replace("\\", "\\\\").replace("'", "''").replace(";", "")
+        return f"'{s}'"
+
+    chunk_size = 25  # smaller chunks for reliability
+    failed_chunks = 0
+
     for i in range(0, len(servers), chunk_size):
         chunk = servers[i:i + chunk_size]
-        
-        # Prepare SQL values
+
         values = []
         for s in chunk:
-            fields = s["fields"]
-            # Escape strings to prevent SQL injection
-            name = fields["name"].replace("'", "''")
-            desc = fields["description"].replace("'", "''")
-            values.append(f"('{s['id']}', '{name}', '{desc}', '{fields['author']}', '{fields['category']}', '{fields.get('language', 'Unknown')}', {fields['stars']}, '{fields['github_url']}', NULL, {fields['downloads']}, '{fields.get('logoUrl', '')}', '{fields['updated']}')")
-            
-        sql = f"INSERT OR REPLACE INTO servers (id, name, description, author, category, language, stars, github_url, npm_package, downloads, logo_url, updated_at) VALUES {','.join(values)};"
-        
-        # Execute via wrangler
-        # Note: assumes wrangler is configured in the environment
-        cmd = f"npx wrangler d1 execute mcp-directory --command=\"{sql}\""
-        exit_code = os.system(cmd)
-        
-        if exit_code != 0:
-            raise RuntimeError(f"Failed to write to D1 at chunk {i}")
+            f = s["fields"]
+            deployment_type = s.get("deployment") or _infer_deployment(s)
+            values.append(
+                f"({_sql_escape(s['id'])}, {_sql_escape(f.get('name'))}, "
+                f"{_sql_escape(f.get('description'))}, {_sql_escape(f.get('author'))}, "
+                f"{_sql_escape(f.get('category'))}, {_sql_escape(f.get('language', 'Unknown'))}, "
+                f"{f.get('stars') or 0}, {_sql_escape(f.get('github_url'))}, "
+                f"{_sql_escape(f.get('npm_package'))}, {f.get('downloads') or 0}, "
+                f"{_sql_escape(f.get('logoUrl'))}, {_sql_escape(f.get('updated'))}, "
+                f"{_sql_escape(deployment_type)})"
+            )
+
+        sql = (
+            "INSERT OR REPLACE INTO servers "
+            "(id, name, description, author, category, language, stars, "
+            "github_url, npm_package, downloads, logo_url, updated_at, deployment_type) "
+            f"VALUES {','.join(values)};"
+        )
+
+        env = {
+            **os.environ,
+            "CLOUDFLARE_API_TOKEN": api_token,
+            "CLOUDFLARE_ACCOUNT_ID": account_id,
+        }
+
+        try:
+            result = subprocess.run(
+                ["npx", "wrangler", "d1", "execute", "mcp-directory", "--command", sql],
+                capture_output=True,
+                text=True,
+                timeout=120,
+                env=env,
+            )
+
+            if result.returncode != 0:
+                logger.error(
+                    f"D1 write failed at chunk {i}-{i+len(chunk)}: "
+                    f"exit={result.returncode} stderr={result.stderr[:500]}"
+                )
+                failed_chunks += 1
+            else:
+                logger.info(f"D1 chunk {i}-{i+len(chunk)} written OK")
+
+        except subprocess.TimeoutExpired:
+            logger.error(f"D1 write timed out at chunk {i}-{i+len(chunk)}")
+            failed_chunks += 1
+        except Exception as exc:
+            logger.error(f"D1 write exception at chunk {i}: {exc}")
+            failed_chunks += 1
+
+    if failed_chunks > 0:
+        raise RuntimeError(
+            f"D1 write completed with {failed_chunks} failed chunk(s) out of "
+            f"{(len(servers) + chunk_size - 1) // chunk_size} total"
+        )
 
     logger.info(f"Successfully wrote {len(servers):,} servers to D1")
     return True
