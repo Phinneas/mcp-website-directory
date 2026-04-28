@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import type { MCPServer } from '../utils/d1';
 import { getDeploymentBadge } from '../utils/serverData.js';
+import { HealthBadge } from './HealthBadge';
 
 interface Props {
   initialServers: MCPServer[];
@@ -124,6 +125,17 @@ function ServerCard({ server }: { server: MCPServer }) {
             ? (server.fields.description || '').slice(0, 120).trimEnd() + '…'
             : server.fields.description}
         </div>
+        
+        {/* Health Status Badge */}
+        {(server as any).health_status && (
+          <div className="server-health-status">
+            <HealthBadge 
+              healthStatus={(server as any).health_status}
+              lastCommitDate={(server as any).last_commit_date}
+              showLabel={true}
+            />
+          </div>
+        )}
         
         <div className="server-meta">
           {server.fields.language && <span className="meta-tag">{server.fields.language}</span>}

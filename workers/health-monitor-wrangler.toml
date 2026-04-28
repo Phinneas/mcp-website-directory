@@ -1,0 +1,23 @@
+name = "mcp-health-monitor"
+main = "health-monitor.js"
+compatibility_date = "2024-11-12"
+
+# D1 Database binding
+[[d1_databases]]
+binding = "DB"
+database_name = "mcp-directory"
+database_id = "527bf637-7aba-4719-8d39-b9e6e614a3b9"
+
+# KV Namespace for caching GitHub API responses
+[[kv_namespaces]]
+binding = "GITHUB_STATS"
+id = "63174dafd4e34b36a008c1cea5209ad1"
+
+# Cron triggers - runs weekly on Sundays at 2 AM UTC
+[triggers]
+crons = ["0 2 * * Sun"]
+
+# Workers free tier limits:
+# - 100,000 requests/day
+# - Cron triggers included in request count
+# Weekly health check of ~600 servers = ~500 API calls/month (well within limits)

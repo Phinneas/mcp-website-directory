@@ -1,0 +1,267 @@
+---
+title: "How to Use Skills in Cursor: A Complete Agent Skills Tutorial"
+description: "Learn how to create, configure, and invoke Cursor Skills to give your AI agent reusable capabilities. Covers setup, file structure, invocation, subagents, and Rules vs Skills."
+pubDate: 2026-05-05
+slug: how-to-use-skills-in-cursor
+tags: ["cursor", "cursor skills", "cursor agent", "cursor subagents", "ai coding", "tutorial"]
+draft: false
+---
+
+Cursor Skills let you package reusable instructions, workflows, and expertise into files your AI agent can automatically discover and invoke. They arrived in early 2025 as part of Cursor's push into full agent mode and have quickly become the most powerful customization layer available — distinct from Rules (which enforce persistent behavior) and MCP servers (which connect external tools). This guide covers exactly how to create a Skill, where to store it, how the agent decides to use it, and how Skills fit alongside subagents and Cursor Rules.
+
+If you're already using Cursor in agent mode and want to stop retyping the same instructions every session, Skills are what you've been looking for.
+
+---
+
+## What Are Cursor Skills?
+
+Cursor Skills are an open format for giving your AI agent new, domain-specific capabilities. Mechanically, a Skill is a named folder containing a `SKILL.md` file — a Markdown document with a description field and freeform instructions. The agent reads that description to decide when the Skill is relevant and applies it automatically, or you can call it directly with a slash command.
+
+Skills live in a `.cursor/skills/` directory, either globally at `~/.cursor/skills/` (available across all your projects) or locally inside a repo at `.cursor/skills/` (scoped to that project). Both are supported simultaneously.
+
+The official framing from Cursor's documentation describes them as "an open standard for packaging reusable knowledge and scripts" — which is accurate, but undersells how useful they become once you have a handful of them tuned to your actual workflows.
+
+Where Rules constrain how the agent always behaves, Skills define what the agent can do on demand. You might have a Rule that says "always write TypeScript with strict mode enabled" alongside a Skill that packages your full deploy checklist. Both live in `.cursor/` but serve completely different purposes.
+
+---
+
+## Cursor Rules vs Skills: What's the Difference?
+
+This is the most common point of confusion when people first discover the Customizing section of Cursor's settings. Here's a clean breakdown:
+
+| | Cursor Rules | Cursor Skills |
+|---|---|---|
+| **Purpose** | Persistent behavioral constraints | Reusable task playbooks |
+| **Activation** | Always active in agent context | Auto (via description match) or explicit `/skill-name` |
+| **File location** | `.cursor/rules/` | `.cursor/skills/<name>/SKILL.md` |
+| **Scope** | Project or global | Project or global |
+| **Typical use** | "Use ESLint, never console.log" | "Run my PR checklist" |
+
+Rules are the *what* — how the agent should always behave. Skills are the *how* — step-by-step procedures for specific, repeatable tasks.
+
+Many teams use both in combination: Rules enforce coding style and team conventions, while Skills encode the workflows that get run repeatedly. You can also set `disable-model-invocation: true` in a Skill's frontmatter, which converts it into a pure slash command that never auto-activates — useful for high-stakes operations like deploys where you want explicit invocation every time.
+
+---
+
+## How to Create a Cursor Skill
+
+### Step 1 — Create the folder structure
+
+Decide whether the Skill should be global or project-scoped, then create the directory:
+
+```bash
+# Global skill — available across all your projects
+~/.cursor/skills/my-skill-name/SKILL.md
+
+# Project-level skill — scoped to one repo
+.cursor/skills/my-skill-name/SKILL.md
+```
+
+**Naming rules:** folder names must use lowercase letters, numbers, and hyphens only. No spaces, no uppercase, no underscores. The file inside must always be named exactly `SKILL.md`.
+
+> **Screenshot:** File explorer showing the `.cursor/skills/deploy-checklist/` folder structure with `SKILL.md` inside.
+
+### Step 2 — Write the SKILL.md file
+
+Every Skill needs at minimum a frontmatter `description` field and some body content. Here's a minimal working example:
+
+```markdown
+---
+description: Runs the full deployment checklist before pushing to production
+---
+
+# Deploy Checklist
+
+## Steps
+1. Run `npm run test` — confirm all tests pass before continuing
+2. Check for uncommitted changes with `git status`
+3. Bump the version in package.json following semver
+4. Build the project with `npm run build`
+5. Verify the build output looks correct
+6. Push to the deploy branch
+```
+
+The `description` field is the most important line in the file. It's what the agent reads when deciding whether to activate the Skill automatically. Keep it specific and action-oriented — "Runs X when Y is needed" works better than a vague label. Think of it as the brief you'd give a teammate to explain when to use this procedure.
+
+The body is free-form Markdown. Steps, code blocks, decision trees, environment variable references, example outputs — anything the agent needs to execute the workflow correctly belongs here.
+
+### Step 3 — Verify the Skill appears in Cursor
+
+After creating the file, open Cursor Settings and navigate to the Rules panel. Your new Skill should appear in the **Agent Decides** section. If it's missing, check:
+
+- The folder name uses only lowercase, numbers, and hyphens
+- The file is named exactly `SKILL.md` (case-sensitive)
+- The path is `.cursor/skills/<name>/SKILL.md`, not `.cursor/rules/`
+
+> **Screenshot:** Cursor Settings → Rules panel showing Skills listed under "Agent Decides."
+
+---
+
+## How to Invoke Cursor Skills
+
+There are two ways to use a Skill once it's set up.
+
+### Automatic invocation
+
+In agent mode, Cursor reads all available Skill descriptions and decides which ones are relevant based on your current conversation context. You don't need to type anything extra — just work normally, and the agent will pull in relevant Skills as it goes. A Skill with `description: Runs the full deployment checklist before pushing to production` will activate when you ask the agent to help you deploy.
+
+### Explicit invocation
+
+Type a `/` followed by the Skill's folder name directly in agent chat:
+
+```
+/deploy-checklist
+```
+
+> **Screenshot:** Cursor agent chat window showing `/deploy-checklist` typed and the Skill executing.
+
+Explicit invocation is the right call when you want the Skill to run regardless of whether the agent would have chosen it automatically, or when the Skill has `disable-model-invocation: true` set, which suppresses auto-activation entirely.
+
+The slash command behavior mirrors how Slack commands work — deterministic, always runs that specific Skill, no inference involved.
+
+---
+
+## Global vs Project-Level Skills
+
+Choosing where to store a Skill matters for maintenance and team sharing.
+
+**Global skills** (`~/.cursor/skills/`) are best for generic capabilities that are useful regardless of what project you're in: a PR description generator, a commit message formatter, a code review checklist, or anything you'd reach for every day. They live on your machine, not in any repo, and activate automatically across every project you open.
+
+**Project-level skills** (`.cursor/skills/` in the repo root) are the right choice for business logic or domain-specific workflows that only make sense in one codebase — a release procedure that calls your internal CI scripts, a database migration workflow, or a checklist specific to your team's branching strategy. Commit this directory to version control. Every developer who clones the repo inherits the Skills automatically, which is one of the more underrated onboarding benefits.
+
+The practical guidance from the Cursor community is to treat Skills as reusable infrastructure rather than per-project configuration. Define globally by default, and only drop to project level when the Skill genuinely encodes something business-specific. Duplicating global Skills at the project level just creates maintenance overhead with no benefit.
+
+---
+
+## Cursor Skills and Subagents
+
+Skills and subagents are complementary features that work well together but serve different purposes.
+
+A **Skill** packages a workflow — a sequence of steps, instructions, or knowledge the agent can execute. A **Subagent** packages a specialization — a distinct agent persona (like `frontend`, `code-review`, or `backend`) that a parent agent can spawn to handle delegated or parallel work.
+
+With Cursor's `/multitask` command (shipped April 2026), the main agent can spin up async subagents to parallelize requests or break large tasks into simultaneous chunks. Skills tell each subagent *how* to handle its assigned piece; subagents determine *who* does what.
+
+Like Skills, subagents follow the same global vs project-level logic: generic subagents (code-review, documentation) belong globally, while specialized ones tied to your team's stack belong in the project.
+
+For teams building on the MCP ecosystem, Skills are also where you encode how the agent should use a connected MCP server — the prompting patterns, workflow steps, and edge cases specific to your integration. More on available Cursor-compatible MCP servers in the [MyMCPShelf Cursor Skills directory](/cursor-skills).
+
+---
+
+## Four Ready-to-Use Cursor Skill Templates
+
+### 1. PR Description Writer
+
+```markdown
+---
+description: Generates a structured pull request title and description from staged changes
+---
+
+# PR Description Writer
+
+## Instructions
+1. Run `git diff --staged` to get the full diff
+2. Identify the primary change type: feat, fix, refactor, docs, chore
+3. Write a title following the pattern: `<type>(<scope>): <short summary>`
+4. Write a body with three sections: What changed, Why it changed, How to test
+5. Keep the title under 72 characters
+```
+
+### 2. Commit Message Generator
+
+```markdown
+---
+description: Creates a Conventional Commits-formatted commit message from staged changes
+---
+
+# Commit Message Generator
+
+## Instructions
+1. Run `git diff --staged` to inspect staged changes
+2. Identify the change type: feat, fix, docs, style, refactor, test, chore
+3. Identify the scope (component, module, or file area affected)
+4. Write the commit using the format: `<type>(<scope>): <imperative summary>`
+5. If the change is breaking, add `BREAKING CHANGE:` in the footer
+6. Keep the subject line under 72 characters
+```
+
+### 3. Test Coverage Checker
+
+```markdown
+---
+description: Runs the test suite and identifies files with insufficient coverage
+---
+
+# Test Coverage Checker
+
+## Instructions
+1. Run `npm run test -- --coverage` (adjust command for your test runner)
+2. Parse the coverage output for files below 80% line coverage
+3. List each uncovered file with its current coverage percentage
+4. Suggest which functions or branches need additional test cases
+5. Do not modify any source files during this check
+```
+
+### 4. Documentation Gap Finder
+
+```markdown
+---
+description: Scans recently changed files and flags any documentation that needs updating
+---
+
+# Documentation Gap Finder
+
+## Instructions
+1. Run `git diff HEAD~1 --name-only` to get recently changed files
+2. For each changed file, check if a corresponding doc file exists in `/docs`
+3. Flag any public functions or exported types that lack JSDoc comments
+4. List missing docs as a checklist the developer can work through
+5. Do not auto-generate documentation — output the gaps only
+```
+
+---
+
+## Tips for Writing Better Cursor Skills
+
+**Write descriptions as task triggers, not labels.** "Runs the deploy checklist before production pushes" is better than "Deploy." The agent pattern-matches against your conversation to decide what to invoke.
+
+**One workflow per Skill.** Avoid building a Skill that tries to do everything — you'll end up with a god-Skill that activates at the wrong times and is hard to maintain. Keep each Skill focused on one repeatable procedure.
+
+**Use `disable-model-invocation: true` for high-stakes operations.** Anything that pushes code, runs migrations, or modifies production systems should require an explicit `/skill-name` call, not auto-activation.
+
+**Commit project Skills to version control.** Your `.cursor/skills/` directory belongs in the repo. Teammates and CI environments should all have the same Skills available.
+
+**Test with explicit invocation first.** Before relying on auto-activation, call the Skill directly with `/skill-name` to make sure it executes correctly. Tune the `description` field if the agent isn't picking it up automatically when you'd expect it to.
+
+**Build a library over time.** Skills compound. Start with two or three for your most repetitive workflows and expand from there. Teams with mature Skill libraries report significantly less time spent re-explaining context to the agent across sessions.
+
+---
+
+## Frequently Asked Questions
+
+**Do Cursor Skills work on all plans?**  
+Skills are part of Cursor's agent mode functionality. Check the current [Cursor pricing page](https://cursor.com/pricing) to confirm which plans include agent mode — features and limits do change between releases.
+
+**What's the difference between a Cursor Skill and an MCP server?**  
+MCP servers extend the agent with access to external tools — APIs, databases, services, file systems. Skills are internal playbooks: packaged instructions for recurring tasks that don't require an external connection. The two work together well. An MCP server gives the agent a capability; a Skill tells it the right way to use that capability in your specific workflow.
+
+**Can I share Cursor Skills with my team?**  
+Yes — commit `.cursor/skills/` to your repository. Every developer who clones the repo gets the Skills automatically. This is one of the most effective ways to standardize how a team interacts with the agent.
+
+**Why isn't my Skill appearing in the Rules panel?**  
+The three most common causes: the folder name contains uppercase letters or underscores; the file isn't named exactly `SKILL.md`; or it's been placed in `.cursor/rules/` instead of `.cursor/skills/`. Fix any of those and it should appear immediately.
+
+**Can a Skill call another Skill?**  
+Not directly through a built-in chaining mechanism as of this writing — but you can reference another Skill's slash command in the instructions of a parent Skill and let the agent handle the sequence. Subagents are the more structured solution for complex multi-step delegation.
+
+**How are Skills different from Cursor's `.cursorrules` file?**  
+The `.cursorrules` file (and its successor, the Rules system) sets persistent instructions that apply to every agent interaction. Skills are on-demand procedures the agent selects or you invoke explicitly. The `.cursorrules` approach has largely been superseded by the Rules system; Skills are a separate, newer primitive entirely.
+
+---
+
+## Next Steps
+
+Cursor Skills are the fastest way to turn one-off agent interactions into repeatable, team-shareable infrastructure. The setup takes minutes and the payoff compounds as your library grows.
+
+If you're looking for community-built Skills designed around specific MCP server integrations — deploy hooks, database workflows, API automation — the [MyMCPShelf Cursor Skills directory](/cursor-skills) is a good starting point. Cursor's MCP support means any server in the directory can become the foundation of a Skill-powered workflow.
+
+Start with one Skill for the workflow you repeat most. You'll have a small library within a week.
