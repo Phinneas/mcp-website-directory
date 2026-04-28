@@ -190,6 +190,9 @@ const faqSections = [
             <a href="/blog"><VintageIcon client:load name="Windows95TextFile" size={16} /> View Blog</a>
             <a href="/agent-skills"><ToolboxIcon client:load size={16} /> Browse Skills</a>
             <a href="/mcp-clients"><ComputerIcon client:load size={16} /> Browse Clients</a>
+            <a href="https://www.salishseaconsulting.com/contact/" class="custom-mcp-link" target="_blank" rel="noopener noreferrer">
+                🔧 Need a Custom MCP System?
+            </a>
         </div>
     </div>
 
@@ -423,6 +426,24 @@ const faqSections = [
 
     .footer-links a:hover {
         color: #d97706;
+    }
+
+    .footer-links .custom-mcp-link {
+        background: rgba(238, 123, 48, 0.15);
+        color: #fbbf24;
+        padding: 0.5rem 1rem;
+        border: 1px solid rgba(238, 123, 48, 0.3);
+        border-radius: 8px;
+        font-size: 0.85rem;
+        margin: 0.5rem 1rem;
+        display: inline-block;
+    }
+
+    .footer-links .custom-mcp-link:hover {
+        background: rgba(238, 123, 48, 0.25);
+        color: #ffcf7a;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(238, 123, 48, 0.3);
     }
 
     @media (max-width: 768px) {
