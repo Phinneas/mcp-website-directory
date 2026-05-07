@@ -12,7 +12,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/vercel-labs/skills/tree/main/skills/find-skills",
-    "skillsShUrl": "https://skills.sh"
+    "skillsShUrl": "https://skills.sh",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "vercel-react-best-practices",
@@ -27,7 +29,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/vercel-labs/agent-skills/tree/main/skills/vercel-react-best-practices",
-    "skillsShUrl": "https://skills.sh"
+    "skillsShUrl": "https://skills.sh",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "web-design-guidelines",
@@ -42,7 +46,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/vercel-labs/agent-skills/tree/main/skills/web-design-guidelines",
-    "skillsShUrl": "https://skills.sh"
+    "skillsShUrl": "https://skills.sh",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "remotion-best-practices",
@@ -57,7 +63,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/remotion-dev/skills/tree/main/skills/remotion-best-practices",
-    "skillsShUrl": "https://skills.sh"
+    "skillsShUrl": "https://skills.sh",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "frontend-design",
@@ -72,7 +80,9 @@
     "license": "Complete terms in LICENSE.txt",
     "version": "1.0.0",
     "url": "https://github.com/anthropics/skills/tree/main/skills/frontend-design",
-    "skillsShUrl": "https://skills.sh"
+    "skillsShUrl": "https://skills.sh",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "azure-ai",
@@ -87,7 +97,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/microsoft/github-copilot-for-azure/tree/main/skills/azure-ai",
-    "skillsShUrl": "https://skills.sh"
+    "skillsShUrl": "https://skills.sh",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "azure-observability",
@@ -102,7 +114,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/microsoft/github-copilot-for-azure/tree/main/skills/azure-observability",
-    "skillsShUrl": "https://skills.sh"
+    "skillsShUrl": "https://skills.sh",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "azure-cost-optimization",
@@ -117,7 +131,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/microsoft/github-copilot-for-azure/tree/main/skills/azure-cost-optimization",
-    "skillsShUrl": "https://skills.sh"
+    "skillsShUrl": "https://skills.sh",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "azure-storage",
@@ -132,7 +148,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/microsoft/github-copilot-for-azure/tree/main/skills/azure-storage",
-    "skillsShUrl": "https://skills.sh"
+    "skillsShUrl": "https://skills.sh",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "azure-deploy",
@@ -147,7 +165,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/microsoft/github-copilot-for-azure/tree/main/skills/azure-deploy",
-    "skillsShUrl": "https://skills.sh"
+    "skillsShUrl": "https://skills.sh",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "azure-diagnostics",
@@ -162,7 +182,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/microsoft/github-copilot-for-azure/tree/main/skills/azure-diagnostics",
-    "skillsShUrl": "https://skills.sh"
+    "skillsShUrl": "https://skills.sh",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "microsoft-foundry",
@@ -177,7 +199,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/microsoft/github-copilot-for-azure/tree/main/skills/microsoft-foundry",
-    "skillsShUrl": "https://skills.sh"
+    "skillsShUrl": "https://skills.sh",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "entra-app-registration",
@@ -192,7 +216,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/microsoft/github-copilot-for-azure/tree/main/skills/entra-app-registration",
-    "skillsShUrl": "https://skills.sh"
+    "skillsShUrl": "https://skills.sh",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "azure-kusto",
@@ -207,7 +233,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/microsoft/github-copilot-for-azure/tree/main/skills/azure-kusto",
-    "skillsShUrl": "https://skills.sh"
+    "skillsShUrl": "https://skills.sh",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "azure-resource-visualizer",
@@ -222,7 +250,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/microsoft/github-copilot-for-azure/tree/main/skills/azure-resource-visualizer",
-    "skillsShUrl": "https://skills.sh"
+    "skillsShUrl": "https://skills.sh",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "appinsights-instrumentation",
@@ -237,7 +267,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/microsoft/github-copilot-for-azure/tree/main/skills/appinsights-instrumentation",
-    "skillsShUrl": "https://skills.sh"
+    "skillsShUrl": "https://skills.sh",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "azure-prepare",
@@ -252,7 +284,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/microsoft/github-copilot-for-azure/tree/main/skills/azure-prepare",
-    "skillsShUrl": "https://skills.sh"
+    "skillsShUrl": "https://skills.sh",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "azure-rbac",
@@ -267,7 +301,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/microsoft/github-copilot-for-azure/tree/main/skills/azure-rbac",
-    "skillsShUrl": "https://skills.sh"
+    "skillsShUrl": "https://skills.sh",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "azure-compliance",
@@ -282,7 +318,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/microsoft/github-copilot-for-azure/tree/main/skills/azure-compliance",
-    "skillsShUrl": "https://skills.sh"
+    "skillsShUrl": "https://skills.sh",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "azure-validate",
@@ -297,7 +335,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/microsoft/github-copilot-for-azure/tree/main/skills/azure-validate",
-    "skillsShUrl": "https://skills.sh"
+    "skillsShUrl": "https://skills.sh",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "azure-aigateway",
@@ -312,7 +352,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/microsoft/github-copilot-for-azure/tree/main/skills/azure-aigateway",
-    "skillsShUrl": "https://skills.sh"
+    "skillsShUrl": "https://skills.sh",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "azure-resource-lookup",
@@ -327,7 +369,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/microsoft/github-copilot-for-azure/tree/main/skills/azure-resource-lookup",
-    "skillsShUrl": "https://skills.sh"
+    "skillsShUrl": "https://skills.sh",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "azure-messaging",
@@ -342,7 +386,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/microsoft/github-copilot-for-azure/tree/main/skills/azure-messaging",
-    "skillsShUrl": "https://skills.sh"
+    "skillsShUrl": "https://skills.sh",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "agent-tools",
@@ -357,7 +403,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/inference-sh-9/skills/tree/main/skills/agent-tools",
-    "skillsShUrl": "https://skills.sh"
+    "skillsShUrl": "https://skills.sh",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "remotion-render",
@@ -372,7 +420,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/inference-sh-9/skills/tree/main/skills/remotion-render",
-    "skillsShUrl": "https://skills.sh"
+    "skillsShUrl": "https://skills.sh",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "ai-image-generation",
@@ -387,7 +437,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/inference-sh-9/skills/tree/main/skills/ai-image-generation",
-    "skillsShUrl": "https://skills.sh"
+    "skillsShUrl": "https://skills.sh",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "agent-browser",
@@ -402,7 +454,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/inference-sh-9/skills/tree/main/skills/agent-browser",
-    "skillsShUrl": "https://skills.sh"
+    "skillsShUrl": "https://skills.sh",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "ai-video-generation",
@@ -417,7 +471,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/inference-sh-9/skills/tree/main/skills/ai-video-generation",
-    "skillsShUrl": "https://skills.sh"
+    "skillsShUrl": "https://skills.sh",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "twitter-automation",
@@ -432,7 +488,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/inference-sh-9/skills/tree/main/skills/twitter-automation",
-    "skillsShUrl": "https://skills.sh"
+    "skillsShUrl": "https://skills.sh",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "expo-skills",
@@ -447,7 +505,9 @@
     "license": "MIT",
     "version": "1.0.0",
     "url": "https://github.com/expo/skills",
-    "skillsShUrl": "https://skills.sh"
+    "skillsShUrl": "https://skills.sh",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "docx",
@@ -462,7 +522,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/anthropics/skills/tree/main/document-skills/docx",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "pdf",
@@ -477,7 +539,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/anthropics/skills/tree/main/document-skills/pdf",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "pptx",
@@ -492,7 +556,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/anthropics/skills/tree/main/document-skills/pptx",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "xlsx",
@@ -507,7 +573,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/anthropics/skills/tree/main/document-skills/xlsx",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "markdown-to-epub-converter",
@@ -522,7 +590,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/smerchek/claude-epub-skill",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "artifacts-builder",
@@ -537,7 +607,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/anthropics/skills/tree/main/artifacts-builder",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "aws-skills",
@@ -552,7 +624,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/zxkane/aws-skills",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "changelog-generator",
@@ -567,7 +641,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/anthropics/skills/tree/main/./changelog-generator/",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "claude-code-terminal-title",
@@ -582,7 +658,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/bluzername/claude-code-terminal-title",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "d3.js-visualization",
@@ -597,7 +675,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/chrisvoncsefalvay/claude-d3js-skill",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "ffuf-web-fuzzing",
@@ -612,7 +692,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/jthack/ffuf_claude_skill",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "finishing-a-development-branch",
@@ -627,7 +709,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/obra/superpowers/tree/main/skills/finishing-a-development-branch",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "ios-simulator",
@@ -642,7 +726,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/conorluddy/ios-simulator-skill",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "mcp-builder",
@@ -657,7 +743,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/anthropics/skills/tree/main/./mcp-builder/",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "move-code-quality-skill",
@@ -672,7 +760,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/1NickPappas/move-code-quality-skill",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "playwright-browser-automation",
@@ -687,7 +777,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/lackeyjb/playwright-skill",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "pypict-claude-skill",
@@ -702,7 +794,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/omkamal/pypict-claude-skill",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "skill-creator",
@@ -717,7 +811,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/anthropics/skills/tree/main/./skill-creator/",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "skill-seekers",
@@ -732,7 +828,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/yusufkaraaslan/Skill_Seekers",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "test-driven-development",
@@ -747,7 +845,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/obra/superpowers/tree/main/skills/test-driven-development",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "using-git-worktrees",
@@ -762,7 +862,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/obra/superpowers/blob/main/skills/using-git-worktrees/",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "webapp-testing",
@@ -777,7 +879,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/anthropics/skills/tree/main/webapp-testing",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "csv-data-summarizer",
@@ -792,7 +896,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/coffeefuelbump/csv-data-summarizer-claude-skill",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "root-cause-tracing",
@@ -807,7 +913,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/obra/superpowers/tree/main/skills/root-cause-tracing",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "brand-guidelines",
@@ -822,7 +930,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/anthropics/skills/tree/main/./brand-guidelines/",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "competitive-ads-extractor",
@@ -837,7 +947,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/anthropics/skills/tree/main/./competitive-ads-extractor/",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "domain-name-brainstormer",
@@ -852,7 +964,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/anthropics/skills/tree/main/./domain-name-brainstormer/",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "internal-comms",
@@ -867,7 +981,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/anthropics/skills/tree/main/./internal-comms/",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "lead-research-assistant",
@@ -882,7 +998,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/anthropics/skills/tree/main/./lead-research-assistant/",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "article-extractor",
@@ -897,7 +1015,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/michalparkola/tapestry-skills-for-claude-code/tree/main/article-extractor",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "brainstorming",
@@ -912,7 +1032,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/obra/superpowers/tree/main/skills/brainstorming",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "content-research-writer",
@@ -927,7 +1049,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/anthropics/skills/tree/main/./content-research-writer/",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "family-history-research",
@@ -942,7 +1066,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/emaynard/claude-family-history-research-skill",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "meeting-insights-analyzer",
@@ -957,7 +1083,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/anthropics/skills/tree/main/./meeting-insights-analyzer/",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "notebooklm-integration",
@@ -972,7 +1100,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/PleasePrompto/notebooklm-skill",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "canvas-design",
@@ -987,7 +1117,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/anthropics/skills/tree/main/./canvas-design/",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "image-enhancer",
@@ -1002,7 +1134,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/anthropics/skills/tree/main/./image-enhancer/",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "slack-gif-creator",
@@ -1017,7 +1151,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/anthropics/skills/tree/main/./slack-gif-creator/",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "theme-factory",
@@ -1032,7 +1168,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/anthropics/skills/tree/main/./theme-factory/",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "video-downloader",
@@ -1047,7 +1185,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/anthropics/skills/tree/main/./video-downloader/",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "youtube-transcript",
@@ -1062,7 +1202,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/michalparkola/tapestry-skills-for-claude-code/tree/main/youtube-transcript",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "file-organizer",
@@ -1077,7 +1219,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/anthropics/skills/tree/main/./file-organizer/",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "invoice-organizer",
@@ -1092,7 +1236,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/anthropics/skills/tree/main/./invoice-organizer/",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "raffle-winner-picker",
@@ -1107,7 +1253,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/anthropics/skills/tree/main/./raffle-winner-picker/",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "ship-learn-next",
@@ -1122,7 +1270,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/michalparkola/tapestry-skills-for-claude-code/tree/main/ship-learn-next",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "tapestry",
@@ -1137,7 +1287,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/michalparkola/tapestry-skills-for-claude-code/tree/main/tapestry",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "git-pushing",
@@ -1152,7 +1304,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/mhattingpete/claude-skills-marketplace/tree/main/engineering-workflow-plugin/skills/git-pushing",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "review-implementing",
@@ -1167,7 +1321,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/mhattingpete/claude-skills-marketplace/tree/main/engineering-workflow-plugin/skills/review-implementing",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "test-fixing",
@@ -1182,7 +1338,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/mhattingpete/claude-skills-marketplace/tree/main/engineering-workflow-plugin/skills/test-fixing",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "computer-forensics",
@@ -1197,7 +1355,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/mhattingpete/claude-skills-marketplace/tree/main/computer-forensics-skills/skills/computer-forensics",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "file-deletion",
@@ -1212,7 +1372,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/mhattingpete/claude-skills-marketplace/tree/main/computer-forensics-skills/skills/file-deletion",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "metadata-extraction",
@@ -1227,7 +1389,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/mhattingpete/claude-skills-marketplace/tree/main/computer-forensics-skills/skills/metadata-extraction",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "threat-hunting-with-sigma-rules",
@@ -1242,7 +1406,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/jthack/threat-hunting-with-sigma-rules-skill",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "claude-skills-overview",
@@ -1257,7 +1423,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://www.anthropic.com/news/skills",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "skills-user-guide",
@@ -1272,7 +1440,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://support.claude.com/en/articles/12512180-using-skills-in-claude",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "creating-custom-skills",
@@ -1287,7 +1457,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://support.claude.com/en/articles/12512198-creating-custom-skills",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "skills-api-documentation",
@@ -1302,7 +1474,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://docs.claude.com/en/api/skills-guide",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "agent-skills-blog-post",
@@ -1317,7 +1491,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "claude-community",
@@ -1332,7 +1508,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://community.anthropic.com",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "skills-marketplace",
@@ -1347,7 +1525,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://claude.ai/marketplace",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "lenny's-newsletter",
@@ -1362,7 +1542,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://www.lennysnewsletter.com/p/everyone-should-be-using-claude-code",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "notion-skills",
@@ -1377,7 +1559,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://www.notion.so/notiondevs/Notion-Skills-for-Claude-28da4445d27180c7af1df7d8615723d0",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "mongodb-connection",
@@ -1392,7 +1576,9 @@
     "license": "Apache-2.0",
     "version": "1.0.0",
     "url": "https://github.com/mongodb/agent-skills/tree/main/skills/mongodb-connection",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "mongodb-mcp-setup",
@@ -1407,7 +1593,9 @@
     "license": "Apache-2.0",
     "version": "1.0.0",
     "url": "https://github.com/mongodb/agent-skills/tree/main/skills/mongodb-mcp-setup",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "mongodb-natural-language-querying",
@@ -1422,7 +1610,9 @@
     "license": "Apache-2.0",
     "version": "1.0.0",
     "url": "https://github.com/mongodb/agent-skills/tree/main/skills/mongodb-natural-language-querying",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "mongodb-query-optimizer",
@@ -1437,7 +1627,9 @@
     "license": "Apache-2.0",
     "version": "1.0.0",
     "url": "https://github.com/mongodb/agent-skills/tree/main/skills/mongodb-query-optimizer",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "mongodb-schema-design",
@@ -1452,7 +1644,9 @@
     "license": "Apache-2.0",
     "version": "1.0.0",
     "url": "https://github.com/mongodb/agent-skills/tree/main/skills/mongodb-schema-design",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "mongodb-search-and-ai",
@@ -1467,7 +1661,9 @@
     "license": "Apache-2.0",
     "version": "1.0.0",
     "url": "https://github.com/mongodb/agent-skills/tree/main/skills/mongodb-search-and-ai",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "atlas-stream-processing",
@@ -1482,7 +1678,9 @@
     "license": "Apache-2.0",
     "version": "1.0.0",
     "url": "https://github.com/mongodb/agent-skills/tree/main/skills/atlas-stream-processing",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "qdrant-clients-sdk",
@@ -1497,7 +1695,9 @@
     "license": "Apache-2.0",
     "version": "1.0.0",
     "url": "https://github.com/qdrant/skills/tree/main/skills/qdrant-clients-sdk",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "qdrant-deployment-options",
@@ -1512,7 +1712,9 @@
     "license": "Apache-2.0",
     "version": "1.0.0",
     "url": "https://github.com/qdrant/skills/tree/main/skills/qdrant-deployment-options",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "qdrant-model-migration",
@@ -1527,7 +1729,9 @@
     "license": "Apache-2.0",
     "version": "1.0.0",
     "url": "https://github.com/qdrant/skills/tree/main/skills/qdrant-model-migration",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "qdrant-monitoring",
@@ -1542,7 +1746,9 @@
     "license": "Apache-2.0",
     "version": "1.0.0",
     "url": "https://github.com/qdrant/skills/tree/main/skills/qdrant-monitoring",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "qdrant-performance-optimization",
@@ -1557,7 +1763,9 @@
     "license": "Apache-2.0",
     "version": "1.0.0",
     "url": "https://github.com/qdrant/skills/tree/main/skills/qdrant-performance-optimization",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "qdrant-scaling",
@@ -1572,7 +1780,9 @@
     "license": "Apache-2.0",
     "version": "1.0.0",
     "url": "https://github.com/qdrant/skills/tree/main/skills/qdrant-scaling",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "qdrant-search-quality",
@@ -1587,7 +1797,9 @@
     "license": "Apache-2.0",
     "version": "1.0.0",
     "url": "https://github.com/qdrant/skills/tree/main/skills/qdrant-search-quality",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "qdrant-version-upgrade",
@@ -1602,7 +1814,9 @@
     "license": "Apache-2.0",
     "version": "1.0.0",
     "url": "https://github.com/qdrant/skills/tree/main/skills/qdrant-version-upgrade",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "neo4j-cypher-skill",
@@ -1617,7 +1831,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/neo4j-contrib/neo4j-skills/tree/main/neo4j-cypher-skill",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "neo4j-cli-tools-skill",
@@ -1632,7 +1848,9 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/neo4j-contrib/neo4j-skills/tree/main/neo4j-cli-tools-skill",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   },
   {
     "name": "neo4j-migration-skill",
@@ -1647,6 +1865,8 @@
     "license": "",
     "version": "1.0.0",
     "url": "https://github.com/neo4j-contrib/neo4j-skills/tree/main/neo4j-migration-skill",
-    "skillsShUrl": ""
+    "skillsShUrl": "",
+    "claude": true,
+    "featured": false
   }
 ]
