@@ -1,0 +1,185 @@
+---
+title: "Cursor MCP Servers — The Ones Actually Worth Connecting"
+description: "Most Cursor MCP guides tell you what to add. This one explains why adding too many degrades your agent — and which servers actually clear the overhead bar."
+pubDate: 2026-05-22
+slug: cursor-mcp-servers
+tags: ["cursor", "mcp servers", "cursor mcp", "model context protocol", "cursor agent", "ai coding tools"]
+draft: true
+---
+
+Most guides on Cursor MCP servers give you a list of things to install. This one starts somewhere different: every MCP server you connect loads its full tool set into the agent's context on every request. At three or four servers that's manageable. At ten, you're degrading the agent's tool selection accuracy, burning context window, and adding latency — for capabilities you invoke maybe once a week.
+
+The problem isn't that MCP servers aren't useful. It's that connecting everything in [MyMCP Shelf](/) and seeing what sticks is the wrong mental model. The right question isn't "which servers exist" — it's "which servers justify their cost." This guide covers how Cursor's MCP layer works under the hood, where the overhead actually comes from, and a curated set of servers that clear the bar. It also covers a few popular categories that don't.
+
+---
+
+## How Cursor Loads MCP Servers (and Why It Matters)
+
+When you connect an MCP server in Cursor, it doesn't just sit in the background waiting to be called. At the start of each agent session, Cursor fetches the full list of tools from every enabled server and loads their names and descriptions into the model's context. A server with 20 tools contributes 20 tool definitions — each with a name, a description, and a parameter schema — to the context window before you've typed a single word.
+
+That overhead compounds in two ways. First, it's token cost: more tool definitions mean less room for your actual codebase context, conversation history, and file content. Second, and more subtly, it's selection accuracy: when the agent has 60 available tools, it's making a harder routing decision on every step than when it has 15. When two servers expose semantically similar capabilities — two tools named something like "search," two that read files, two that run queries — the model can and does pick the wrong one.
+
+This isn't theoretical. Cursor's own support team, responding to context window complaints on their forum, states it plainly: context window problems frequently come from too many tool calls or MCPs, and the recommendation is to enable only what you need and scope MCPs per project.
+
+The `mcp.json` config file is where this discipline gets enforced. It exists at two levels: a global config at `~/.cursor/mcp.json` that loads for every session in every project, and a project-level config at `.cursor/mcp.json` in your workspace root that loads only when that project is open. That distinction is the entire practical solution to the overhead problem — and it's missing from every directory and list post currently ranking for this keyword.
+
+A minimal global config looks like this:
+
+```json
+// ~/.cursor/mcp.json
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/you/projects"]
+    },
+    "brave-search": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+      "env": {
+        "BRAVE_API_KEY": "your-key-here"
+      }
+    }
+  }
+}
+```
+
+A project-level config in `.cursor/mcp.json` follows the same structure — Cursor merges both at session start, with project config taking precedence on conflicts.
+
+---
+
+## Global vs Project Scope — The Rule Most People Miss
+
+The single most useful thing you can do with Cursor MCP configuration is stop treating global scope as a dumping ground.
+
+Global scope is for servers you genuinely want available in every project you open: a filesystem server for broad file access, a web search tool, maybe a memory or context layer if you use one. The ceiling here should be three to four servers, and the test for inclusion is strict — would this tool be useful when I open a fresh repo I've never seen before? If the answer is "probably not," it doesn't belong globally.
+
+Project scope is for everything else. Your Postgres MCP server has no business being loaded when you're working on a React component library. Your Figma integration doesn't need to be active when you're debugging a backend service. Connecting them globally means the agent has those tool definitions in context at all times — consuming tokens and introducing routing noise — for zero benefit in the sessions where the project doesn't need them.
+
+The practical failure mode is easy to stumble into: you connect a database MCP server globally because it's convenient, forget about it, and three months later you're puzzled why your agent's context window is consistently tight on a frontend project. The fix is a five-second config move, but you have to know to make it.
+
+One other scope consideration worth flagging: Cursor's forum has documented a reproducible performance issue where MCP calls from the home-level global agent take ten or more minutes to complete, while the same calls from a project-scoped agent complete in seconds. The root cause appears to be related to how global agents initialize MCP connections. Until that's resolved, scoping servers at the project level isn't just good hygiene — it's meaningfully faster.
+
+---
+
+## What Makes a Cursor MCP Server Worth Connecting
+
+Before the curated list, here's the evaluation framework. A server needs to pass four tests.
+
+**Tool count is proportionate to scope.** A server with 60 tools for a single database is a yellow flag. That's 60 tool definitions in context every time the agent thinks. Focused servers — those that do one category of thing with a small, well-named tool set — are almost always preferable to servers that bundle everything. Check the tool count before connecting, not after.
+
+**It covers a genuine capability gap.** Cursor's native agent already handles file reads, terminal execution, web browsing in some contexts, and basic code operations. An MCP server that duplicates any of those adds tool collision risk without adding capability. The question is whether the server does something the agent can't already do natively.
+
+**Transport is reliable in Cursor's agent loop.** stdio transport — where the server runs as a local subprocess — is the most stable option for Cursor. SSE and HTTP remote servers are convenient (no local install) but introduce network latency that compounds across multi-step agent tasks. A five-step agent task that calls a remote MCP server on each step is paying network round-trip cost five times. For servers you use heavily, local stdio is worth the setup friction.
+
+**Set-and-forget vs needs babysitting.** Some servers work reliably without any additional configuration — the agent finds them, uses them correctly, and you never think about them again. Others require explicit invocation instructions in your Cursor rules or system prompt to be used reliably. Neither category is disqualifying, but servers in the second group require more investment than most guides acknowledge. Factor that in.
+
+---
+
+## Cursor MCP Servers Worth the Overhead
+
+These are the servers that pass the bar. For each one: what the tool count looks like, which scope it belongs in, and what it actually adds.
+
+### Filesystem MCP (Anthropic official)
+
+**Scope: Global | Tools: ~10 | Transport: stdio**
+
+The official Anthropic filesystem server is the clearest example of a well-scoped MCP server. It exposes a small, focused set of tools — read file, write file, list directory, search, move, create directory — and does nothing else. It extends Cursor's reach to files and directories outside the current workspace without adding routing noise or scope creep.
+
+It's one of the few servers that genuinely belongs in global config, because filesystem access is useful across every project. Keep the allowed directories parameter tight — don't point it at your entire home directory — and it's essentially transparent overhead.
+
+[Find it in the MyMCP Shelf directory](/)
+
+### Figma MCP
+
+**Scope: Project | Tools: varies by implementation | Transport: stdio or HTTP**
+
+The Figma MCP integration is the highest-growth adjacent query in this cluster (+84% year-over-year), and for good reason: design-to-code is the use case where MCP tooling makes the biggest practical difference in a Cursor workflow. The agent can pull component data, style tokens, and layout structure directly from Figma frames, which means generated code that actually matches the design rather than approximating it from a screenshot.
+
+The caveat is scope: Figma tools have no business being globally connected. They belong in project config for projects that have a Figma component library. Outside that context they're dead weight.
+
+A few implementations exist — the official Figma remote MCP and several community-built alternatives with different capability sets. The `figma-context-mcp` package is among the more widely used community options for stdio local use. Whichever you choose, verify the tool count before connecting: some implementations are lean (8–12 tools), others expose far more.
+
+*[Screenshot callout: Cursor agent generating a component from a Figma frame using MCP context]*
+
+[Browse Figma MCP servers on MyMCP Shelf](/)
+
+### PostgreSQL MCP
+
+**Scope: Project only | Tools: high (40–60+) | Transport: stdio**
+
+The Postgres MCP server is the most powerful entry on this list and the one that most clearly illustrates why project scope discipline matters. An enterprise-grade Postgres server can expose 60 or more tools: query execution, schema inspection, index analysis, EXPLAIN output, performance monitoring, migration helpers. That's a heavy tool load — but when you're actively working on a database-backed service, the return is real. Schema-aware query generation, migration assistance, and index recommendations that account for actual table structure are genuinely difficult to replicate through prompting alone.
+
+The non-negotiable: project scope only. A Postgres server connected globally is 60 tool definitions in context when you open your frontend project, your CLI tool, your documentation site. That's not a tradeoff worth making.
+
+If you're working locally and don't need the full enterprise feature set, a lighter SQLite MCP server is worth considering — fewer tools, faster startup, no network dependency.
+
+[Browse database MCP servers on MyMCP Shelf](/)
+
+### Brave Search or Tavily MCP
+
+**Scope: Global | Tools: 1–3 | Transport: stdio or HTTP**
+
+One web search server belongs in your global config. The agent's ability to look up documentation, check package versions, and verify API behavior without leaving the coding context is genuinely useful across every project.
+
+The emphasis is on *one*. Two search servers — say, Brave Search and Tavily both connected — create a routing decision the agent has to make on every search intent: which one do I call? The tool descriptions are similar enough that selection is inconsistent. Pick one, configure it globally, and don't add a second.
+
+Brave Search's MCP server is narrow (one to two tools, simple schema) which makes it a clean global option. Tavily's server has slightly richer output options but similar footprint. Either works — the choice matters less than the discipline of picking only one.
+
+### GitHub MCP (official)
+
+**Scope: Project | Tools: high (30+) | Transport: stdio or HTTP**
+
+The official GitHub MCP server brings PR context, issue data, repo search, and repository management into the agent loop. For active development work — reviewing open PRs while writing code, pulling issue context before starting a feature, checking CI status — it's worth the setup.
+
+The tool count is high, which is why it belongs in project scope for active repos rather than global config. The secondary mitigation is an explicit invocation instruction in your project's Cursor rules: telling the agent to prefer GitHub tools for PR and issue context, rather than leaving it to figure that out from tool descriptions alone, meaningfully improves reliability.
+
+[Browse developer workflow MCP servers on MyMCP Shelf](/)
+
+---
+
+## Servers That Don't Clear the Bar
+
+Equal time to the other side.
+
+**Aggregator bundles.** A handful of MCP servers exist that bundle dozens of unrelated tools — email, calendar, CRM, task management, web scraping, and more — into a single server. The appeal is one-install convenience. The reality is you're paying the tool count cost for every capability in the bundle, even the ones you never use. Focused, single-category servers connected at project scope almost always outperform bundles on both accuracy and maintainability.
+
+**Native capability duplicates.** If Cursor can already do it — read local files, execute terminal commands, fetch a URL — an MCP server replicating that capability adds collision risk without adding new ability. The agent now has two ways to accomplish the same task and has to choose between them. In practice it often chooses wrong.
+
+**High-volume community installs from the hype era.** MyMCP Shelf sorts by install count. That metric reflects when people were experimenting with MCP in 2024 and early 2025, not which servers are worth connecting in a production workflow today. A server with 5,000 installs from early adoption isn't a quality signal — it's a popularity signal from a period when most people were adding everything available. Evaluate tool count, maintenance activity, and transport reliability instead.
+
+---
+
+## FAQ
+
+**Where is the Cursor MCP config file?**
+
+Global config: `~/.cursor/mcp.json` on macOS/Linux, `%USERPROFILE%\.cursor\mcp.json` on Windows. Project config: `.cursor/mcp.json` in your workspace root. If the file doesn't exist, create it — Cursor will pick it up on the next session start.
+
+**How many MCP servers should I have connected in Cursor?**
+
+For global config: three to four maximum. For project config: as many as the project genuinely needs, but evaluate each one against the tool count and capability gap tests above. Ten servers with a combined 200 tools is a configuration that will visibly degrade agent performance.
+
+**How do I add an MCP server to Cursor?**
+
+Either edit `mcp.json` directly (global or project level), or go to Cursor Settings > Tools & MCP > Add MCP Server and use the UI — it writes to global config by default. If you want project scope, move the entry to `.cursor/mcp.json` manually after adding it.
+
+**What's the difference between Cursor MCP servers and Cursor Skills?**
+
+MCP servers connect the agent to external systems and data sources — databases, APIs, design tools, version control. Skills are reusable instruction packages stored in `.cursor/skills/` that teach the agent how to handle specific tasks or workflows within your codebase. They're complementary: MCP handles external capability, Skills handle internal process. See our [guide to Cursor Skills](/cursor-skills) for a full breakdown.
+
+**Why is my Cursor agent ignoring my MCP server?**
+
+The most common cause is a failed connection that Cursor hasn't flagged clearly. Go to Settings > Tools & MCP, toggle the server off and back on, and check the logs for connection errors. If the server shows as connected but the agent still isn't using it, add an explicit instruction to your project rules telling the agent when to invoke it — vague tool descriptions are a common source of missed invocations.
+
+---
+
+## Finding More
+
+The servers above are a starting point, not an exhaustive list. The right set for your workflow depends on your stack, your team size, and which external systems you're actually connecting to in daily development.
+
+The [MyMCP Shelf MCP directory](/) has 600+ verified servers organized by category — database, design, developer tools, productivity, and more. Each listing includes transport type and notes where available. Use the category filters to find servers relevant to your stack, and apply the evaluation framework above before connecting anything new.
+
+If you're building out a Cursor-specific workflow and want to see which servers pair well with Cursor Skills, the [Cursor Skills directory](/cursor-skills) covers community-built Skills that are designed to work alongside MCP integrations.
+
+If you've built an MCP server or Cursor Skill, you can [submit it to the directory](/submit) to make it discoverable by the community.
