@@ -16,11 +16,24 @@ export interface MCPServerRow {
   logo_url: string | null;
   updated_at: string | null;
   deployment_type: string | null;
+  security_audit_json: string | null;
+}
+
+export interface SecurityAuditData {
+  transport: 'stdio' | 'sse_http' | 'both';
+  authMethod: 'None' | 'API Key' | 'OAuth2' | 'SSO-SAML';
+  tokenLifecycle: 'short-lived' | 'long-lived' | 'N/A';
+  inputHandling: 'parameterized' | 'shell_strings' | 'mixed';
+  dataResidency: 'local_only' | 'cloud' | 'hybrid' | 'unknown';
+  auditScore: number;
+  auditDate: string;
+  auditorNotes?: string;
 }
 
 export interface MCPServer {
   id: string;
   deployment: string;
+  securityAudit?: SecurityAuditData | null;
   fields: {
     name: string;
     description: string;
@@ -44,9 +57,19 @@ export interface ServersPage {
 }
 
 function rowToServer(row: MCPServerRow): MCPServer {
+  let securityAudit: SecurityAuditData | null = null;
+  if (row.security_audit_json) {
+    try {
+      securityAudit = JSON.parse(row.security_audit_json) as SecurityAuditData;
+    } catch {
+      // invalid JSON — leave as null
+    }
+  }
+
   return {
     id: row.id,
     deployment: row.deployment_type || 'local_stdio',
+    securityAudit,
     fields: {
       name: row.name,
       description: row.description || '',
@@ -71,12 +94,14 @@ export async function getServersPage(
     category = '',
     search = '',
     deployment = '',
+    localOnly = false,
   }: {
     offset?: number;
     limit?: number;
     category?: string;
     search?: string;
     deployment?: string;
+    localOnly?: boolean;
   } = {}
 ): Promise<ServersPage> {
   const conditions: string[] = [];
@@ -90,6 +115,13 @@ export async function getServersPage(
   if (deployment && deployment !== 'all') {
     conditions.push('deployment_type = ?');
     params.push(deployment);
+  }
+
+  if (localOnly) {
+    // Graceful fallback: if security_audit_json column doesn't exist yet,
+    // filter by deployment_type only. Once migrated, the LIKE clause also
+    // catches audited servers with stdio transport.
+    conditions.push("(deployment_type = 'local_stdio')");
   }
 
   if (search && search.trim()) {

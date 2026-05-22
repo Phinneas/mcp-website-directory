@@ -1,0 +1,909 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/deployment-page.css';
+
+const pageTitle = 'MCP Security Audit Manifesto | MyMCPShelf';
+const pageDescription = 'Our transparent security assessment methodology for MCP servers. Full checklist criteria, scoring rubric, and self-attestation form for server authors. Enterprise-grade MCP evaluation framework.';
+const canonicalUrl = 'https://www.mymcpshelf.com/audit-manifesto';
+
+const scoringCriteria = [
+  {
+    dimension: 'Transport Security',
+    icon: '📡',
+    maxScore: 20,
+    description: 'How the MCP server communicates with clients. Stdio is inherently safer than network-exposed transports.',
+    levels: [
+      { value: 'stdio', score: 20, label: 'Stdio (Local Process)', risk: 'low' },
+      { value: 'sse_http_auth', score: 15, label: 'SSE/HTTP with Authentication', risk: 'medium' },
+      { value: 'sse_http_no_auth', score: 5, label: 'SSE/HTTP without Authentication', risk: 'high' },
+    ]
+  },
+  {
+    dimension: 'Authentication Method',
+    icon: '🔐',
+    maxScore: 20,
+    description: 'How the server verifies client identity. Strong authentication prevents unauthorized access and confused deputy attacks.',
+    levels: [
+      { value: 'sso_saml', score: 20, label: 'SSO/SAML', risk: 'low' },
+      { value: 'oauth2', score: 16, label: 'OAuth2', risk: 'low' },
+      { value: 'api_key', score: 10, label: 'API Key', risk: 'medium' },
+      { value: 'none', score: 0, label: 'None', risk: 'high' },
+    ]
+  },
+  {
+    dimension: 'Token Lifecycle',
+    icon: '⏱️',
+    maxScore: 20,
+    description: 'How long authentication tokens remain valid. Short-lived tokens with refresh limit the damage window if compromised.',
+    levels: [
+      { value: 'short_lived', score: 20, label: 'Short-lived (with Refresh)', risk: 'low' },
+      { value: 'long_lived', score: 8, label: 'Long-lived (Static)', risk: 'medium' },
+      { value: 'na', score: 0, label: 'N/A (No Auth)', risk: 'high' },
+    ]
+  },
+  {
+    dimension: 'Input Handling',
+    icon: '🛡️',
+    maxScore: 20,
+    description: 'How the server processes user/LLM inputs. Parameterized inputs prevent injection attacks. Shell string concatenation enables command injection.',
+    levels: [
+      { value: 'parameterized', score: 20, label: 'Parameterized (Safe)', risk: 'low' },
+      { value: 'mixed', score: 10, label: 'Mixed', risk: 'medium' },
+      { value: 'shell_strings', score: 2, label: 'Shell Strings (Risky)', risk: 'high' },
+    ]
+  },
+  {
+    dimension: 'Data Residency',
+    icon: '🌍',
+    maxScore: 20,
+    description: 'Where server data flows and is stored. Local-only means data never leaves your machine. Cloud residency means data passes through third-party APIs.',
+    levels: [
+      { value: 'local_only', score: 20, label: 'Local Only', risk: 'low' },
+      { value: 'hybrid', score: 12, label: 'Hybrid', risk: 'medium' },
+      { value: 'cloud', score: 6, label: 'Cloud', risk: 'medium' },
+      { value: 'unknown', score: 0, label: 'Unknown', risk: 'high' },
+    ]
+  },
+];
+
+const tiers = [
+  { min: 80, label: 'Secure', emoji: '🟢', color: '#22c55e', description: 'Safe for enterprise deployment. Strong authentication, safe input handling, and clear data boundaries.' },
+  { min: 50, label: 'Moderate', emoji: '🟡', color: '#eab308', description: 'Acceptable for internal use with risk acceptance. May have long-lived tokens or cloud data flow but with proper auth.' },
+  { min: 0, label: 'At Risk', emoji: '🔴', color: '#ef4444', description: 'Not recommended for production. Lacks authentication, uses shell strings, or has uncontrolled data exfiltration vectors.' },
+];
+
+const checklist = [
+  { category: 'Transport', items: [
+    'Does the server use stdio transport exclusively?',
+    'If SSE/HTTP: is TLS enforced?',
+    'If SSE/HTTP: is CORS properly restricted?',
+    'Is the transport documented in README?',
+  ]},
+  { category: 'Authentication', items: [
+    'Does the server require authentication?',
+    'Is OAuth2 implemented with proper PKCE flow?',
+    'Are token scopes following least-privilege?',
+    'Is there a documented auth setup guide?',
+  ]},
+  { category: 'Token Lifecycle', items: [
+    'Do access tokens expire within 1 hour?',
+    'Is there a refresh token rotation mechanism?',
+    'Are revoked tokens immediately invalidated?',
+    'Are secrets stored securely (not in plaintext configs)?',
+  ]},
+  { category: 'Input Handling', items: [
+    'Are all tool inputs parameterized?',
+    'Is shell execution avoided or sandboxed?',
+    'Are SQL queries using prepared statements?',
+    'Is input validated and sanitized?',
+  ]},
+  { category: 'Data Residency', items: [
+    'Is all data processed locally by default?',
+    'Are outbound API calls documented?',
+    'Can cloud features be disabled for air-gapped use?',
+    'Is there a data processing agreement (for SaaS)?',
+  ]},
+];
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "MCP Server Security Audit Methodology",
+  "description": pageDescription,
+  "url": canonicalUrl,
+  "totalTime": "PT30M",
+  "step": scoringCriteria.map((c, i) => ({
+    "@type": "HowToStep",
+    "position": i + 1,
+    "name": `Evaluate ${c.dimension}`,
+    "text": c.description,
+  })),
+};
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  canonical={canonicalUrl}
+  structuredData={structuredData}
+>
+  <div class="page-wrapper">
+    <!-- Hero -->
+    <section class="hero-section">
+      <div class="hero-content">
+        <h1 class="page-title">Security Audit Manifesto</h1>
+        <p class="page-subtitle">
+          Exactly how we assess MCP server security. Full methodology, scoring rubric, and self-attestation for server authors. Transparency converts badges from decoration into evidence.
+        </p>
+        <div class="hero-badges">
+          <span class="hero-badge">5 Dimensions</span>
+          <span class="hero-badge">0-100 Score</span>
+          <span class="hero-badge">20 Servers Audited</span>
+          <span class="hero-badge">Self-Attestation Open</span>
+        </div>
+      </div>
+    </section>
+
+    <main class="page-container">
+      <!-- Why This Matters -->
+      <section class="section">
+        <h2 class="section-title">Why Publish Our Methodology?</h2>
+        <p class="section-description">
+          Enterprise procurement teams need evidence, not decoration. A security badge means nothing if the criteria behind it are opaque. By publishing our full checklist, scoring formula, and attestation process, we let you verify our claims — and we let server authors self-attest with accountability.
+        </p>
+        <div class="info-grid">
+          <div class="info-card">
+            <h3>Transparency</h3>
+            <p>Every scoring decision is documented and reproducible. No hidden weights or subjective adjustments.</p>
+          </div>
+          <div class="info-card">
+            <h3>Accountability</h3>
+            <p>Self-attestations are spot-checked quarterly. Falsified claims result in public score downgrades.</p>
+          </div>
+          <div class="info-card">
+            <h3>Enterprise Trust</h3>
+            <p>Procurement teams can trace every score back to specific, auditable criteria — critical for compliance.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Scoring Methodology -->
+      <section class="section">
+        <h2 class="section-title">Scoring Methodology (0-100)</h2>
+        <p class="section-description">
+          Each server is scored across 5 security dimensions. Each dimension contributes up to 20 points. Scores are computed mechanically — no subjective adjustments.
+        </p>
+
+        <div class="dimensions-grid">
+          {scoringCriteria.map(dim => (
+            <div class="dimension-card">
+              <div class="dimension-header">
+                <span class="dimension-icon">{dim.icon}</span>
+                <div>
+                  <h3>{dim.dimension}</h3>
+                  <span class="dimension-max">Max {dim.maxScore} pts</span>
+                </div>
+              </div>
+              <p class="dimension-desc">{dim.description}</p>
+              <table class="scoring-table">
+                <thead>
+                  <tr>
+                    <th>Level</th>
+                    <th>Score</th>
+                    <th>Risk</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {dim.levels.map(level => (
+                    <tr>
+                      <td>{level.label}</td>
+                      <td class="score-cell">{level.score}</td>
+                      <td>
+                        <span class={`risk-badge risk-${level.risk}`}>
+                          {level.risk === 'low' ? '✓ Low' : level.risk === 'medium' ? '⚠ Medium' : '✗ High'}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- Score Tiers -->
+      <section class="section">
+        <h2 class="section-title">Score Tiers</h2>
+        <div class="tiers-grid">
+          {tiers.map(tier => (
+            <div class="tier-card" style={`border-left: 4px solid ${tier.color}`}>
+              <div class="tier-header">
+                <span class="tier-emoji">{tier.emoji}</span>
+                <h3 style={`color: ${tier.color}`}>{tier.label}</h3>
+                <span class="tier-range">{tier.min}+ points</span>
+              </div>
+              <p>{tier.description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- Full Checklist -->
+      <section class="section">
+        <h2 class="section-title">Full Audit Checklist</h2>
+        <p class="section-description">
+          The complete checklist our auditors use when evaluating MCP servers. Each item maps to one of the 5 scoring dimensions.
+        </p>
+        <div class="checklist-grid">
+          {checklist.map(group => (
+            <div class="checklist-group">
+              <h3>{group.category}</h3>
+              <ul>
+                {group.items.map(item => (
+                  <li>
+                    <span class="check-box">☐</span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- Self-Attestation Form -->
+      <section class="section">
+        <h2 class="section-title">Self-Attestation for Server Authors</h2>
+        <p class="section-description">
+          Authored an MCP server? Submit your own security details. We verify 10% of attestations quarterly. Falsified claims result in a public score reduction.
+        </p>
+
+        <form class="attestation-form" id="attestationForm" action="/api/attestation" method="POST">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="server_name">Server Name *</label>
+              <input type="text" id="server_name" name="server_name" required placeholder="e.g. My MCP Server" />
+            </div>
+            <div class="form-group">
+              <label for="github_url">GitHub URL *</label>
+              <input type="url" id="github_url" name="github_url" required placeholder="https://github.com/..." />
+            </div>
+            <div class="form-group">
+              <label for="author_email">Author Email *</label>
+              <input type="email" id="author_email" name="author_email" required placeholder="you@example.com" />
+            </div>
+            <div class="form-group">
+              <label for="author_name">Author Name</label>
+              <input type="text" id="author_name" name="author_name" placeholder="Your name or org" />
+            </div>
+          </div>
+
+          <h3 class="form-section-title">Security Dimensions</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="transport">Transport *</label>
+              <select id="transport" name="transport" required>
+                <option value="">Select...</option>
+                <option value="stdio">Stdio (Local)</option>
+                <option value="sse_http">SSE/HTTP</option>
+                <option value="both">Both</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="auth_method">Authentication *</label>
+              <select id="auth_method" name="auth_method" required>
+                <option value="">Select...</option>
+                <option value="None">None</option>
+                <option value="API Key">API Key</option>
+                <option value="OAuth2">OAuth2</option>
+                <option value="SSO-SAML">SSO/SAML</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="token_lifecycle">Token Lifecycle *</label>
+              <select id="token_lifecycle" name="token_lifecycle" required>
+                <option value="">Select...</option>
+                <option value="short-lived">Short-lived (with Refresh)</option>
+                <option value="long-lived">Long-lived (Static)</option>
+                <option value="N/A">N/A</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="input_handling">Input Handling *</label>
+              <select id="input_handling" name="input_handling" required>
+                <option value="">Select...</option>
+                <option value="parameterized">Parameterized (Safe)</option>
+                <option value="mixed">Mixed</option>
+                <option value="shell_strings">Shell Strings</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="data_residency">Data Residency *</label>
+              <select id="data_residency" name="data_residency" required>
+                <option value="">Select...</option>
+                <option value="local_only">Local Only</option>
+                <option value="hybrid">Hybrid</option>
+                <option value="cloud">Cloud</option>
+                <option value="unknown">Unknown</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="documentation_url">Security Docs URL</label>
+              <input type="url" id="documentation_url" name="documentation_url" placeholder="https://.../security" />
+            </div>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="notes">Additional Security Notes</label>
+            <textarea id="notes" name="notes" rows={4} placeholder="Describe any additional security measures, exemptions, or context..."></textarea>
+          </div>
+
+          <div class="form-group full-width">
+            <label class="checkbox-label">
+              <input type="checkbox" name="attestation_truth" required />
+              I attest that the above information is accurate. I understand that spot-checks may verify these claims and that falsified attestations will result in a public score reduction.
+            </label>
+          </div>
+
+          <button type="submit" class="btn btn-primary submit-btn">Submit Attestation</button>
+          <p class="form-disclaimer">Attestations are reviewed within 5 business days. 10% are spot-checked quarterly.</p>
+        </form>
+      </section>
+
+      <!-- Spot-Check Process -->
+      <section class="section">
+        <h2 class="section-title">Spot-Check Verification Process</h2>
+        <div class="spotcheck-steps">
+          <div class="step">
+            <span class="step-number">1</span>
+            <div>
+              <h3>Random Selection</h3>
+              <p>10% of all attested servers are randomly selected each quarter for re-verification.</p>
+            </div>
+          </div>
+          <div class="step">
+            <span class="step-number">2</span>
+            <div>
+              <h3>Manual Review</h3>
+              <p>Auditors clone the repository and verify each claimed security property against the source code.</p>
+            </div>
+          </div>
+          <div class="step">
+            <span class="step-number">3</span>
+            <div>
+              <h3>Score Adjustment</h3>
+              <p>Verified attestations maintain their score. Discrepancies result in score downgrades published on the server detail page.</p>
+            </div>
+          </div>
+          <div class="step">
+            <span class="step-number">4</span>
+            <div>
+              <h3>Public Record</h3>
+              <p>Spot-check results are published in our quarterly transparency report, linked from this page.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section class="cta-section">
+        <h2 class="cta-title">Explore Audited Servers</h2>
+        <p class="cta-description">
+          Browse MCP servers with transparent security scores. Filter by Local-Only, OAuth2, and more.
+        </p>
+        <div class="cta-buttons">
+          <a href="/" class="btn-white">Browse Servers</a>
+          <a href="/blog/mcp-security-best-practices" class="btn-outline-white">Security Best Practices →</a>
+        </div>
+      </section>
+    </main>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hero-section {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+    padding: 4rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    text-align: center;
+  }
+
+  .hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .page-title {
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #ffffff 0%, #f59e0b 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .page-subtitle {
+    font-size: 1.2rem;
+    color: #94a3b8;
+    margin-bottom: 2rem;
+    font-weight: 400;
+    line-height: 1.7;
+  }
+
+  .hero-badges {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .hero-badge {
+    background: rgba(245, 158, 11, 0.15);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    color: #f59e0b;
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    flex: 1;
+  }
+
+  .section {
+    margin: 3rem 0;
+  }
+
+  .section-title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-align: center;
+    color: #f1f5f9;
+  }
+
+  .section-description {
+    font-size: 1.1rem;
+    color: #94a3b8;
+    text-align: center;
+    margin-bottom: 2.5rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.7;
+  }
+
+  /* Info Cards */
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .info-card {
+    background: #1e293b;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .info-card h3 {
+    font-size: 1.1rem;
+    color: #f59e0b;
+    margin-bottom: 0.5rem;
+  }
+
+  .info-card p {
+    color: #94a3b8;
+    line-height: 1.6;
+    font-size: 0.9rem;
+  }
+
+  /* Dimension Cards */
+  .dimensions-grid {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .dimension-card {
+    background: #1e293b;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .dimension-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .dimension-icon {
+    font-size: 1.75rem;
+  }
+
+  .dimension-header h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #f1f5f9;
+    margin: 0;
+  }
+
+  .dimension-max {
+    font-size: 0.8rem;
+    color: #64748b;
+  }
+
+  .dimension-desc {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+  }
+
+  .scoring-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+
+  .scoring-table th {
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    background: rgba(255,255,255,0.05);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    color: #94a3b8;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .scoring-table td {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    color: #cbd5e1;
+  }
+
+  .score-cell {
+    font-weight: 700;
+    color: #f1f5f9;
+  }
+
+  .risk-badge {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .risk-low { background: rgba(34,197,94,0.12); color: #22c55e; }
+  .risk-medium { background: rgba(234,179,8,0.12); color: #eab308; }
+  .risk-high { background: rgba(239,68,68,0.12); color: #ef4444; }
+
+  /* Tiers */
+  .tiers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .tier-card {
+    background: #1e293b;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .tier-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .tier-emoji { font-size: 1.5rem; }
+
+  .tier-header h3 {
+    font-size: 1.15rem;
+    margin: 0;
+  }
+
+  .tier-range {
+    font-size: 0.8rem;
+    color: #64748b;
+    margin-left: auto;
+  }
+
+  .tier-card p {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  /* Checklist */
+  .checklist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .checklist-group {
+    background: #1e293b;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .checklist-group h3 {
+    font-size: 1.1rem;
+    color: #f59e0b;
+    margin-bottom: 0.75rem;
+  }
+
+  .checklist-group ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .checklist-group li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.35rem 0;
+    color: #94a3b8;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .check-box {
+    color: #64748b;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+  }
+
+  /* Attestation Form */
+  .attestation-form {
+    background: #1e293b;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .form-group.full-width {
+    grid-column: 1 / -1;
+  }
+
+  .form-group label {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    margin-bottom: 0.35rem;
+    font-weight: 500;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px;
+    padding: 0.65rem 0.85rem;
+    color: #f1f5f9;
+    font-size: 0.9rem;
+    font-family: inherit;
+    transition: border-color 0.15s;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: #f59e0b;
+  }
+
+  .form-group select option {
+    background: #1e293b;
+  }
+
+  .form-section-title {
+    font-size: 1.1rem;
+    color: #f59e0b;
+    margin: 1.5rem 0 1rem;
+  }
+
+  .checkbox-label {
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 0.5rem !important;
+    color: #94a3b8 !important;
+    font-size: 0.85rem !important;
+    line-height: 1.5 !important;
+  }
+
+  .checkbox-label input {
+    margin-top: 0.2rem;
+    accent-color: #f59e0b;
+  }
+
+  .submit-btn {
+    margin-top: 1rem;
+    width: 100%;
+    padding: 0.85rem;
+    font-size: 1rem;
+  }
+
+  .form-disclaimer {
+    text-align: center;
+    color: #64748b;
+    font-size: 0.8rem;
+    margin-top: 0.75rem;
+  }
+
+  /* Spot-Check Steps */
+  .spotcheck-steps {
+    display: grid;
+    gap: 1.5rem;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .step {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    background: #1e293b;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 1.25rem;
+  }
+
+  .step-number {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f59e0b, #3b82f6);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  .step h3 {
+    font-size: 1rem;
+    color: #f1f5f9;
+    margin: 0 0 0.35rem 0;
+  }
+
+  .step p {
+    color: #94a3b8;
+    font-size: 0.875rem;
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  /* CTA */
+  .cta-section {
+    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+    border-radius: 12px;
+    padding: 3rem;
+    text-align: center;
+    color: white;
+    margin: 3rem 0;
+  }
+
+  .cta-title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  .cta-description {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+  }
+
+  .cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-white {
+    background: white;
+    color: #1e40af;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.15s ease;
+  }
+
+  .btn-white:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.25);
+  }
+
+  .btn-outline-white {
+    background: transparent;
+    color: white;
+    border: 2px solid white;
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.15s ease;
+  }
+
+  .btn-outline-white:hover {
+    background: white;
+    color: #1e40af;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.15s ease;
+    font-size: 0.875rem;
+    border: none;
+    cursor: pointer;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #f59e0b 0%, #3b82f6 100%);
+    color: white;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+  }
+
+  @media (max-width: 768px) {
+    .page-title { font-size: 2rem; }
+    .hero-badges { gap: 0.5rem; }
+    .form-grid { grid-template-columns: 1fr; }
+    .cta-buttons { flex-direction: column; }
+    .btn-white, .btn-outline-white { width: 100%; }
+  }
+</style>

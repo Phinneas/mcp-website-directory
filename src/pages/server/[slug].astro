@@ -22,6 +22,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getRelatedServers, getCategoryDisplayName } from '../../utils/serverData.js';
 import { slugify } from '../../utils/slugify.js';
 import { staticServers as fallbackServers } from '../../data/staticServers.js';
+import { getSecurityAudit, getScoreTier } from '../../data/securityAudit';
 
 // servers.json is bundled by Vite at build time — safe to import statically
 import serversData from '../../data/servers.json';
@@ -94,6 +95,16 @@ if (!server) {
 
 // Related servers
 const relatedServers = getRelatedServers(server, allServers, 5);
+
+// Security audit data (from manual audit data file + D1 data)
+const auditData = getSecurityAudit(server.id) || (server as any).securityAudit || null;
+const auditTier = auditData ? getScoreTier(auditData.auditScore) : null;
+
+const TRANSPORT_LABELS: Record<string, string> = { stdio: 'Stdio (Local)', sse_http: 'SSE/HTTP (Remote)', both: 'Both' };
+const AUTH_LABELS: Record<string, string> = { None: 'None', 'API Key': 'API Key', OAuth2: 'OAuth2', 'SSO-SAML': 'SSO/SAML' };
+const TOKEN_LABELS: Record<string, string> = { 'short-lived': 'Short-lived (Refresh)', 'long-lived': 'Long-lived (Static)', 'N/A': 'N/A' };
+const INPUT_LABELS: Record<string, string> = { parameterized: 'Parameterized (Safe)', shell_strings: 'Shell Strings (Risky)', mixed: 'Mixed' };
+const RESIDENCY_LABELS: Record<string, string> = { local_only: 'Local Only', cloud: 'Cloud', hybrid: 'Hybrid', unknown: 'Unknown' };
 
 // SEO
 const serverName = server.fields.name;
@@ -234,6 +245,107 @@ const structuredData = {
 
         <!-- Configuration -->
         <ServerConfiguration server={server} />
+
+        <!-- Security Audit -->
+        {auditData && auditTier && (
+          <section class="security-audit-section">
+            <h2>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
+              Security Audit
+            </h2>
+
+            <div class="audit-score-row">
+              <div class="audit-score-gauge" style={`background: conic-gradient(${auditTier.color} ${auditData.auditScore * 3.6}deg, rgba(255,255,255,0.08) 0deg)`}>
+                <div class="audit-score-inner">
+                  <span class="score-value" style={`color: ${auditTier.color}`}>{auditData.auditScore}</span>
+                  <span class="score-max">/100</span>
+                </div>
+              </div>
+              <div class="audit-tier-info">
+                <span class="tier-badge" style={`background: ${auditTier.color}22; color: ${auditTier.color}; border: 1px solid ${auditTier.color}44`}>
+                  {auditTier.emoji} {auditTier.label}
+                </span>
+                <span class="audit-date">Audited {auditData.auditDate}</span>
+                <a href="/audit-manifesto" class="methodology-link">View methodology →</a>
+              </div>
+            </div>
+
+            <table class="audit-table">
+              <thead>
+                <tr>
+                  <th>Dimension</th>
+                  <th>Result</th>
+                  <th>Details</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <span class="dimension-icon">📡</span> Transport Security
+                  </td>
+                  <td>
+                    <span class={`result-badge ${auditData.transport === 'stdio' ? 'result-good' : auditData.transport === 'both' ? 'result-warn' : 'result-risk'}`}>
+                      {TRANSPORT_LABELS[auditData.transport]}
+                    </span>
+                  </td>
+                  <td class="detail-text">Stdio is local-only process communication. SSE/HTTP exposes network attack surface.</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="dimension-icon">🔐</span> Authentication
+                  </td>
+                  <td>
+                    <span class={`result-badge ${auditData.authMethod === 'None' ? 'result-risk' : auditData.authMethod === 'OAuth2' || auditData.authMethod === 'SSO-SAML' ? 'result-good' : 'result-warn'}`}>
+                      {AUTH_LABELS[auditData.authMethod]}
+                    </span>
+                  </td>
+                  <td class="detail-text">{auditData.authMethod === 'None' ? 'No authentication — any client can connect.' : auditData.authMethod === 'API Key' ? 'Static API key — long-lived secret must be stored securely.' : 'Scoped tokens with expiration and refresh capabilities.'}</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="dimension-icon">⏱️</span> Token Lifecycle
+                  </td>
+                  <td>
+                    <span class={`result-badge ${auditData.tokenLifecycle === 'short-lived' ? 'result-good' : auditData.tokenLifecycle === 'N/A' ? 'result-neutral' : 'result-warn'}`}>
+                      {TOKEN_LABELS[auditData.tokenLifecycle]}
+                    </span>
+                  </td>
+                  <td class="detail-text">Short-lived tokens limit exposure window if compromised. Long-lived tokens require secure rotation policies.</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="dimension-icon">🛡️</span> Input Handling
+                  </td>
+                  <td>
+                    <span class={`result-badge ${auditData.inputHandling === 'parameterized' ? 'result-good' : auditData.inputHandling === 'mixed' ? 'result-warn' : 'result-risk'}`}>
+                      {INPUT_LABELS[auditData.inputHandling]}
+                    </span>
+                  </td>
+                  <td class="detail-text">Parameterized inputs prevent injection attacks. Shell strings enable command injection vectors.</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="dimension-icon">🌍</span> Data Residency
+                  </td>
+                  <td>
+                    <span class={`result-badge ${auditData.dataResidency === 'local_only' ? 'result-good' : auditData.dataResidency === 'hybrid' ? 'result-warn' : auditData.dataResidency === 'cloud' ? 'result-risk' : 'result-neutral'}`}>
+                      {RESIDENCY_LABELS[auditData.dataResidency]}
+                    </span>
+                  </td>
+                  <td class="detail-text">Local-only data never leaves your machine. Cloud residency means data flows through third-party APIs.</td>
+                </tr>
+              </tbody>
+            </table>
+
+            {auditData.auditorNotes && (
+              <div class="auditor-notes">
+                <strong>Auditor Notes:</strong> {auditData.auditorNotes}
+              </div>
+            )}
+          </section>
+        )}
 
         <!-- Available Tools -->
         {server.fields.available_tools && server.fields.available_tools.length > 0 && (
@@ -458,6 +570,170 @@ const structuredData = {
   .required-badge.no {
     background: rgba(34,197,94,0.1);
     color: #22c55e;
+  }
+
+  /* Security Audit Section */
+  .security-audit-section {
+    background: rgba(255,255,255,0.04);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .security-audit-section h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #f1f5f9;
+    margin: 0 0 1.25rem 0;
+  }
+
+  .security-audit-section h2 svg {
+    color: #94a3b8;
+  }
+
+  .audit-score-row {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .audit-score-gauge {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .audit-score-inner {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: #1e293b;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .score-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .score-max {
+    font-size: 0.75rem;
+    color: #64748b;
+  }
+
+  .audit-tier-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .tier-badge {
+    display: inline-block;
+    padding: 0.35rem 0.85rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    width: fit-content;
+  }
+
+  .audit-date {
+    font-size: 0.8rem;
+    color: #64748b;
+  }
+
+  .methodology-link {
+    font-size: 0.8rem;
+    color: #f59e0b;
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .methodology-link:hover { color: #fbbf24; }
+
+  .audit-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  .audit-table th {
+    text-align: left;
+    padding: 0.75rem;
+    background: rgba(255,255,255,0.06);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    font-weight: 600;
+    color: #f1f5f9;
+  }
+
+  .audit-table td {
+    padding: 0.75rem;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    color: #94a3b8;
+    vertical-align: top;
+  }
+
+  .dimension-icon { margin-right: 0.35rem; }
+
+  .result-badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .result-good {
+    background: rgba(34,197,94,0.12);
+    color: #22c55e;
+  }
+
+  .result-warn {
+    background: rgba(234,179,8,0.12);
+    color: #eab308;
+  }
+
+  .result-risk {
+    background: rgba(239,68,68,0.12);
+    color: #ef4444;
+  }
+
+  .result-neutral {
+    background: rgba(100,116,139,0.15);
+    color: #94a3b8;
+  }
+
+  .detail-text {
+    font-size: 0.8rem;
+    color: #64748b;
+    line-height: 1.5;
+  }
+
+  .auditor-notes {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+    font-size: 0.85rem;
+    color: #94a3b8;
+    line-height: 1.6;
+    border-left: 3px solid #f59e0b;
+  }
+
+  .auditor-notes strong {
+    color: #f1f5f9;
   }
 
   @media (max-width: 1024px) {

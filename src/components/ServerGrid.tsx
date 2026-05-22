@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import type { MCPServer } from '../utils/d1';
+import type { MCPServer, SecurityAuditData } from '../utils/d1';
 import { getDeploymentBadge } from '../utils/serverData.js';
+import { getScoreTier } from '../data/securityAudit';
 import { HealthBadge } from './HealthBadge';
 
 interface Props {
@@ -79,6 +80,18 @@ function ServerCard({ server }: { server: MCPServer }) {
   const deploymentInfo = server.deployment ? getDeploymentBadge(server.deployment) : null;
   const secondaryDeployments = server.deployment_metadata?.secondary_deployments || [];
 
+  // Security audit data
+  const audit = server.securityAudit || (server as any).securityAudit;
+  const tier = audit ? getScoreTier(audit.auditScore) : null;
+
+  const transportLabel = (t: string) => t === 'stdio' ? 'Stdio' : t === 'sse_http' ? 'SSE' : 'Both';
+  const authLabel = (a: string) => {
+    if (a === 'None') return '⚠️ No Auth';
+    if (a === 'OAuth2') return '🔒 OAuth2';
+    if (a === 'SSO-SAML') return '🔐 SSO/SAML';
+    return '🔑 API Key';
+  };
+
   return (
     <div className="server-card" data-category={server.fields.category || 'other'}>
       <a href={`/server/${slug}`} className="server-card-link">
@@ -136,6 +149,21 @@ function ServerCard({ server }: { server: MCPServer }) {
             />
           </div>
         )}
+
+        {/* Security Audit Badges */}
+        {audit && (
+          <div className="security-badges" style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '0.5rem' }}>
+            <span className="meta-tag" style={{ background: tier?.color + '22', color: tier?.color, border: `1px solid ${tier?.color}44` }} title={`Security Score: ${audit.auditScore}/100 — ${tier?.label}`}>
+              {tier?.emoji} {audit.auditScore}
+            </span>
+            <span className="meta-tag" title={`Transport: ${transportLabel(audit.transport)}`}>
+              📡 {transportLabel(audit.transport)}
+            </span>
+            <span className="meta-tag" title={`Auth: ${audit.authMethod}`}>
+              {authLabel(audit.authMethod)}
+            </span>
+          </div>
+        )}
         
         <div className="server-meta">
           {server.fields.language && <span className="meta-tag">{server.fields.language}</span>}
@@ -184,6 +212,7 @@ export default function ServerGrid({ initialServers, total: initialTotal, meta }
   const [total, setTotal] = useState(initialTotal);
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
+  const [localOnly, setLocalOnly] = useState(false);
   const deployment = meta?.deployment || 'all';
   const [offset, setOffset] = useState(initialServers.length);
   const [loading, setLoading] = useState(false);
@@ -195,7 +224,8 @@ export default function ServerGrid({ initialServers, total: initialTotal, meta }
     cat: string,
     dep: string,
     off: number,
-    append: boolean
+    append: boolean,
+    local: boolean
   ) => {
     if (append) setLoadingMore(true);
     else setLoading(true);
@@ -205,6 +235,7 @@ export default function ServerGrid({ initialServers, total: initialTotal, meta }
       if (cat && cat !== 'all') params.set('category', cat);
       if (dep && dep !== 'all') params.set('deployment', dep);
       if (q.trim()) params.set('search', q.trim());
+      if (local) params.set('local_only', 'true');
 
       const res = await fetch(`/api/servers?${params}`);
       if (!res.ok) throw new Error('fetch failed');
@@ -225,14 +256,14 @@ export default function ServerGrid({ initialServers, total: initialTotal, meta }
     }
   }, []);
 
-  // On search/category/deployment change, debounce and reset
+  // On search/category/deployment/localOnly change, debounce and reset
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
-      fetchServers(search, category, deployment, 0, false);
+      fetchServers(search, category, deployment, 0, false, localOnly);
     }, 300);
     return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
-  }, [search, category, deployment, fetchServers]);
+  }, [search, category, deployment, localOnly, fetchServers]);
 
   const hasMore = offset < total;
 
@@ -270,6 +301,23 @@ export default function ServerGrid({ initialServers, total: initialTotal, meta }
           ))}
         </div>
         
+        {/* Local-Only (stdio) Toggle */}
+        <div className="filter-toggles" style={{ display: 'flex', gap: '0.75rem', marginTop: '0.75rem', alignItems: 'center' }}>
+          <label className="local-only-toggle" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.875rem', color: localOnly ? '#22c55e' : '#94a3b8', fontWeight: localOnly ? 600 : 400, userSelect: 'none' }}>
+            <input
+              type="checkbox"
+              checked={localOnly}
+              onChange={e => setLocalOnly(e.target.checked)}
+              style={{ accentColor: '#22c55e', width: '16px', height: '16px', cursor: 'pointer' }}
+            />
+            💻 Local-Only (stdio)
+          </label>
+          {localOnly && (
+            <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
+              Showing stdio servers with local-only data residency
+            </span>
+          )}
+        </div>
       </div>
 
       <div className="servers-grid" id="serversGrid">
@@ -283,7 +331,7 @@ export default function ServerGrid({ initialServers, total: initialTotal, meta }
           <button
             className="btn btn-primary"
             style={{ padding: '0.75rem 2rem', fontSize: '1rem' }}
-            onClick={() => fetchServers(search, category, deployment, offset, true)}
+            onClick={() => fetchServers(search, category, deployment, offset, true, localOnly)}
             disabled={loadingMore}
           >
             {loadingMore ? 'Loading…' : `Load More (${total - offset} remaining)`}

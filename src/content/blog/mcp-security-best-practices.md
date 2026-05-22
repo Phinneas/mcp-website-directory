@@ -337,5 +337,9 @@ I'm Buzz, curator of MyMCPShelf.com and a former Microsoft developer who worked 
 
 ---
 
+**Want to see how we score MCP servers?** Our [Security Audit Manifesto](/audit-manifesto) publishes the full methodology — checklist, scoring rubric, and self-attestation form for server authors. Every score is traceable to specific, auditable criteria.
+
+---
+
 *Last Updated: January 22, 2026*
 *Keywords: MCP security, MCP server security, MCP security best practices, MCP security risks, Model Context Protocol security, AI security, LLM security, enterprise MCP deployment*
