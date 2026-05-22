@@ -346,30 +346,28 @@ export const securityAudits: Record<string, SecurityAudit> = {
  * than staticServers.js. This maps alternate IDs to the canonical audit key.
  */
 const AUDIT_ID_ALIASES: Record<string, string> = {
-  // GitHub MCP — exists as 'github' in servers.json
+  // D1 uses different IDs than staticServers.js
   'github': 'github-official-mcp-new',
-  // Playwright — may exist under different IDs
   'playwright': 'playwright-browser-automation',
   'playwright-mcp': 'microsoft-playwright-mcp',
-  // PostgreSQL
-  'postgres-mcp': 'postgres-mcp',
-  // SQLite
-  'sqlite-mcp': 'sqlite-mcp',
-  // Puppeteer
-  'puppeteer-mcp': 'puppeteer-mcp',
-  // Google Workspace / gdrive
-  'gdrive-mcp': 'gdrive-mcp',
+  'postgresql': 'postgres-mcp',
+  'sqlite': 'sqlite-mcp',
+  'puppeteer': 'puppeteer-mcp',
+  'google-workspace': 'gdrive-mcp',
   'mcp-gsuite': 'gdrive-mcp',
-  // AWS
   'aws-mcp': 'awslabs-mcp-official',
-  // Figma
-  'figma-mcp': 'figma-context-mcp',
-  // Chrome
+  'figma-context': 'figma-context-mcp',
   'chrome-mcp': 'mcp-chrome-hangwin',
-  // WhatsApp
   'whatsapp': 'whatsapp-mcp',
-  // Git
   'git-mcp': 'git-mcp-idosal',
+  'gitmcp-github-to-mcp': 'git-mcp-idosal',
+  'context7': 'upstash-context7',
+  '1panel': 'panel-1panel',
+  'activepieces': 'activepieces-mcp',
+  'ghidramcp': 'ghidra-mcp',
+  'zen': 'zen-mcp-server',
+  'mindsdb': 'mindsdb-mcp',
+  'fastmcp': 'fastmcp',
 };
 
 /**
