@@ -1,0 +1,240 @@
+---
+/**
+ * CustomMcpCta.astro — Reusable "Need a custom MCP system?" CTA
+ *
+ * Emphasizes configuration/integration, NOT tool recommendation.
+ * "The directory recommends. The consultancy configures."
+ *
+ * Props:
+ *   variant — 'compact' (sidebar) | 'card' (page section) | 'banner' (full-width)
+ *   context — optional context string for contextual CTAs (e.g. "Skill Pack")
+ */
+
+interface Props {
+  variant?: 'compact' | 'card' | 'banner';
+  context?: string;
+}
+
+const { variant = 'card', context } = Astro.props;
+
+const INTAKE_URL = 'https://www.salishseaconsulting.com/contact/';
+const heading = context
+  ? `Custom ${context} Configuration?`
+  : 'Need a Custom MCP System?';
+const subtext = context
+  ? `This directory helps you pick the right tools. Salish Sea Consulting configures, integrates, and deploys them for your stack.`
+  : 'We help you pick the right tools. Salish Sea Consulting configures, integrates, and deploys them for your stack.';
+---
+
+{variant === 'compact' && (
+  <div class="custom-mcp-cta compact">
+    <span class="cta-icon">🔧</span>
+    <div class="cta-body">
+      <h4 class="cta-heading">{heading}</h4>
+      <p class="cta-subtext">Configuration & integration, not just recommendations.</p>
+    </div>
+    <a href={INTAKE_URL} class="cta-btn compact-btn" target="_blank" rel="noopener noreferrer">
+      Get Started →
+    </a>
+  </div>
+)}
+
+{variant === 'card' && (
+  <div class="custom-mcp-cta card">
+    <div class="cta-accent-bar"></div>
+    <span class="cta-icon large">🔧</span>
+    <h3 class="cta-heading">{heading}</h3>
+    <p class="cta-subtext">{subtext}</p>
+    <a href={INTAKE_URL} class="cta-btn card-btn" target="_blank" rel="noopener noreferrer">
+      Get Started →
+    </a>
+    <span class="cta-disclaimer">The directory recommends. The consultancy configures.</span>
+  </div>
+)}
+
+{variant === 'banner' && (
+  <div class="custom-mcp-cta banner">
+    <div class="banner-inner">
+      <span class="cta-icon">🔧</span>
+      <div class="banner-text">
+        <h3 class="cta-heading">{heading}</h3>
+        <p class="cta-subtext">{subtext}</p>
+      </div>
+      <a href={INTAKE_URL} class="cta-btn banner-btn" target="_blank" rel="noopener noreferrer">
+        Get Started →
+      </a>
+    </div>
+  </div>
+)}
+
+<style>
+  .custom-mcp-cta {
+    border-radius: 12px;
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    background: rgba(245, 158, 11, 0.06);
+  }
+
+  /* ── Compact (sidebar) ── */
+  .compact {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    text-align: center;
+  }
+
+  .compact .cta-icon {
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  .compact .cta-heading {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin: 0;
+  }
+
+  .compact .cta-subtext {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .compact .cta-body {
+    margin-bottom: 0.25rem;
+  }
+
+  .compact-btn {
+    padding: 0.4rem 0.85rem;
+    font-size: 0.75rem;
+  }
+
+  /* ── Card (page section) ── */
+  .card {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-accent-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #f59e0b, #3b82f6);
+  }
+
+  .card .cta-icon.large {
+    font-size: 2rem;
+  }
+
+  .card .cta-heading {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin: 0;
+  }
+
+  .card .cta-subtext {
+    font-size: 0.9rem;
+    color: #94a3b8;
+    margin: 0;
+    line-height: 1.5;
+    max-width: 380px;
+  }
+
+  .card-btn {
+    padding: 0.6rem 1.5rem;
+    font-size: 0.85rem;
+  }
+
+  .cta-disclaimer {
+    font-size: 0.7rem;
+    color: #64748b;
+    font-style: italic;
+    margin-top: 0.25rem;
+  }
+
+  /* ── Banner (full-width) ── */
+  .banner {
+    padding: 2rem 1.5rem;
+    border-radius: 12px;
+  }
+
+  .banner-inner {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .banner .cta-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+  }
+
+  .banner-text {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .banner .cta-heading {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin: 0 0 0.25rem;
+  }
+
+  .banner .cta-subtext {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .banner-btn {
+    padding: 0.65rem 1.5rem;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* ── Shared button ── */
+  .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: linear-gradient(135deg, #f59e0b 0%, #3b82f6 100%);
+    color: #fff;
+    font-weight: 600;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+  }
+
+  .cta-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+  }
+
+  @media (max-width: 600px) {
+    .banner-inner {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+</style>

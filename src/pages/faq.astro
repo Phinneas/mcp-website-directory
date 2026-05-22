@@ -4,6 +4,7 @@ export const prerender = true;
 import { FolderIcon, ToolboxIcon, ComputerIcon, VintageIcon } from '../components/VintageIcon';
 import HeaderNewsletter from '../components/HeaderNewsletter.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import CustomMcpCta from '../components/CustomMcpCta.astro';
 
 const faqSections = [
     {
@@ -190,9 +191,10 @@ const faqSections = [
             <a href="/blog"><VintageIcon client:load name="Windows95TextFile" size={16} /> View Blog</a>
             <a href="/agent-skills"><ToolboxIcon client:load size={16} /> Browse Skills</a>
             <a href="/mcp-clients"><ComputerIcon client:load size={16} /> Browse Clients</a>
-            <a href="https://www.salishseaconsulting.com/contact/" class="custom-mcp-link" target="_blank" rel="noopener noreferrer">
-                🔧 Need a Custom MCP System?
-            </a>
+        </div>
+
+        <div class="about-cta-section">
+            <CustomMcpCta variant="card" />
         </div>
     </div>
 
@@ -444,6 +446,11 @@ const faqSections = [
         color: #ffcf7a;
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(238, 123, 48, 0.3);
+    }
+
+    .about-cta-section {
+        max-width: 500px;
+        margin: 2.5rem auto 0;
     }
 
     @media (max-width: 768px) {

@@ -23,6 +23,7 @@ import { getRelatedServers, getCategoryDisplayName } from '../../utils/serverDat
 import { slugify } from '../../utils/slugify.js';
 import { staticServers as fallbackServers } from '../../data/staticServers.js';
 import { getSecurityAudit, getScoreTier } from '../../data/securityAudit';
+import CustomMcpCta from '../../components/CustomMcpCta.astro';
 
 // servers.json is bundled by Vite at build time — safe to import statically
 import serversData from '../../data/servers.json';
@@ -419,6 +420,7 @@ const structuredData = {
           />
         )}
         <RelatedServers servers={relatedServers} currentServerId={server.id} />
+        <CustomMcpCta variant="compact" />
       </aside>
     </div>
   </div>
