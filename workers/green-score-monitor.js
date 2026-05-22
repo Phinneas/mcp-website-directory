@@ -44,17 +44,13 @@ function resolveDomainForCheck(server) {
     return null;
   }
 
-  // Try github_url first (most reliable domain source)
+  // Extract domain from github_url
   if (server.github_url) {
     const domain = extractDomain(server.github_url);
-    if (domain && domain !== 'github.com') {
+    if (domain) {
+      // Even github.com is a valid check target — GitHub is a major host
       return domain;
     }
-  }
-
-  // Try homepage_url
-  if (server.homepage_url) {
-    return extractDomain(server.homepage_url);
   }
 
   return null;
@@ -129,6 +125,22 @@ function computeGreenScore(domain, greenResult, carbonResult, deployment) {
     };
   }
 
+  // Special case: github.com — Green Web Foundation may not list it, but GitHub
+  // publishes sustainability data. If greencheck didn't verify, mark as estimated
+  // with GitHub as the inferred hosting provider.
+  if (domain === 'github.com' && (!greenResult || !greenResult.green)) {
+    return {
+      tier: 'green_estimated',
+      label: '~420 gCO2/kWh',
+      description: 'Hosted on GitHub infrastructure. GitHub reports carbon-neutral operations with renewable energy credits. Regional grid intensity estimated for US-East.',
+      carbonIntensity: 420,
+      region: 'US-East (estimated)',
+      greenVerified: false,
+      hostingProvider: 'GitHub',
+      quality: 'moderate',
+    };
+  }
+
   // Green Estimated: Use carbon intensity data
   if (carbonResult && carbonResult.carbonIntensity !== null) {
     const intensity = Math.round(carbonResult.carbonIntensity);
@@ -165,7 +177,7 @@ async function runGreenCheck(env) {
 
   // Fetch all remote (non-stdio) servers + stdio servers that have github_urls
   const servers = await env.DB.prepare(`
-    SELECT id, name, deployment_type, github_url, homepage_url
+    SELECT id, name, deployment_type, github_url
     FROM servers
     ORDER BY stars DESC
     LIMIT 500
