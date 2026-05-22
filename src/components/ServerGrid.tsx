@@ -3,6 +3,7 @@ import type { MCPServer, SecurityAuditData } from '../utils/d1';
 import { getDeploymentBadge } from '../utils/serverData.js';
 import { getScoreTier } from '../data/securityAudit';
 import { HealthBadge } from './HealthBadge';
+import { GreenBadge } from './GreenBadge';
 
 interface Props {
   initialServers: MCPServer[];
@@ -162,6 +163,13 @@ function ServerCard({ server }: { server: MCPServer }) {
             <span className="meta-tag" title={`Auth: ${audit.authMethod}`}>
               {authLabel(audit.authMethod)}
             </span>
+          </div>
+        )}
+
+        {/* Green Score Badge */}
+        {(server as any).greenScore && (
+          <div style={{ marginBottom: '0.5rem' }}>
+            <GreenBadge greenScore={(server as any).greenScore} compact />
           </div>
         )}
         

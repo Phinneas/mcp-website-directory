@@ -1,0 +1,20 @@
+name = "mcp-green-score-monitor"
+main = "green-score-monitor.js"
+compatibility_date = "2024-11-12"
+
+# D1 Database binding — same DB as the main site
+[[d1_databases]]
+binding = "DB"
+database_name = "mcp-directory"
+database_id = "527bf637-7aba-4719-8d39-b9e6e614a3b9"
+
+# Cron triggers — runs weekly on Mondays at 3 AM UTC
+# (offset from health-monitor's Sunday 2 AM to avoid D1 contention)
+[triggers]
+crons = ["0 3 * * Mon"]
+
+# Workers free tier limits:
+# - 100,000 requests/day
+# - Cron triggers included in request count
+# Weekly green check of ~500 servers = ~1000 API calls/month (well within limits)
+# Two API calls per remote server (Greencheck + IP-to-CO2)

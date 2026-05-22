@@ -17,6 +17,7 @@ export interface MCPServerRow {
   updated_at: string | null;
   deployment_type: string | null;
   security_audit_json: string | null;
+  green_score_json: string | null;
 }
 
 export interface SecurityAuditData {
@@ -30,10 +31,22 @@ export interface SecurityAuditData {
   auditorNotes?: string;
 }
 
+export interface GreenScoreData {
+  tier: 'green_verified' | 'green_estimated' | 'user_dependent' | 'unknown';
+  label: string;
+  description: string;
+  carbonIntensity: number | null;
+  region: string | null;
+  greenVerified: boolean;
+  hostingProvider: string | null;
+  quality?: 'low' | 'moderate' | 'high';
+}
+
 export interface MCPServer {
   id: string;
   deployment: string;
   securityAudit?: SecurityAuditData | null;
+  greenScore?: GreenScoreData | null;
   fields: {
     name: string;
     description: string;
@@ -66,10 +79,20 @@ function rowToServer(row: MCPServerRow): MCPServer {
     }
   }
 
+  let greenScore: GreenScoreData | null = null;
+  if (row.green_score_json) {
+    try {
+      greenScore = JSON.parse(row.green_score_json) as GreenScoreData;
+    } catch {
+      // invalid JSON — leave as null
+    }
+  }
+
   return {
     id: row.id,
     deployment: row.deployment_type || 'local_stdio',
     securityAudit,
+    greenScore,
     fields: {
       name: row.name,
       description: row.description || '',
