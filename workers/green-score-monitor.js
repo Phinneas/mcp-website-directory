@@ -1,32 +1,14 @@
 // Cloudflare Worker for weekly MCP server green hosting assessment
-// Uses Greencheck API (verified renewable energy) and IP-to-CO2 API (estimated grid intensity)
-// Runs weekly via cron triggers and updates D1 database
+// Uses Greencheck API to verify if a server's hosting provider runs on
+// confirmed renewable-energy infrastructure.
 //
-// Badge tiers:
-//   green_verified  — Greencheck API confirms hosting on verified renewable-energy infrastructure
-//   green_estimated  — Calculated via IP-to-CO2 API based on regional grid data
-//   user_dependent   — stdio/local servers inherit user's own energy profile
+// Only two outcomes:
+//   green_verified  — Greencheck API confirms verified renewable hosting
+//   user_dependent  — stdio/local servers inherit user's own energy profile
+//
+// No estimates. No hardcoded values. Every verified badge is backed by API data.
 
-const GREENCHECK_API = 'https://api.thegreenwebfoundation.org/v3/greencheck/';
-const IP_TO_CO2_API = 'https://api.thegreenwebfoundation.org/v2/ip-to-co2intensity/';
-
-// Domains that are well-known cloud providers with known hosting
-const CLOUD_PROVIDER_MAP = {
-  'github.io': 'GitHub Pages',
-  'github.com': 'GitHub',
-  'vercel.app': 'Vercel',
-  'netlify.app': 'Netlify',
-  'cloudflare.com': 'Cloudflare',
-  'aws.amazon.com': 'AWS',
-  'azure.microsoft.com': 'Azure',
-  'cloud.google.com': 'GCP',
-  'railway.app': 'Railway',
-  'render.com': 'Render',
-  'fly.dev': 'Fly.io',
-  'herokuapp.com': 'Heroku',
-  'supabase.co': 'Supabase',
-  'upstash.com': 'Upstash',
-};
+const GREENCHECK_API = 'https://api.thegreenwebfoundation.org/api/v3/greencheck/';
 
 function extractDomain(url) {
   try {
@@ -46,11 +28,7 @@ function resolveDomainForCheck(server) {
 
   // Extract domain from github_url
   if (server.github_url) {
-    const domain = extractDomain(server.github_url);
-    if (domain) {
-      // Even github.com is a valid check target — GitHub is a major host
-      return domain;
-    }
+    return extractDomain(server.github_url);
   }
 
   return null;
@@ -63,7 +41,9 @@ async function checkGreenVerified(domain) {
     const data = await res.json();
     return {
       green: data.green === true,
-      hostingProvider: data.hosted_by || data.greenable || null,
+      hostingProvider: data.hosted_by || null,
+      listedProvider: data.listed_provider || false,
+      supportingDocuments: data.supporting_documents || [],
       checkedDomain: domain,
     };
   } catch (err) {
@@ -72,42 +52,13 @@ async function checkGreenVerified(domain) {
   }
 }
 
-async function checkCarbonIntensity(domain) {
-  try {
-    // First resolve IP from domain
-    const dnsRes = await fetch(`https://dns.google/resolve?name=${domain}&type=A`);
-    if (!dnsRes.ok) return null;
-    const dnsData = await dnsRes.json();
-    const ip = dnsData?.Answer?.[0]?.data;
-    if (!ip || ip.match(/^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$/) === null) return null;
-
-    // Then query IP-to-CO2 API
-    const co2Res = await fetch(`${IP_TO_CO2_API}${ip}`);
-    if (!co2Res.ok) return null;
-    const co2Data = await co2Res.json();
-    return {
-      carbonIntensity: co2Data.carbon_intensity || null,
-      countryName: co2Data.country_name || null,
-      countryCode: co2Data.country_code || null,
-      region: co2Data.country_name || co2Data.country_code || 'Unknown',
-      checkedIp: ip,
-    };
-  } catch (err) {
-    console.error(`CO2 check failed for ${domain}:`, err.message);
-    return null;
-  }
-}
-
-function computeGreenScore(domain, greenResult, carbonResult, deployment) {
+function computeGreenScore(domain, greenResult, deployment) {
   // stdio/local servers: user-dependent
   if (deployment === 'local_stdio' || !domain) {
     return {
       tier: 'user_dependent',
       label: 'User-Dependent',
       description: 'Local stdio server — carbon footprint depends on your own energy source.',
-      carbonIntensity: null,
-      region: null,
-      greenVerified: false,
       hostingProvider: null,
     };
   }
@@ -117,65 +68,24 @@ function computeGreenScore(domain, greenResult, carbonResult, deployment) {
     return {
       tier: 'green_verified',
       label: 'Green Verified',
-      description: `Hosted by ${greenResult.hostingProvider || 'a verified green host'} on confirmed renewable-energy infrastructure.`,
-      carbonIntensity: null,
-      region: null,
-      greenVerified: true,
+      description: `Hosted by ${greenResult.hostingProvider || 'a verified green host'} on confirmed renewable-energy infrastructure. Verified by the Green Web Foundation.`,
       hostingProvider: greenResult.hostingProvider,
     };
   }
 
-  // Special case: github.com — Green Web Foundation may not list it, but GitHub
-  // publishes sustainability data. If greencheck didn't verify, mark as estimated
-  // with GitHub as the inferred hosting provider.
-  if (domain === 'github.com' && (!greenResult || !greenResult.green)) {
-    return {
-      tier: 'green_estimated',
-      label: '~420 gCO2/kWh',
-      description: 'Hosted on GitHub infrastructure. GitHub reports carbon-neutral operations with renewable energy credits. Regional grid intensity estimated for US-East.',
-      carbonIntensity: 420,
-      region: 'US-East (estimated)',
-      greenVerified: false,
-      hostingProvider: 'GitHub',
-      quality: 'moderate',
-    };
-  }
-
-  // Green Estimated: Use carbon intensity data
-  if (carbonResult && carbonResult.carbonIntensity !== null) {
-    const intensity = Math.round(carbonResult.carbonIntensity);
-    let quality = 'moderate';
-    if (intensity < 200) quality = 'low';
-    if (intensity > 500) quality = 'high';
-
-    return {
-      tier: 'green_estimated',
-      label: `~${intensity} gCO2/kWh`,
-      description: `Estimated carbon intensity: ${intensity} gCO2/kWh (${carbonResult.region}). Based on regional grid data, not verified renewable.`,
-      carbonIntensity: intensity,
-      region: carbonResult.region,
-      greenVerified: false,
-      hostingProvider: greenResult?.hostingProvider || CLOUD_PROVIDER_MAP[domain] || null,
-      quality,
-    };
-  }
-
-  // Fallback: no data available
+  // No verification available — return unknown (badge won't be shown)
   return {
     tier: 'unknown',
-    label: 'No Data',
-    description: 'Green hosting status could not be determined.',
-    carbonIntensity: null,
-    region: null,
-    greenVerified: false,
-    hostingProvider: null,
+    label: 'Not Verified',
+    description: 'Green hosting status could not be verified by the Green Web Foundation.',
+    hostingProvider: greenResult?.hostingProvider || null,
   };
 }
 
 async function runGreenCheck(env) {
   console.log('Starting weekly green hosting assessment...');
 
-  // Fetch all remote (non-stdio) servers + stdio servers that have github_urls
+  // Fetch all servers
   const servers = await env.DB.prepare(`
     SELECT id, name, deployment_type, github_url
     FROM servers
@@ -195,12 +105,12 @@ async function runGreenCheck(env) {
     // Column already exists — safe to ignore
   }
 
-  console.log(`Processing ${servers.results.length} servers for green scores...`);
+  console.log(`Processing ${servers.results.length} servers for green verification...`);
 
   let processed = 0;
   let greenVerified = 0;
-  let greenEstimated = 0;
   let userDependent = 0;
+  let unknown = 0;
 
   // Process in batches of 20 to respect API rate limits
   const batchSize = 20;
@@ -213,17 +123,13 @@ async function runGreenCheck(env) {
 
       // For stdio servers, no API call needed
       if (!domain) {
-        const score = computeGreenScore(null, null, null, deployment);
+        const score = computeGreenScore(null, null, deployment);
         return { id: server.id, score };
       }
 
-      // Check both APIs in parallel
-      const [greenResult, carbonResult] = await Promise.all([
-        checkGreenVerified(domain),
-        checkCarbonIntensity(domain),
-      ]);
-
-      const score = computeGreenScore(domain, greenResult, carbonResult, deployment);
+      // Check Greencheck API
+      const greenResult = await checkGreenVerified(domain);
+      const score = computeGreenScore(domain, greenResult, deployment);
       return { id: server.id, score };
     }));
 
@@ -238,8 +144,8 @@ async function runGreenCheck(env) {
 
       processed++;
       if (result.score.tier === 'green_verified') greenVerified++;
-      else if (result.score.tier === 'green_estimated') greenEstimated++;
       else if (result.score.tier === 'user_dependent') userDependent++;
+      else unknown++;
     }
 
     // Rate limit pause between batches
@@ -248,7 +154,7 @@ async function runGreenCheck(env) {
     }
   }
 
-  console.log(`Green check complete: ${processed} processed, ${greenVerified} verified, ${greenEstimated} estimated, ${userDependent} user-dependent`);
+  console.log(`Green check complete: ${processed} processed, ${greenVerified} verified, ${userDependent} user-dependent, ${unknown} unknown`);
 }
 
 export default {
@@ -265,12 +171,8 @@ export default {
 
   async fetch(request, env) {
     // Manual trigger via HTTP for testing
-    const url = new URL(request.url);
-    const limit = parseInt(url.searchParams.get('limit') || '20');
-    
     try {
-      // Override limit for manual runs
-      await runGreenCheck({ ...env, _manualLimit: limit });
+      await runGreenCheck(env);
       return new Response('Green check completed successfully');
     } catch (error) {
       console.error('Green check failed:', error);

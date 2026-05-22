@@ -32,14 +32,10 @@ export interface SecurityAuditData {
 }
 
 export interface GreenScoreData {
-  tier: 'green_verified' | 'green_estimated' | 'user_dependent' | 'unknown';
+  tier: 'green_verified' | 'user_dependent' | 'unknown';
   label: string;
   description: string;
-  carbonIntensity: number | null;
-  region: string | null;
-  greenVerified: boolean;
   hostingProvider: string | null;
-  quality?: 'low' | 'moderate' | 'high';
 }
 
 export interface MCPServer {

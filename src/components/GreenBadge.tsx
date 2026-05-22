@@ -1,50 +1,37 @@
 // GreenBadge Component for MCP Servers
-// Displays green hosting status with Verified/Estimated/User-Dependent tiers
+// Only two tiers: Green Verified (third-party confirmed) and User-Dependent (local/stdio)
+// No estimated/hardcoded values — every verified badge is backed by Greencheck API data
 
 interface GreenBadgeProps {
   greenScore?: {
-    tier: 'green_verified' | 'green_estimated' | 'user_dependent' | 'unknown';
+    tier: 'green_verified' | 'user_dependent' | 'unknown';
     label: string;
     description: string;
-    carbonIntensity: number | null;
-    region: string | null;
-    greenVerified: boolean;
     hostingProvider: string | null;
-    quality?: 'low' | 'moderate' | 'high';
   } | null;
   compact?: boolean;
 }
 
-const TIER_STYLES: Record<string, { bg: string; text: string; border: string; dot: string }> = {
+const TIER_STYLES: Record<string, { bg: string; text: string; border: string }> = {
   green_verified: {
     bg: 'rgba(16, 185, 129, 0.1)',
     text: '#10b981',
     border: 'rgba(16, 185, 129, 0.3)',
-    dot: '#10b981',
-  },
-  green_estimated: {
-    bg: 'rgba(245, 158, 11, 0.1)',
-    text: '#f59e0b',
-    border: 'rgba(245, 158, 11, 0.3)',
-    dot: '#f59e0b',
   },
   user_dependent: {
     bg: 'rgba(99, 102, 241, 0.1)',
     text: '#818cf8',
     border: 'rgba(99, 102, 241, 0.3)',
-    dot: '#818cf8',
   },
   unknown: {
     bg: 'rgba(100, 116, 139, 0.1)',
     text: '#64748b',
     border: 'rgba(100, 116, 139, 0.3)',
-    dot: '#64748b',
   },
 };
 
 const TIER_ICONS: Record<string, string> = {
   green_verified: '🌿',
-  green_estimated: '📊',
   user_dependent: '💻',
   unknown: '❓',
 };
@@ -101,9 +88,6 @@ export function GreenBadge({ greenScore, compact = false }: GreenBadgeProps) {
       <span>{greenScore.label}</span>
       {greenScore.tier === 'green_verified' && (
         <span style={{ fontSize: '0.65rem', opacity: 0.8 }}>Verified</span>
-      )}
-      {greenScore.tier === 'green_estimated' && greenScore.region && (
-        <span style={{ fontSize: '0.65rem', opacity: 0.8 }}>{greenScore.region}</span>
       )}
     </div>
   );

@@ -1,0 +1,515 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const pageTitle = 'Green Hosting for MCP Servers | MyMCPShelf';
+const pageDescription = 'Which hosting platforms are verified green for deploying remote MCP servers? Honest, third-party verified data from the Green Web Foundation — no greenwashing.';
+const canonicalUrl = 'https://www.mymcpshelf.com/green-hosting';
+
+// Real data from Greencheck API — tested 2026-05-22
+const tier1Direct = [
+  {
+    name: 'Cloudflare Workers / Pages',
+    domain: 'cloudflare.com',
+    hostedBy: 'Cloudflare',
+    verifiedSince: 'Listed in Green Web Dataset (ID #779)',
+    supportingDocs: [
+      { title: 'Blog — The Climate and Cloudflare', url: 'https://blog.cloudflare.com/the-climate-and-cloudflare/' },
+      { title: 'Cloudflare 2023 Emissions Inventory', url: 'https://media.greenweb.org/uploads/Cloudflare_2023_Emissions_Inventory.pdf' },
+    ],
+    mcpGuide: 'https://developers.cloudflare.com/agents/guides/remote-mcp-server/',
+    mcpGuideLabel: 'Build a Remote MCP Server on Cloudflare →',
+    notes: 'The only platform where both the compute AND the CDN are on verified green infrastructure. Official MCP deployment guide available.',
+    affiliateUrl: null,
+  },
+  {
+    name: 'Google Cloud Run',
+    domain: 'cloud.google.com',
+    hostedBy: 'Google Cloud',
+    verifiedSince: 'Listed in Green Web Dataset',
+    supportingDocs: [],
+    mcpGuide: 'https://docs.cloud.google.com/run/docs/host-mcp-servers',
+    mcpGuideLabel: 'Host MCP Servers on Cloud Run →',
+    notes: 'Google Cloud is verified green. Cloud Run supports MCP server deployment with official documentation.',
+    affiliateUrl: null,
+  },
+  {
+    name: 'Hetzner Cloud',
+    domain: 'hetzner.com',
+    hostedBy: 'Hetzner Online GmbH',
+    verifiedSince: 'Listed in Green Web Dataset',
+    supportingDocs: [],
+    mcpGuide: null,
+    mcpGuideLabel: null,
+    notes: 'Verified green VPS provider. No official MCP guide, but any SSE/HTTP MCP server can be deployed on a Hetzner VPS.',
+    affiliateUrl: null,
+  },
+  {
+    name: 'OVHcloud',
+    domain: 'ovh.com',
+    hostedBy: 'OVHcloud',
+    verifiedSince: 'Listed in Green Web Dataset',
+    supportingDocs: [],
+    mcpGuide: null,
+    mcpGuideLabel: null,
+    notes: 'Verified green European cloud provider. VPS and bare-metal options for MCP server deployment.',
+    affiliateUrl: null,
+  },
+  {
+    name: 'Infomaniak',
+    domain: 'infomaniak.com',
+    hostedBy: 'Infomaniak',
+    verifiedSince: 'Listed in Green Web Dataset',
+    supportingDocs: [],
+    mcpGuide: null,
+    mcpGuideLabel: null,
+    notes: 'Swiss green-hosting pioneer. Cloud and VPS offerings suitable for MCP server deployment.',
+    affiliateUrl: null,
+  },
+];
+
+const tier2EdgeOnly = [
+  { name: 'Railway', domain: 'railway.app', showsAs: 'Cloudflare (CDN only)', reality: 'Edge traffic goes through Cloudflare (green). Origin servers not independently verified.', mcpRelevant: true },
+  { name: 'Kinsta', domain: 'kinsta.com', showsAs: 'Cloudflare (CDN only)', reality: 'Green only because Cloudflare fronts their CDN. Kinsta\'s own infrastructure is not independently verified.', mcpRelevant: false },
+  { name: 'WPEngine', domain: 'wpengine.com', showsAs: 'Cloudflare (CDN only)', reality: 'Same pattern — green CDN edge, unverified origin.', mcpRelevant: false },
+  { name: 'GreenGeeks', domain: 'greengeeks.com', showsAs: 'Cloudflare (CDN only)', reality: 'Markets 300% renewable energy, but Greencheck only confirms their Cloudflare CDN is green, not their own data centers.', mcpRelevant: false },
+  { name: 'Hostinger', domain: 'hostinger.com', showsAs: 'Cloudflare (CDN only)', reality: 'CDN edge is green. Origin not independently verified.', mcpRelevant: false },
+  { name: 'Bluehost', domain: 'bluehost.com', showsAs: 'Cloudflare (CDN only)', reality: 'CDN edge is green. Origin not independently verified.', mcpRelevant: false },
+];
+
+const tier3NotVerified = [
+  { name: 'Vercel', domain: 'vercel.app', status: 'Not in Green Web Dataset', mcpRelevant: true, note: 'Serverless architecture is energy-efficient but not verified green.' },
+  { name: 'Netlify', domain: 'netlify.app', status: 'Not in Green Web Dataset', mcpRelevant: true, note: 'Netlify community has asked about renewable energy — no verified answer.' },
+  { name: 'Render', domain: 'render.com', status: 'Not in Green Web Dataset', mcpRelevant: true, note: 'Popular for MCP deployment but not green-verified.' },
+  { name: 'Fly.io', domain: 'fly.dev', status: 'Not in Green Web Dataset', mcpRelevant: true, note: 'Edge compute platform, not verified green.' },
+  { name: 'GitHub', domain: 'github.com', status: 'Not in Green Web Dataset', mcpRelevant: true, note: 'Claims carbon-neutral operations via offsets, but not verified by Green Web Foundation.' },
+  { name: 'AWS', domain: 'aws.amazon.com', status: 'Not in Green Web Dataset', mcpRelevant: true, note: 'Huge renewable energy procurement, but not in the verified directory.' },
+  { name: 'Azure', domain: 'azure.microsoft.com', status: 'Not in Green Web Dataset', mcpRelevant: true, note: 'Microsoft is 100% renewable by 2025 target, but not Green Web verified.' },
+  { name: 'Heroku', domain: 'heroku.com', status: 'Not in Green Web Dataset', mcpRelevant: true, note: 'Runs on AWS — same unverified status.' },
+  { name: 'Supabase', domain: 'supabase.co', status: 'Not in Green Web Dataset', mcpRelevant: true, note: 'Runs on AWS — same unverified status.' },
+  { name: 'Gandi', domain: 'gandi.net', status: 'Not in Green Web Dataset', mcpRelevant: false, note: 'French domain/hosting registrar, not verified.' },
+  { name: 'Upstash', domain: 'upstash.com', status: 'Not in Green Web Dataset', mcpRelevant: true, note: 'Serverless Redis/Kafka — not verified green.' },
+];
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "Green Hosting Platforms for MCP Servers",
+  "description": pageDescription,
+  "url": canonicalUrl,
+  "numberOfItems": tier1Direct.length,
+  "itemListElement": tier1Direct.map((p, i) => ({
+    "@type": "ListItem",
+    "position": i + 1,
+    "item": {
+      "@type": "SoftwareApplication",
+      "name": p.name,
+      "applicationCategory": "Hosting",
+    },
+  })),
+};
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  canonical={canonicalUrl}
+  structuredData={structuredData}
+>
+  <div class="page-wrapper">
+    <section class="hero-section">
+      <div class="hero-content">
+        <h1 class="page-title">Green Hosting for MCP Servers</h1>
+        <p class="page-subtitle">
+          Which platforms are <strong>actually verified green</strong> for deploying remote MCP servers?
+          We tested every major platform against the Green Web Foundation's verified directory.
+          No estimates. No greenwashing. Just third-party audited data.
+        </p>
+        <div class="hero-badges">
+          <span class="hero-badge verified">🌿 Verified Green</span>
+          <span class="hero-badge edge">⚡ Green at Edge Only</span>
+          <span class="hero-badge unverified">⚪ Not Verified</span>
+        </div>
+      </div>
+    </section>
+
+    <main class="page-container">
+      <!-- How We Know -->
+      <section class="section">
+        <h2 class="section-title">How We Know</h2>
+        <p class="section-description">
+          Every result on this page comes from the <a href="https://www.thegreenwebfoundation.org/tools/directory/" target="_blank" rel="noopener noreferrer">Green Web Foundation's directory</a> —
+          a free, third-party audited database of hosting providers that run on verified renewable energy.
+          We query their <a href="https://developers.thegreenwebfoundation.org/api/greencheck/v3/check-single-domain/" target="_blank" rel="noopener noreferrer">Greencheck API</a> for each platform.
+          If it returns <code>green: true</code>, the provider has been independently verified. If not, we say so.
+        </p>
+        <div class="how-grid">
+          <div class="how-card">
+            <span class="how-icon">🔍</span>
+            <h3>We Check</h3>
+            <p>Each platform's domain is queried against the Greencheck API weekly.</p>
+          </div>
+          <div class="how-card">
+            <span class="how-icon">🌿</span>
+            <h3>They Verify</h3>
+            <p>The Green Web Foundation audits hosting providers annually. Only confirmed renewable infrastructure gets listed.</p>
+          </div>
+          <div class="how-card">
+            <span class="how-icon">🚫</span>
+            <h3>We Don't Guess</h3>
+            <p>If a platform isn't in the verified directory, we don't assign it a green badge. No estimates. No hardcoding.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tier 1: Directly Verified -->
+      <section class="section">
+        <div class="tier-header">
+          <span class="tier-badge verified">🌿</span>
+          <h2 class="section-title" style="margin-bottom:0">Tier 1 — Directly Verified Green</h2>
+        </div>
+        <p class="section-description">
+          These platforms' <strong>own infrastructure</strong> has been independently verified by the Green Web Foundation.
+          When you deploy an MCP server here, the compute runs on confirmed renewable-energy infrastructure.
+        </p>
+        <div class="platforms-grid">
+          {tier1Direct.map(platform => (
+            <div class="platform-card verified">
+              <div class="platform-header">
+                <h3>{platform.name}</h3>
+                <span class="verified-tag">🌿 Verified</span>
+              </div>
+              <div class="platform-meta">
+                <span>Verified by: <strong>{platform.hostedBy}</strong></span>
+                {platform.verifiedSince && <span class="meta-detail">{platform.verifiedSince}</span>}
+              </div>
+              {platform.mcpGuide && (
+                <a href={platform.mcpGuide} class="mcp-guide-link" target="_blank" rel="noopener noreferrer">
+                  {platform.mcpGuideLabel}
+                </a>
+              )}
+              <p class="platform-notes">{platform.notes}</p>
+              {platform.supportingDocs.length > 0 && (
+                <div class="supporting-docs">
+                  <span class="docs-label">Supporting evidence:</span>
+                  {platform.supportingDocs.map(doc => (
+                    <a href={doc.url} target="_blank" rel="noopener noreferrer" class="doc-link">{doc.title}</a>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- Tier 2: Green at Edge Only -->
+      <section class="section">
+        <div class="tier-header">
+          <span class="tier-badge edge">⚡</span>
+          <h2 class="section-title" style="margin-bottom:0">Tier 2 — Green at Edge Only</h2>
+        </div>
+        <p class="section-description">
+          These platforms show up as "green" in Greencheck, but only because <strong>Cloudflare sits in front of their CDN</strong>.
+          The edge/CDN layer is verified green — the actual origin servers where your code runs are <strong>not independently verified</strong>.
+        </p>
+        <div class="warning-callout">
+          <strong>Why this matters:</strong> If a provider's domain returns <code>green: true</code> with <code>hosted_by: "Cloudflare"</code>,
+          that means Cloudflare's CDN is green — not that the provider's own servers run on renewable energy.
+          Your MCP server code runs on the <strong>origin</strong>, not the CDN edge.
+        </div>
+        <div class="edge-table">
+          <div class="edge-row header">
+            <span>Platform</span>
+            <span>Greencheck Shows</span>
+            <span>Reality</span>
+            <span>MCP?</span>
+          </div>
+          {tier2EdgeOnly.map(p => (
+            <div class="edge-row">
+              <span class="edge-name">{p.name}</span>
+              <span class="edge-shows">{p.showsAs}</span>
+              <span class="edge-reality">{p.reality}</span>
+              <span class={`edge-mcp ${p.mcpRelevant ? 'yes' : 'no'}`}>{p.mcpRelevant ? '✓' : '—'}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- Tier 3: Not Verified -->
+      <section class="section">
+        <div class="tier-header">
+          <span class="tier-badge unverified">⚪</span>
+          <h2 class="section-title" style="margin-bottom:0">Tier 3 — Not Verified</h2>
+        </div>
+        <p class="section-description">
+          These platforms are <strong>not in the Green Web Foundation's verified directory</strong>.
+          Some may use renewable energy — but they haven't been independently audited and confirmed.
+          We don't assign green badges to unverified claims.
+        </p>
+        <div class="unverified-grid">
+          {tier3NotVerified.map(p => (
+            <div class="unverified-card">
+              <div class="unverified-header">
+                <span class="unverified-name">{p.name}</span>
+                {p.mcpRelevant && <span class="mcp-relevant">MCP</span>}
+              </div>
+              <span class="unverified-status">{p.status}</span>
+              <p class="unverified-note">{p.note}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- What About Per-Server Green Scores? -->
+      <section class="section">
+        <h2 class="section-title">What About Per-Server Green Scores?</h2>
+        <p class="section-description">
+          We previously tried scoring individual MCP servers for green hosting. We stopped, because:
+        </p>
+        <div class="reasons-grid">
+          <div class="reason-card">
+            <span class="reason-icon">❌</span>
+            <h3>Wrong address</h3>
+            <p>Most MCP servers only list a GitHub URL. Checking where the code repo lives tells you nothing about where the running service is hosted.</p>
+          </div>
+          <div class="reason-card">
+            <span class="reason-icon">❌</span>
+            <h3>Made-up numbers</h3>
+            <p>The "estimated" tier used hardcoded carbon intensity values that didn't come from any API. That's greenwashing.</p>
+          </div>
+          <div class="reason-card">
+            <span class="reason-icon">❌</span>
+            <h3>CDN ≠ origin</h3>
+            <p>Greencheck returns "green" for any domain behind Cloudflare's CDN — even if the origin servers run on coal power.</p>
+          </div>
+        </div>
+        <p class="section-description" style="margin-top:1.5rem">
+          Now we only show a <strong>🌿 Green Verified</strong> badge on server detail pages when Greencheck confirms the hosting provider directly.
+          For stdio/local servers, we show <strong>💻 User-Dependent</strong> — honest about what we don't know.
+          Everything else gets no badge.
+        </p>
+      </section>
+
+      <!-- Get Your Provider Verified -->
+      <section class="section">
+        <h2 class="section-title">Get Your Hosting Provider Verified</h2>
+        <p class="section-description">
+          If your MCP server runs on green infrastructure but your provider isn't listed, here's how to fix that:
+        </p>
+        <div class="steps-list">
+          <div class="step-item">
+            <span class="step-num">1</span>
+            <div>
+              <strong>Ask your provider to apply</strong> — the Green Web Foundation offers <a href="https://www.thegreenwebfoundation.org/tools/green-web-dataset/get-verified/" target="_blank" rel="noopener noreferrer">free verification</a> for hosting providers.
+            </div>
+          </div>
+          <div class="step-item">
+            <span class="step-num">2</span>
+            <div>
+              <strong>Once verified, our weekly scan picks it up automatically</strong> — no manual update needed.
+            </div>
+          </div>
+          <div class="step-item">
+            <span class="step-num">3</span>
+            <div>
+              <strong>Self-host on verified green infrastructure</strong> — deploy on Cloudflare Workers, Google Cloud Run, Hetzner, OVHcloud, or Infomaniak for immediate green verification.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section class="cta-section">
+        <h2 class="cta-title">Deploy Your MCP Server on Verified Green Infrastructure</h2>
+        <p class="cta-description">
+          Cloudflare Workers and Google Cloud Run both have official MCP deployment guides and verified green hosting.
+        </p>
+        <div class="cta-buttons">
+          <a href="https://developers.cloudflare.com/agents/guides/remote-mcp-server/" class="btn-green" target="_blank" rel="noopener noreferrer">Deploy on Cloudflare →</a>
+          <a href="https://docs.cloud.google.com/run/docs/host-mcp-servers" class="btn-outline" target="_blank" rel="noopener noreferrer">Deploy on Cloud Run →</a>
+          <a href="/" class="btn-white">Browse Servers</a>
+        </div>
+      </section>
+    </main>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-wrapper { min-height: 100vh; display: flex; flex-direction: column; }
+  .hero-section {
+    background: linear-gradient(135deg, #0f172a 0%, #064e3b 50%, #334155 100%);
+    padding: 4rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    text-align: center;
+  }
+  .hero-content { max-width: 800px; margin: 0 auto; padding: 0 1.5rem; }
+  .page-title {
+    font-size: 3rem; font-weight: 700; line-height: 1.1; margin-bottom: 1rem;
+    background: linear-gradient(135deg, #ffffff 0%, #10b981 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .page-subtitle { font-size: 1.2rem; color: #94a3b8; margin-bottom: 2rem; line-height: 1.7; }
+  .page-subtitle strong { color: #f1f5f9; }
+  .page-subtitle a { color: #10b981; text-decoration: none; }
+  .page-subtitle a:hover { color: #34d399; }
+  .page-subtitle code { background: rgba(255,255,255,0.08); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; color: #10b981; }
+  .hero-badges { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+  .hero-badge {
+    padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600;
+  }
+  .hero-badge.verified { background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: #10b981; }
+  .hero-badge.edge { background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.3); color: #f59e0b; }
+  .hero-badge.unverified { background: rgba(100,116,139,0.15); border: 1px solid rgba(100,116,139,0.3); color: #94a3b8; }
+  .page-container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; flex: 1; }
+  .section { margin: 3rem 0; }
+  .section-title { font-size: 2rem; font-weight: 600; margin-bottom: 1rem; text-align: center; color: #f1f5f9; }
+  .section-description { font-size: 1.1rem; color: #94a3b8; text-align: center; margin-bottom: 2.5rem; max-width: 800px; margin-left: auto; margin-right: auto; line-height: 1.7; }
+  .section-description strong { color: #f1f5f9; }
+  .section-description code { background: rgba(255,255,255,0.08); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.85rem; color: #10b981; }
+
+  /* How We Know */
+  .how-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; }
+  .how-card {
+    background: #1e293b; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
+    padding: 1.5rem; text-align: center;
+  }
+  .how-icon { font-size: 2rem; display: block; margin-bottom: 0.75rem; }
+  .how-card h3 { font-size: 1.1rem; color: #f1f5f9; margin: 0 0 0.5rem; }
+  .how-card p { color: #94a3b8; font-size: 0.9rem; margin: 0; line-height: 1.6; }
+
+  /* Tier Headers */
+  .tier-header { display: flex; align-items: center; justify-content: center; gap: 0.75rem; margin-bottom: 1rem; }
+  .tier-badge {
+    width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 1.25rem;
+  }
+  .tier-badge.verified { background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); }
+  .tier-badge.edge { background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.3); }
+  .tier-badge.unverified { background: rgba(100,116,139,0.15); border: 1px solid rgba(100,116,139,0.3); }
+
+  /* Platform Cards - Tier 1 */
+  .platforms-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; }
+  .platform-card {
+    background: #1e293b; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 1.5rem;
+  }
+  .platform-card.verified { border-top: 3px solid #10b981; }
+  .platform-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
+  .platform-header h3 { font-size: 1.15rem; color: #f1f5f9; margin: 0; }
+  .verified-tag {
+    background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3);
+    color: #10b981; padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600;
+  }
+  .platform-meta { color: #94a3b8; font-size: 0.85rem; margin-bottom: 0.75rem; }
+  .platform-meta strong { color: #f1f5f9; }
+  .meta-detail { display: block; color: #64748b; font-size: 0.8rem; margin-top: 0.25rem; }
+  .mcp-guide-link {
+    display: inline-block; background: rgba(16,185,129,0.15); color: #10b981;
+    padding: 0.4rem 0.8rem; border-radius: 8px; text-decoration: none;
+    font-size: 0.85rem; font-weight: 600; margin-bottom: 0.75rem;
+  }
+  .mcp-guide-link:hover { background: rgba(16,185,129,0.25); }
+  .platform-notes { color: #94a3b8; font-size: 0.875rem; margin: 0 0 0.75rem; line-height: 1.6; }
+  .supporting-docs { margin-top: 0.5rem; }
+  .docs-label { font-size: 0.8rem; color: #64748b; display: block; margin-bottom: 0.35rem; }
+  .doc-link { display: block; color: #10b981; font-size: 0.8rem; text-decoration: none; margin-bottom: 0.2rem; }
+  .doc-link:hover { color: #34d399; }
+
+  /* Edge Table - Tier 2 */
+  .warning-callout {
+    background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.25);
+    border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 1.5rem;
+    color: #fbbf24; font-size: 0.9rem; line-height: 1.6;
+  }
+  .warning-callout strong { color: #f59e0b; }
+  .warning-callout code { background: rgba(255,255,255,0.08); padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.8rem; color: #fbbf24; }
+  .edge-table { max-width: 100%; overflow-x: auto; }
+  .edge-row {
+    display: grid; grid-template-columns: 1fr 1.2fr 2fr 0.5fr;
+    gap: 0.75rem; padding: 0.75rem 1rem; font-size: 0.85rem;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .edge-row.header { color: #64748b; font-weight: 600; border-bottom: 1px solid rgba(255,255,255,0.1); }
+  .edge-name { color: #f1f5f9; font-weight: 500; }
+  .edge-shows { color: #f59e0b; }
+  .edge-reality { color: #94a3b8; }
+  .edge-mcp { text-align: center; }
+  .edge-mcp.yes { color: #10b981; font-weight: 700; }
+  .edge-mcp.no { color: #64748b; }
+
+  /* Unverified Grid - Tier 3 */
+  .unverified-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; }
+  .unverified-card {
+    background: #1e293b; border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px; padding: 1rem;
+  }
+  .unverified-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; }
+  .unverified-name { color: #f1f5f9; font-weight: 600; font-size: 0.95rem; }
+  .mcp-relevant {
+    background: rgba(16,185,129,0.12); color: #10b981;
+    padding: 0.1rem 0.4rem; border-radius: 8px; font-size: 0.7rem; font-weight: 600;
+  }
+  .unverified-status { color: #64748b; font-size: 0.8rem; display: block; margin-bottom: 0.5rem; }
+  .unverified-note { color: #94a3b8; font-size: 0.8rem; margin: 0; line-height: 1.5; }
+
+  /* Why We Stopped */
+  .reasons-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; }
+  .reason-card {
+    background: #1e293b; border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px; padding: 1.5rem; text-align: center;
+  }
+  .reason-icon { font-size: 2rem; display: block; margin-bottom: 0.75rem; }
+  .reason-card h3 { color: #f1f5f9; font-size: 1.05rem; margin: 0 0 0.5rem; }
+  .reason-card p { color: #94a3b8; font-size: 0.875rem; margin: 0; line-height: 1.6; }
+
+  /* Steps */
+  .steps-list { max-width: 700px; margin: 0 auto; }
+  .step-item {
+    display: flex; align-items: flex-start; gap: 1rem;
+    background: #1e293b; border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 0.75rem;
+    color: #94a3b8; font-size: 0.9rem; line-height: 1.6;
+  }
+  .step-item a { color: #10b981; text-decoration: none; }
+  .step-item a:hover { color: #34d399; }
+  .step-num {
+    width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white; display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.9rem;
+  }
+  .step-item strong { color: #f1f5f9; }
+
+  /* CTA */
+  .cta-section {
+    background: linear-gradient(135deg, #064e3b 0%, #10b981 100%);
+    border-radius: 12px; padding: 3rem; text-align: center; color: white; margin: 3rem 0;
+  }
+  .cta-title { font-size: 2rem; font-weight: 600; margin-bottom: 1rem; }
+  .cta-description { font-size: 1.1rem; margin-bottom: 2rem; opacity: 0.9; }
+  .cta-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+  .btn-green {
+    background: white; color: #064e3b; padding: 0.75rem 2rem; border-radius: 8px;
+    text-decoration: none; font-weight: 600; transition: all 0.15s ease;
+  }
+  .btn-green:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255,255,255,0.25); }
+  .btn-outline {
+    background: transparent; color: white; border: 2px solid white;
+    padding: 0.75rem 2rem; border-radius: 8px; text-decoration: none;
+    font-weight: 600; transition: all 0.15s ease;
+  }
+  .btn-outline:hover { background: white; color: #064e3b; }
+  .btn-white {
+    background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.3);
+    padding: 0.75rem 2rem; border-radius: 8px; text-decoration: none;
+    font-weight: 600; transition: all 0.15s ease;
+  }
+  .btn-white:hover { background: rgba(255,255,255,0.25); }
+
+  @media (max-width: 768px) {
+    .page-title { font-size: 2rem; }
+    .hero-badges { gap: 0.5rem; }
+    .edge-row { grid-template-columns: 1fr; gap: 0.25rem; }
+    .edge-row.header { display: none; }
+    .cta-buttons { flex-direction: column; }
+    .btn-green, .btn-outline, .btn-white { width: 100%; }
+  }
+</style>
