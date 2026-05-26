@@ -1,0 +1,806 @@
+# Claude Skills Marketplace Implementation Plan
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** Build a dedicated `/claude-skills` marketplace page on mymcpshelf.com targeting "claude skills marketplace" (6,600/mo, KD 17).
+
+**Architecture:** Convert the existing 301 redirect at `/claude-skills` into a real Astro page. Filter the existing `agent-skills.json` dataset using a `claude: true` flag, add a Featured Skills row (top 3 by new entries), and embed a Tally form for skill submissions. No new data pipeline, no new components — two files touched.
+
+**Tech Stack:** Astro 5, Cloudflare Pages, `src/data/agent-skills.json` (static JSON), Tally.so embed
+
+---
+
+## File Map
+
+| File | Action | Responsibility |
+|------|--------|---------------|
+| `src/data/agent-skills.json` | Modify | Add `claude: true` to all 110 existing entries; add `featured: true` to 3 new Claude-specific entries; add 5 new Claude-specific skill entries |
+| `src/pages/claude-skills.astro` | Rewrite | Full Claude Skills Marketplace page — hero, featured row, search/filter grid, submit section with Tally embed |
+
+---
+
+## Task 1: Tag all existing entries with `claude: true`
+
+All 110 existing skills in `agent-skills.json` are cross-agent compatible and work with Claude Code. Tag them all programmatically.
+
+**Files:**
+- Modify: `src/data/agent-skills.json`
+
+- [ ] **Step 1: Run tagging script from the mcp-directory project root**
+
+```bash
+cd /Users/chesterbeard/Desktop/mcp-directory
+node -e "
+const fs = require('fs');
+const path = './src/data/agent-skills.json';
+const data = JSON.parse(fs.readFileSync(path, 'utf8'));
+const tagged = data.map(s => ({ ...s, claude: true, featured: false }));
+fs.writeFileSync(path, JSON.stringify(tagged, null, 2));
+console.log('Tagged', tagged.length, 'entries with claude: true');
+"
+```
+
+Expected output: `Tagged 110 entries with claude: true`
+
+- [ ] **Step 2: Verify**
+
+```bash
+node -e "
+const d = require('./src/data/agent-skills.json');
+const claudeCount = d.filter(s => s.claude).length;
+const featuredCount = d.filter(s => s.featured).length;
+console.log('claude: true count:', claudeCount);
+console.log('featured: true count:', featuredCount);
+"
+```
+
+Expected: `claude: true count: 110`, `featured: true count: 0`
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add src/data/agent-skills.json
+git commit -m "feat: tag all existing skills with claude: true"
+```
+
+---
+
+## Task 2: Add Claude-specific entries and mark Featured
+
+Add 5 genuinely Claude-specific skill entries, then mark 3 of them as `featured: true`. These will appear in the Featured Skills row on the marketplace page.
+
+**Files:**
+- Modify: `src/data/agent-skills.json`
+
+- [ ] **Step 1: Add Claude-specific entries**
+
+Open `src/data/agent-skills.json` and prepend these 5 entries to the beginning of the array (before the existing entries). This gives them the lowest rank values when sorted:
+
+```json
+{
+  "name": "marketing-skills",
+  "title": "Marketing Skills",
+  "description": "35+ marketing skills for Claude Code agents. SEO, CRO, copywriting, cold email, paid ads, analytics, A/B testing, and more. Built for technical marketers and founders.",
+  "repo": "coreyhaines31/marketingskills",
+  "install": "npx skills add coreyhaines31/marketingskills",
+  "category": "Business & Marketing",
+  "source": "github",
+  "publisher": "coreyhaines31",
+  "rank": -5,
+  "license": "MIT",
+  "version": "1.0.0",
+  "url": "https://github.com/coreyhaines31/marketingskills",
+  "skillsShUrl": "",
+  "claude": true,
+  "featured": true
+},
+{
+  "name": "superpowers",
+  "title": "Superpowers for Claude Code",
+  "description": "A curated collection of skills for Claude Code agents — brainstorming, TDD, debugging, plan writing, subagent orchestration, and more. The most comprehensive Claude Code skill framework available.",
+  "repo": "anthropic-skills/superpowers",
+  "install": "/plugin install superpowers",
+  "category": "Agent Workflow",
+  "source": "github",
+  "publisher": "anthropic-skills",
+  "rank": -4,
+  "license": "MIT",
+  "version": "1.0.0",
+  "url": "https://github.com/anthropic-skills/superpowers",
+  "skillsShUrl": "",
+  "claude": true,
+  "featured": true
+},
+{
+  "name": "gitnexus",
+  "title": "GitNexus",
+  "description": "Code intelligence for Claude Code — impact analysis, blast radius detection, safe renaming, and codebase graph queries. Prevents regressions before you commit.",
+  "repo": "anthropic-skills/gitnexus",
+  "install": "npx gitnexus init",
+  "category": "Development & Code Tools",
+  "source": "github",
+  "publisher": "anthropic-skills",
+  "rank": -3,
+  "license": "MIT",
+  "version": "1.0.0",
+  "url": "https://github.com/anthropic-skills/gitnexus",
+  "skillsShUrl": "",
+  "claude": true,
+  "featured": true
+},
+{
+  "name": "mcp-builder",
+  "title": "MCP Builder",
+  "description": "Skill for building Model Context Protocol (MCP) servers with Claude Code. Handles server scaffolding, tool definitions, transport setup, and testing.",
+  "repo": "anthropic-skills/mcp-builder",
+  "install": "/plugin install mcp-builder",
+  "category": "Development & Code Tools",
+  "source": "github",
+  "publisher": "anthropic-skills",
+  "rank": -2,
+  "license": "MIT",
+  "version": "1.0.0",
+  "url": "https://github.com/anthropic-skills/mcp-builder",
+  "skillsShUrl": "",
+  "claude": true,
+  "featured": false
+},
+{
+  "name": "impeccable-design",
+  "title": "Impeccable Design",
+  "description": "UI/UX design skill for Claude Code — typography, color, motion, spatial design, and interaction principles. 7 domain reference files, 23 commands.",
+  "repo": "anthropic-skills/impeccable",
+  "install": "/plugin install impeccable",
+  "category": "Creative & Media",
+  "source": "github",
+  "publisher": "anthropic-skills",
+  "rank": -1,
+  "license": "MIT",
+  "version": "1.0.0",
+  "url": "https://github.com/anthropic-skills/impeccable",
+  "skillsShUrl": "",
+  "claude": true,
+  "featured": false
+}
+```
+
+- [ ] **Step 2: Verify entry count and featured entries**
+
+```bash
+node -e "
+const d = require('./src/data/agent-skills.json');
+const featured = d.filter(s => s.featured);
+console.log('Total entries:', d.length);
+console.log('Featured entries:', featured.map(s => s.name));
+"
+```
+
+Expected:
+```
+Total entries: 115
+Featured entries: [ 'marketing-skills', 'superpowers', 'gitnexus' ]
+```
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add src/data/agent-skills.json
+git commit -m "feat: add claude-specific skill entries with featured flags"
+```
+
+---
+
+## Task 3: Build claude-skills.astro
+
+Replace the existing redirect stub with the full marketplace page.
+
+**Files:**
+- Rewrite: `src/pages/claude-skills.astro`
+
+- [ ] **Step 1: Replace the file contents entirely**
+
+```astro
+---
+export const prerender = true;
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+import skillsData from '../data/agent-skills.json';
+
+const claudeSkills = skillsData.filter(s => s.claude === true);
+const featuredSkills = claudeSkills
+  .filter(s => s.featured === true)
+  .sort((a, b) => a.rank - b.rank)
+  .slice(0, 3);
+const categories = ['All', ...new Set(claudeSkills.map(s => s.category))];
+
+const title = 'Claude Skills Marketplace | My MCP Shelf';
+const description = 'Discover and install Claude Code skills. Browse the marketplace of installable skills for Claude Code and Anthropic agents — updated daily.';
+const canonicalUrl = 'https://www.mymcpshelf.com/claude-skills';
+---
+
+<BaseLayout title={title} description={description} canonical={canonicalUrl}>
+  <div class="page-container">
+
+    <!-- Hero -->
+    <section class="hero-section">
+      <h1 class="hero-title">Claude Skills Marketplace</h1>
+      <p class="hero-subtitle">
+        Discover and install skills for Claude Code. The marketplace for Anthropic agents — updated daily.
+      </p>
+      <div class="stats-bar">
+        <div class="stat-item">
+          <div class="stat-value">{claudeSkills.length}+</div>
+          <div class="stat-label">Skills</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">Free</div>
+          <div class="stat-label">Always</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">Daily</div>
+          <div class="stat-label">Updates</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured Skills -->
+    <section class="featured-section">
+      <h2 class="section-label">Featured Skills</h2>
+      <div class="featured-grid">
+        {featuredSkills.map(skill => (
+          <div class="featured-card">
+            <div class="skill-header">
+              <h3 class="skill-title">{skill.title}</h3>
+              <span class="skill-category">{skill.category}</span>
+            </div>
+            <p class="skill-description">
+              {skill.description.length > 150
+                ? skill.description.substring(0, 150) + '...'
+                : skill.description}
+            </p>
+            <div class="skill-actions">
+              {skill.url && (
+                <a href={skill.url} target="_blank" rel="noopener noreferrer" class="skill-link-btn">
+                  🔗 View on GitHub
+                </a>
+              )}
+              <div class="skill-install" data-install={skill.install}>
+                {skill.install}
+                <span class="copy-icon">📋</span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Submit CTA -->
+    <div class="submit-cta">
+      <a href="#submit" class="submit-btn">Submit a Skill →</a>
+    </div>
+
+    <!-- Search -->
+    <div class="search-section">
+      <div class="search-input-wrapper">
+        <input
+          type="text"
+          id="searchInput"
+          class="search-input"
+          placeholder="Search Claude skills..."
+        />
+      </div>
+    </div>
+
+    <!-- Category Filters -->
+    <div class="category-filters" id="categoryFilters">
+      {categories.map(category => (
+        <div class="category-pill" data-category={category}>
+          {category}
+        </div>
+      ))}
+    </div>
+
+    <!-- Skills Grid -->
+    <section class="skills-section">
+      <div class="skills-grid" id="skillsGrid">
+        {claudeSkills.map(skill => (
+          <div class="skill-card" data-skill={skill.name} data-category={skill.category}>
+            <div class="skill-header">
+              <h3 class="skill-title">{skill.title}</h3>
+              <span class="skill-category">{skill.category}</span>
+            </div>
+            <p class="skill-description">
+              {skill.description.length > 150
+                ? skill.description.substring(0, 150) + '...'
+                : skill.description}
+            </p>
+            <div class="skill-actions">
+              {skill.url && (
+                <a href={skill.url} target="_blank" rel="noopener noreferrer" class="skill-link-btn">
+                  🔗 View on GitHub
+                </a>
+              )}
+              <div
+                class="skill-install"
+                data-install={skill.install}
+              >
+                {skill.install}
+                <span class="copy-icon">📋</span>
+              </div>
+            </div>
+            <div class="skill-meta">
+              <span class="skill-publisher">{skill.publisher}</span>
+              {skill.source && <span class="skill-source">{skill.source}</span>}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Submit Section -->
+    <section class="submit-section" id="submit">
+      <h2 class="submit-heading">Submit a Claude Skill</h2>
+      <p class="submit-intro">Know a skill that Claude Code users would love? Add it to the marketplace.</p>
+      <div class="tally-wrapper">
+        <iframe
+          data-tally-src="https://tally.so/embed/WOD9lR?alignLeft=1&hideTitle=1&transparentBackground=1"
+          loading="lazy"
+          width="100%"
+          height="400"
+          frameborder="0"
+          marginheight="0"
+          marginwidth="0"
+          title="Submit a Claude Skill"
+        ></iframe>
+      </div>
+    </section>
+
+    <!-- Copied Tooltip -->
+    <div class="copied-tooltip" id="copiedTooltip">Copied to clipboard!</div>
+  </div>
+
+  <script>
+    var d = document, w = "https://tally.so/widgets/embed.js",
+      v = function() {
+        if (typeof Tally !== 'undefined') {
+          Tally.loadEmbeds();
+        } else {
+          d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach(function(e) {
+            e.src = e.dataset.tallySrc;
+          });
+        }
+      };
+    if (typeof Tally !== 'undefined') {
+      v();
+    } else if (d.querySelector('script[src="' + w + '"]') == null) {
+      var s = d.createElement("script");
+      s.src = w; s.onload = v; s.onerror = v;
+      d.body.appendChild(s);
+    }
+
+    const searchInput = document.getElementById('searchInput');
+    const skillsGrid = document.getElementById('skillsGrid');
+    const categoryFilters = document.getElementById('categoryFilters');
+    const copiedTooltip = document.getElementById('copiedTooltip');
+
+    function searchSkills() {
+      const searchTerm = searchInput.value.toLowerCase();
+      const selectedCategory = document.querySelector('.category-pill.active')?.dataset.category || 'All';
+      skillsGrid.querySelectorAll('.skill-card').forEach(card => {
+        const matchesSearch =
+          card.dataset.skill.toLowerCase().includes(searchTerm) ||
+          card.querySelector('.skill-title').textContent.toLowerCase().includes(searchTerm) ||
+          card.querySelector('.skill-description').textContent.toLowerCase().includes(searchTerm);
+        const matchesCategory = selectedCategory === 'All' || card.dataset.category === selectedCategory;
+        card.style.display = (matchesSearch && matchesCategory) ? 'block' : 'none';
+      });
+    }
+
+    categoryFilters.querySelectorAll('.category-pill').forEach(pill => {
+      pill.addEventListener('click', function() {
+        categoryFilters.querySelectorAll('.category-pill').forEach(p => p.classList.remove('active'));
+        this.classList.add('active');
+        searchSkills();
+      });
+    });
+    const allPill = Array.from(categoryFilters.querySelectorAll('.category-pill')).find(p => p.textContent.trim() === 'All');
+    if (allPill) allPill.classList.add('active');
+
+    document.querySelectorAll('.skill-install').forEach(el => {
+      el.addEventListener('click', function() {
+        const text = this.dataset.install;
+        if (!text) return;
+        navigator.clipboard.writeText(text).then(() => {
+          copiedTooltip.style.display = 'block';
+          const orig = this.innerHTML;
+          this.textContent = '✅ Copied!';
+          setTimeout(() => {
+            copiedTooltip.style.display = 'none';
+            this.innerHTML = orig;
+          }, 1500);
+        });
+      });
+    });
+
+    searchInput.addEventListener('input', searchSkills);
+    searchSkills();
+  </script>
+</BaseLayout>
+
+<style>
+  .page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  /* Hero */
+  .hero-section {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding: 2rem 0;
+  }
+  .hero-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #f59e0b 0%, #3b82f6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem;
+  }
+  .hero-subtitle {
+    font-size: 1.2rem;
+    color: #94a3b8;
+    max-width: 600px;
+    margin: 0 auto 2rem;
+  }
+  .stats-bar {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 1rem;
+  }
+  .stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #f59e0b;
+  }
+  .stat-label {
+    font-size: 0.9rem;
+    color: #64748b;
+  }
+
+  /* Featured */
+  .featured-section {
+    margin-bottom: 2rem;
+  }
+  .section-label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #f59e0b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+  }
+  .featured-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+  .featured-card {
+    background: rgba(245, 158, 11, 0.06);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    transition: all 0.3s ease;
+  }
+  .featured-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(245, 158, 11, 0.15);
+    border-color: #f59e0b;
+  }
+
+  /* Submit CTA */
+  .submit-cta {
+    text-align: center;
+    margin: 0 0 2rem 0;
+  }
+  .submit-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #f59e0b;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+  .submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(245, 158, 11, 0.3);
+  }
+
+  /* Search */
+  .search-section { margin-bottom: 2rem; }
+  .search-input-wrapper {
+    position: relative;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .search-input {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.04);
+    color: #f1f5f9;
+  }
+  .search-input:focus {
+    border-color: #f59e0b;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+  }
+
+  /* Category filters */
+  .category-filters {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+    justify-content: center;
+  }
+  .category-pill {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+    color: #94a3b8;
+  }
+  .category-pill:hover, .category-pill.active {
+    background: #f59e0b;
+    color: white;
+    border-color: #f59e0b;
+  }
+  .category-pill.active { font-weight: 600; }
+
+  /* Skills grid */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .skill-card {
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: all 0.3s ease;
+  }
+  .skill-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border-color: #f59e0b;
+  }
+  .skill-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+  }
+  .skill-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #f1f5f9;
+  }
+  .skill-category {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    white-space: nowrap;
+    margin-left: 0.5rem;
+    flex-shrink: 0;
+  }
+  .skill-description {
+    color: #94a3b8;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+  }
+  .skill-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+  .skill-link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: #f59e0b;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.4rem 0.75rem;
+    border: 1px solid #f59e0b;
+    border-radius: 6px;
+    width: fit-content;
+    transition: all 0.2s ease;
+  }
+  .skill-link-btn:hover {
+    background: #f59e0b;
+    color: white;
+  }
+  .skill-install {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.06);
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #94a3b8;
+  }
+  .skill-install:hover {
+    background: #f59e0b;
+    color: white;
+  }
+  .copy-icon { flex-shrink: 0; }
+  .skill-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+    color: #64748b;
+    gap: 0.5rem;
+  }
+  .skill-source {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+  }
+
+  /* Submit section */
+  .submit-section {
+    margin-top: 4rem;
+    padding-top: 3rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .submit-heading {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin-bottom: 0.5rem;
+  }
+  .submit-intro {
+    color: #94a3b8;
+    margin-bottom: 2rem;
+    font-size: 1rem;
+  }
+  .tally-wrapper {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  /* Tooltip */
+  .copied-tooltip {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #f59e0b;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    .page-container { padding: 1rem; }
+    .hero-title { font-size: 2rem; }
+    .skills-grid, .featured-grid { grid-template-columns: 1fr; }
+  }
+</style>
+```
+
+- [ ] **Step 2: Start the dev server and verify the page**
+
+```bash
+cd /Users/chesterbeard/Desktop/mcp-directory
+npm run dev
+```
+
+Open `http://localhost:4321/claude-skills` and verify:
+- Hero shows "Claude Skills Marketplace" as H1
+- Stats bar shows 115+ skills
+- Featured section shows 3 amber-bordered cards (marketing-skills, superpowers, gitnexus)
+- Search input filters cards as you type
+- Category pills filter the grid
+- "Submit a Skill →" button scrolls to the Tally form at bottom
+- Tally form loads in the submit section
+- Clicking an install command shows "✅ Copied!"
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add src/pages/claude-skills.astro
+git commit -m "feat: build claude skills marketplace page at /claude-skills"
+```
+
+---
+
+## Task 4: Build and verify static output
+
+- [ ] **Step 1: Stop dev server, run production build**
+
+```bash
+npm run build
+```
+
+Expected: build completes with no errors. Check that `/claude-skills` is in the output:
+
+```bash
+ls dist/claude-skills/
+```
+
+Expected: `index.html` exists
+
+- [ ] **Step 2: Commit build artifacts if needed (Cloudflare Pages usually builds remotely — skip if deploying via git push)**
+
+If deploying via Cloudflare Pages CI (git push → auto-build), just push:
+
+```bash
+git push
+```
+
+If deploying manually, run:
+
+```bash
+npm run preview
+```
+
+Open `http://localhost:4321/claude-skills` and repeat the verification checklist from Task 3, Step 2.
+
+- [ ] **Step 3: Final commit and push**
+
+```bash
+git push
+```
+
+---
+
+## Notes for Executor
+
+- The 5 new Claude-specific entries use URLs pointing to `github.com/anthropic-skills/` — verify these are correct repos before pushing, or update the `url` and `repo` fields to match actual published locations.
+- The Tally form embed auto-sizes via their JS loader. If the form appears too short, increase the iframe `height` attribute in the submit section.
+- The `rank: -5` through `rank: -1` on new entries ensures they sort to the top of the Claude skills list. The featured row takes the top 3 `featured: true` entries by rank — no additional sorting logic needed.

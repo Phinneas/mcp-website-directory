@@ -4,6 +4,9 @@ on:
     - cron: '0 8 1-7 * 1'  # First Monday of each month at 8:00am UTC
   workflow_dispatch:  # Manual trigger option
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
   review:
     runs-on: ubuntu-latest
