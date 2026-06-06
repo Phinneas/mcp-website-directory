@@ -1,0 +1,230 @@
+---
+title: "Introducing The MCP Security Standard: A 6-Dimension Framework for Evaluating MCP Servers"
+description: "We're publishing The MCP Security Standard — a complete, reproducible security framework for MCP servers covering transport encryption, authentication, token lifecycle, input validation, data flow, and dependency health. Free to use for enterprise procurement and server authors alike."
+date: "2026-06-04T00:00:00.000Z"
+author: "Chester Beard"
+image: "/images/placeholder.jpg"
+tags: ["mcp", "security", "enterprise", "standard", "checklist", "socket-dev", "procurement"]
+---
+
+# Introducing The MCP Security Standard
+
+The MCP ecosystem has grown faster than the security tooling around it. Teams are deploying MCP servers into production infrastructure — connecting them to databases, file systems, internal APIs, and cloud accounts — without a shared vocabulary for what "secure" actually means.
+
+We're fixing that today.
+
+**The MCP Security Standard** is a published, reproducible framework for evaluating MCP server security. Six dimensions. A 0–100 score. A full 48-item checklist you can run yourself. Open for community self-attestation, with automated dependency scanning via Socket.dev coming in Phase 2.
+
+---
+
+## Why a Standard, Not Just a Score
+
+A badge without a methodology is decoration. If you can't reproduce a score, you can't trust it — and your security team can't sign off on it.
+
+Every dimension in this framework maps to a real attack surface in MCP deployments we've observed:
+
+- **Confused deputy attacks** from unauthenticated SSE transports
+- **Token theft** from long-lived static API keys stored in plaintext configs
+- **Command injection** from shell string concatenation in tool inputs
+- **Unintended data exfiltration** from undisclosed outbound cloud API calls
+- **Supply chain compromise** from unaudited dependency trees
+
+Each one is preventable. Each one has a score. Here's how the framework works.
+
+---
+
+## The 6 Dimensions
+
+### 1. Transport Encryption (0–20 pts)
+
+How the MCP server communicates with its clients determines its entire network attack surface. Stdio is inherently local — the OS enforces process isolation. SSE/HTTP is network-exposed and needs TLS, CORS restrictions, and proper binding.
+
+| Level | Score |
+|---|---|
+| Stdio (local process) | 20 |
+| SSE/HTTP with authentication | 15 |
+| SSE/HTTP without authentication | 5 |
+
+**What auditors check:** TLS 1.2+ enforcement, no HTTP fallback, CORS origin restrictions (no wildcard `*`), localhost binding for local use, transport downgrade protection.
+
+---
+
+### 2. Authentication Method (0–20 pts)
+
+No authentication means any process that can reach the server can call its tools. For a server with file system or database access, that's a critical exposure.
+
+| Level | Score |
+|---|---|
+| SSO/SAML | 20 |
+| OAuth2 with PKCE | 16 |
+| API Key | 10 |
+| None | 0 |
+
+**What auditors check:** PKCE implementation (not implicit grant), least-privilege token scopes, API keys in env vars (not hardcoded), rate limiting on auth endpoints, auth errors that don't leak implementation details.
+
+---
+
+### 3. Token Lifecycle (0–20 pts)
+
+A compromised long-lived API key is a permanent breach until manually rotated. Short-lived tokens with refresh limit the damage window to minutes.
+
+| Level | Score |
+|---|---|
+| Short-lived with refresh | 20 |
+| Long-lived static | 8 |
+| N/A (no auth) | 0 |
+
+**What auditors check:** Access token expiry under 1 hour, refresh token rotation, server-side revocation, JWT validation (alg, exp, iss, aud), secrets absent from logs and plaintext configs, credentials rotatable without downtime.
+
+---
+
+### 4. Input Validation (0–20 pts)
+
+MCP tools execute actions — shell commands, SQL queries, file operations — based on inputs from an LLM. Unvalidated inputs that reach shell interpreters or database drivers are an injection attack waiting to happen.
+
+| Level | Score |
+|---|---|
+| Parameterized (safe) | 20 |
+| Mixed | 10 |
+| Shell string concatenation | 2 |
+
+**What auditors check:** Parameterized tool inputs, no shell string concatenation, prepared SQL statements, path traversal protection, input size limits, deserialization schema validation, SSRF protection on URL inputs, and prompt injection detection.
+
+---
+
+### 5. Data Flow (0–20 pts)
+
+Where does the data go? Stdio + local-only means nothing leaves the machine. Cloud-connected servers route data through third-party APIs — which need to be disclosed, minimized, and deniable for air-gapped deployments.
+
+| Level | Score |
+|---|---|
+| Local only | 20 |
+| Hybrid | 12 |
+| Cloud | 6 |
+| Unknown | 0 |
+
+**What auditors check:** Local processing by default, outbound API calls documented and minimal, cloud features disableable for air-gapped use, PII/secrets redacted from logs, data retention policy documented, network egress restricted to allowlisted endpoints, third-party recipients disclosed.
+
+---
+
+### 6. Dependency Health (0–20 pts) — Phase 2
+
+A perfectly secure server can still be compromised through a malicious or vulnerable dependency. This dimension is the one we're automating — manual dependency audits don't scale.
+
+**Socket.dev integration is rolling out in Phase 2.** Until then, all audited servers show as "Unscanned" on this dimension — it's a separate score that doesn't affect the core 0–100 rating.
+
+| Level | Score |
+|---|---|
+| Clean (no CVEs) | 20 |
+| Warnings (minor CVEs) | 10 |
+| Critical CVEs present | 2 |
+| Unscanned | 0 |
+
+**What Socket.dev will check automatically:** Publisher verification, known CVEs in direct and transitive dependencies, malware flags, typosquatting detection, suspicious install scripts, abandoned package detection.
+
+---
+
+## The Full 48-Item Checklist
+
+You don't need us to run this. Copy it for your own vendor reviews.
+
+### Transport Encryption
+- [ ] Does the server use stdio transport (inherently local, no network exposure)?
+- [ ] If SSE/HTTP: is TLS 1.2+ enforced with no plaintext HTTP fallback?
+- [ ] If SSE/HTTP: is the certificate from a trusted CA or explicitly pinned?
+- [ ] If SSE/HTTP: are CORS origins restricted — no wildcard `*`?
+- [ ] If SSE/HTTP: is the listening address bound to localhost for local use?
+- [ ] Is transport configuration documented in the README?
+- [ ] Are deprecated or unencrypted transport modes explicitly disabled?
+- [ ] Is transport downgrade protection in place?
+
+### Auth Methods
+- [ ] Does the server require authentication before serving any tool call?
+- [ ] Is OAuth2 implemented with PKCE (not implicit grant flow)?
+- [ ] Are token scopes following the least-privilege principle?
+- [ ] Are API keys stored in environment variables — not hardcoded?
+- [ ] Is there a documented auth setup guide in the README?
+- [ ] Do auth error messages avoid leaking implementation details?
+- [ ] Is there rate limiting on authentication endpoints?
+- [ ] Are authentication failures logged without exposing credentials?
+
+### Token Lifecycle
+- [ ] Do access tokens expire within 1 hour?
+- [ ] Is there a refresh token rotation mechanism?
+- [ ] Are revoked tokens immediately invalidated server-side?
+- [ ] Are secrets absent from plaintext configs and logs?
+- [ ] Is JWT validation complete (alg, exp, iss, aud all checked)?
+- [ ] Are tokens bound to a specific client identity?
+- [ ] Is there a token revocation endpoint or documented revocation process?
+- [ ] Are long-lived credentials rotatable without downtime?
+
+### Input Validation
+- [ ] Are all tool inputs parameterized — no string concatenation into commands?
+- [ ] Is shell execution avoided, or strictly sandboxed when unavoidable?
+- [ ] Are SQL queries using prepared statements with bound parameters?
+- [ ] Are file paths validated against directory traversal attacks?
+- [ ] Is input size bounded — no unbounded payload acceptance?
+- [ ] Are deserialization inputs schema-validated before processing?
+- [ ] Is prompt injection detection or sanitization in place?
+- [ ] Are URL inputs validated against SSRF?
+
+### Data Flow
+- [ ] Is all data processed locally by default?
+- [ ] Are outbound API calls documented and kept to the minimum necessary?
+- [ ] Can cloud features be disabled for air-gapped or compliance deployments?
+- [ ] Is sensitive data (PII, secrets) redacted from logs?
+- [ ] Are data retention policies documented?
+- [ ] Is there a data processing agreement for SaaS deployments?
+- [ ] Is network egress restricted to allowlisted endpoints?
+- [ ] Are third-party data recipients disclosed in the README or privacy policy?
+
+### Dependency Health *(Phase 2 — Socket.dev)*
+- [ ] Are all dependencies from verified, reputable publishers?
+- [ ] Are there any known CVEs in direct dependencies?
+- [ ] Are there any known CVEs in transitive dependencies?
+- [ ] Are dependency versions pinned in a committed lockfile?
+- [ ] Is there a documented dependency update and review policy?
+- [ ] Are deprecated or abandoned packages avoided?
+- [ ] Has the dependency tree been audited (npm audit / pip audit / cargo audit)?
+- [ ] Does Socket.dev scan show no malware or suspicious behavior flags?
+
+---
+
+## Score Tiers
+
+| Score | Tier | Meaning |
+|---|---|---|
+| 80–100 | 🟢 Secure | Safe for enterprise deployment |
+| 50–79 | 🟡 Moderate | Acceptable for internal use with documented risk acceptance |
+| 0–49 | 🔴 At Risk | Not recommended for production |
+
+---
+
+## For Server Authors: Self-Attestation
+
+We verify 10% of attestations quarterly. If your server scores well, you want the badge. Submit your security details at [mymcpshelf.com/audit-manifesto](/audit-manifesto) — the form takes about 10 minutes and your score goes live within 5 business days.
+
+Falsified attestations result in a public score downgrade. That's the accountability mechanism.
+
+---
+
+## What's Coming in Phase 2
+
+Socket.dev's supply chain analysis will run automatically against every server in the directory. When it lands:
+
+- Dependency Health scores move from "Unscanned" to real data
+- The score becomes a 120-point composite (100 manual + 20 dependency)
+- Publishers with clean scores get a "Supply Chain Verified" badge
+- Servers with critical CVEs get flagged with remediation guidance
+
+We're building the integration now. If you work at Socket.dev and want to accelerate this — reach out.
+
+---
+
+## Why This Matters More Than You Think
+
+MCP is becoming infrastructure. Servers that started as developer productivity tools are now embedded in customer-facing workflows, internal automation pipelines, and agentic systems that take real actions in the world.
+
+The attack surface is real. The tooling to evaluate it has been missing.
+
+That's what The MCP Security Standard is for. Browse audited servers at [mymcpshelf.com](https://www.mymcpshelf.com) and see the full methodology at [mymcpshelf.com/audit-manifesto](/audit-manifesto).

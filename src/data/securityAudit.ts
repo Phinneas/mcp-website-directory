@@ -2,11 +2,12 @@
  * Security Audit Data for Top 20 MCP Servers
  *
  * Audit dimensions:
- *   transport     - stdio | sse_http | both
- *   authMethod    - None | API Key | OAuth2 | SSO-SAML
- *   tokenLifecycle - short-lived | long-lived | N/A
- *   inputHandling - parameterized | shell_strings | mixed
- *   dataResidency - local_only | cloud | hybrid | unknown
+ *   transport         - stdio | sse_http | both
+ *   authMethod        - None | API Key | OAuth2 | SSO-SAML
+ *   tokenLifecycle    - short-lived | long-lived | N/A
+ *   inputHandling     - parameterized | shell_strings | mixed
+ *   dataResidency     - local_only | cloud | hybrid | unknown
+ *   dependencyHealth  - clean | warnings | critical | unscanned  [Phase 2 — Socket.dev]
  *
  * Scoring methodology (0-100):
  *   Transport Security (20): stdio=20, SSE-with-auth=15, SSE-no-auth=5
@@ -14,6 +15,9 @@
  *   Token Lifecycle (20): short-lived=20, long-lived=8, N/A=0
  *   Input Handling (20): parameterized=20, mixed=10, shell_strings=2
  *   Data Residency (20): local_only=20, hybrid=12, cloud=6, unknown=0
+ *
+ * Dependency Health score (0-20, separate — powered by Socket.dev in Phase 2):
+ *   clean=20, warnings=10, critical=2, unscanned=0
  */
 
 export type Transport = 'stdio' | 'sse_http' | 'both';
@@ -21,6 +25,11 @@ export type AuthMethod = 'None' | 'API Key' | 'OAuth2' | 'SSO-SAML';
 export type TokenLifecycle = 'short-lived' | 'long-lived' | 'N/A';
 export type InputHandling = 'parameterized' | 'shell_strings' | 'mixed';
 export type DataResidency = 'local_only' | 'cloud' | 'hybrid' | 'unknown';
+/**
+ * Phase 2 — automated via Socket.dev integration.
+ * All Phase 1 servers default to 'unscanned'.
+ */
+export type DependencyHealth = 'clean' | 'warnings' | 'critical' | 'unscanned';
 
 export interface SecurityAudit {
   serverId: string;
@@ -29,12 +38,26 @@ export interface SecurityAudit {
   tokenLifecycle: TokenLifecycle;
   inputHandling: InputHandling;
   dataResidency: DataResidency;
+  /** Core 0-100 score across the 5 manual dimensions. */
   auditScore: number;
+  /**
+   * Dependency health score (0-20), separate from auditScore.
+   * Populated by Socket.dev in Phase 2; defaults to 0 (unscanned) for Phase 1.
+   */
+  dependencyHealth: DependencyHealth;
+  dependencyScore: number;
   auditDate: string;
   auditorNotes?: string;
 }
 
 // --- Scoring helpers ---
+
+export const DEPENDENCY_SCORES: Record<DependencyHealth, number> = {
+  clean: 20,
+  warnings: 10,
+  critical: 2,
+  unscanned: 0,
+};
 
 const TRANSPORT_SCORES: Record<Transport, number> = {
   stdio: 20,
@@ -92,7 +115,8 @@ function makeAudit(
   tokenLifecycle: TokenLifecycle,
   inputHandling: InputHandling,
   dataResidency: DataResidency,
-  auditorNotes?: string
+  auditorNotes?: string,
+  dependencyHealth: DependencyHealth = 'unscanned'
 ): SecurityAudit {
   return {
     serverId,
@@ -102,18 +126,33 @@ function makeAudit(
     inputHandling,
     dataResidency,
     auditScore: computeScore(transport, authMethod, tokenLifecycle, inputHandling, dataResidency),
+    dependencyHealth,
+    dependencyScore: DEPENDENCY_SCORES[dependencyHealth],
     auditDate: '2026-05-22',
     auditorNotes,
   };
 }
 
 /**
- * Score tier label
+ * Score tier label (0-100 core score)
  */
 export function getScoreTier(score: number): { label: string; color: string; emoji: string } {
   if (score >= 80) return { label: 'Secure', color: '#22c55e', emoji: '🟢' };
   if (score >= 50) return { label: 'Moderate', color: '#eab308', emoji: '🟡' };
   return { label: 'At Risk', color: '#ef4444', emoji: '🔴' };
+}
+
+/**
+ * Dependency health tier label (Phase 2 — Socket.dev)
+ */
+export function getDependencyTier(health: DependencyHealth): { label: string; color: string; emoji: string } {
+  switch (health) {
+    case 'clean':    return { label: 'Clean', color: '#22c55e', emoji: '🟢' };
+    case 'warnings': return { label: 'Warnings', color: '#eab308', emoji: '🟡' };
+    case 'critical': return { label: 'Critical', color: '#ef4444', emoji: '🔴' };
+    case 'unscanned':
+    default:         return { label: 'Unscanned', color: '#64748b', emoji: '⚪' };
+  }
 }
 
 /**
