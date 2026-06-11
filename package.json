@@ -42,22 +42,6 @@
     "tailwind-merge": "^3.4.0",
     "tailwindcss": "^4.1.17"
   },
-  "devDependencies": {
-    "@types/node": "^22.10.6",
-    "ajv": "^8.17.1",
-    "fast-check": "^3.22.0",
-    "husky": "^9.1.7",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.2.5",
-    "typescript": "^5.7.3"
-  }
-}
-{
-  "name": "mcp-newsletter-system",
-  "version": "1.0.0",
-  "description": "Automated newsletter system for MCP server ecosystem",
-  "type": "module",
-  "scripts": {
     "newsletter": "tsx scripts/newsletter/cli.ts",
     "newsletter:weekly": "tsx scripts/newsletter/cli.ts weekly",
     "newsletter:monthly": "tsx scripts/newsletter/cli.ts monthly",
@@ -66,10 +50,37 @@
     "newsletter:preview": "tsx scripts/newsletter/cli.ts preview-weekly"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "^12.6.12",
+    "@astrojs/mdx": "^4.3.6",
+    "@astrojs/node": "^9.0.0",
+    "@astrojs/react": "^4.4.2",
+    "@astrojs/sitemap": "^3.6.0",
+    "@octokit/rest": "^22.0.1",
+    "@tailwindcss/vite": "^4.1.17",
+    "astro": "^5.10.1",
+    "axios": "^1.10.0",
+    "cheerio": "^1.2.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "dotenv": "^16.3.1",
+    "lucide-react": "^0.553.0",
+    "meilisearch": "^0.51.0",
+    "node-fetch": "^3.3.2",
+    "puppeteer": "^24.29.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-old-icons": "^1.0.2",
+    "tailwind-merge": "^3.4.0",
+    "tailwindcss": "^4.1.17",
     "tsx": "^4.0.0"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
-    "typescript": "^5.0.0"
+    "@types/node": "^22.10.6",
+    "ajv": "^8.17.1",
+    "fast-check": "^3.22.0",
+    "husky": "^9.1.7",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.5",
+    "typescript": "^5.7.3"
   }
 }
