@@ -1,0 +1,99 @@
+name: MCP Newsletter Automation
+
+on:
+  schedule:
+    # Weekly newsletter - Mondays at 9 AM UTC
+    - cron: '0 9 * * 1'
+    # Monthly newsletter - 1st of month at 9 AM UTC
+    - cron: '0 9 1 * *'
+  
+  workflow_dispatch:
+    inputs:
+      newsletter_type:
+        description: 'Newsletter type to generate'
+        required: true
+        default: 'weekly'
+        type: choice
+        options:
+          - weekly
+          - monthly
+          - test-weekly
+          - test-monthly
+
+jobs:
+  weekly-newsletter:
+    if: github.event.schedule == '0 9 * * 1' || github.event.inputs.newsletter_type == 'weekly'
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Generate and publish weekly newsletter
+        env:
+          BEEHIIV_API_KEY: ${{ secrets.BEEHIIV_API_KEY }}
+          BEEHIIV_PUBLICATION_ID: ${{ secrets.BEEHIIV_PUBLICATION_ID }}
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+        run: npm run newsletter:weekly
+
+  monthly-newsletter:
+    if: github.event.schedule == '0 9 1 * *' || github.event.inputs.newsletter_type == 'monthly'
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Generate and publish monthly newsletter
+        env:
+          BEEHIIV_API_KEY: ${{ secrets.BEEHIIV_API_KEY }}
+          BEEHIIV_PUBLICATION_ID: ${{ secrets.BEEHIIV_PUBLICATION_ID }}
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+        run: npm run newsletter:monthly
+
+  test-newsletter:
+    if: github.event.inputs.newsletter_type == 'test-weekly' || github.event.inputs.newsletter_type == 'test-monthly'
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Test newsletter generation
+        env:
+          BEEHIIV_API_KEY: ${{ secrets.BEEHIIV_API_KEY }}
+          BEEHIIV_PUBLICATION_ID: ${{ secrets.BEEHIIV_PUBLICATION_ID }}
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+        run: |
+          if [ "${{ github.event.inputs.newsletter_type }}" = "test-weekly" ]; then
+            npm run newsletter test-weekly
+          else
+            npm run newsletter test-monthly
+          fi

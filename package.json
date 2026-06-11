@@ -52,3 +52,24 @@
     "typescript": "^5.7.3"
   }
 }
+{
+  "name": "mcp-newsletter-system",
+  "version": "1.0.0",
+  "description": "Automated newsletter system for MCP server ecosystem",
+  "type": "module",
+  "scripts": {
+    "newsletter": "tsx scripts/newsletter/cli.ts",
+    "newsletter:weekly": "tsx scripts/newsletter/cli.ts weekly",
+    "newsletter:monthly": "tsx scripts/newsletter/cli.ts monthly",
+    "newsletter:schedule": "tsx scripts/newsletter/cli.ts schedule",
+    "newsletter:test": "tsx scripts/newsletter/cli.ts test-weekly && tsx scripts/newsletter/cli.ts test-monthly",
+    "newsletter:preview": "tsx scripts/newsletter/cli.ts preview-weekly"
+  },
+  "dependencies": {
+    "tsx": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}
