@@ -20,6 +20,53 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const rootDir = join(__dirname, '..');
 const OUTPUT_SQL = join(rootDir, 'add-security-audit.sql');
 
+// Validation schema for security audit data
+const VALID_TRANSPORTS = ['stdio', 'sse_http', 'both'];
+const VALID_AUTH_METHODS = ['None', 'API Key', 'OAuth2'];
+const VALID_TOKEN_LIFECYCLES = ['N/A', 'short-lived', 'long-lived'];
+const VALID_INPUT_HANDLING = ['parameterized', 'shell_strings', 'mixed'];
+const VALID_DATA_RESIDENCY = ['local_only', 'cloud'];
+
+function validateAuditData(id, audit) {
+  const errors = [];
+  
+  if (!VALID_TRANSPORTS.includes(audit.transport)) {
+    errors.push(`Invalid transport: ${audit.transport}`);
+  }
+  
+  if (!VALID_AUTH_METHODS.includes(audit.authMethod)) {
+    errors.push(`Invalid authMethod: ${audit.authMethod}`);
+  }
+  
+  if (!VALID_TOKEN_LIFECYCLES.includes(audit.tokenLifecycle)) {
+    errors.push(`Invalid tokenLifecycle: ${audit.tokenLifecycle}`);
+  }
+  
+  if (!VALID_INPUT_HANDLING.includes(audit.inputHandling)) {
+    errors.push(`Invalid inputHandling: ${audit.inputHandling}`);
+  }
+  
+  if (!VALID_DATA_RESIDENCY.includes(audit.dataResidency)) {
+    errors.push(`Invalid dataResidency: ${audit.dataResidency}`);
+  }
+  
+  if (typeof audit.auditScore !== 'number' || audit.auditScore < 0 || audit.auditScore > 100) {
+    errors.push(`Invalid auditScore: must be number 0-100, got ${audit.auditScore}`);
+  }
+  
+  if (!audit.auditDate || !/^\d{4}-\d{2}-\d{2}$/.test(audit.auditDate)) {
+    errors.push(`Invalid auditDate: must be YYYY-MM-DD format, got ${audit.auditDate}`);
+  }
+  
+  if (!audit.auditorNotes || typeof audit.auditorNotes !== 'string' || audit.auditorNotes.length < 10) {
+    errors.push(`Invalid auditorNotes: must be string with at least 10 characters`);
+  }
+  
+  if (errors.length > 0) {
+    throw new Error(`Validation failed for server '${id}': ${errors.join(', ')}`);
+  }
+}
+
 // Security audit data for top 20 servers
 const securityAudits = {
   'mindsdb-mcp': { transport: 'stdio', authMethod: 'API Key', tokenLifecycle: 'long-lived', inputHandling: 'parameterized', dataResidency: 'cloud', auditScore: 56, auditDate: '2026-05-22', auditorNotes: 'Requires MindsDB API key for cloud instance. Data queries routed to MindsDB cloud. Local self-hosted option available.' },
@@ -52,22 +99,54 @@ function escape(val) {
 
 console.log('Generating migration SQL...');
 
-const lines = [];
+try {
+  // Validate all audit data first
+  console.log('Validating audit data...');
+  let validatedCount = 0;
+  for (const [id, audit] of Object.entries(securityAudits)) {
+    try {
+      validateAuditData(id, audit);
+      validatedCount++;
+    } catch (error) {
+      console.error(`❌ ${error.message}`);
+      process.exit(1);
+    }
+  }
+  console.log(`✅ Validated ${validatedCount} audit records`);
 
-// Step 1: Add column if not exists
-lines.push('-- Migration: Add security_audit_json column');
-lines.push('ALTER TABLE servers ADD COLUMN security_audit_json TEXT;');
-lines.push('');
+  const lines = [];
 
-// Step 2: Populate audit data for each server
-for (const [id, audit] of Object.entries(securityAudits)) {
-  const jsonStr = JSON.stringify(audit);
-  lines.push(`UPDATE servers SET security_audit_json = ${escape(jsonStr)} WHERE id = ${escape(id)};`);
+  // Step 1: Add column if not exists
+  lines.push('-- Migration: Add security_audit_json column');
+  lines.push('ALTER TABLE servers ADD COLUMN security_audit_json TEXT;');
+  lines.push('');
+
+  // Step 2: Populate audit data for each server
+  console.log('Generating SQL statements...');
+  for (const [id, audit] of Object.entries(securityAudits)) {
+    try {
+      const jsonStr = JSON.stringify(audit);
+      lines.push(`UPDATE servers SET security_audit_json = ${escape(jsonStr)} WHERE id = ${escape(id)};`);
+    } catch (error) {
+      console.error(`❌ Failed to serialize audit data for '${id}': ${error.message}`);
+      process.exit(1);
+    }
+  }
+
+  lines.push('');
+  lines.push('-- Done: 20 servers audited');
+
+  // Write file with error handling
+  try {
+    writeFileSync(OUTPUT_SQL, lines.join('\n'), 'utf-8');
+    console.log(`✅ Written ${OUTPUT_SQL}`);
+    console.log(`📋 Run with: npx wrangler d1 execute mcp-directory --file=add-security-audit.sql`);
+  } catch (error) {
+    console.error(`❌ Failed to write SQL file: ${error.message}`);
+    process.exit(1);
+  }
+
+} catch (error) {
+  console.error(`❌ Unexpected error: ${error.message}`);
+  process.exit(1);
 }
-
-lines.push('');
-lines.push('-- Done: 20 servers audited');
-
-writeFileSync(OUTPUT_SQL, lines.join('\n'), 'utf-8');
-console.log(`Written ${OUTPUT_SQL}`);
-console.log(`Run with: npx wrangler d1 execute mcp-directory --file=add-security-audit.sql`);
