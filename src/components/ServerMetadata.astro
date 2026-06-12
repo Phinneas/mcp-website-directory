@@ -4,6 +4,7 @@
  */
 import { getCategoryDisplayName, formatStars } from '../utils/serverData.js';
 import { slugify } from '../utils/slugify.js';
+import { getScoreTier, formatTransport, formatAuthMethod, formatDataResidency, parseSecurityAudit } from '../data/securityAudit.js';
 
 interface Props {
   server: {
@@ -19,11 +20,16 @@ interface Props {
       downloads?: number;
       stars?: number;
     };
+    security_audit_json?: string;
   };
 }
 
 const { server } = Astro.props;
 const { fields } = server;
+
+// Parse security audit data
+const securityAudit = parseSecurityAudit(server.security_audit_json);
+const scoreTier = securityAudit ? getScoreTier(securityAudit.auditScore) : null;
 
 // Build links array
 const links = [];
@@ -93,6 +99,50 @@ if (fields.homepage_url) {
       )}
     </div>
   </div>
+
+  {securityAudit && (
+    <div class="metadata-section">
+      <h3 class="metadata-title">Security Audit</h3>
+      
+      <div class="metadata-grid">
+        <div class="metadata-item">
+          <span class="metadata-label">Security Score</span>
+          <div class="security-score-wrapper">
+            <span class="security-score" style={`color: ${scoreTier?.color}; font-weight: 600;`}>
+              {scoreTier?.emoji} {securityAudit.auditScore}/100
+            </span>
+            <span class="security-tier" style={`background: ${scoreTier?.color}22; color: ${scoreTier?.color}; border: 1px solid ${scoreTier?.color}44;`}>
+              {scoreTier?.label}
+            </span>
+          </div>
+        </div>
+        
+        <div class="metadata-item">
+          <span class="metadata-label">Transport</span>
+          <span class="metadata-value">📡 {formatTransport(securityAudit.transport)}</span>
+        </div>
+        
+        <div class="metadata-item">
+          <span class="metadata-label">Authentication</span>
+          <span class="metadata-value">
+            {formatAuthMethod(securityAudit.authMethod).icon} {formatAuthMethod(securityAudit.authMethod).label}
+          </span>
+        </div>
+        
+        <div class="metadata-item">
+          <span class="metadata-label">Data Residency</span>
+          <span class="metadata-value" style={`color: ${formatDataResidency(securityAudit.dataResidency).color};`}>
+            {formatDataResidency(securityAudit.dataResidency).icon} {formatDataResidency(securityAudit.dataResidency).label}
+          </span>
+        </div>
+        
+        <div class="metadata-item">
+          <span class="metadata-label">Audit Date</span>
+          <span class="metadata-value">{new Date(securityAudit.auditDate).toLocaleDateString()}</span>
+        </div>
+      </div>
+    </div>
+  )}
 
   {links.length > 0 && (
     <div class="metadata-section">
@@ -237,6 +287,28 @@ if (fields.homepage_url) {
 
   .external-icon {
     opacity: 0.5;
+  }
+
+  .security-score-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .security-score {
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  .security-tier {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    width: fit-content;
   }
 
   @media (max-width: 1024px) {
