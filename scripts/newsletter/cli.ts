@@ -38,6 +38,7 @@ async function main() {
 
     case 'preview-weekly':
       console.log('Generating weekly newsletter preview...');
+      const generator = new NewsletterGenerator();
       const weeklyNewsletter = await generator.generateWeeklyNewsletter();
       console.log('\n=== WEEKLY NEWSLETTER PREVIEW ===');
       console.log('Subject:', weeklyNewsletter.subject);
@@ -50,7 +51,8 @@ async function main() {
 
     case 'preview-monthly':
       console.log('Generating monthly newsletter preview...');
-      const monthlyNewsletter = await generator.generateMonthlyNewsletter();
+      const monthlyGenerator = new NewsletterGenerator();
+      const monthlyNewsletter = await monthlyGenerator.generateMonthlyNewsletter();
       console.log('\n=== MONTHLY NEWSLETTER PREVIEW ===');
       console.log('Subject:', monthlyNewsletter.subject);
       console.log('Metadata:', monthlyNewsletter.metadata);
