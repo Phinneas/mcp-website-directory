@@ -77,6 +77,7 @@ Commands:
   preview-weekly   Generate and display weekly newsletter preview
   preview-monthly  Generate and display monthly newsletter preview
   schedule         Start newsletter scheduler daemon
+  test-beehiiv     Test Beehiiv API connection
 
 Environment Variables:
   BEEHIIV_API_KEY         Your Beehiiv API key
@@ -87,6 +88,7 @@ Examples:
   npm run newsletter weekly
   npm run newsletter preview-monthly
   npm run newsletter schedule
+  npm run newsletter test-beehiiv
       `);
       process.exit(1);
   }

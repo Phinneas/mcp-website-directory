@@ -42,13 +42,6 @@
     "tailwind-merge": "^3.4.0",
     "tailwindcss": "^4.1.17"
   },
-    "newsletter": "tsx scripts/newsletter/cli.ts",
-    "newsletter:weekly": "tsx scripts/newsletter/cli.ts weekly",
-    "newsletter:monthly": "tsx scripts/newsletter/cli.ts monthly",
-    "newsletter:schedule": "tsx scripts/newsletter/cli.ts schedule",
-    "newsletter:test": "tsx scripts/newsletter/cli.ts test-weekly && tsx scripts/newsletter/cli.ts test-monthly",
-    "newsletter:preview": "tsx scripts/newsletter/cli.ts preview-weekly"
-  },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.12",
     "@astrojs/mdx": "^4.3.6",
@@ -73,6 +66,17 @@
     "tailwind-merge": "^3.4.0",
     "tailwindcss": "^4.1.17",
     "tsx": "^4.0.0"
+  },
+  "scripts": {
+    "newsletter": "tsx scripts/newsletter/cli.ts",
+    "newsletter:start": "tsx scripts/newsletter/cli.ts start",
+    "newsletter:weekly": "tsx scripts/newsletter/cli.ts weekly",
+    "newsletter:monthly": "tsx scripts/newsletter/cli.ts monthly",
+    "newsletter:test-weekly": "tsx scripts/newsletter/cli.ts test-weekly",
+    "newsletter:test-monthly": "tsx scripts/newsletter/cli.ts test-monthly",
+    "newsletter:test-beehiiv": "tsx scripts/newsletter/cli.ts test-beehiiv",
+    "newsletter:preview-weekly": "tsx scripts/newsletter/cli.ts preview-weekly",
+    "newsletter:preview-monthly": "tsx scripts/newsletter/cli.ts preview-monthly"
   },
   "devDependencies": {
     "@types/node": "^22.10.6",
