@@ -4,7 +4,7 @@
  */
 import { getCategoryDisplayName, formatStars } from '../utils/serverData.js';
 import { slugify } from '../utils/slugify.js';
-import { getScoreTier, formatTransport, formatAuthMethod, formatDataResidency, parseSecurityAudit } from '../data/securityAudit.ts';
+import { getScoreTier, formatTransport, formatAuthMethod, formatDataResidency, parseSecurityAudit, type SecurityAuditData } from '../data/securityAudit.ts';
 
 interface Props {
   server: {
@@ -20,15 +20,15 @@ interface Props {
       downloads?: number;
       stars?: number;
     };
-    security_audit_json?: string;
+    securityAudit?: SecurityAuditData | null;
   };
 }
 
 const { server } = Astro.props;
 const { fields } = server;
 
-// Parse security audit data
-const securityAudit = parseSecurityAudit(server.security_audit_json);
+// Get security audit data
+const securityAudit = server.securityAudit;
 const scoreTier = securityAudit ? getScoreTier(securityAudit.auditScore) : null;
 
 // Build links array

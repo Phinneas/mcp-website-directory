@@ -82,7 +82,7 @@ function ServerCard({ server }: { server: MCPServer }) {
   const secondaryDeployments = server.deployment_metadata?.secondary_deployments || [];
 
   // Security audit data
-  const audit = server.securityAudit || (server as any).securityAudit;
+  const audit = server.securityAudit;
   const tier = audit ? getScoreTier(audit.auditScore) : null;
 
   const transportLabel = (t: string) => t === 'stdio' ? 'Stdio' : t === 'sse_http' ? 'SSE' : 'Both';
