@@ -431,6 +431,64 @@ export function isLocalOnly(serverId: string): boolean {
 }
 
 /**
+ * Format transport type for display
+ */
+export function formatTransport(transport: string): string {
+  switch (transport) {
+    case 'stdio': return 'Stdio';
+    case 'sse_http': return 'SSE';
+    case 'both': return 'Both';
+    default: return transport;
+  }
+}
+
+/**
+ * Format auth method for display with icon
+ */
+export function formatAuthMethod(authMethod: string): { label: string; icon: string } {
+  switch (authMethod) {
+    case 'None':
+      return { label: 'No Auth', icon: '⚠️' };
+    case 'API Key':
+      return { label: 'API Key', icon: '🔑' };
+    case 'OAuth2':
+      return { label: 'OAuth2', icon: '🔒' };
+    case 'SSO-SAML':
+      return { label: 'SSO/SAML', icon: '🔐' };
+    default:
+      return { label: authMethod, icon: '🔑' };
+  }
+}
+
+/**
+ * Get data residency display info
+ */
+export function formatDataResidency(residency: string): { label: string; icon: string; color: string } {
+  switch (residency) {
+    case 'local_only':
+      return { label: 'Local Only', icon: '💻', color: '#22c55e' };
+    case 'cloud':
+      return { label: 'Cloud', icon: '☁️', color: '#3b82f6' };
+    default:
+      return { label: residency, icon: '❓', color: '#6b7280' };
+  }
+}
+
+/**
+ * Parse security audit JSON from database
+ */
+export function parseSecurityAudit(auditJson: string | null): SecurityAudit | null {
+  if (!auditJson) return null;
+  
+  try {
+    return JSON.parse(auditJson) as SecurityAudit;
+  } catch (error) {
+    console.warn('Failed to parse security audit data:', error);
+    return null;
+  }
+}
+
+/**
  * Get all audited server IDs
  */
 export function getAuditedServerIds(): string[] {
