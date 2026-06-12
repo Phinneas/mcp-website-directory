@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import type { MCPServer, SecurityAuditData } from '../utils/d1';
 import { getDeploymentBadge } from '../utils/serverData.js';
-import { getScoreTier } from '../data/securityAudit';
+import { getScoreTier } from '../data/securityAudit.ts';
 import { HealthBadge } from './HealthBadge';
 import { GreenBadge } from './GreenBadge';
 
