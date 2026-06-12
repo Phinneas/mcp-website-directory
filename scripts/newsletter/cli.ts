@@ -38,8 +38,8 @@ async function main() {
 
     case 'preview-weekly':
       console.log('Generating weekly newsletter preview...');
-      const generator = new NewsletterGenerator();
-      const weeklyNewsletter = await generator.generateWeeklyNewsletter();
+      const weeklyGenerator = new NewsletterGenerator();
+      const weeklyNewsletter = await weeklyGenerator.generateWeeklyNewsletter();
       console.log('\n=== WEEKLY NEWSLETTER PREVIEW ===');
       console.log('Subject:', weeklyNewsletter.subject);
       console.log('Metadata:', weeklyNewsletter.metadata);
@@ -60,6 +60,13 @@ async function main() {
       console.log(monthlyNewsletter.content.html);
       console.log('\nText Content:');
       console.log(monthlyNewsletter.content.text);
+      break;
+
+    case 'test-beehiiv':
+      console.log('Testing Beehiiv connection...');
+      const testGenerator = new NewsletterGenerator();
+      const testResult = await testGenerator['beehiiv'].testConnection();
+      console.log('Beehiiv connection test:', testResult ? 'SUCCESS' : 'FAILED');
       break;
 
     default:

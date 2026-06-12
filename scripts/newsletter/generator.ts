@@ -55,9 +55,18 @@ export class NewsletterGenerator {
   constructor() {
     this.storage = new StorageManager();
     this.config = new ConfigManager();
+    
+    // Validate required environment variables
+    if (!process.env.BEEHIIV_API_KEY) {
+      throw new Error('BEEHIIV_API_KEY environment variable is required');
+    }
+    if (!process.env.BEEHIIV_PUBLICATION_ID) {
+      throw new Error('BEEHIIV_PUBLICATION_ID environment variable is required');
+    }
+    
     this.beehiiv = new BeehiivClient({
-      apiKey: process.env.BEEHIIV_API_KEY!,
-      publicationId: process.env.BEEHIIV_PUBLICATION_ID!
+      apiKey: process.env.BEEHIIV_API_KEY,
+      publicationId: process.env.BEEHIIV_PUBLICATION_ID
     });
   }
 
@@ -76,7 +85,7 @@ export class NewsletterGenerator {
       subject: `MCP Weekly: ${weeklyContent.newServers.length} New Servers, ${weeklyContent.staleServers.length} Need Updates`,
       content: { html, text },
       metadata: {
-        serverCount: (await this.storage.getStats()).totalServers,
+        serverCount: await this.getTotalServerCount(),
         newServers: weeklyContent.newServers.length,
         staleServers: weeklyContent.staleServers.length
       }
@@ -98,7 +107,7 @@ export class NewsletterGenerator {
       subject: `MCP Monthly: Top 10 Most Maintained + Security Roundup`,
       content: { html, text },
       metadata: {
-        serverCount: (await this.storage.getStats()).totalServers,
+        serverCount: await this.getTotalServerCount(),
         newServers: monthlyContent.topMaintained.length,
         staleServers: 0,
         securityIncidents: monthlyContent.securityIncidents.length
@@ -456,6 +465,16 @@ Cross-promotion: Check out AI Dispatch (https://aidispatch.com) for broader AI i
     } catch (error) {
       console.error('Failed to publish newsletter:', error);
       throw error;
+    }
+  }
+
+  private async getTotalServerCount(): Promise<number> {
+    try {
+      const servers = await this.storage.getServersByStatus('approved');
+      return servers.length;
+    } catch (error) {
+      console.warn('Could not get server count, using default:', error);
+      return 0;
     }
   }
 }

@@ -91,22 +91,32 @@ export class NewsletterScheduler {
   }
 
   private async logNewsletterRun(type: 'weekly' | 'monthly', newsletter: any): Promise<void> {
-    // Store newsletter run log in storage system
-    const logEntry = {
-      type,
-      date: new Date().toISOString(),
-      subject: newsletter.subject,
-      metadata: newsletter.metadata
-    };
+    try {
+      // Store newsletter run log in storage system
+      const logEntry = {
+        type,
+        date: new Date().toISOString(),
+        subject: newsletter.subject,
+        metadata: newsletter.metadata,
+        success: true
+      };
 
-    // This would be stored in the storage system
-    console.log('Newsletter run logged:', logEntry);
+      // For now, just log to console - would integrate with storage system
+      console.log('Newsletter run logged:', logEntry);
+    } catch (error) {
+      console.error('Failed to log newsletter run:', error);
+    }
   }
 
   private async getLastNewsletterRun(type: 'weekly' | 'monthly'): Promise<string | null> {
-    // Retrieve last newsletter run from storage system
-    // Mock implementation
-    return null;
+    try {
+      // Retrieve last newsletter run from storage system
+      // Mock implementation - would integrate with storage system
+      return null;
+    } catch (error) {
+      console.error('Failed to get last newsletter run:', error);
+      return null;
+    }
   }
 
   // Method to run scheduler continuously
