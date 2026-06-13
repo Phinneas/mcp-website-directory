@@ -16,7 +16,16 @@
     "monthly-review": "node scripts/tavily/monthly-review.js",
     "set-deployment-types": "node scripts/set-deployment-types.js",
     "set-deployment-types:preview": "node scripts/set-deployment-types.js --preview",
-    "set-deployment-types:apply": "node scripts/set-deployment-types.js --apply"
+    "set-deployment-types:apply": "node scripts/set-deployment-types.js --apply",
+    "newsletter": "npx tsx scripts/newsletter/cli.ts",
+    "newsletter:start": "npx tsx scripts/newsletter/cli.ts start",
+    "newsletter:weekly": "npx tsx scripts/newsletter/cli.ts weekly",
+    "newsletter:monthly": "npx tsx scripts/newsletter/cli.ts monthly",
+    "newsletter:test-weekly": "npx tsx scripts/newsletter/cli.ts test-weekly",
+    "newsletter:test-monthly": "npx tsx scripts/newsletter/cli.ts test-monthly",
+    "newsletter:test-beehiiv": "npx tsx scripts/newsletter/cli.ts test-beehiiv",
+    "newsletter:preview-weekly": "npx tsx scripts/newsletter/cli.ts preview-weekly",
+    "newsletter:preview-monthly": "npx tsx scripts/newsletter/cli.ts preview-monthly"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.12",
@@ -42,17 +51,6 @@
     "tailwind-merge": "^3.4.0",
     "tailwindcss": "^4.1.17",
     "tsx": "^4.0.0"
-  },
-  "scripts": {
-    "newsletter": "tsx scripts/newsletter/cli.ts",
-    "newsletter:start": "tsx scripts/newsletter/cli.ts start",
-    "newsletter:weekly": "tsx scripts/newsletter/cli.ts weekly",
-    "newsletter:monthly": "tsx scripts/newsletter/cli.ts monthly",
-    "newsletter:test-weekly": "tsx scripts/newsletter/cli.ts test-weekly",
-    "newsletter:test-monthly": "tsx scripts/newsletter/cli.ts test-monthly",
-    "newsletter:test-beehiiv": "tsx scripts/newsletter/cli.ts test-beehiiv",
-    "newsletter:preview-weekly": "tsx scripts/newsletter/cli.ts preview-weekly",
-    "newsletter:preview-monthly": "tsx scripts/newsletter/cli.ts preview-monthly"
   },
   "devDependencies": {
     "@types/node": "^22.10.6",

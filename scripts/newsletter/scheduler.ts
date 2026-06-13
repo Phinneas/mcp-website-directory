@@ -1,5 +1,5 @@
 import { NewsletterGenerator } from './generator.js';
-import { StorageManager } from '../tavily/storage.js';
+import { StorageManager } from './storage-stub.js';
 
 interface ScheduleConfig {
   weeklyDay: number; // 0 = Sunday, 1 = Monday, etc.
