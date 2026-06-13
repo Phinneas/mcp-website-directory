@@ -159,13 +159,28 @@ export class NewsletterGenerator {
   }
 
   private async getServersWithRecentSDKUpdates(since: Date): Promise<Server[]> {
-    // Mock implementation - would integrate with GitHub API to check for SDK updates
-    const allServers = await this.storage.getServersByStatus('approved');
-    return allServers.filter(server => {
-      // Check if server has been updated to use latest MCP SDK
-      // This would involve checking package.json, requirements.txt, etc.
-      return Math.random() > 0.8; // Mock: 20% chance of recent SDK update
-    }).slice(0, 5);
+    try {
+      const allServers = await this.storage.getServersByStatus('approved');
+      
+      // Filter servers that have GitHub URLs and check for recent SDK updates
+      const serversWithUpdates = [];
+      
+      for (const server of allServers) {
+        if (server.githubUrl && server.lastCommitDate) {
+          const lastCommit = new Date(server.lastCommitDate);
+          if (lastCommit >= since) {
+            // Additional check: look for MCP SDK version updates in commit messages
+            // This would require GitHub API integration in a real implementation
+            serversWithUpdates.push(server);
+          }
+        }
+      }
+      
+      return serversWithUpdates.slice(0, 10); // Limit to top 10
+    } catch (error) {
+      console.error('Error fetching servers with SDK updates:', error);
+      return [];
+    }
   }
 
   private async getStaleServers(threshold: Date): Promise<Server[]> {
@@ -194,18 +209,61 @@ export class NewsletterGenerator {
   }
 
   private classifyServerSecurity(server: Server): 'secure' | 'review_needed' | 'high_risk' {
-    // Mock classification logic - would analyze dependencies, permissions, etc.
-    const random = Math.random();
-    if (random > 0.8) return 'high_risk';
-    if (random > 0.5) return 'review_needed';
+    let riskScore = 0;
+    
+    // Check for high-risk indicators
+    const description = (server.description || '').toLowerCase();
+    const name = server.name.toLowerCase();
+    
+    // High-risk keywords
+    const highRiskKeywords = ['exec', 'shell', 'command', 'system', 'admin', 'root', 'sudo'];
+    const reviewKeywords = ['file', 'network', 'api', 'database', 'auth'];
+    
+    // Analyze description and name for risk indicators
+    if (highRiskKeywords.some(keyword => description.includes(keyword) || name.includes(keyword))) {
+      riskScore += 3;
+    }
+    
+    if (reviewKeywords.some(keyword => description.includes(keyword) || name.includes(keyword))) {
+      riskScore += 1;
+    }
+    
+    // Check for missing security indicators
+    if (!server.githubUrl) riskScore += 1;
+    if (!server.documentation) riskScore += 1;
+    
+    // Classify based on risk score
+    if (riskScore >= 4) return 'high_risk';
+    if (riskScore >= 2) return 'review_needed';
     return 'secure';
   }
 
   private classifyServerDeployment(server: Server): 'production_ready' | 'development' | 'experimental' {
-    // Mock classification logic - would analyze documentation, tests, version, etc.
-    const random = Math.random();
-    if (random > 0.7) return 'production_ready';
-    if (random > 0.4) return 'development';
+    let readinessScore = 0;
+    
+    // Check for production readiness indicators
+    if (server.documentation) readinessScore += 2;
+    if (server.githubUrl) readinessScore += 1;
+    if (server.version && !server.version.includes('0.0.') && !server.version.includes('alpha') && !server.version.includes('beta')) {
+      readinessScore += 2;
+    }
+    
+    // Check description for maturity indicators
+    const description = (server.description || '').toLowerCase();
+    const productionKeywords = ['stable', 'production', 'enterprise', 'reliable'];
+    const experimentalKeywords = ['experimental', 'prototype', 'proof of concept', 'poc', 'alpha', 'beta'];
+    
+    if (productionKeywords.some(keyword => description.includes(keyword))) {
+      readinessScore += 2;
+    }
+    
+    if (experimentalKeywords.some(keyword => description.includes(keyword))) {
+      readinessScore -= 2;
+    }
+    
+    // Classify based on readiness score
+    if (readinessScore >= 4) return 'production_ready';
+    if (readinessScore >= 1) return 'development';
     return 'experimental';
   }
 
@@ -325,7 +383,10 @@ export class NewsletterGenerator {
         </div>
 
         <div style="text-align: center; margin-top: 40px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
-            <p><strong>Cross-promotion:</strong> Check out <a href="https://aidispatch.com">AI Dispatch</a> for broader AI industry news and insights!</p>
+            <h3>🤝 Partner Spotlight</h3>
+            <p><strong>AI Dispatch</strong> - Your weekly source for AI industry news, funding rounds, and strategic insights.</p>
+            <p>While MCP Weekly focuses on the technical ecosystem, AI Dispatch covers the broader AI landscape including enterprise adoption, regulatory updates, and market analysis.</p>
+            <p><a href="https://aidispatch.com" style="background: #667eea; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Subscribe to AI Dispatch →</a></p>
         </div>
     </div>
 </body>
@@ -348,7 +409,9 @@ New Servers (${content.newServers.length})
 ${content.newServers.map(server => `• ${server.name} by ${server.vendor} - Security: ${server.securityClassification}, Deployment: ${server.deploymentClassification}`).join('\n')}
 
 ---
-Cross-promotion: Check out AI Dispatch (https://aidispatch.com) for broader AI industry news and insights!
+Partner Spotlight: AI Dispatch
+Your weekly source for AI industry news, funding rounds, and strategic insights.
+Subscribe at https://aidispatch.com
     `.trim();
   }
 
@@ -417,7 +480,10 @@ Cross-promotion: Check out AI Dispatch (https://aidispatch.com) for broader AI i
         </div>
 
         <div style="text-align: center; margin-top: 40px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
-            <p><strong>Cross-promotion:</strong> Check out <a href="https://aidispatch.com">AI Dispatch</a> for broader AI industry news and insights!</p>
+            <h3>🤝 Partner Spotlight</h3>
+            <p><strong>AI Dispatch</strong> - Your monthly source for AI industry analysis, market trends, and strategic insights.</p>
+            <p>Complement your MCP technical knowledge with broader AI industry intelligence from AI Dispatch.</p>
+            <p><a href="https://aidispatch.com" style="background: #667eea; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Subscribe to AI Dispatch →</a></p>
         </div>
     </div>
 </body>
@@ -445,7 +511,9 @@ Included Servers:
 ${content.featuredSkillPack.servers.map(server => `• ${server.name} by ${server.vendor}`).join('\n')}
 
 ---
-Cross-promotion: Check out AI Dispatch (https://aidispatch.com) for broader AI industry news and insights!
+Partner Spotlight: AI Dispatch  
+Your monthly source for AI industry analysis, market trends, and strategic insights.
+Subscribe at https://aidispatch.com
     `.trim();
   }
 

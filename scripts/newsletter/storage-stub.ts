@@ -32,11 +32,32 @@ export class StorageManager {
         id: '2',
         name: 'Example Server 2',
         vendor: 'Another Vendor',
-        description: 'Another sample MCP server',
+        description: 'Another sample MCP server with file system access',
         discoveryDate: new Date().toISOString(),
         lastCommitDate: new Date(Date.now() - 200 * 24 * 60 * 60 * 1000).toISOString(), // 200 days ago
         githubUrl: 'https://github.com/example/server2',
         version: '0.1.0'
+      },
+      {
+        id: '3',
+        name: 'Shell Command Server',
+        vendor: 'Security Test',
+        description: 'Executes shell commands for system administration',
+        discoveryDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
+        lastCommitDate: new Date().toISOString(),
+        githubUrl: 'https://github.com/example/shell-server',
+        version: '1.2.0'
+      },
+      {
+        id: '4',
+        name: 'Production Database Connector',
+        vendor: 'Enterprise Corp',
+        description: 'Stable production-ready database integration server',
+        discoveryDate: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
+        lastCommitDate: new Date().toISOString(),
+        githubUrl: 'https://github.com/example/db-connector',
+        documentation: 'https://docs.example.com/db-connector',
+        version: '2.1.0'
       }
     ];
   }
