@@ -1,4 +1,5 @@
-import { StorageManager, Server } from './storage-stub.js';
+import { StorageManager } from './storage-stub.js';
+import type { Server } from './storage-stub.js';
 import { ConfigManager } from './config-stub.js';
 import { BeehiivClient } from './beehiiv-client.js';
 
