@@ -1,0 +1,202 @@
+---
+title: "MCP Architecture by Use Case: Coding Agent, Data Agent, Support Agent"
+description: "Concrete MCP reference architectures for three real agent types. What servers to connect, which transport to use, and where each pattern breaks under production load."
+date: "2026-06-15T00:00:00.000Z"
+author: "Chester Beard"
+tags: ["mcp", "architecture", "ai agents", "mcp servers", "model context protocol"]
+---
+
+The official MCP architecture documentation shows you a diagram: host, client, server, transport. What it does not show you is what that diagram looks like when you are building a coding agent versus a data analysis pipeline versus a customer support system.
+
+Each use case makes different demands. The server set changes. The dominant failure mode changes. The decision that matters most — transport, topology, hosting — shifts depending on what the agent is actually doing.
+
+This post gives you a reference architecture for each of three common agent types, grounded in what works in production. Jump to the one you are building:
+
+| Use case | Typical server count | Transport | Biggest risk |
+|---|---|---|---|
+| [Coding agent](#coding-agent) | 4–6 | stdio | Context window overload |
+| [Data analysis agent](#data-agent) | 3–5 | Streamable HTTP | Intermediate result token consumption |
+| [Customer support agent](#support-agent) | 4–7 | Streamable HTTP | Duplicate writes from LLM retries |
+
+For the hosting and gateway decisions that apply across all three, see [MCP Architecture Decisions](/blog/mcp-architecture-decisions/).
+
+---
+
+## Coding Agent Architecture {#coding-agent}
+
+A coding agent needs to read and write files, execute commands, interact with version control, search documentation, and sometimes call external APIs. It is the most tool-dense of the three archetypes and the one where context window management is most likely to be the binding constraint.
+
+### What the agent needs to do
+
+- Read, write, and edit files across a project
+- Execute shell commands and run tests
+- Query and manipulate git history and branches
+- Search documentation, package registries, and the web
+- Optionally: interact with issue trackers or CI systems
+
+### Server set
+
+| Server | Role | Examples |
+|---|---|---|
+| Filesystem server | Read/write/edit files | filesystem MCP, built-in file tools |
+| Shell/execution server | Run commands, tests, scripts | bash MCP, code execution server |
+| Git server | Commits, branches, diffs, PRs | GitHub MCP, git MCP |
+| Web search/fetch server | Documentation, package lookup | web search MCP, fetch MCP |
+| Docs/knowledge server | Project-specific context | optional, project-dependent |
+
+**Typical server count: 4–6.** This is the upper range before context overhead starts to compound noticeably.
+
+### Transport
+
+**stdio for all servers in local and IDE configurations.** The model and all tools run on the same machine. stdio eliminates network overhead entirely and provides process-level isolation by default — each server is a child process of the client.
+
+Use Streamable HTTP only if the coding agent is team-shared (a shared CI coding agent, for example) or if any of the tools are genuinely remote services. Most coding agent deployments — Claude Code, Cursor integrations, VS Code extensions — are single-user local environments where stdio is both simpler and faster.
+
+### The dominant architectural challenge: context window overload
+
+This is the problem Anthropic's own engineering team identified as MCP usage scales. Most MCP clients load all tool definitions upfront into context. Each tool definition consumes tokens — name, description, parameter schemas — before a single line of user input is processed. At 4–6 servers with 5–15 tools each, a coding agent can load 30–90 tool definitions before doing any work.
+
+The architectural response is not to reduce the number of tools available to the agent. It is to not load all of them at once.
+
+**The subagent pattern:** rather than one coding agent with all tools in context, use subagents with purpose-specific server subsets. A file-editing subagent gets the filesystem and shell servers. A git subagent gets the git server. A research subagent gets the web search and docs servers. Each subagent runs in its own context window with a focused tool set. This is how Claude Code's own architecture handles sustained multi-step work — long-running tasks use a two-agent model where each agent maintains focused context rather than accumulating everything.
+
+**The anti-pattern to avoid:** a single monolithic server that bundles file operations, git operations, web search, and code execution into one tool list. This is the fastest path to context saturation and degraded tool selection accuracy.
+
+### Domain split recommendation
+
+Split by operation category, not by tool count. File operations belong together. Git operations belong together. Web operations belong together. Execution belongs together. Four servers with clean domain separation is better than two servers with mixed responsibilities, even if the total tool count is identical.
+
+Explore purpose-built servers for each domain in the MyMCPShelf [development](/category/development/) and [file systems](/category/file-systems/) categories.
+
+---
+
+## Data Analysis Agent Architecture {#data-agent}
+
+A data analysis agent queries live systems, runs computation, and produces structured output. Unlike a coding agent, it operates primarily on data rather than code — and the data it handles is often sensitive, large, and live. This makes the architecture less about context window management and more about transport choice, scope control, and what happens to intermediate query results.
+
+### What the agent needs to do
+
+- Query databases with natural language translated to SQL or other query languages
+- Execute code to perform analysis and transformations
+- Fetch live data from external APIs or data sources
+- Optionally: retrieve metadata or schema context from a knowledge base
+- Produce structured, human-readable output
+
+### Server set
+
+| Server | Role | Examples |
+|---|---|---|
+| Database server | SQL/query execution against structured data | PostgreSQL MCP, SQLite MCP, database connectors |
+| Code execution server | Analysis, transformation, computation | code execution MCP, Python execution server |
+| Web fetch server | Live data, APIs, external sources | fetch MCP, web search MCP |
+| RAG/metadata server | Schema context, documentation lookup | optional, depends on database complexity |
+
+**Typical server count: 3–5.** Fewer servers than the coding agent, but the operational complexity of each server is higher.
+
+### Transport
+
+**Streamable HTTP for most production data agent deployments.** Databases are almost universally remote systems — even in development, the database typically runs in a separate container or cloud instance. Any server connecting to a remote database must use Streamable HTTP.
+
+The exception: a fully local development setup (local database, local model, single developer) can use stdio throughout. This is a valid starting configuration but will require a transport migration when the agent moves to a shared or production environment.
+
+### MCP vs. RAG: a brief clarification
+
+These two approaches solve different problems and are frequently confused. RAG retrieves information from a knowledge base to ground the model's response. MCP executes against live systems — it runs the query, gets the live result, returns it to the model.
+
+Data agents often need both. MCP handles the live query execution (run this SQL, return these rows). A RAG component handles schema and metadata context (what does this column mean, what are the relationships between these tables). They are not competing choices — they operate at different layers of the same architecture.
+
+### The dominant architectural challenge: intermediate result token consumption
+
+When a data agent executes a query, the results come back through the context window. Raw database results — even a moderately sized result set — can consume thousands of tokens. A multi-step analysis that runs five or six queries accumulates result tokens rapidly.
+
+The architectural responses:
+
+**Limit result set size at the server level.** The database MCP server should enforce row limits and support pagination. Never allow an agent to pull unbounded result sets into context.
+
+**Return structured summaries, not raw rows.** A well-designed database server can return aggregated or summarized results rather than raw tabular data where the analysis question allows it.
+
+**Use code execution for computation, not context accumulation.** Rather than pulling data into context and asking the model to compute on it, the code execution server can perform the computation and return only the result. This is the pattern Anthropic's engineering team described for making MCP agents more efficient at scale.
+
+### Scope control is not optional
+
+The safest production pattern for data agents: **start read-only.** Read access to databases, APIs, and data sources is the starting point. Write access — inserts, updates, deletes — requires explicit justification and approval gates. This is not a security recommendation bolted on after the fact; it is an architectural principle that determines what the agent can do if it makes an error.
+
+Find database MCP servers in the MyMCPShelf [databases](/category/databases/) category.
+
+---
+
+## Customer Support Agent Architecture {#support-agent}
+
+A customer support agent touches the most external systems of the three archetypes. It needs to look up customer data, read ticket history, search knowledge bases, create records, send notifications, and sometimes schedule follow-ups. It has the highest server count, the most complex authentication requirements, and the most dangerous failure mode: duplicate writes.
+
+### What the agent needs to do
+
+- Look up customer records and account history
+- Read and create support tickets
+- Search product knowledge base and documentation
+- Send notifications or draft messages
+- Optionally: schedule follow-ups or escalate to human agents
+
+### Server set
+
+| Server | Role | Examples |
+|---|---|---|
+| CRM server | Customer record lookup and updates | HubSpot MCP, Salesforce MCP |
+| Ticketing server | Ticket creation, status, history | Linear MCP, Jira MCP, Zendesk MCP |
+| Knowledge base server | Product docs, FAQ, policy search | Notion MCP, documentation server |
+| Messaging server | Notifications, drafts, outbound comms | Slack MCP, email server |
+| Calendar server | Scheduling, follow-ups | optional, depends on workflow |
+
+**Typical server count: 4–7.** This is the highest server count of the three archetypes. Every additional system the support workflow touches is another server — and potentially another OAuth integration to manage.
+
+### Transport
+
+**Streamable HTTP for all servers.** Every system in a support stack is a remote SaaS product. There is no local-process option here. If the agent is serving multiple customers or support agents simultaneously, session management and gateway-level routing are required from day one.
+
+### The dominant architectural challenge: duplicate writes from LLM retries
+
+This is the most operationally dangerous failure pattern in support agent architectures, and it does not get enough attention. LLMs sometimes misinterpret error responses and retry. A `create_ticket` tool that is not idempotent, called twice due to a retry loop, creates two tickets. A `send_message` tool called in a retry loop sends two messages to the customer.
+
+At scale, this is not theoretical. One production pattern described by teams operating support agents: an LLM that misunderstands a rate limit response from an external API will retry the tool call repeatedly. If the external API is not idempotent and the MCP server does not implement deduplication, the result is duplicate records at the rate of the retry loop.
+
+The architectural requirements this creates — not recommendations, requirements — are:
+
+**Request deduplication at the server level.** Every write-operation tool should accept and enforce an idempotency key. The server rejects or de-dupes requests with a key it has already processed.
+
+**Circuit breakers and exponential backoff.** The MCP server, not the LLM, should handle retry logic with backoff. The model should not be making retry decisions.
+
+**Approval gates for all write operations.** Read operations (lookup customer, search knowledge base, fetch ticket history) can be autonomous. Write operations (create ticket, send message, update CRM record) should require explicit approval before execution. This single architectural pattern prevents the majority of duplicate-write incidents.
+
+### Authentication complexity: the case for a managed gateway
+
+The support agent archetype makes the strongest case for a managed gateway of the three patterns. Each external SaaS integration requires its own OAuth scope. Managing OAuth flows for five or more services — CRM, ticketing, messaging, calendar, knowledge base — is a substantial ongoing maintenance burden.
+
+The heuristic that applies here: if you need more than three SaaS connectors and integrations are not your core product, the cost of maintaining custom OAuth implementations will exceed managed platform cost within a quarter. This is the archetype where that calculation tips earliest.
+
+If you are operating in a regulated environment or have data sovereignty requirements that prevent third-party network routing, a self-hosted gateway remains the right choice. But the operational argument for managed platforms is strongest here.
+
+### Multi-tenant considerations
+
+Support agents often serve multiple customers or operate on behalf of multiple users within one organization. If the agent's actions are taken on behalf of a specific user (creating a ticket as that user, sending a message from that user's account), the architecture requires per-user credential scoping at the gateway level — not a shared service account.
+
+This is the distinction between an MCP server that acts as a service and one that acts on behalf of a user. The latter requires session-scoped authorization, which is defined in the current spec but requires deliberate implementation.
+
+Find servers for support workflows in the MyMCPShelf [communication](/category/communication/) category.
+
+---
+
+## Cross-Cutting Lessons
+
+These patterns hold across all three archetypes:
+
+**Server count scales with use case complexity.** Coding agents: 4–6. Data agents: 3–5. Support agents: 4–7. No use case studied here was well-served by a monolithic single server. Every case had natural domain boundaries that warranted separation.
+
+**Transport follows deployment environment, not use case.** Local execution always favors stdio. Remote systems always require Streamable HTTP. The use case does not change this — it is the deployment topology that determines the transport.
+
+**The context window is a finite budget, not a background detail.** Every server's tool definitions, every intermediate result, and every accumulated turn in a multi-step workflow draws from the same budget. Architectural decisions that seem small — whether to bundle tools into one server or split them, whether to return raw results or summaries — have compounding effects on cost and latency at inference time.
+
+**Write operations require explicit architecture.** In all three patterns, the highest-risk operations are writes: file edits in coding agents, database mutations in data agents, record creation and messages in support agents. Each use case warrants a deliberate decision about where human approval is required and where autonomous action is acceptable. The safest default is read-only autonomy, write-with-approval.
+
+For the transport, topology, and hosting decisions that underpin all three of these patterns, see [MCP Architecture Decisions](/blog/mcp-architecture-decisions/).
+
+For a primer on the protocol itself, see [What is MCP in AI?](/blog/what-is-mcp-in-ai/).

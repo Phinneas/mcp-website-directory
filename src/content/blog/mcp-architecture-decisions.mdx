@@ -1,0 +1,180 @@
+---
+title: "MCP Architecture Decisions: Transport, Multi-Server Design, and Hosting"
+description: "A decision framework for developers architecting systems with MCP servers. Covers stdio vs Streamable HTTP transport, single-server vs multi-server topology, and self-hosted vs managed gateway tradeoffs."
+date: "2026-06-15T00:00:00.000Z"
+author: "Chester Beard"
+tags: ["mcp", "architecture", "mcp servers", "model context protocol"]
+---
+
+Most writing about MCP architecture describes the spec. This post is about making decisions within it.
+
+By the time you are asking "what transport should I use" or "should this be one server or three," you already understand what MCP is. What you need is a framework for choosing, not another diagram of host-client-server.
+
+Here is the short version before the detail:
+
+| Decision | Local / single-user | Remote / multi-user | Cloud / SaaS |
+|---|---|---|---|
+| Transport | stdio | Streamable HTTP | Streamable HTTP |
+| Topology | Single server per capability | Multi-server, domain-split | Multi-server + gateway |
+| Hosting | None required | Self-hosted gateway | Managed gateway |
+
+The rest of this post explains why, and what goes wrong when you choose differently.
+
+---
+
+## The Two Transports (and the One You Can Ignore)
+
+The MCP spec currently defines two transport mechanisms: **stdio** and **Streamable HTTP**. A third — HTTP+SSE — was deprecated in spec version 2025-03-26 and should not be used in new implementations. If you encounter it in an existing server, plan migration. It is not covered further here.
+
+### stdio
+
+Stdio uses standard input and output streams for direct process communication between a client and server running on the same machine. No network stack. No authentication configuration. No port management. The client spawns the server as a child process; messages flow through stdin/stdout as JSON-RPC 2.0.
+
+**Where it wins:**
+- IDE integrations (Cursor, VS Code, Claude Code)
+- CLI tools
+- Local developer environments
+- Any setup where the model and the tool run on the same machine
+
+**The hard constraint:** stdio serves exactly one client per server instance. It cannot handle remote connections. It cannot scale horizontally. This is not a limitation to work around — it is a design property that makes stdio appropriate for its intended use case and inappropriate for everything else.
+
+### Streamable HTTP
+
+Streamable HTTP replaced HTTP+SSE as the remote transport. The server runs as an independent process and handles multiple client connections over standard HTTP POST and GET requests. Server-Sent Events are available for streaming, but are optional — basic implementations work without them.
+
+**Where it wins:**
+- Remote server deployments
+- Multi-user or multi-agent scenarios
+- SaaS products exposing AI features to customers
+- Any deployment where server and client are not on the same machine
+
+**The real constraint:** session management. Unlike stdio's stateless-from-the-deployment-perspective simplicity, Streamable HTTP requires session state. This means load balancers need sticky sessions or a shared session store across instances. Developers familiar with stateless REST APIs will find this counterintuitive.
+
+There is a second constraint that is harder to discover without load testing: session handling strategy dominates performance. Stacklok's benchmark testing of Streamable HTTP in a Kubernetes environment found a **10x throughput difference** between shared session pools (290–300 requests per second) and unique session pools (30–36 requests per second). The transport is not the bottleneck — session reuse is. Build around sessions from the start.
+
+### The decision rule
+
+If the model and the tool run on the same machine and serve one user: **stdio**.
+
+If either the model or the tool is remote, or if more than one client needs to connect: **Streamable HTTP**.
+
+There is no hybrid. Clients that support only stdio (Claude Desktop, at various points) cannot connect directly to Streamable HTTP servers without a proxy in between. Design for the transport your target clients support.
+
+---
+
+## Single-Server vs. Multi-Server Topology
+
+The spec permits a host to connect to multiple MCP servers simultaneously. Whether to use one server or several is the second architectural decision, and it is more consequential than most developers expect.
+
+### The context window tax
+
+Every tool definition loaded into an MCP client consumes tokens before a single user query is processed. Anthropic's engineering team has documented this directly: tool descriptions occupy context window space, increasing response time and cost. In systems connected to dozens of MCP servers with hundreds of tools, the model may process hundreds of thousands of tokens of tool definitions before reading the actual request.
+
+This is not a theoretical concern. It is the reason experienced MCP developers split servers by domain rather than aggregating tools into a single server — and it is the reason the GitHub MCP spec includes an active proposal for hierarchical tool management and lazy loading.
+
+The practical implication: **every tool you add to a server costs tokens at every inference call, whether that tool is needed or not.**
+
+### Single-server design
+
+One server handles all capabilities for a given system. Simple to deploy, simple to reason about, simple to debug. Zero discovery overhead.
+
+Works well when:
+- The tool set is small and stable (fewer than ~10–15 tools)
+- One team owns and maintains the server
+- The use case is narrow and purpose-built
+
+Breaks down when:
+- Tool count grows past the point where context consumption becomes measurable
+- Different teams need to own different capabilities independently
+- The server becomes a monolith that cannot be updated without risk to unrelated tools
+
+### Multi-server design
+
+Capabilities are split across servers by domain. A coding agent might connect to a filesystem server, a git server, a web-search server, and a code-execution server — each purpose-built, each independently deployable.
+
+**The atomic server principle:** keep each server focused on one domain. Practical experience from teams operating at scale suggests 4 or fewer servers per software component as a ceiling before context overhead and coordination complexity exceed the benefit of further splitting.
+
+**When to split:** the signal is a growing tool list. If a single server exceeds 10–15 tools, evaluate whether those tools fall into distinct domains that could be separated. If yes, split. The host connects to multiple servers; the model selects which tools to call. Domain separation also makes it easier to swap or update individual servers without touching the rest of the system.
+
+Multi-server design does introduce discovery overhead — the client must enumerate tools across servers on initialization. This is a fixed cost at connection time, not a per-inference cost, and it is typically acceptable.
+
+Browse purpose-built servers by category in the [MyMCPShelf directory](/category/development/) — the file systems, databases, and development tools categories are good examples of the kind of domain-focused servers that work well in multi-server architectures.
+
+---
+
+## Self-Hosted vs. Managed Gateway
+
+Once you move beyond a single local developer and into remote or multi-user deployments, you face a third decision: where does the control plane live?
+
+### Proxy vs. gateway: an important distinction
+
+These terms are often used interchangeably and should not be. An **MCP proxy** routes requests between clients and servers. An **MCP gateway** does that plus authentication, authorization (RBAC), rate limiting, session management, context management, audit logging, and observability. If you need the latter, do not build the former and attempt to add the rest.
+
+### Self-hosted gateway
+
+Your team deploys and operates the gateway on your own infrastructure. No third-party network hops. Tool call arguments and results stay within your perimeter. Your team controls patching, monitoring, and scaling.
+
+**When this is the right call:**
+- Regulated industries where data cannot leave the corporate network (SOC 2, HIPAA, GDPR)
+- Enterprise environments with existing Kubernetes infrastructure and DevOps capability
+- Situations where tool call arguments contain sensitive data you cannot route through a vendor
+
+**The honest cost:** your team owns the operational burden. Patching, scaling, and credential management are your problem. This is the right tradeoff for teams with the infrastructure capability to handle it.
+
+### Managed gateway
+
+A third-party platform handles hosting, auth, observability, and often provides a catalog of pre-built server connectors. You configure; they operate.
+
+**When this is the right call:**
+- Building a SaaS product that needs to connect to 10+ third-party services
+- Teams without dedicated infrastructure capability
+- Early-stage deployments where time to production matters more than operational control
+
+One useful heuristic from the truto.one architecture guide: if integrations are your core product, build custom servers — you need full control. If integrations support your core product and you need more than three SaaS connectors, the cost of building and maintaining custom servers will typically exceed managed platform cost within a quarter.
+
+### The four enterprise topology patterns
+
+For teams operating at larger scale, the current spec supports four recognized deployment topologies:
+
+- **Single-tenant:** one MCP server serves one internal team. Simplest to operate; does not scale beyond one team without replication.
+- **Multi-tenant row-isolated:** one server fronts many customers with per-tenant audience binding and row-level storage filters. Audience validation must be enforced server-side.
+- **Federated gateway:** central control plane with audit across a large server estate. The right choice for organizations needing centralized governance without centralized data.
+- **Edge-cached read-only:** optimized for high request-per-second tool discovery with caching at the edge. Relevant when tool enumeration is a performance bottleneck.
+
+---
+
+## Putting It Together: Four Deployment Archetypes
+
+**Local developer tooling (IDE or CLI)**
+Transport: stdio. Topology: one server per capability domain. Hosting: none required — servers run as child processes. This is the lowest-friction configuration and the right starting point for any new MCP integration. Add complexity only when a specific constraint forces it.
+
+**Team-shared internal tools**
+Transport: Streamable HTTP. Topology: multi-server, domain-split. Hosting: self-hosted gateway behind your corporate identity provider. The team or teams building tools own their respective servers independently; the gateway provides unified access control and audit.
+
+**SaaS product with AI features**
+Transport: Streamable HTTP. Topology: multi-server, with server count growing as integration count grows. Hosting: managed gateway if connecting to multiple third-party SaaS systems; custom servers only for proprietary integrations that require full schema control.
+
+**Enterprise deployment with compliance requirements**
+Transport: Streamable HTTP. Topology: federated gateway pattern. Hosting: self-hosted, with full audit logging, RBAC, and credential management within the corporate perimeter. OAuth 2.1 with PKCE is the current spec-correct auth posture for remote servers.
+
+### What to avoid
+
+**Stdio in production for multi-user scenarios.** The single-client constraint will force a rewrite. If there is any possibility of more than one client, start with Streamable HTTP.
+
+**The all-tools monolith.** A single server that accumulates tools across domains becomes a context window liability. The cost compounds with every inference. Split early.
+
+**Building a proxy when you need a gateway.** Routing alone does not give you auth, RBAC, or audit. Those are not features to add later — they are the reason the gateway exists.
+
+**Custom gateway builds for commodity SaaS integrations.** OAuth maintenance across five or more third-party services is a substantial ongoing cost. Evaluate managed platforms before committing to custom infrastructure.
+
+---
+
+## What This Means for Your Stack
+
+The three decisions covered here — transport, topology, hosting — are made once and are expensive to undo. The spec is stable enough now that the patterns above reflect production-tested choices, not speculation.
+
+The short version: default to stdio for local tools, Streamable HTTP for everything remote, split servers by domain before your tool count becomes a context tax, and choose your hosting model based on where your credentials need to live and who owns your compliance posture.
+
+For a concrete look at how these decisions play out in practice, see how each choice maps to specific agent types in [MCP Architecture by Use Case](/blog/mcp-architecture-by-use-case/).
+
+For a primer on the protocol itself, see [What is MCP in AI?](/blog/what-is-mcp-in-ai/).
