@@ -60,6 +60,20 @@ from prefect import flow, task, get_run_logger
 from prefect.artifacts import create_markdown_artifact, create_table_artifact
 
 # ---------------------------------------------------------------------------
+# Compatibility shim — starlette 1.3+ / fastapi 0.137+ renamed
+# PrefectRouter.routes to .route, but Prefect 3.6–3.7 still accesses
+# .routes internally when building the ephemeral API server.
+# This monkey-patch adds a read-only `routes` property so both names work.
+# Remove once Prefect ships a release that handles this natively.
+# ---------------------------------------------------------------------------
+try:
+    from prefect.server.api.server import PrefectRouter
+    if not hasattr(PrefectRouter, "routes") and hasattr(PrefectRouter, "route"):
+        PrefectRouter.routes = property(lambda self: self.route)  # type: ignore[attr-defined]
+except ImportError:
+    pass  # Prefect not installed or structure changed — nothing to patch
+
+# ---------------------------------------------------------------------------
 # Config
 # ---------------------------------------------------------------------------
 
