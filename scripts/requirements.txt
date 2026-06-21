@@ -9,4 +9,4 @@ httpx>=0.27,<1
 
 # Prefect orchestration (flow, task, artifacts, scheduling)
 # Pin to 3.x to match the installed version; bump deliberately when upgrading.
-prefect>=3.6,<4
+prefect>=3.6,<3.7

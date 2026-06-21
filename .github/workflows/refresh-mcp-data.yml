@@ -157,6 +157,7 @@ jobs:
 
       # ── 5. Verify output ──────────────────────────────────────────────────────
       - name: Verify servers.json
+        if: always()
         run: |
           if [ ! -f src/data/servers.json ]; then
             echo "::error::servers.json was not created — pipeline may have failed"
