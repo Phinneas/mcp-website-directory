@@ -8,5 +8,9 @@
 httpx>=0.27,<1
 
 # Prefect orchestration (flow, task, artifacts, scheduling)
-# Pin to 3.x to match the installed version; bump deliberately when upgrading.
+# Pin to 3.6.x; 3.7+ has compat issues with starlette 1.3+.
 prefect>=3.6,<3.7
+
+# Starlette — pin to <1.3 because 1.3.x removed PrefectRouter.routes
+# (changed to .route), crashing the local ephemeral API server.
+starlette>=1.0,<1.3
