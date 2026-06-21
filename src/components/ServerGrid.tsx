@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import type { MCPServer, SecurityAuditData } from '../utils/d1';
+import type { MCPServer, SecurityAuditData, ReliabilityScoreData } from '../utils/d1';
 import { getDeploymentBadge } from '../utils/serverData.js';
 import { getScoreTier } from '../data/securityAudit.ts';
 import { HealthBadge } from './HealthBadge';
@@ -50,6 +50,17 @@ function formatStars(stars?: number): string {
   if (!stars) return '';
   if (stars >= 1000) return `★ ${(stars / 1000).toFixed(1)}k`;
   return `★ ${stars}`;
+}
+
+function getReliabilityColor(tier: string): string {
+  const colors: Record<string, string> = {
+    excellent: '#22c55e',
+    strong: '#3b82f6',
+    moderate: '#f59e0b',
+    limited: '#f97316',
+    minimal: '#ef4444',
+  };
+  return colors[tier] || '#64748b';
 }
 
 function SkeletonCard() {
@@ -170,6 +181,27 @@ function ServerCard({ server }: { server: MCPServer }) {
         {(server as any).greenScore && (
           <div style={{ marginBottom: '0.5rem' }}>
             <GreenBadge greenScore={(server as any).greenScore} compact />
+          </div>
+        )}
+
+        {/* Reliability Score Badge */}
+        {server.reliability && (
+          <div style={{ marginBottom: '0.5rem' }}>
+            <span
+              style={{
+                display: 'inline-block',
+                padding: '0.15rem 0.5rem',
+                borderRadius: '4px',
+                fontSize: '0.7rem',
+                fontWeight: 700,
+                background: getReliabilityColor(server.reliability.tier) + '22',
+                color: getReliabilityColor(server.reliability.tier),
+                border: `1px solid ${getReliabilityColor(server.reliability.tier)}44`,
+              }}
+              title={`Reliability: ${server.reliability.score}/100 — ${server.reliability.label}`}
+            >
+              📊 {server.reliability.score}/100
+            </span>
           </div>
         )}
         

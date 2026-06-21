@@ -1,0 +1,99 @@
+---
+interface Props {
+  score: number;
+  tier: string;
+  label?: string;
+  compact?: boolean;
+}
+
+const { score, tier, label, compact = false } = Astro.props;
+
+const TIER_COLORS: Record<string, string> = {
+  excellent: '#22c55e',
+  strong: '#3b82f6',
+  moderate: '#f59e0b',
+  limited: '#f97316',
+  minimal: '#ef4444',
+};
+
+const color = TIER_COLORS[tier] || '#64748b';
+const displayLabel = label || tier.charAt(0).toUpperCase() + tier.slice(1);
+---
+
+{compact ? (
+  <span class="reliability-badge-compact" style={`background: ${color}22; color: ${color}; border: 1px solid ${color}44`}>
+    {score}/100
+  </span>
+) : (
+  <div class="reliability-gauge">
+    <div
+      class="gauge-ring"
+      style={`background: conic-gradient(${color} ${score * 3.6}deg, rgba(255,255,255,0.08) 0deg)`}
+    >
+      <div class="gauge-inner">
+        <span class="gauge-score" style={`color: ${color}`}>{score}</span>
+        <span class="gauge-max">/100</span>
+      </div>
+    </div>
+    <span class="gauge-tier" style={`background: ${color}22; color: ${color}; border: 1px solid ${color}44`}>
+      {displayLabel}
+    </span>
+  </div>
+)}
+
+<style>
+  .reliability-badge-compact {
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .reliability-gauge {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .gauge-ring {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .gauge-inner {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: #1e293b;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .gauge-score {
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .gauge-max {
+    font-size: 0.65rem;
+    color: #64748b;
+  }
+
+  .gauge-tier {
+    display: inline-block;
+    padding: 0.25rem 0.65rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+</style>

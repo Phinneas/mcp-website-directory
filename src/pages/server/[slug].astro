@@ -25,6 +25,7 @@ import { staticServers as fallbackServers } from '../../data/staticServers.js';
 import { getSecurityAudit, getScoreTier } from '../../data/securityAudit';
 import CustomMcpCta from '../../components/CustomMcpCta.astro';
 import { GreenBadge } from '../../components/GreenBadge';
+import ReliabilityGauge from '../../components/ReliabilityGauge.astro';
 
 // servers.json is bundled by Vite at build time — safe to import statically
 import serversData from '../../data/servers.json';
@@ -102,6 +103,15 @@ const relatedServers = getRelatedServers(server, allServers, 5);
 const auditData = getSecurityAudit(server.id) || (server as any).securityAudit || null;
 const auditTier = auditData ? getScoreTier(auditData.auditScore) : null;
 const greenScore = (server as any).greenScore || null;
+const reliability = (server as any).reliability || null;
+
+const RELIABILITY_TIER_COLORS: Record<string, string> = {
+  excellent: '#22c55e',
+  strong: '#3b82f6',
+  moderate: '#f59e0b',
+  limited: '#f97316',
+  minimal: '#ef4444',
+};
 
 const TRANSPORT_LABELS: Record<string, string> = { stdio: 'Stdio (Local)', sse_http: 'SSE/HTTP (Remote)', both: 'Both' };
 const AUTH_LABELS: Record<string, string> = { None: 'None', 'API Key': 'API Key', OAuth2: 'OAuth2', 'SSO-SAML': 'SSO/SAML' };
@@ -374,6 +384,80 @@ const structuredData = {
                 <a href="/green-hosting" class="methodology-link">Which platforms are green-verified? →</a>
               </div>
             </div>
+          </section>
+        )}
+
+        <!-- Reliability Score -->
+        {reliability && (
+          <section class="reliability-section">
+            <h2>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+              </svg>
+              Reliability Score
+            </h2>
+
+            <div class="reliability-score-row">
+              <ReliabilityGauge score={reliability.score} tier={reliability.tier} label={reliability.label} />
+              <div class="reliability-meta">
+                <span class="reliability-assessed">Assessed {reliability.assessedAt?.split('T')[0]}</span>
+                <a href="/blog/top-10-reliable-mcp-servers-monthly" class="methodology-link">Monthly Top 10 report →</a>
+              </div>
+            </div>
+
+            <table class="audit-table">
+              <thead>
+                <tr>
+                  <th>Dimension</th>
+                  <th>Weight</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="dimension-icon">⭐</span> Stars trajectory</td>
+                  <td>30%</td>
+                  <td>
+                    {reliability.breakdown.starsTrajectory.stars} stars,
+                    {reliability.breakdown.starsTrajectory.commits90d} commits (90d)
+                  </td>
+                </tr>
+                <tr>
+                  <td><span class="dimension-icon">🐛</span> Issue response</td>
+                  <td>25%</td>
+                  <td>
+                    {reliability.breakdown.issueResponse.medianDays != null
+                      ? `Median ${reliability.breakdown.issueResponse.medianDays} days to close`
+                      : `${reliability.breakdown.issueResponse.closedCount} closed issues`}
+                  </td>
+                </tr>
+                <tr>
+                  <td><span class="dimension-icon">🔱</span> Fork activity</td>
+                  <td>20%</td>
+                  <td>
+                    {reliability.breakdown.forkActivity.forks} forks
+                    ({reliability.breakdown.forkActivity.recentForks} recent)
+                  </td>
+                </tr>
+                <tr>
+                  <td><span class="dimension-icon">📦</span> Download trend</td>
+                  <td>15%</td>
+                  <td>
+                    {reliability.breakdown.downloadTrend.weeklyDownloads.toLocaleString()}/week
+                    {reliability.breakdown.downloadTrend.growthPercent != null &&
+                      ` (${reliability.breakdown.downloadTrend.growthPercent > 0 ? '+' : ''}${reliability.breakdown.downloadTrend.growthPercent}%)`}
+                  </td>
+                </tr>
+                <tr>
+                  <td><span class="dimension-icon">📝</span> Commit frequency</td>
+                  <td>10%</td>
+                  <td>
+                    {reliability.breakdown.commitFrequency.avgPerWeek}/week avg
+                    ({reliability.breakdown.commitFrequency.commits90d} in 90d)
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </section>
         )}
 
@@ -817,6 +901,45 @@ const structuredData = {
 
   .methodology-link { color: #10b981; text-decoration: none; font-size: 0.85rem; }
   .methodology-link:hover { color: #34d399; }
+
+  /* Reliability Score Section */
+  .reliability-section {
+    background: rgba(255,255,255,0.04);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .reliability-section h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #f1f5f9;
+    margin: 0 0 1.25rem 0;
+  }
+
+  .reliability-section h2 svg { color: #94a3b8; }
+
+  .reliability-score-row {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .reliability-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .reliability-assessed {
+    font-size: 0.8rem;
+    color: #64748b;
+  }
 
   @media (max-width: 1024px) {
     .content-layout { grid-template-columns: 1fr; }

@@ -1,0 +1,113 @@
+---
+title: "Top 10 Most Reliable MCP Servers — June 2026"
+description: "Monthly reliability report ranking the most dependable MCP servers by stars trajectory, issue response time, fork activity, download trends, and commit frequency."
+date: "2026-06-21"
+author: "MCP Directory Team"
+tags: ["reliability", "rankings", "monthly-report", "mcp-servers"]
+---
+
+import ReliabilityGauge from '../../components/ReliabilityGauge.astro';
+
+Every month, we rank MCP servers by a **composite reliability score (0–100)** built from five purely data-driven metrics — no user-submitted reviews, no editorial picks, no sponsorship. Just verifiable signals from GitHub and package registries.
+
+## Scoring Methodology
+
+| Dimension | Weight | Source |
+|-----------|--------|--------|
+| Stars trajectory | 30% | GitHub star count + recent commit activity |
+| Issue response time | 25% | Median days to close issues (last 90 days) |
+| Fork activity | 20% | Total forks + recent fork recency |
+| Download trend | 15% | npm weekly downloads + week-over-week growth |
+| Commit frequency | 10% | Average commits per week (last 90 days) |
+
+Minimum threshold: 40/100. Servers below this are excluded.
+
+---
+
+## Top 10 — June 2026
+
+> **Note:** This is a template. The actual rankings are populated by the reliability-monitor Worker's `/report` endpoint. Replace the entries below with live data from the latest report.
+
+### 1. [Server Name](/server/server-slug)
+
+<ReliabilityGauge score={85} tier="excellent" />
+
+- **Score:** 85/100 — Excellent
+- **Stars trajectory:** 1,200+ stars, 45 commits in last 90 days
+- **Issue response:** Median 2.1 days to close
+- **Fork activity:** 85 forks, 4 recent
+- **Weekly downloads:** 2,400 (growing +15%)
+- **Commit frequency:** 3.5/week
+
+### 2. [Server Name](/server/server-slug)
+
+<ReliabilityGauge score={78} tier="strong" />
+
+- **Score:** 78/100 — Strong
+- **Stars trajectory:** 800+ stars, 30 commits in last 90 days
+- **Issue response:** Median 3.5 days to close
+- **Fork activity:** 50 forks, 2 recent
+- **Weekly downloads:** 1,200 (growing +8%)
+- **Commit frequency:** 2.3/week
+
+### 3. [Server Name](/server/server-slug)
+
+<ReliabilityGauge score={72} tier="strong" />
+
+- **Score:** 72/100 — Strong
+
+### 4. [Server Name](/server/server-slug)
+
+<ReliabilityGauge score={68} tier="strong" />
+
+- **Score:** 68/100 — Strong
+
+### 5. [Server Name](/server/server-slug)
+
+<ReliabilityGauge score={63} tier="moderate" />
+
+- **Score:** 63/100 — Moderate
+
+### 6. [Server Name](/server/server-slug)
+
+<ReliabilityGauge score={58} tier="moderate" />
+
+- **Score:** 58/100 — Moderate
+
+### 7. [Server Name](/server/server-slug)
+
+<ReliabilityGauge score={52} tier="moderate" />
+
+- **Score:** 52/100 — Moderate
+
+### 8. [Server Name](/server/server-slug)
+
+<ReliabilityGauge score={48} tier="moderate" />
+
+- **Score:** 48/100 — Moderate
+
+### 9. [Server Name](/server/server-slug)
+
+<ReliabilityGauge score={44} tier="moderate" />
+
+- **Score:** 44/100 — Moderate
+
+### 10. [Server Name](/server/server-slug)
+
+<ReliabilityGauge score={41} tier="moderate" />
+
+- **Score:** 41/100 — Moderate
+
+---
+
+## What Changed This Month
+
+*(Populate with month-over-month movement: new entries, rank changes, servers that dropped below threshold.)*
+
+## About This Report
+
+This report is generated automatically by the [MCP Directory](/) reliability monitoring system. Scores are computed from public GitHub and npm data — no user reviews, no editorial judgment, no pay-for-placement. The assessment runs weekly and the Top 10 is published monthly.
+
+For the full methodology, see [Enterprise Readiness](/enterprise-readiness) and [Security Audit Manifesto](/audit-manifesto).
+
+**Next report:** July 2026

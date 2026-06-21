@@ -18,6 +18,7 @@ export interface MCPServerRow {
   deployment_type: string | null;
   security_audit_json: string | null;
   green_score_json: string | null;
+  reliability_score_json: string | null;
 }
 
 export interface SecurityAuditData {
@@ -38,11 +39,63 @@ export interface GreenScoreData {
   hostingProvider: string | null;
 }
 
+export interface ReliabilityBreakdownStars {
+  weight: number;
+  score: number;
+  stars: number;
+  commits90d: number;
+}
+
+export interface ReliabilityBreakdownIssues {
+  weight: number;
+  score: number;
+  medianDays: number | null;
+  closedCount: number;
+}
+
+export interface ReliabilityBreakdownForks {
+  weight: number;
+  score: number;
+  forks: number;
+  recentForks: number;
+}
+
+export interface ReliabilityBreakdownDownloads {
+  weight: number;
+  score: number;
+  weeklyDownloads: number;
+  prevWeeklyDownloads?: number;
+  growthPercent?: number;
+  trend: 'growing' | 'stable' | 'declining' | 'no_package' | 'error';
+}
+
+export interface ReliabilityBreakdownCommits {
+  weight: number;
+  score: number;
+  commits90d: number;
+  avgPerWeek: number;
+}
+
+export interface ReliabilityScoreData {
+  score: number;
+  tier: 'excellent' | 'strong' | 'moderate' | 'limited' | 'minimal';
+  label: string;
+  breakdown: {
+    starsTrajectory: ReliabilityBreakdownStars;
+    issueResponse: ReliabilityBreakdownIssues;
+    forkActivity: ReliabilityBreakdownForks;
+    downloadTrend: ReliabilityBreakdownDownloads;
+    commitFrequency: ReliabilityBreakdownCommits;
+  };
+  assessedAt: string;
+}
+
 export interface MCPServer {
   id: string;
   deployment: string;
   securityAudit?: SecurityAuditData | null;
   greenScore?: GreenScoreData | null;
+  reliability?: ReliabilityScoreData | null;
   fields: {
     name: string;
     description: string;
@@ -84,11 +137,21 @@ function rowToServer(row: MCPServerRow): MCPServer {
     }
   }
 
+  let reliability: ReliabilityScoreData | null = null;
+  if (row.reliability_score_json) {
+    try {
+      reliability = JSON.parse(row.reliability_score_json) as ReliabilityScoreData;
+    } catch {
+      // invalid JSON — leave as null
+    }
+  }
+
   return {
     id: row.id,
     deployment: row.deployment_type || 'local_stdio',
     securityAudit,
     greenScore,
+    reliability,
     fields: {
       name: row.name,
       description: row.description || '',

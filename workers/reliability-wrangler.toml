@@ -1,0 +1,15 @@
+name = "mcp-reliability-monitor"
+main = "reliability-monitor.js"
+compatibility_date = "2024-11-12"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "mcp-directory"
+database_id = "527bf637-7aba-4719-8d39-b9e6e614a3b9"
+
+[triggers]
+crons = ["0 4 * * Mon"]   # Weekly Monday 4 AM UTC (offset from other workers)
+
+# GitHub personal access token for higher rate limits
+# [vars]
+# GITHUB_TOKEN = ""       # Set via: wrangler secret put GITHUB_TOKEN
