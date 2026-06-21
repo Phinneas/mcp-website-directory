@@ -26,6 +26,9 @@ import { getSecurityAudit, getScoreTier } from '../../data/securityAudit';
 import CustomMcpCta from '../../components/CustomMcpCta.astro';
 import { GreenBadge } from '../../components/GreenBadge';
 import ReliabilityGauge from '../../components/ReliabilityGauge.astro';
+import ReviewSection from '../../components/ReviewSection';
+import BookmarkToggle from '../../components/BookmarkToggle';
+import { CommunityBadge, AuthStatus } from '../../components/CommunityBadge';
 
 // servers.json is bundled by Vite at build time — safe to import statically
 import serversData from '../../data/servers.json';
@@ -461,6 +464,21 @@ const structuredData = {
           </section>
         )}
 
+        <!-- Community Reviews -->
+        <section class="community-section">
+          <h2>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            Community Reviews
+          </h2>
+          <p class="community-intro">Authenticated reviews from GitHub users. No anonymous submissions. Your experience helps others choose wisely.</p>
+          <ReviewSection client:load serverId={server.id} />
+        </section>
+
         <!-- Available Tools -->
         {server.fields.available_tools && server.fields.available_tools.length > 0 && (
           <ServerTools tools={server.fields.available_tools} />
@@ -524,6 +542,12 @@ const structuredData = {
 
       <!-- Sidebar -->
       <aside class="sidebar">
+        <div class="sidebar-auth">
+          <AuthStatus client:load />
+        </div>
+        <div class="sidebar-bookmark">
+          <BookmarkToggle client:load serverId={server.id} />
+        </div>
         <ServerMetadata server={server} />
         {server.fields.github_url && (
           <GitHubHealthVitals
@@ -939,6 +963,47 @@ const structuredData = {
   .reliability-assessed {
     font-size: 0.8rem;
     color: #64748b;
+  }
+
+  /* Community Section */
+  .community-section {
+    background: rgba(255,255,255,0.04);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .community-section h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #f1f5f9;
+    margin: 0 0 0.75rem 0;
+  }
+
+  .community-section h2 svg { color: #94a3b8; }
+
+  .community-intro {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+  }
+
+  /* Sidebar extras */
+  .sidebar-auth {
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .sidebar-bookmark {
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: flex-end;
   }
 
   @media (max-width: 1024px) {

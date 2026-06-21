@@ -4,6 +4,7 @@ import { getDeploymentBadge } from '../utils/serverData.js';
 import { getScoreTier } from '../data/securityAudit.ts';
 import { HealthBadge } from './HealthBadge';
 import { GreenBadge } from './GreenBadge';
+import { CommunityBadge } from './CommunityBadge';
 
 interface Props {
   initialServers: MCPServer[];
@@ -204,6 +205,11 @@ function ServerCard({ server }: { server: MCPServer }) {
             </span>
           </div>
         )}
+
+        {/* Community Badge */}
+        <div style={{ marginBottom: '0.5rem' }}>
+          <CommunityBadge serverId={server.id} />
+        </div>
         
         <div className="server-meta">
           {server.fields.language && <span className="meta-tag">{server.fields.language}</span>}
