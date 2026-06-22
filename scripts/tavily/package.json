@@ -1,6 +1,7 @@
 {
   "name": "mcp-intelligence-system",
   "type": "module",
+  "packageManager": "pnpm@10.33.0",
   "scripts": {
     "test": "NODE_OPTIONS=--experimental-vm-modules jest",
     "test:watch": "NODE_OPTIONS=--experimental-vm-modules jest --watch",

@@ -2,6 +2,7 @@
   "name": "my-mcp-shelf",
   "type": "module",
   "version": "0.0.1",
+  "packageManager": "pnpm@10.33.0",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build && node scripts/fix-routes.js",
@@ -9,9 +10,9 @@
     "start": "node ./dist/server/entry.mjs",
     "astro": "astro",
     "prepare": "husky",
-    "test:tavily": "cd scripts/tavily && npm test",
-    "test:tavily:watch": "cd scripts/tavily && npm test --watch",
-    "test:tavily:coverage": "cd scripts/tavily && npm test --coverage",
+    "test:tavily": "cd scripts/tavily && pnpm test",
+    "test:tavily:watch": "cd scripts/tavily && pnpm test --watch",
+    "test:tavily:coverage": "cd scripts/tavily && pnpm test --coverage",
     "weekly-scan": "node scripts/tavily/weekly-scan.js",
     "monthly-review": "node scripts/tavily/monthly-review.js",
     "set-deployment-types": "node scripts/set-deployment-types.js",
@@ -60,5 +61,13 @@
     "jest": "^29.7.0",
     "ts-jest": "^29.2.5",
     "typescript": "^5.7.3"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "puppeteer",
+      "sharp",
+      "workerd"
+    ]
   }
 }
