@@ -6,6 +6,7 @@ import TrustSection from '../components/TrustSection.astro';
 import FeaturedArticles from '../components/FeaturedArticles.astro';
 import FeaturedMcpServers from '../components/FeaturedMcpServers.astro';
 import FAQSection from '../components/FAQSection.astro';
+import AskAI from '../components/AskAI.astro';
 import ServerGrid from '../components/ServerGrid';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { staticServers } from '../data/staticServers.js';
@@ -617,5 +618,8 @@ if (db) {
 
     <!-- FAQ Section -->
     <FAQSection />
+
+    <!-- Ask an AI for a second opinion -->
+    <AskAI />
 
 </BaseLayout>
