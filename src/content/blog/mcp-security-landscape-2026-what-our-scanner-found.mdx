@@ -1,0 +1,104 @@
+---
+title: "We Scanned 574 MCP Servers: The 2026 Security Landscape, In Our Own Data"
+description: "Original research: we ran an automated CVE watchlist, static analysis, and dependency scan against every server in our MCP directory. Here's what we found — including 3 critical vulnerabilities in widely-trusted tools."
+date: "2026-06-29"
+author: "Buzz (Former Microsoft Xbox Security Engineer)"
+image: "/images/quality-standards.jpg"
+tags: ["mcp security", "vulnerability research", "cve", "supply chain", "original research"]
+---
+
+# We Scanned 574 MCP Servers: The 2026 Security Landscape, In Our Own Data
+
+There's no shortage of scary statistics about Model Context Protocol (MCP) security right now. Researchers report that roughly **one in three** MCP servers they tested was vulnerable to server-side request forgery (SSRF). Headlines catalog thousands of internet-exposed endpoints. It's enough to make any team pause before connecting an AI agent to anything.
+
+Statistics borrowed from someone else's research only get you so far. So we did something most directories haven't: **we built an automated security scanner and ran it against our own catalog of 574 curated servers.** This is what it actually found — in our data, against the servers developers are really installing — not a recycled industry number.
+
+> This piece is the first in a series. As our scanner accumulates weeks of results, we'll publish a live, versioned "State of MCP Security" report. The numbers below are the inaugural baseline.
+
+## Why we stopped trusting "it has 5,000 stars, it's probably fine"
+
+Star count is a popularity signal, not a safety signal. Some of the most-installed MCP tooling in the world carried critical vulnerabilities in early 2026 — including a CVSS 10.0 remote code execution in the official MCP Inspector, and a three-vulnerability RCE chain in Anthropic's Git MCP server. Both are exactly the kind of server a developer adds without a second thought.
+
+The early-2026 disclosures were a turning point. Between January and February 2026 alone, security researchers filed more than **30 CVEs** against MCP servers, clients, and infrastructure. Three patterns dominated:
+
+1. **Command injection / RCE** via unsanitized `stdio` arguments and shell-string construction.
+2. **Tool-description poisoning** — where a malicious or tampered tool description subverts the agent itself (the "MCPoison" and "CurXecute" disclosures).
+3. **Supply-chain compromise** — typosquats, backdoors, and credential exfiltration.
+
+We treat all three as first-class concerns in our pipeline.
+
+## How we scan (the method, so you can judge the data)
+
+Every server in the directory is scored against four layers, run together in a single consolidated recheck:
+
+| Layer | What it checks |
+|-------|----------------|
+| **Static analysis** | Suspicious `install`/`postinstall` npm scripts (`curl`, `eval`, `child_process`, obfuscated `require`) — the classic supply-chain backdoor vector. |
+| **Socket.dev** | Dependency health and **typosquat** detection against the package and its transitive deps. |
+| **CVE / IOC watchlist** | The server's npm package and GitHub repo cross-referenced against a curated watchlist of 50 entries sourced from vulnerablemcp.info, NVD, GHSA, Snyk, and known-malicious campaigns. |
+| **Tool-description diff** | The server's advertised tool set is snapshotted and re-diffed each run — a silent rewording that adds an "upload tokens to a webhook" tool is the signature of a **rug-pull / tool-poisoning** attack. |
+
+For this baseline, the headline number comes from the **CVE/IOC watchlist layer** — the most deterministic of the four — applied to all 574 servers.
+
+## The findings: 8 servers flagged, 3 of them critical
+
+Of 574 listed servers, **543 (94.6%) ship an npm package** we can attribute and scan. Cross-referencing those against the watchlist flagged **8 servers — 1.4% of the directory** — with a known vulnerability or indicator of compromise. By highest severity, that's **3 critical and 5 high**.
+
+That 1.4% rate looks reassuringly low next to the ~1-in-3 SSRF figure reported for the unvetted ecosystem — and it should. Curation plus scanning filters out the obvious junk. But it would be a mistake to read "1.4%" as "safe." Three of those eight are **critical**, and every one of them is a server people genuinely use:
+
+| Server | Finding | Severity |
+|--------|---------|----------|
+| **MCP Inspector** (`@modelcontextprotocol/inspector`) | CVE-2025-49596 — remote code execution via the inspector interface. **CVSS 10.0.** | Critical |
+| **GitHub Official MCP** (`@github/mcp-server`) | CVE-2025-68145 — a chained RCE: path-validation bypass plus unrestricted `git` operations. | Critical |
+| **Google Workspace MCP** (`mcp-gsuite`) | A malicious Google Doc with embedded prompt injection auto-executes when the agent fetches it. | Critical |
+| **Node Code Sandbox MCP** | CVE-2025-53372 — command injection bypassing the Docker sandbox via unsanitized `execSync`. | High |
+| **Figma Context MCP** (`figma-context-mcp`) | CVE-2025-53967 — command injection in `fetch-with-retry.ts`, falling back to `child_process.exec(curl)` without sanitizing the URL. | High |
+| **Zen MCP Server** | CVE-2025-66689 — `is_dangerous_path()` used exact string matching against a blocklist, trivially bypassed. Path traversal. | High |
+| **GitHub MCP Server** (`@modelcontextprotocol/server-github`) | Data exfiltration from private repositories via crafted tool calls. | High |
+| **WhatsApp MCP Server** | Message exfiltration through the MCP tool interface. | High |
+
+Read that table carefully. The MCP Inspector is the tool thousands of developers use to *debug* MCP servers — and it shipped an unauthenticated, remotely-exploitable RCE. The Anthropic Git server is the reference implementation. "Popular and official" is not a proxy for "audited."
+
+## The supply-chain campaigns worth naming
+
+Two incidents from this window deserve to be quoted directly, because they illustrate why automated scanning matters more than reading a README:
+
+- **`postmark-mcp` — the first malicious MCP in the wild.** It was a typosquat of the legitimate Postmark email service. Once installed, it silently **BCC'd every email an AI agent sent to an attacker-controlled address.** There was no bug to patch — the malicious behavior *was* the feature. A static analysis of install scripts wouldn't catch it; a dependency/typosquat layer and a reputation cross-reference would.
+- **`Sandworm_Mode` — a coordinated typosquat campaign.** Attackers published look-alike npm packages that installed rogue MCP servers to exfiltrate **SSH keys, AWS credentials, and npm tokens.** This is the threat model where "just `npx` the package from the README" turns into an incident.
+
+These aren't hypothetical. They shipped to npm, were installed by real users, and were only caught after the fact by researchers. Our watchlist includes them so that any listed server overlapping a known-bad package or repo is flagged automatically.
+
+## What the comparison to "~1-in-3" actually means
+
+The widely-cited figure that about a third of sampled MCP servers are vulnerable to SSRF is real and worth taking seriously — but it describes the **unvetted** ecosystem: everything researchers could find and probe, including abandoned experiments and raw proofs-of-concept.
+
+Our 1.4% figure describes a different population: a **curated** directory where every entry has a real GitHub presence and 94.6% ship a scannable npm package, and where every entry is now run through the four-layer scan. The honest interpretation is not "we're 25× safer." It's two things:
+
+1. **Curation plus scanning genuinely reduces exposure** — the obvious typosquats and abandoned-vulnerable projects never make the list, or get flagged the moment they do.
+2. **Even a curated list is not immune.** A CVSS-10 RCE sat in the official Inspector. The job isn't "keep bad servers out"; it's "detect the moment a previously-good server becomes risky" — which is exactly what the recurring scan and the tool-description diff are for.
+
+That second point is the entire reason we ship this as a *recurring* pipeline rather than a one-time audit. A server that's clean today can ship a poisoned tool description tomorrow.
+
+## What we changed in the directory because of this
+
+This research directly shaped the product:
+
+- **Badge tiers.** Every server carries one of three labels: **Manually Reviewed** (a human has audited transport, auth, input handling, and data residency), **Scanned** (passed automated static analysis, dependency/typosquat, and CVE cross-reference), or **Unverified** (not yet assessed). No badge means no claim.
+- **The Composite Trust Score.** Because staleness, green-hosting, security, and tool-poisoning risk all feed a single number, a server that suddenly adds an exfiltration-capable tool can't hide behind good maintenance — a tool-poisoning detection hard-caps the score regardless of the other signals.
+- **The consolidated recheck.** Rather than four separate weekly jobs, one pipeline re-runs all four checks per server and writes a single record, so the trust score always reflects the same point-in-time assessment.
+
+## How to protect yourself, regardless of which directory you use
+
+1. **Pin and update the SDK.** Keep `@modelcontextprotocol/sdk` current. CVE-2026-25536 (a cross-client data leak when `StreamableHTTPServerTransport` is reused across clients, affecting v1.10.0–1.25.3) is a recent reminder that the SDK itself is in the threat model.
+2. **Never bind `0.0.0.0` unauthenticated.** CVE-2026-23744 (MCPJam Inspector) and CVE-2025-49596 both exploited inspectors/listeners with no auth.
+3. **Diff tool descriptions.** If you run third-party servers, snapshot their advertised tools and alert on additions of anything that can move data — `upload`, `send`, `webhook`, `exec`. That's the rug-pull signature.
+4. **Prefer the patched version.** For every entry in the table above, check the project's advisories and run the version that's fixed — or remove it until you can.
+5. **Least privilege.** Give an MCP server the narrowest credentials it needs. The WhatsApp and GitHub exfiltration findings are far less damaging when the token in scope can't read private repos or send mail broadly.
+
+## What's next
+
+This is the baseline. As the scanner continues its weekly run, two things will make this research more valuable over time: the **trend** (is the flagged share rising or falling as projects patch?), and the **tool-poisoning diff** catching real rug-pulls in the wild. We'll publish updated figures and, if our pipeline flags a novel incident first, you'll read it here — sourced from our own data, not someone else's press release.
+
+---
+
+*Methodology note: the 8 flagged servers were identified by cross-referencing each listed server's npm package and GitHub repository against a 50-entry watchlist of disclosed CVEs and indicators of compromise. The static-analysis, Socket.dev, and tool-description-diff layers run on the same cadence and contribute to each server's Composite Trust Score. Figures reflect the directory as of June 2026 and will update as servers are patched and new vulnerabilities are disclosed.*

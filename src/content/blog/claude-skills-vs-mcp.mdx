@@ -1,0 +1,197 @@
+---
+title: "Claude Skills and MCP Together: Patterns for Real Workflows"
+description: "Everyone says Claude Skills and MCP are complementary. Nobody shows what that looks like in practice. Here are the three composition patterns and when each one applies."
+date: "2026-06-16"
+slug: "claude-skills-vs-mcp"
+draft: false
+author: "Chester Beard"
+category: "MCP vs Skills"
+tags: ["claude-skills", "mcp", "agent-skills", "ai-workflows"]
+---
+
+Claude Skills and MCP solve different problems, and every comparison post will tell you that. What they won't tell you is how to use them together. In practice, the most capable Claude workflows aren't Skills *or* MCP — they're Skills *and* MCP layered in specific patterns: MCP provides the connection to external systems, Skills encode what to do with the data once Claude has it, and in enterprise setups a subagent handles the execution in isolation. This post covers the three composition patterns and when each one applies.
+
+If you're still working out the conceptual distinction, start with [MCP vs Agent Skills](/blog/mcp-vs-agent-skills) first and come back here.
+
+## The one-paragraph foundation
+
+MCP (Model Context Protocol) is a connectivity protocol. It connects Claude to external systems — databases, APIs, SaaS tools — via a client-server architecture. Claude is the client; your Notion workspace, Postgres database, or GitHub repo is the server. MCP solves "can Claude reach this?"
+
+A Claude Skill is a `SKILL.md` file that encodes a workflow procedure. It tells Claude how to perform a specific task: the steps, the output format, the edge cases, the standards to apply. Skills don't connect Claude to anything external. They solve "how should Claude handle this when it has the data?"
+
+That's the full conceptual distinction. The rest of this post is about what happens when you combine them.
+
+## Why "use both" isn't just a platitude
+
+Most developers hit a wall when they start with one layer and ignore the other.
+
+**The Skills-only wall:** You build a clean `weekly-report` skill that formats output perfectly. Then you realize Claude needs to pull live data from your analytics database to populate it. The skill can't reach that database. You need MCP.
+
+**The MCP-only wall:** You wire up five MCP servers — Jira, GitHub, Slack, Notion, your internal API. Claude can now reach all of them. But the output is inconsistent: different formats, different priorities applied, different levels of detail depending on how you phrased the request. You need a Skill to encode the procedure for using those connections correctly.
+
+The wall in both cases is the missing layer. Skills without MCP are workflows that can only operate on data Claude already has. MCP without Skills is connectivity without consistency. Together, they cover both problems.
+
+## The three composition patterns
+
+### Pattern 1 — MCP fetches, Skill formats
+
+The most common pattern. An MCP server pulls live external data. A Skill encodes what to do with it: the normalization rules, the output template, the priority tiers.
+
+**When to use it:** Any workflow that requires live external data and a consistent, repeatable output format.
+
+**Concrete example — weekly bug report:**
+
+- Jira MCP server pulls all open tickets updated in the last 7 days
+- `weekly-bug-report` Skill applies your team's severity taxonomy (P0–P3), groups by component, and outputs to your standard markdown table format
+- Without the Skill: Claude produces different formats each run, applies inconsistent severity judgments
+- Without MCP: the Skill has no data to work with
+
+The Skill's `SKILL.md` can explicitly reference the MCP tool by name in its instructions:
+
+```markdown
+---
+name: weekly-bug-report
+description: Generates the weekly bug report. Use when asked to produce the weekly bug report or summarize open Jira issues by severity.
+---
+
+## Steps
+
+1. Use the Jira MCP tool to fetch all issues updated in the last 7 days with status != Done
+2. Group issues by component
+3. Apply severity taxonomy: P0 (customer-facing outage), P1 (major feature broken), P2 (minor feature degraded), P3 (cosmetic/low impact)
+4. Output as a markdown table: Component | Issue | Severity | Assignee | Days Open
+5. Add a summary line: total open issues, count by severity
+```
+
+Now every run produces the same format, applies the same severity logic, and pulls fresh data.
+
+**Other use cases for this pattern:** Notion page summarization with consistent structure, GitHub PR review with team coding standards applied, CRM data pulled via MCP and formatted to a sales template.
+
+### Pattern 2 — Skill orchestrates multiple MCP calls
+
+A Skill's instructions can sequence multiple MCP tool calls, handle failures between them, and define what to do with combined output. The Skill becomes the workflow controller; MCP servers are the execution layer it calls.
+
+**When to use it:** Multi-step workflows that touch more than one external system, where the order of operations and failure handling matter.
+
+**Concrete example — automated PR review:**
+
+- `code-review-standards` Skill defines your team's checklist: naming conventions, error handling requirements, test coverage rules, security patterns to flag
+- GitHub MCP server fetches the diff for the open PR
+- Brave Search MCP server (optional) checks for relevant documentation or known CVEs on flagged patterns
+- The Skill's instructions specify: fetch the diff first, run the AST analysis script, then check security patterns, then format the review
+
+```markdown
+---
+name: code-review-standards
+description: Reviews pull requests and code changes against team standards. Use when asked to review a PR, check a diff, or audit changed files.
+---
+
+## Review process
+
+1. Use the GitHub MCP tool to fetch the diff for the specified PR
+2. Run scripts/ast-analysis.py on the changed files (outputs list of potential issues)
+3. Check each changed file against:
+   - Naming: variables camelCase, constants UPPER_SNAKE_CASE, no single-letter names outside loops
+   - Error handling: all async functions must have try/catch with specific error types
+   - Tests: any new exported function needs a corresponding test file entry
+4. For any security-adjacent changes (auth, input handling, crypto), use Brave Search to check for known issues with the patterns used
+5. Output: markdown table — File | Line | Issue | Severity | Suggested Fix
+6. Add summary: total issues by severity, overall recommendation (Approve / Request Changes / Needs Discussion)
+```
+
+The Skill is doing the orchestration. The MCP servers are providing data on demand. Neither layer knows about the other's internals — they compose cleanly.
+
+**Other use cases for this pattern:** Deployment checklists that touch GitHub + Slack + internal status page, research workflows that pull from multiple data sources before synthesizing, customer support workflows that check CRM + docs + ticket history before drafting a response.
+
+### Pattern 3 — The three-layer enterprise stack
+
+MCP connectivity + Skill procedure + subagent execution. The subagent runs the full pipeline in isolation, keeping the main session context clean and the main Claude instance free for other work.
+
+**When to use it:** Long-running or resource-intensive workflows where you don't want the pipeline occupying your main session, or where you want execution isolation for reliability and auditability.
+
+**Concrete example — automated analytics report:**
+
+- Anthropic's analytics database MCP server and Notion MCP server are connected
+- `analytics-report` Skill defines the report structure, the normalization rules, and the Notion template to populate
+- A subagent is spun up with the Skill installed and the MCP servers in scope
+- The subagent: queries the database, applies normalization, writes the Notion report, posts a summary to Slack
+- The main session: handles other work while this runs
+
+This is the pattern Anthropic's partner integrations are built around. Figma's partner Skill is designed to work alongside the Figma MCP connector. Notion's partner Skill pairs with the Notion MCP connector. The split is deliberate: the connector provides access, the Skill encodes the workflow procedure for your organization's specific use of that tool.
+
+**Other use cases for this pattern:** Nightly data processing jobs, batch document generation, multi-step research pipelines, any workflow where execution time is variable and you want it isolated from interactive sessions.
+
+## Partner Skills and MCP connectors — Anthropic's reference implementations
+
+Anthropic's partner Skills program is the clearest signal that "use both" is the intended production model. Each partner ships a Skill paired with an MCP connector, and the two are designed to work together:
+
+| Partner | MCP Connector provides | Partner Skill provides |
+|---------|----------------------|----------------------|
+| Notion | Access to pages, databases, blocks | Workflow procedure: how to search, create, update Notion content to your team's standards |
+| Figma | Access to design files, components, frames | Workflow procedure: how to extract, describe, and work with Figma assets consistently |
+| Atlassian | Access to Jira tickets, Confluence pages | Workflow procedure: how to query, format, and act on Atlassian data per your team's process |
+
+The connector solves the access problem. The Skill solves the consistency problem. Neither is optional if you want a production-quality workflow.
+
+Browse the MCP servers for these integrations in the [MyMCPShelf directory](/mcp-servers/).
+
+## When Skills alone is the right call
+
+Not every workflow needs MCP. If the task is self-contained — Claude already has everything it needs in context — a Skill is the complete solution.
+
+**Good fits for Skills-only:**
+
+- Brand voice and tone guidelines applied to content Claude is already drafting
+- Code review standards applied to a diff the user pasted directly
+- Output formatting rules for data Claude already has
+- Document generation from structured input the user provided
+- SOPs for tasks Claude can perform with its built-in capabilities
+
+The advantage: no server to run, no credentials to manage, no external dependency, no latency from network calls. Skills are the lightest path to consistent, repeatable Claude behavior.
+
+## When MCP alone is the right call
+
+If the task is straightforward connectivity — fetch data, write data, call an API — and Claude's default behavior for the output is acceptable, MCP without a Skill is the right call. Adding a Skill to a simple fetch operation is overhead that doesn't pay off.
+
+| Use case | MCP alone is fine when... |
+|----------|--------------------------|
+| Read a Notion page | You just need the content; no specific format required |
+| Query a database | The raw query result is what you need |
+| Push a GitHub commit | The operation is the output; no formatting layer needed |
+| Check a Slack channel | You're reading messages, not producing a structured report |
+
+The test: if you'd accept Claude's default handling of the data, you don't need a Skill. If you need it handled a specific way every time, you do.
+
+## Maintenance reality check
+
+"Use both" comes with two maintenance surfaces. This is what most comparison posts skip.
+
+**Skills require procedure maintenance.** If your workflow changes — new output format, updated severity taxonomy, different step sequence — the Skill needs updating. Skills that encode frequently-changing procedures (anything tied to a product roadmap, org structure, or external standard) accumulate drift. The mitigation: write Skills for stable procedures first, and build in a review cadence for the ones that change.
+
+**MCP servers require infrastructure maintenance.** Auth token rotation, uptime monitoring, credential management, version updates when the external API changes. This is the MCP cost that Skills avoid entirely.
+
+In a combined stack, you have both. The practical implication: if you're building a combined workflow, identify upfront which layer is more likely to change and design accordingly. If the procedure is stable but the data source might change, the MCP server is the maintenance surface. If the data source is stable but your team's standards evolve, the Skill is.
+
+## FAQ
+
+**Can a Skill call an MCP server directly?**
+Not in the protocol sense — a Skill can't initiate a connection. But a Skill's instructions can explicitly tell Claude to use a specific MCP tool as part of the workflow. Claude handles the actual MCP call; the Skill just encodes when and how.
+
+**Do I need an MCP server to use Skills?**
+No. Skills work independently of MCP. If your workflow doesn't require external data or system access, a Skill alone is sufficient.
+
+**What happens if my MCP server goes down — does the Skill break?**
+The Skill itself doesn't break, but any step that requires the MCP tool will fail. Well-written Skills for combined workflows should include fallback instructions: what Claude should do if an MCP tool is unavailable (return an error, use cached data, prompt the user).
+
+**Can I use Skills and MCP together in claude.ai (not just Claude Code)?**
+Yes. Both are supported in claude.ai. Skills are enabled in Settings > Capabilities; MCP connectors are configured separately. The composition patterns work across surfaces.
+
+**Which should I build first — the Skill or the MCP server?**
+Build the MCP server first if the workflow can't function without the external data. Build the Skill first if the workflow can be tested with manually-provided data and you want to validate the procedure before wiring up the connection. In practice: build the MCP server to confirm the data access works, then build the Skill to encode how to use it.
+
+**Is it harder to debug a combined Skills + MCP workflow?**
+Yes, modestly. The failure modes are additive: a Skill can fail to trigger, trigger on the wrong input, or apply the wrong logic. An MCP server can fail to connect, return unexpected data, or hit rate limits. In combined workflows, isolate which layer failed first. Claude's reasoning trace usually makes the failure point clear.
+
+---
+
+*Looking for MCP servers to pair with your Skills? Browse the [MyMCPShelf directory](/mcp-servers/) — 600+ verified servers across 15 categories. Building something worth listing? [Submit it here](/submit).*

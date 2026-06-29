@@ -1,0 +1,231 @@
+---
+/**
+ * /playground — Standalone MCP Playground page
+ *
+ * Visitors can paste any server ID or remote URL to test in the browser.
+ * Mirrors mcp.so's dedicated playground page but with our safety badges.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PlaygroundPanel from '../components/PlaygroundPanel';
+---
+
+<BaseLayout title="MCP Playground — Try Servers Live | MyMCPShelf" description="Try MCP servers live in the browser with security context. No installation needed.">
+  <div class="playground-page">
+    <div class="playground-hero">
+      <h1>MCP Playground</h1>
+      <p>Try any MCP server live in the browser — with the security context mcp.so doesn't show you.</p>
+    </div>
+
+    <div class="playground-features">
+      <div class="feature-card">
+        <span class="feature-icon">🔬</span>
+        <h3>Try Before You Install</h3>
+        <p>Test tools, see outputs, and explore server capabilities without touching your local config.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">🛡️</span>
+        <h3>Safety Context</h3>
+        <p>Every tool execution shows audit score, dependency health, and green hosting status — right next to the output.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">💻</span>
+        <h3>Stdio + Remote</h3>
+        <p>Unlike mcp.so, we sandbox stdio servers too via Cloudflare Durable Objects. Remote servers connect directly.</p>
+      </div>
+    </div>
+
+    <div class="playground-search">
+      <label for="playground-server-input">Enter a server ID to start:</label>
+      <div class="search-row">
+        <input type="text" id="playground-server-input" placeholder="e.g. github-official-mcp-new, postgres-mcp, figma-context-mcp" />
+        <button id="playground-start-btn">▶ Start</button>
+      </div>
+      <div id="playground-mount"></div>
+    </div>
+
+    <div class="playground-popular">
+      <h2>Popular Servers to Try</h2>
+      <div class="popular-grid" id="popular-servers"></div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .playground-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    color: #e2e8f0;
+  }
+
+  .playground-hero h1 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+    background: linear-gradient(135deg, #818cf8, #c084fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .playground-hero p {
+    color: #94a3b8;
+    font-size: 1.1rem;
+    margin: 0;
+    max-width: 600px;
+  }
+
+  .playground-features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+
+  .feature-card {
+    background: rgba(255,255,255,0.04);
+    border-radius: 12px;
+    padding: 1.25rem;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .feature-icon {
+    font-size: 1.5rem;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .feature-card h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 0.4rem 0;
+    color: #f1f5f9;
+  }
+
+  .feature-card p {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .playground-search {
+    margin: 2rem 0;
+  }
+
+  .playground-search label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #c7d2fe;
+    font-weight: 500;
+  }
+
+  .search-row {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .search-row input {
+    flex: 1;
+    padding: 0.65rem 1rem;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.05);
+    color: white;
+    font-size: 0.95rem;
+  }
+
+  .search-row input::placeholder {
+    color: rgba(255,255,255,0.4);
+  }
+
+  .search-row button {
+    padding: 0.65rem 1.5rem;
+    border-radius: 10px;
+    border: none;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+
+  #playground-mount {
+    margin-top: 1.5rem;
+  }
+
+  .playground-popular h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 2rem 0 1rem 0;
+    color: #f1f5f9;
+  }
+
+  .popular-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .popular-item {
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.03);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .popular-item:hover {
+    background: rgba(99,102,241,0.1);
+    border-color: rgba(99,102,241,0.3);
+  }
+
+  .popular-item .name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #e2e8f0;
+  }
+
+  .popular-item .meta {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin-top: 0.2rem;
+  }
+
+  @media (max-width: 768px) {
+    .playground-features {
+      grid-template-columns: 1fr;
+    }
+    .search-row {
+      flex-direction: column;
+    }
+  }
+</style>
+
+<script>
+  const POPULAR = [
+    { id: 'github-official-mcp-new', name: 'GitHub MCP', stars: '20.6k' },
+    { id: 'microsoft-playwright-mcp', name: 'Playwright MCP', stars: '16.7k' },
+    { id: 'figma-context-mcp', name: 'Figma Context', stars: '9.8k' },
+    { id: 'notion-mcp-official', name: 'Notion MCP', stars: '2.9k' },
+    { id: 'upstash-context7', name: 'Context7', stars: '25.1k' },
+    { id: 'atlassian-mcp', name: 'Atlassian', stars: '2.8k' },
+    { id: 'serena-mcp', name: 'Serena MCP', stars: '8.3k' },
+    { id: 'slack-mcp', name: 'Slack MCP', stars: '567' },
+  ];
+
+  const grid = document.getElementById('popular-servers');
+  if (grid) {
+    POPULAR.forEach(s => {
+      const div = document.createElement('div');
+      div.className = 'popular-item';
+      div.innerHTML = `<div class="name">${s.name}</div><div class="meta">★ ${s.stars}</div>`;
+      div.addEventListener('click', () => {
+        const input = document.getElementById('playground-server-input') as HTMLInputElement;
+        if (input) input.value = s.id;
+        input?.focus();
+      });
+      grid.appendChild(div);
+    });
+  }
+</script>

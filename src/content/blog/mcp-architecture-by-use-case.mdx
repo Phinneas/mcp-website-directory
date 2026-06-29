@@ -14,15 +14,15 @@ This post gives you a reference architecture for each of three common agent type
 
 | Use case | Typical server count | Transport | Biggest risk |
 |---|---|---|---|
-| [Coding agent](#coding-agent) | 4–6 | stdio | Context window overload |
-| [Data analysis agent](#data-agent) | 3–5 | Streamable HTTP | Intermediate result token consumption |
-| [Customer support agent](#support-agent) | 4–7 | Streamable HTTP | Duplicate writes from LLM retries |
+| [Coding agent](#coding-agent-architecture) | 4–6 | stdio | Context window overload |
+| [Data analysis agent](#data-analysis-agent-architecture) | 3–5 | Streamable HTTP | Intermediate result token consumption |
+| [Customer support agent](#customer-support-agent-architecture) | 4–7 | Streamable HTTP | Duplicate writes from LLM retries |
 
 For the hosting and gateway decisions that apply across all three, see [MCP Architecture Decisions](/blog/mcp-architecture-decisions/).
 
 ---
 
-## Coding Agent Architecture {#coding-agent}
+## Coding Agent Architecture
 
 A coding agent needs to read and write files, execute commands, interact with version control, search documentation, and sometimes call external APIs. It is the most tool-dense of the three archetypes and the one where context window management is most likely to be the binding constraint.
 
@@ -70,7 +70,7 @@ Explore purpose-built servers for each domain in the MyMCPShelf [development](/c
 
 ---
 
-## Data Analysis Agent Architecture {#data-agent}
+## Data Analysis Agent Architecture
 
 A data analysis agent queries live systems, runs computation, and produces structured output. Unlike a coding agent, it operates primarily on data rather than code — and the data it handles is often sensitive, large, and live. This makes the architecture less about context window management and more about transport choice, scope control, and what happens to intermediate query results.
 
@@ -125,7 +125,7 @@ Find database MCP servers in the MyMCPShelf [databases](/category/databases/) ca
 
 ---
 
-## Customer Support Agent Architecture {#support-agent}
+## Customer Support Agent Architecture
 
 A customer support agent touches the most external systems of the three archetypes. It needs to look up customer data, read ticket history, search knowledge bases, create records, send notifications, and sometimes schedule follow-ups. It has the highest server count, the most complex authentication requirements, and the most dangerous failure mode: duplicate writes.
 

@@ -1,0 +1,514 @@
+---
+/**
+ * /topics/[slug] — Topic Stack Detail Page
+ *
+ * Shows the full stack: servers, security badges, env vars, benefits,
+ * and the one-command install that mcpservers.org can't offer.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getTopicStack } from '../../data/topicStacks';
+import { getSecurityAudit, getScoreTier } from '../../data/securityAudit';
+import SecurityBadge from '../../components/SecurityBadge';
+
+export const prerender = false;
+
+const { slug } = Astro.params;
+const stack = getTopicStack(slug || '');
+
+if (!stack) {
+  return Astro.redirect('/topics');
+}
+
+// Fetch server details from D1
+const db = (Astro.locals as any).runtime?.env?.DB as D1Database | undefined;
+
+interface ServerInfo {
+  id: string;
+  name: string;
+  description: string;
+  npm_package: string | null;
+  stars: number;
+  badge_tier: string;
+  install_count: number;
+  security_audit: any;
+  scan_data: any;
+}
+
+let servers: ServerInfo[] = [];
+
+if (db) {
+  try {
+    const placeholders = stack.serverIds.map(() => '?').join(', ');
+    const rows = await db
+      .prepare(
+        `SELECT id, name, description, npm_package, stars, badge_tier,
+                install_count, security_audit_json, scan_summary_json
+         FROM servers WHERE id IN (${placeholders})`
+      )
+      .bind(...stack.serverIds)
+      .all<any>();
+
+    for (const row of rows.results || []) {
+      let securityAudit = null;
+      if (row.security_audit_json) {
+        try { securityAudit = JSON.parse(row.security_audit_json); } catch {}
+      }
+      let scanData = null;
+      if (row.scan_summary_json) {
+        try { scanData = JSON.parse(row.scan_summary_json); } catch {}
+      }
+
+      servers.push({
+        id: row.id,
+        name: row.name,
+        description: (row.description || '').slice(0, 200),
+        npm_package: row.npm_package,
+        stars: row.stars || 0,
+        badge_tier: row.badge_tier || 'unverified',
+        install_count: row.install_count || 0,
+        security_audit: securityAudit,
+        scan_data: scanData,
+      });
+    }
+  } catch {}
+}
+
+// Fill in missing servers from static audit data
+for (const sid of stack.serverIds) {
+  if (!servers.find(s => s.id === sid)) {
+    const audit = getSecurityAudit(sid);
+    servers.push({
+      id: sid,
+      name: sid.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+      description: '',
+      npm_package: null,
+      stars: 0,
+      badge_tier: audit ? 'manually_reviewed' : 'unverified',
+      install_count: 0,
+      security_audit: audit,
+      scan_data: null,
+    });
+  }
+}
+
+// Re-order to match the stack's server order
+servers = stack.serverIds
+  .map(sid => servers.find(s => s.id === sid))
+  .filter(Boolean) as ServerInfo[];
+
+const DIFFICULTY: Record<string, { color: string; label: string }> = {
+  beginner: { color: '#22c55e', label: 'Beginner' },
+  intermediate: { color: '#eab308', label: 'Intermediate' },
+  advanced: { color: '#f97316', label: 'Advanced' },
+};
+
+const diff = DIFFICULTY[stack.difficulty] || DIFFICULTY.intermediate;
+
+// Count verified servers
+const verifiedCount = servers.filter(s => s.badge_tier !== 'unverified').length;
+const totalServers = servers.length;
+---
+
+<BaseLayout title={`${stack.name} — Verified MCP Stack | MyMCPShelf`} description={stack.description}>
+  <div class="topic-page">
+    <a href="/topics" class="back-link">← All Topics</a>
+
+    <div class="topic-header">
+      <span class="topic-icon">{stack.icon}</span>
+      <div>
+        <h1>{stack.name}</h1>
+        <p>{stack.description}</p>
+      </div>
+    </div>
+
+    <!-- Key differentiator banner -->
+    <div class="diff-banner">
+      <div class="diff-stat">
+        <span class="diff-value">{verifiedCount}/{totalServers}</span>
+        <span class="diff-label">Servers Verified</span>
+      </div>
+      <div class="diff-stat">
+        <span class="diff-value" style={`color:${diff.color}`}>{diff.label}</span>
+        <span class="diff-label">Difficulty</span>
+      </div>
+      <div class="diff-stat">
+        <span class="diff-value">~{stack.estimatedSetupMinutes} min</span>
+        <span class="diff-label">Setup Time</span>
+      </div>
+      <div class="diff-stat">
+        <span class="diff-value diff-install">One Command</span>
+        <span class="diff-label">Install Method</span>
+      </div>
+    </div>
+
+    <!-- mcpservers.org comparison -->
+    {stack.mcpserversOrgEquivalent && (
+      <div class="vs-banner">
+        <span class="vs-text">Better than <a href={`https://mcpservers.org/topics/${stack.mcpserversOrgEquivalent}`} target="_blank" rel="noopener">mcpservers.org/{stack.mcpserversOrgEquivalent}</a></span>
+        <span class="vs-why">We verify every server. They don't.</span>
+      </div>
+    )}
+
+    <!-- One-command install -->
+    <div class="install-section">
+      <h2>One-Command Install</h2>
+      <div class="install-box">
+        <code>npx mymcpshelf add-stack {stack.slug}</code>
+        <span class="install-note">Installs all {totalServers} servers, prompts for env vars, verifies security.</span>
+      </div>
+    </div>
+
+    <!-- Stack servers -->
+    <div class="servers-section">
+      <h2>Stack Servers ({totalServers})</h2>
+      <div class="server-list">
+        {servers.map((server, i) => {
+          const audit = server.security_audit;
+          const auditScore = audit?.auditScore ?? 0;
+          const auditTier = auditScore >= 80 ? 'Secure' : auditScore >= 50 ? 'Moderate' : auditScore > 0 ? 'At Risk' : '';
+          const badgeStyle = server.badge_tier === 'manually_reviewed'
+            ? 'color:#818cf8;background:rgba(129,140,248,0.1)'
+            : server.badge_tier === 'scanned'
+              ? 'color:#22c55e;background:rgba(34,197,94,0.1)'
+              : 'color:#94a3b8;background:rgba(148,163,184,0.1)';
+          return (
+            <div class="stack-server">
+              <div class="ss-number">{i + 1}</div>
+              <div class="ss-content">
+                <div class="ss-header">
+                  <a href={`/server/${server.id}`} class="ss-name">{server.name}</a>
+                  <span class="ss-badge" style={badgeStyle}>{server.badge_tier === 'manually_reviewed' ? '🛡️ Reviewed' : server.badge_tier === 'scanned' ? '🟢 Scanned' : '⚪ Unverified'}</span>
+                  {auditScore > 0 && <span class="ss-score">Score: {auditScore}/100</span>}
+                </div>
+                <p class="ss-desc">{server.description}</p>
+                <div class="ss-meta">
+                  {server.npm_package && <span class="ss-npm">npm: {server.npm_package}</span>}
+                  {server.stars > 0 && <span class="ss-stars">★ {server.stars >= 1000 ? `${(server.stars / 1000).toFixed(1)}k` : server.stars}</span>}
+                  {server.install_count > 0 && <span class="ss-installs">⬇ {server.install_count}</span>}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+
+    <!-- Benefits -->
+    <div class="benefits-section">
+      <h2>What You Get</h2>
+      <ul class="benefits-list">
+        {stack.benefits.map(b => <li>✓ {b}</li>)}
+      </ul>
+    </div>
+
+    <!-- Environment Variables -->
+    {Object.keys(stack.envVars).length > 0 && (
+      <div class="env-section">
+        <h2>Environment Variables</h2>
+        <div class="env-table">
+          {Object.entries(stack.envVars).map(([key, val]: [string, any]) => (
+            <div class="env-row">
+              <code class="env-key">{key}</code>
+              <span class="env-required" style={val.required ? 'color:#ef4444' : 'color:#64748b'}>{val.required ? 'Required' : 'Optional'}</span>
+              <span class="env-desc">{val.description}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <!-- Prerequisites -->
+    {stack.prerequisites.length > 0 && (
+      <div class="prereqs-section">
+        <h2>Prerequisites</h2>
+        <ul class="prereqs-list">
+          {stack.prerequisites.map(p => <li>{p}</li>)}
+        </ul>
+      </div>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  .topic-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    color: #e2e8f0;
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-bottom: 1rem;
+    color: #818cf8;
+    font-size: 0.85rem;
+    text-decoration: none;
+  }
+
+  .topic-header {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .topic-icon { font-size: 2.5rem; }
+
+  .topic-header h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0 0 0.35rem 0;
+    color: #f1f5f9;
+  }
+
+  .topic-header p {
+    color: #94a3b8;
+    font-size: 0.95rem;
+    margin: 0;
+  }
+
+  /* Diff banner */
+  .diff-banner {
+    display: flex;
+    gap: 2rem;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .diff-stat {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .diff-value {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #f1f5f9;
+  }
+
+  .diff-value.diff-install { color: #818cf8; font-size: 1rem; }
+
+  .diff-label {
+    font-size: 0.7rem;
+    color: #64748b;
+  }
+
+  /* VS banner */
+  .vs-banner {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    background: rgba(34,197,94,0.06);
+    border: 1px solid rgba(34,197,94,0.15);
+    margin-bottom: 1.5rem;
+  }
+
+  .vs-text {
+    font-size: 0.85rem;
+    color: #86efac;
+  }
+
+  .vs-text a {
+    color: #86efac;
+    text-decoration: underline;
+  }
+
+  .vs-why {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin-left: auto;
+  }
+
+  /* Install section */
+  .install-section {
+    margin-bottom: 2rem;
+  }
+
+  .install-section h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 0.75rem 0;
+  }
+
+  .install-box {
+    padding: 1rem 1.25rem;
+    border-radius: 10px;
+    background: rgba(129,140,248,0.08);
+    border: 1px solid rgba(129,140,248,0.2);
+  }
+
+  .install-box code {
+    display: block;
+    font-size: 1rem;
+    color: #a5b4fc;
+  }
+
+  .install-note {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    color: #94a3b8;
+  }
+
+  /* Servers */
+  .servers-section { margin-bottom: 2rem; }
+  .servers-section h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 1rem 0;
+  }
+
+  .stack-server {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .ss-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #475569;
+    min-width: 30px;
+    text-align: center;
+  }
+
+  .ss-content { flex: 1; }
+
+  .ss-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .ss-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #f1f5f9;
+    text-decoration: none;
+  }
+
+  .ss-name:hover { color: #818cf8; }
+
+  .ss-badge {
+    padding: 0.1rem 0.4rem;
+    border-radius: 9999px;
+    font-size: 0.65rem;
+    font-weight: 600;
+  }
+
+  .ss-score {
+    font-size: 0.7rem;
+    color: #64748b;
+  }
+
+  .ss-desc {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin: 0.35rem 0;
+    line-height: 1.4;
+  }
+
+  .ss-meta {
+    display: flex;
+    gap: 0.75rem;
+    font-size: 0.7rem;
+    color: #64748b;
+  }
+
+  .ss-npm { color: #94a3b8; }
+
+  /* Benefits */
+  .benefits-section { margin-bottom: 2rem; }
+  .benefits-section h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 0.75rem 0;
+  }
+
+  .benefits-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .benefits-list li {
+    padding: 0.35rem 0;
+    font-size: 0.85rem;
+    color: #cbd5e1;
+  }
+
+  /* Env vars */
+  .env-section { margin-bottom: 2rem; }
+  .env-section h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 0.75rem 0;
+  }
+
+  .env-table {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .env-row {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .env-key {
+    font-size: 0.8rem;
+    color: #a5b4fc;
+    min-width: 180px;
+  }
+
+  .env-required {
+    font-size: 0.65rem;
+    font-weight: 600;
+    min-width: 65px;
+  }
+
+  .env-desc {
+    font-size: 0.8rem;
+    color: #94a3b8;
+  }
+
+  /* Prerequisites */
+  .prereqs-section { margin-bottom: 2rem; }
+  .prereqs-section h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 0.75rem 0;
+  }
+
+  .prereqs-list {
+    padding-left: 1.25rem;
+  }
+
+  .prereqs-list li {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    padding: 0.2rem 0;
+  }
+
+  @media (max-width: 768px) {
+    .diff-banner { gap: 1rem; }
+    .vs-why { display: none; }
+    .env-row { flex-direction: column; gap: 0.25rem; align-items: flex-start; }
+    .env-key { min-width: auto; }
+  }
+</style>

@@ -607,6 +607,18 @@ if (db) {
     <!-- Trust Section -->
     <TrustSection />
 
+    <!-- Leaderboard CTA -->
+    <section class="leaderboard-cta">
+      <a href="/leaderboard" class="leaderboard-link">
+        <span class="leaderboard-icon">🏆</span>
+        <div>
+          <span class="leaderboard-title">MCP Server Leaderboard</span>
+          <span class="leaderboard-desc">Real install counts from verified, security-checked servers</span>
+        </div>
+        <span class="leaderboard-arrow">→</span>
+      </a>
+    </section>
+
     <!-- Featured Articles -->
     <FeaturedArticles />
 
@@ -623,3 +635,47 @@ if (db) {
     <AskAI />
 
 </BaseLayout>
+
+<style>
+  .leaderboard-cta {
+    max-width: 1200px;
+    margin: 1.5rem auto;
+    padding: 0 1.5rem;
+  }
+  .leaderboard-link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    background: rgba(129,140,248,0.06);
+    border: 1px solid rgba(129,140,248,0.15);
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .leaderboard-link:hover {
+    background: rgba(129,140,248,0.12);
+    border-color: rgba(129,140,248,0.3);
+  }
+  .leaderboard-icon {
+    font-size: 1.75rem;
+  }
+  .leaderboard-title {
+    display: block;
+    font-weight: 600;
+    color: #e2e8f0;
+    font-size: 1rem;
+  }
+  .leaderboard-desc {
+    display: block;
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-top: 0.15rem;
+  }
+  .leaderboard-arrow {
+    margin-left: auto;
+    color: #818cf8;
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+</style>

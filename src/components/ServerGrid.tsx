@@ -5,6 +5,7 @@ import { getScoreTier } from '../data/securityAudit.ts';
 import { HealthBadge } from './HealthBadge';
 import { GreenBadge } from './GreenBadge';
 import { CommunityBadge } from './CommunityBadge';
+import SecurityBadge from './SecurityBadge';
 import { CompositeTrustBadge } from './CompositeTrustBadge';
 
 interface Props {
@@ -52,6 +53,13 @@ function formatStars(stars?: number): string {
   if (!stars) return '';
   if (stars >= 1000) return `★ ${(stars / 1000).toFixed(1)}k`;
   return `★ ${stars}`;
+}
+
+function formatInstalls(n?: number): string {
+  if (!n || n === 0) return '';
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
+  return String(n);
 }
 
 function getReliabilityColor(tier: string): string {
@@ -218,6 +226,15 @@ function ServerCard({ server }: { server: MCPServer }) {
         <div style={{ marginBottom: '0.5rem' }}>
           <CommunityBadge serverId={server.id} />
         </div>
+
+        {/* Security Scan Badge (Task 13) */}
+        <div style={{ marginBottom: '0.5rem' }}>
+          <SecurityBadge
+            serverId={server.id}
+            scan={(server as any).scanData || null}
+            compact
+          />
+        </div>
         
         <div className="server-meta">
           {server.fields.language && <span className="meta-tag">{server.fields.language}</span>}
@@ -227,6 +244,13 @@ function ServerCard({ server }: { server: MCPServer }) {
             </span>
           )}
           {server.fields.stars ? <span className="meta-tag">{formatStars(server.fields.stars)}</span> : null}
+
+          {/* Real install count from CLI */}
+          {server.installCount && server.installCount > 0 ? (
+            <span className="meta-tag install-tag" title={`${server.installCount} installs via CLI`}>
+              ⬇ {formatInstalls(server.installCount)}
+            </span>
+          ) : null}
           
           {/* Enterprise Features Badge */}
           {server.enterprise_features && server.enterprise_features.includes('enterprise_ready') && (

@@ -1,0 +1,180 @@
+---
+title: "Anthropic Agent Skills: What They Are and How They Work"
+description: "Anthropic Agent Skills are reusable, folder-based capability packages for Claude. Learn how they work, what Anthropic ships out of the box, and how to build your own."
+date: "2026-06-12"
+slug: "anthropic-agent-skills"
+draft: false
+author: "Chester Beard"
+category: "Agent Skills"
+tags: ["agent-skills", "claude", "anthropic", "ai-agents"]
+---
+
+Anthropic Agent Skills are reusable, folder-based capability packages for Claude. Each skill is a directory containing a `SKILL.md` file with YAML metadata and step-by-step instructions. When a task matches a skill's description, Claude loads it on demand — not upfront — which keeps context lean across sessions. Anthropic launched Skills in October 2025, released the specification as an open standard in December 2025, and now ships pre-built skills for document generation (Excel, Word, PowerPoint, PDF) alongside a partner directory and enterprise admin controls.
+
+## The problem Skills solve
+
+Every agent that handles repeated workflows faces the same tax: you re-explain the same procedure in every session. Paste the brand guidelines again. Repeat the output format. Remind Claude how your team names branches. Skills eliminate that overhead by packaging procedural knowledge once, versioning it like code, and making it discoverable across sessions, teammates, and platforms.
+
+The mechanism that makes this practical is called progressive disclosure. At startup, Claude loads only the `name` and `description` from each installed skill's YAML frontmatter — roughly 100 tokens per skill regardless of how complex the skill itself is. The full instructions only load when a user's request triggers a match. Reference files and scripts load only if that specific task path requires them. An agent can carry dozens of skills with minimal context cost.
+
+## How Agent Skills work: the three-level architecture
+
+### Level 1 — Discovery (metadata only)
+
+At startup, Claude scans every installed skill and loads two fields from each: `name` and `description`. This is the signal Claude uses to decide whether a skill is relevant to the current request. The cost is small enough that you can install many skills without meaningful context impact.
+
+```yaml
+---
+name: weekly-bug-report
+description: Generates a formatted weekly bug report from Jira ticket data. Use when asked to produce the weekly bug report or summarize open issues by severity.
+---
+```
+
+### Level 2 — Activation (full SKILL.md)
+
+When a request matches a skill's description, Claude reads the full `SKILL.md` body into context. This is where the actual instructions live: the step sequence, output format, examples, edge case handling. The body can be detailed — it only loads when needed.
+
+### Level 3 — Execution (bundled files and scripts)
+
+For complex skills, `SKILL.md` can reference additional files bundled in the skill directory: a schema file, a templates document, a Python script. Claude reads or executes them as needed. Scripts produce output that enters context; the script code itself does not. This means a skill can include sophisticated logic without bloating the context window during normal use.
+
+A complete skill directory looks like this:
+
+```
+my-skill/
+├── SKILL.md          # Required: metadata + instructions
+├── scripts/          # Optional: executable code
+├── references/       # Optional: documentation, schemas
+└── assets/           # Optional: templates, examples
+```
+
+## Anthropic's implementation — what's specific to Claude
+
+The Agent Skills open standard defines the format. Anthropic's Claude implementation adds a specific set of capabilities on top of that standard.
+
+### Pre-built skills
+
+Anthropic ships four production-ready skills for document generation:
+
+| Skill | Output |
+|-------|--------|
+| XLSX  | Excel spreadsheets with data, formulas, and charts |
+| PPTX  | PowerPoint presentations with slides and layouts |
+| DOCX  | Word documents with formatting |
+| PDF   | PDF reports and documents |
+
+These produce actual downloadable files via the Files API — not text descriptions of what the document would contain. They are available on claude.ai, the Claude API, Claude Platform on AWS, and Microsoft Foundry.
+
+### The /v1/skills endpoint
+
+API users access skills via the `/v1/skills` endpoint. Skills can be attached to API requests to extend Claude's capabilities for that session. See the [official Claude API docs](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview) for current parameter details and quickstart examples.
+
+### Partner skills directory
+
+Anthropic's partner skills include integrations from Atlassian, Canva, Cloudflare, Figma, Notion, Ramp, Sentry, and Stripe. These are designed to work alongside their respective MCP connectors: the MCP connector gives Claude access to the external system, and the partner skill encodes the workflow procedure for using that system correctly in your context.
+
+### Admin controls for Team and Enterprise
+
+Team and Enterprise administrators can set which skills are provisioned for their users and which are enabled by default through central admin settings. This is the enterprise governance layer that makes Skills viable for large organizations — IT can control the skill surface area without blocking individual productivity.
+
+## Agent Skills vs. prompts vs. MCP
+
+These three tools are often conflated. The short version:
+
+| | Prompts | Skills | MCP |
+|---|---------|--------|-----|
+| **What it is** | Session-level instructions | Reusable procedural knowledge | External connectivity protocol |
+| **When it loads** | Every session, manually | On demand, automatically | On demand, via tool call |
+| **Scope** | One conversation | Persistent across sessions | Persistent, cross-platform |
+| **Setup** | None | Write a SKILL.md file | Run a server process |
+| **External access** | No | No (unless bundled script) | Yes |
+
+The canonical framing from Anthropic's own documentation: MCP connects Claude to external services and data sources. Skills provide procedural knowledge — instructions for how to complete specific tasks or workflows. You can use both together: MCP gives Claude access to tools, Skills teach Claude how to use those tools effectively for your specific workflow.
+
+For the full conceptual breakdown, see [MCP vs Agent Skills](/blog/mcp-vs-agent-skills) and [Claude Skills vs MCP](/blog/claude-skills-vs-mcp).
+
+## Where you can use Agent Skills
+
+Agent Skills are supported across the Claude platform:
+
+- **claude.ai** — enable in Settings > Capabilities
+- **Claude Code** — install to the plugin directory
+- **Claude API** — via the `/v1/skills` endpoint
+- **Claude Agent SDK** — native support
+- **Claude Platform on AWS** — available for pre-built skills
+- **Microsoft Foundry** — available for pre-built skills
+
+## Building custom skills
+
+### Minimum viable structure
+
+The only required file is `SKILL.md` with `name` and `description` in the YAML frontmatter. Everything else is optional.
+
+```markdown
+---
+name: code-review-standards
+description: Applies team code review standards when reviewing pull requests or changed files. Use when asked to review code, check a PR, or audit a diff.
+---
+
+## Code Review Standards
+
+When reviewing code, check for the following in order:
+
+1. Naming conventions: variables in camelCase, constants in UPPER_SNAKE_CASE
+2. Error handling: all async functions must have try/catch
+3. Test coverage: every new function needs at least one unit test
+4. Security: flag any hardcoded credentials or unvalidated user input
+
+Output a markdown table with columns: File | Issue | Severity | Suggested Fix
+```
+
+That's a complete, functional skill. Claude will trigger it when asked to review code, load the full instructions, and produce output in your specified format — every time, consistently.
+
+### Best practices
+
+These hold up across practitioner experience and Anthropic's own guidance:
+
+- **Keep frontmatter short and specific.** The `description` field is what Claude uses for discovery. Vague descriptions cause missed triggers or false positives. Write it like a precise routing rule.
+- **Delegate brittle steps to scripts.** If a step requires precise computation, file parsing, or deterministic output, put it in a bundled script. Claude runs the script and gets only the output — less surface area for hallucination.
+- **Keep large artifacts as files, not in context.** If your skill produces a 500-row spreadsheet, output it as a downloadable file. Keeping it in context wastes tokens and degrades performance.
+- **Prefer focused, composable skills over monoliths.** A `code-review-standards` skill and a `pr-description-format` skill are more useful than one giant `engineering-workflow` skill. They can be combined; they can be updated independently.
+- **Pin dependencies and audit before installing.** Skills from unknown sources can direct Claude to execute code or exfiltrate data. Only install skills you created or that come from Anthropic's published directory.
+
+### Security considerations
+
+Skills provide Claude with code execution capability. A malicious skill can direct Claude to invoke tools, execute code, or access data in ways that don't match the skill's stated purpose. The attack surface is real: skills from unverified sources could lead to data exfiltration or unauthorized system access depending on what Claude has access to in that environment.
+
+The rule is simple: only install skills from sources you trust — your own creation, your organization's shared repository, or Anthropic's published skills directory. If you must evaluate a skill from an unfamiliar source, read every file in the skill directory before installing, paying particular attention to bundled scripts and any instructions to connect to external network resources.
+
+## The open standard context
+
+In December 2025, Anthropic released the Agent Skills specification as an open standard at [agentskills.io](https://agentskills.io). This mirrors the trajectory of MCP, which Anthropic donated to the Linux Foundation's Agentic AI Foundation (AAIF) in the same month. Other platforms have adopted structurally identical architectures. The practical implication: skills you build today are portable to any skills-compatible agent, not just Claude.
+
+The `anthropics/skills` GitHub repository is the reference implementation and open-source skills collection. It accumulated over 62,000 stars within four months of the open standard launch — a signal of both developer interest and the format's simplicity.
+
+## FAQ
+
+**What are Anthropic Agent Skills?**
+Agent Skills are reusable capability packages for Claude, structured as folders containing a `SKILL.md` file with YAML metadata and workflow instructions. Claude loads them on demand when a task matches the skill's description.
+
+**How are agent skills different from prompts?**
+Prompts are session-level instructions you provide manually each conversation. Skills are persistent, automatically triggered, and reusable across sessions, teammates, and platforms. You write a skill once; Claude applies it whenever it's relevant.
+
+**Are agent skills safe to use?**
+Pre-built skills from Anthropic and verified partner skills are safe. Skills from unknown sources carry risk because they can execute code and access files in Claude's environment. Only install skills from sources you trust.
+
+**Can I use agent skills without coding?**
+Yes. `SKILL.md` is a Markdown file with a small YAML header — no programming required. Anthropic's `skill-creator` skill can generate the file structure for you based on a description of your workflow. Bundled scripts are optional.
+
+**Do agent skills work in Claude Code?**
+Yes. Claude Code is one of the primary surfaces for skills. Install a skill to the plugin directory and Claude Code will load it automatically at startup.
+
+**What's the difference between agent skills and MCP?**
+MCP connects Claude to external systems (databases, APIs, SaaS tools). Skills provide procedural knowledge — the instructions for how to complete specific workflows, including how to use MCP tools effectively. They're designed to be used together. See [Claude Skills vs MCP](/blog/claude-skills-vs-mcp) for the full breakdown.
+
+**Are agent skills free?**
+The Agent Skills format and open-source skills in the `anthropics/skills` repository are free. Pre-built skills for document generation (XLSX, PPTX, DOCX, PDF) are available on paid Claude plans. Check current [Claude plan details](https://claude.ai) for availability.
+
+---
+
+*Browse the [Claude Skills directory](/claude-skills/) on MyMCPShelf. Know a skill worth listing? [Submit it here](/submit).*

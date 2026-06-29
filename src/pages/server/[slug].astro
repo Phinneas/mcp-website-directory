@@ -23,13 +23,15 @@ import { getRelatedServers, getCategoryDisplayName } from '../../utils/serverDat
 import { slugify } from '../../utils/slugify.js';
 import { staticServers as fallbackServers } from '../../data/staticServers.js';
 import { getSecurityAudit, getScoreTier } from '../../data/securityAudit';
-import { CompositeTrustBadge } from '../../components/CompositeTrustBadge';
 import CustomMcpCta from '../../components/CustomMcpCta.astro';
 import { GreenBadge } from '../../components/GreenBadge';
+import { CompositeTrustBadge } from '../../components/CompositeTrustBadge';
 import ReliabilityGauge from '../../components/ReliabilityGauge.astro';
 import ReviewSection from '../../components/ReviewSection';
 import BookmarkToggle from '../../components/BookmarkToggle';
 import { CommunityBadge, AuthStatus } from '../../components/CommunityBadge';
+import PlaygroundPanel from '../../components/PlaygroundPanel';
+import SecurityBadge from '../../components/SecurityBadge';
 
 // servers.json is bundled by Vite at build time — safe to import statically
 import serversData from '../../data/servers.json';
@@ -109,6 +111,33 @@ const auditTier = auditData ? getScoreTier(auditData.auditScore) : null;
 const greenScore = (server as any).greenScore || null;
 const reliability = (server as any).reliability || null;
 const compositeTrust = (server as any).compositeTrust || null;
+
+// Security scan data from D1 (Task 13 — automated scanning)
+let scanData: any = null;
+try {
+  const db = (Astro.locals as any).runtime?.env?.DB as D1Database | undefined;
+  if (db) {
+    const row = await db
+      .prepare('SELECT badge_tier, last_scan_at, scan_summary_json FROM servers WHERE id = ?')
+      .bind(server.id)
+      .first<{ badge_tier: string; last_scan_at: string | null; scan_summary_json: string | null }>();
+    if (row) {
+      let summary = null;
+      if (row.scan_summary_json) {
+        try { summary = JSON.parse(row.scan_summary_json); } catch {}
+      }
+      scanData = {
+        overall_score: summary?.overall_score ?? null,
+        badge_tier: row.badge_tier || 'unverified',
+        last_scan_at: row.last_scan_at,
+        static_analysis: summary?.static_analysis ?? null,
+        socket_dev: summary?.socket_dev ?? null,
+        mcp_scan: summary?.mcp_scan ?? null,
+        cve_watchlist: summary?.cve_watchlist ?? null,
+      };
+    }
+  }
+} catch {}
 
 const RELIABILITY_TIER_COLORS: Record<string, string> = {
   excellent: '#22c55e',
@@ -264,6 +293,16 @@ const structuredData = {
             <CompositeTrustBadge compositeTrust={compositeTrust} />
           </section>
         )}
+
+        <!-- Playground -->
+        <section class="playground-section">
+          <PlaygroundPanel client:load serverId={server.id} serverName={serverName} />
+        </section>
+
+        <!-- Security Scan Badge (Task 13) -->
+        <section class="security-scan-section">
+          <SecurityBadge client:load serverId={server.id} scan={scanData} />
+        </section>
 
         <!-- Installation -->
         <ServerInstallation server={server} />
@@ -727,6 +766,14 @@ const structuredData = {
     padding: 1.5rem;
     margin-bottom: 1.5rem;
     border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .playground-section {
+    margin-bottom: 1.5rem;
+  }
+
+  .security-scan-section {
+    margin-bottom: 1.5rem;
   }
 
   .security-audit-section h2 {

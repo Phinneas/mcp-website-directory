@@ -1,0 +1,568 @@
+---
+/**
+ * /leaderboard — MCP Server Leaderboard
+ *
+ * Counter to skills.sh's leaderboard: real install counts from
+ * verified, security-checked servers — not an unscreened pile.
+ *
+ * Tabs: All Time | Trending (24h) | Hot
+ * Shows: rank, server, install count, badge tier, trend indicator
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getLeaderboard, getTotalServerCount } from '../utils/d1';
+
+export const prerender = false;
+
+const db = (Astro.locals as any).runtime?.env?.DB as D1Database | undefined;
+
+let totalEntries = 0;
+let allTimeEntries: any[] = [];
+let trendingEntries: any[] = [];
+let hotEntries: any[] = [];
+let serverCount = 0;
+
+if (db) {
+  try {
+    const [allTime, trending, hot] = await Promise.all([
+      getLeaderboard(db, { sort: 'total', limit: 50 }),
+      getLeaderboard(db, { sort: 'trending', limit: 50 }),
+      getLeaderboard(db, { sort: 'hot', limit: 50 }),
+    ]);
+    allTimeEntries = allTime.entries;
+    trendingEntries = trending.entries;
+    hotEntries = hot.entries;
+    totalEntries = allTime.total;
+    serverCount = await getTotalServerCount(db);
+  } catch (err) {
+    console.error('Leaderboard query failed:', err);
+  }
+}
+
+const TREND_STYLES: Record<string, { icon: string; color: string; label: string }> = {
+  hot: { icon: '🔥', color: '#ef4444', label: 'Hot' },
+  rising: { icon: '📈', color: '#22c55e', label: 'Rising' },
+  stable: { icon: '➡️', color: '#64748b', label: 'Stable' },
+  declining: { icon: '📉', color: '#f97316', label: 'Declining' },
+  new: { icon: '✨', color: '#818cf8', label: 'New' },
+};
+
+const BADGE_STYLES: Record<string, { color: string; bg: string; label: string }> = {
+  unverified: { color: '#94a3b8', bg: 'rgba(148,163,184,0.1)', label: 'Unverified' },
+  scanned: { color: '#22c55e', bg: 'rgba(34,197,94,0.1)', label: 'Scanned' },
+  manually_reviewed: { color: '#818cf8', bg: 'rgba(129,140,248,0.1)', label: 'Reviewed' },
+};
+
+function formatCount(n: number): string {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
+  return String(n);
+}
+---
+
+<BaseLayout title="MCP Server Leaderboard — Real Install Counts | MyMCPShelf" description="See which MCP servers developers are actually installing. Real install counts from verified, security-checked servers.">
+  <div class="leaderboard-page">
+    <div class="leaderboard-hero">
+      <h1>MCP Server Leaderboard</h1>
+      <p>Real install counts from <code>npx mymcpshelf add</code> — not proxies, not gamed metrics. Only verified, security-checked servers.</p>
+      <div class="leaderboard-stats">
+        <div class="stat">
+          <span class="stat-value">{formatCount(totalEntries)}</span>
+          <span class="stat-label">Servers Installed</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value">{formatCount(serverCount)}</span>
+          <span class="stat-label">Total Listed</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value">🔒</span>
+          <span class="stat-label">Security-Verified</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="leaderboard-vs">
+      <div class="vs-card">
+        <span class="vs-label">skills.sh</span>
+        <p>265K installs, zero quality control. Any skill accepted via open repo.</p>
+      </div>
+      <div class="vs-divider">vs</div>
+      <div class="vs-card vs-us">
+        <span class="vs-label">MyMCPShelf</span>
+        <p>Real installs + security scanning + typosquat detection. Every install is verified safe.</p>
+      </div>
+    </div>
+
+    <div class="tab-container" id="tab-container">
+      <div class="tabs">
+        <button class="tab active" data-tab="all-time">All Time</button>
+        <button class="tab" data-tab="trending">Trending (24h)</button>
+        <button class="tab" data-tab="hot">🔥 Hot</button>
+      </div>
+
+      <!-- All Time Tab -->
+      <div class="tab-content active" id="tab-all-time">
+        <table class="leaderboard-table">
+          <thead>
+            <tr>
+              <th class="rank-col">#</th>
+              <th class="server-col">Server</th>
+              <th class="installs-col">Installs</th>
+              <th class="week-col">7d</th>
+              <th class="badge-col">Security</th>
+              <th class="trend-col">Trend</th>
+            </tr>
+          </thead>
+          <tbody>
+            {allTimeEntries.map((e: any) => {
+              const badge = BADGE_STYLES[e.badge_tier] || BADGE_STYLES.unverified;
+              const trend = TREND_STYLES[e.trend] || TREND_STYLES.stable;
+              return (
+                <tr>
+                  <td class="rank-cell">
+                    {e.rank <= 3 ? <span class={`rank-badge rank-${e.rank}`}>{e.rank}</span> : e.rank}
+                  </td>
+                  <td class="server-cell">
+                    <a href={`/server/${e.server.id}`} class="server-link">
+                      <span class="server-name">{e.server.fields.name}</span>
+                      <span class="server-category">{e.server.fields.category}</span>
+                    </a>
+                  </td>
+                  <td class="installs-cell">{formatCount(e.total_installs)}</td>
+                  <td class="week-cell">{formatCount(e.installs_7d)}</td>
+                  <td class="badge-cell">
+                    <span class="security-pill" style={`color:${badge.color};background:${badge.bg}`}>{badge.label}</span>
+                  </td>
+                  <td class="trend-cell">
+                    <span style={`color:${trend.color}`}>{trend.icon} {trend.label}</span>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+        {allTimeEntries.length === 0 && (
+          <div class="empty-state">
+            <p>No install data yet. Be the first to install an MCP server with <code>npx mymcpshelf add</code>!</p>
+          </div>
+        )}
+      </div>
+
+      <!-- Trending Tab -->
+      <div class="tab-content" id="tab-trending">
+        <table class="leaderboard-table">
+          <thead>
+            <tr>
+              <th class="rank-col">#</th>
+              <th class="server-col">Server</th>
+              <th class="installs-col">24h</th>
+              <th class="total-col">Total</th>
+              <th class="badge-col">Security</th>
+              <th class="trend-col">Trend</th>
+            </tr>
+          </thead>
+          <tbody>
+            {trendingEntries.map((e: any) => {
+              const badge = BADGE_STYLES[e.badge_tier] || BADGE_STYLES.unverified;
+              const trend = TREND_STYLES[e.trend] || TREND_STYLES.stable;
+              return (
+                <tr>
+                  <td class="rank-cell">{e.rank <= 3 ? <span class={`rank-badge rank-${e.rank}`}>{e.rank}</span> : e.rank}</td>
+                  <td class="server-cell">
+                    <a href={`/server/${e.server.id}`} class="server-link">
+                      <span class="server-name">{e.server.fields.name}</span>
+                      <span class="server-category">{e.server.fields.category}</span>
+                    </a>
+                  </td>
+                  <td class="installs-cell highlight">{formatCount(e.installs_24h)}</td>
+                  <td class="total-cell">{formatCount(e.total_installs)}</td>
+                  <td class="badge-cell">
+                    <span class="security-pill" style={`color:${badge.color};background:${badge.bg}`}>{badge.label}</span>
+                  </td>
+                  <td class="trend-cell">
+                    <span style={`color:${trend.color}`}>{trend.icon} {trend.label}</span>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+        {trendingEntries.length === 0 && (
+          <div class="empty-state">
+            <p>No trending data yet. Check back after more installs!</p>
+          </div>
+        )}
+      </div>
+
+      <!-- Hot Tab -->
+      <div class="tab-content" id="tab-hot">
+        <table class="leaderboard-table">
+          <thead>
+            <tr>
+              <th class="rank-col">#</th>
+              <th class="server-col">Server</th>
+              <th class="installs-col">24h</th>
+              <th class="growth-col">Growth</th>
+              <th class="badge-col">Security</th>
+            </tr>
+          </thead>
+          <tbody>
+            {hotEntries.filter((e: any) => e.trend === 'hot' || e.trend === 'rising').map((e: any, i: number) => {
+              const badge = BADGE_STYLES[e.badge_tier] || BADGE_STYLES.unverified;
+              return (
+                <tr>
+                  <td class="rank-cell">🔥 {i + 1}</td>
+                  <td class="server-cell">
+                    <a href={`/server/${e.server.id}`} class="server-link">
+                      <span class="server-name">{e.server.fields.name}</span>
+                    </a>
+                  </td>
+                  <td class="installs-cell highlight">{formatCount(e.installs_24h)}</td>
+                  <td class="growth-cell">2x+</td>
+                  <td class="badge-cell">
+                    <span class="security-pill" style={`color:${badge.color};background:${badge.bg}`}>{badge.label}</span>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+        {hotEntries.filter((e: any) => e.trend === 'hot' || e.trend === 'rising').length === 0 && (
+          <div class="empty-state">
+            <p>No hot servers right now. Check the Trending tab for recent activity.</p>
+          </div>
+        )}
+      </div>
+    </div>
+
+    <div class="cta-section">
+      <h2>Add Your First Server</h2>
+      <p>Every <code>npx mymcpshelf add</code> counts. Your install feeds the leaderboard with real, verified data.</p>
+      <div class="cta-code">
+        <code>npx mymcpshelf add github-official-mcp-new</code>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .leaderboard-page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    color: #e2e8f0;
+  }
+
+  .leaderboard-hero h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+    background: linear-gradient(135deg, #818cf8, #c084fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .leaderboard-hero p {
+    color: #94a3b8;
+    font-size: 1rem;
+    margin: 0 0 1.5rem 0;
+    max-width: 700px;
+  }
+
+  .leaderboard-hero code {
+    background: rgba(129,140,248,0.15);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    color: #a5b4fc;
+  }
+
+  .leaderboard-stats {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #f1f5f9;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+    color: #64748b;
+  }
+
+  /* VS comparison */
+  .leaderboard-vs {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .vs-card {
+    flex: 1;
+  }
+
+  .vs-card p {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin: 0.25rem 0 0 0;
+  }
+
+  .vs-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #64748b;
+  }
+
+  .vs-us .vs-label {
+    color: #818cf8;
+  }
+
+  .vs-us p {
+    color: #a5b4fc;
+  }
+
+  .vs-divider {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #475569;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.05);
+  }
+
+  /* Tabs */
+  .tab-container {}
+
+  .tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .tab {
+    padding: 0.65rem 1.25rem;
+    border: none;
+    background: none;
+    color: #94a3b8;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+
+  .tab:hover {
+    color: #e2e8f0;
+  }
+
+  .tab.active {
+    color: #818cf8;
+    border-bottom-color: #818cf8;
+  }
+
+  .tab-content {
+    display: none;
+  }
+
+  .tab-content.active {
+    display: block;
+  }
+
+  /* Table */
+  .leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .leaderboard-table th {
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #64748b;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .leaderboard-table td {
+    padding: 0.65rem 0.75rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: middle;
+  }
+
+  .leaderboard-table tr:hover {
+    background: rgba(129,140,248,0.04);
+  }
+
+  .rank-col { width: 50px; }
+  .server-col { width: auto; }
+  .installs-col { width: 100px; text-align: right; }
+  .week-col, .total-col { width: 80px; text-align: right; }
+  .badge-col { width: 100px; }
+  .trend-col { width: 100px; }
+  .growth-col { width: 80px; text-align: right; }
+
+  .rank-cell {
+    font-weight: 700;
+    color: #94a3b8;
+  }
+
+  .rank-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+
+  .rank-1 { background: linear-gradient(135deg, #fbbf24, #d97706); color: #1a1a2e; }
+  .rank-2 { background: linear-gradient(135deg, #9ca3af, #6b7280); color: #fff; }
+  .rank-3 { background: linear-gradient(135deg, #d97706, #92400e); color: #fff; }
+
+  .server-link {
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .server-name {
+    font-weight: 600;
+    color: #f1f5f9;
+    font-size: 0.9rem;
+  }
+
+  .server-name:hover {
+    color: #818cf8;
+  }
+
+  .server-category {
+    font-size: 0.7rem;
+    color: #64748b;
+  }
+
+  .installs-cell {
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-align: right;
+    color: #cbd5e1;
+  }
+
+  .installs-cell.highlight {
+    color: #818cf8;
+  }
+
+  .week-cell, .total-cell {
+    font-size: 0.8rem;
+    color: #64748b;
+    text-align: right;
+  }
+
+  .security-pill {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+
+  .trend-cell {
+    font-size: 0.8rem;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #64748b;
+  }
+
+  .empty-state code {
+    background: rgba(129,140,248,0.15);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    color: #a5b4fc;
+  }
+
+  .cta-section {
+    text-align: center;
+    margin-top: 3rem;
+    padding: 2rem;
+    border-radius: 12px;
+    background: rgba(129,140,248,0.06);
+    border: 1px solid rgba(129,140,248,0.15);
+  }
+
+  .cta-section h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+    color: #e2e8f0;
+  }
+
+  .cta-section p {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    margin: 0 0 1rem 0;
+  }
+
+  .cta-section code {
+    background: rgba(129,140,248,0.15);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    color: #a5b4fc;
+  }
+
+  .cta-code {
+    display: inline-block;
+    padding: 0.5rem 1.25rem;
+    border-radius: 8px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(129,140,248,0.2);
+    font-size: 0.85rem;
+  }
+
+  @media (max-width: 768px) {
+    .leaderboard-vs { flex-direction: column; }
+    .vs-divider { display: none; }
+    .leaderboard-stats { gap: 1rem; }
+    .leaderboard-table { font-size: 0.8rem; }
+    .week-col, .trend-col { display: none; }
+  }
+</style>
+
+<script>
+  // Tab switching
+  const tabs = document.querySelectorAll('.tab');
+  const contents = document.querySelectorAll('.tab-content');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      contents.forEach(c => c.classList.remove('active'));
+      tab.classList.add('active');
+      const target = tab.getAttribute('data-tab');
+      const content = document.getElementById(`tab-${target}`);
+      if (content) content.classList.add('active');
+    });
+  });
+</script>

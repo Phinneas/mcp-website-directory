@@ -19,6 +19,12 @@ export interface MCPServerRow {
   security_audit_json: string | null;
   green_score_json: string | null;
   reliability_score_json: string | null;
+  badge_tier: string | null;
+  last_scan_at: string | null;
+  scan_summary_json: string | null;
+  install_count: number | null;
+  installs_24h: number | null;
+  installs_7d: number | null;
   composite_trust_json: string | null;
 }
 
@@ -113,6 +119,10 @@ export interface MCPServer {
   greenScore?: GreenScoreData | null;
   reliability?: ReliabilityScoreData | null;
   compositeTrust?: CompositeTrustData | null;
+  scanData?: any | null;
+  installCount?: number;
+  installs24h?: number;
+  installs7d?: number;
   fields: {
     name: string;
     description: string;
@@ -168,8 +178,26 @@ function rowToServer(row: MCPServerRow): MCPServer {
     try {
       compositeTrust = JSON.parse(row.composite_trust_json) as CompositeTrustData;
     } catch {
-      // invalid JSON - leave as null
+      // invalid JSON — leave as null
     }
+  }
+
+  let scanData: any = null;
+  if (row.scan_summary_json) {
+    try {
+      const parsed = JSON.parse(row.scan_summary_json);
+      scanData = {
+        overall_score: parsed.overall_score ?? null,
+        badge_tier: row.badge_tier || parsed.badge_tier || 'unverified',
+        last_scan_at: row.last_scan_at || parsed.scanned_at || null,
+        static_analysis: parsed.static_analysis ?? null,
+        socket_dev: parsed.socket_dev ?? null,
+        mcp_scan: parsed.mcp_scan ?? null,
+        cve_watchlist: parsed.cve_watchlist ?? null,
+      };
+    } catch {}
+  } else if (row.badge_tier && row.badge_tier !== 'unverified') {
+    scanData = { badge_tier: row.badge_tier, last_scan_at: row.last_scan_at };
   }
 
   return {
@@ -179,6 +207,10 @@ function rowToServer(row: MCPServerRow): MCPServer {
     greenScore,
     reliability,
     compositeTrust,
+    scanData,
+    installCount: row.install_count || 0,
+    installs24h: row.installs_24h || 0,
+    installs7d: row.installs_7d || 0,
     fields: {
       name: row.name,
       description: row.description || '',
@@ -204,6 +236,7 @@ export async function getServersPage(
     search = '',
     deployment = '',
     localOnly = false,
+    sort = 'stars',
   }: {
     offset?: number;
     limit?: number;
@@ -211,6 +244,7 @@ export async function getServersPage(
     search?: string;
     deployment?: string;
     localOnly?: boolean;
+    sort?: 'stars' | 'installs' | 'trending';
   } = {}
 ): Promise<ServersPage> {
   const conditions: string[] = [];
@@ -249,11 +283,24 @@ export async function getServersPage(
 
   const total = countResult?.total ?? 0;
 
+  // Sort order
+  let orderBy: string;
+  switch (sort) {
+    case 'installs':
+      orderBy = 'install_count DESC NULLS LAST, stars DESC';
+      break;
+    case 'trending':
+      orderBy = 'installs_24h DESC NULLS LAST, stars DESC';
+      break;
+    default:
+      orderBy = 'stars DESC, downloads DESC';
+  }
+
   // Fetch page
   const rows = await db
     .prepare(
       `SELECT * FROM servers ${where}
-       ORDER BY stars DESC, downloads DESC
+       ORDER BY ${orderBy}
        LIMIT ? OFFSET ?`
     )
     .bind(...params, limit, offset)
@@ -308,4 +355,259 @@ export async function getTotalServerCount(db: D1Database): Promise<number> {
     .prepare('SELECT COUNT(*) as total FROM servers')
     .first<{ total: number }>();
   return result?.total ?? 0;
+}
+
+// ── Install Count / Leaderboard Queries ─────────────────────────────────
+
+export interface InstallCountRow {
+  server_id: string;
+  total_installs: number;
+  installs_24h: number;
+  installs_7d: number;
+  installs_30d: number;
+  prev_24h: number;
+  peak_24h: number;
+  peak_date: string | null;
+  first_install_at: string | null;
+  last_install_at: string | null;
+}
+
+export interface LeaderboardEntry {
+  rank: number;
+  server: MCPServer;
+  total_installs: number;
+  installs_24h: number;
+  installs_7d: number;
+  trend: 'hot' | 'rising' | 'stable' | 'declining' | 'new';
+  badge_tier: string;
+}
+
+export type LeaderboardSort = 'total' | 'trending' | 'hot';
+
+/**
+ * Get the leaderboard — servers sorted by real install counts.
+ * Sort modes:
+ *   'total'     — all-time install count (like skills.sh's All Time tab)
+ *   'trending'  — 24h install count (like skills.sh's Trending tab)
+ *   'hot'       — servers with rapidly accelerating installs (24h > 2x prev_24h)
+ */
+export async function getLeaderboard(
+  db: D1Database,
+  {
+    sort = 'total',
+    category = '',
+    limit = 50,
+    offset = 0,
+  }: {
+    sort?: LeaderboardSort;
+    category?: string;
+    limit?: number;
+    offset?: number;
+  } = {}
+): Promise<{ entries: LeaderboardEntry[]; total: number }> {
+  // Join install_counts with servers
+  const categoryFilter = category && category !== 'all'
+    ? 'AND s.category = ?'
+    : '';
+
+  let orderBy: string;
+  switch (sort) {
+    case 'trending':
+      orderBy = 'ic.installs_24h DESC';
+      break;
+    case 'hot':
+      orderBy = 'ic.installs_24h DESC, ic.peak_24h DESC';
+      break;
+    default:
+      orderBy = 'ic.total_installs DESC';
+  }
+
+  const params: (string | number)[] = [];
+  if (category && category !== 'all') params.push(category);
+
+  // Count
+  const countResult = await db
+    .prepare(
+      `SELECT COUNT(*) as total FROM install_counts ic
+       JOIN servers s ON s.id = ic.server_id
+       WHERE ic.total_installs > 0 ${categoryFilter}`
+    )
+    .bind(...params)
+    .first<{ total: number }>();
+  const total = countResult?.total ?? 0;
+
+  // Fetch
+  const rows = await db
+    .prepare(
+      `SELECT s.*, ic.total_installs, ic.installs_24h, ic.installs_7d,
+              ic.installs_30d, ic.prev_24h, ic.peak_24h, ic.peak_date,
+              ic.first_install_at, ic.last_install_at
+       FROM install_counts ic
+       JOIN servers s ON s.id = ic.server_id
+       WHERE ic.total_installs > 0 ${categoryFilter}
+       ORDER BY ${orderBy}
+       LIMIT ? OFFSET ?`
+    )
+    .bind(...params, limit, offset)
+    .all<any>();
+
+  const entries: LeaderboardEntry[] = (rows.results || []).map((row: any, i: number) => {
+    const server = rowToServer(row as MCPServerRow);
+    const installs24h = row.installs_24h || 0;
+    const prev24h = row.prev_24h || 0;
+    const totalInst = row.total_installs || 0;
+
+    // Compute trend
+    let trend: LeaderboardEntry['trend'] = 'stable';
+    if (totalInst > 0 && row.first_install_at && row.last_install_at) {
+      const firstDate = new Date(row.first_install_at);
+      const now = new Date();
+      const ageDays = (now.getTime() - firstDate.getTime()) / (1000 * 60 * 60 * 24);
+      if (ageDays < 7) {
+        trend = 'new';
+      } else if (installs24h > 0 && prev24h > 0 && installs24h >= prev24h * 2) {
+        trend = 'hot';
+      } else if (installs24h > prev24h) {
+        trend = 'rising';
+      } else if (installs24h < prev24h * 0.5) {
+        trend = 'declining';
+      }
+    } else if (installs24h > 0) {
+      trend = 'rising';
+    }
+
+    return {
+      rank: offset + i + 1,
+      server,
+      total_installs: totalInst,
+      installs_24h: installs24h,
+      installs_7d: row.installs_7d || 0,
+      trend,
+      badge_tier: row.badge_tier || 'unverified',
+    };
+  });
+
+  return { entries, total };
+}
+
+/**
+ * Get install count for a single server.
+ */
+export async function getInstallCount(
+  db: D1Database,
+  serverId: string
+): Promise<InstallCountRow | null> {
+  return db
+    .prepare('SELECT * FROM install_counts WHERE server_id = ?')
+    .bind(serverId)
+    .first<InstallCountRow>();
+}
+
+/**
+ * Get top N servers by install count (lightweight, for embedding).
+ */
+export async function getTopInstalled(
+  db: D1Database,
+  limit = 10
+): Promise<Array<{ server_id: string; name: string; total_installs: number; installs_24h: number; badge_tier: string }>> {
+  const rows = await db
+    .prepare(
+      `SELECT ic.server_id, s.name, ic.total_installs, ic.installs_24h, s.badge_tier
+       FROM install_counts ic
+       JOIN servers s ON s.id = ic.server_id
+       WHERE ic.total_installs > 0
+       ORDER BY ic.total_installs DESC
+       LIMIT ?`
+    )
+    .bind(limit)
+    .all<{ server_id: string; name: string; total_installs: number; installs_24h: number; badge_tier: string }>();
+
+  return rows.results || [];
+}
+
+/**
+ * Aggregate install_events into install_counts.
+ * Called by the aggregation cron worker.
+ */
+export async function aggregateInstallCounts(db: D1Database): Promise<number> {
+  const now = new Date();
+  const isoNow = now.toISOString();
+  const h24Ago = new Date(now.getTime() - 24 * 60 * 60 * 1000).toISOString();
+  const d7Ago = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
+  const d30Ago = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
+  // Previous 24h window (24h-48h ago) for trending
+  const h48Ago = new Date(now.getTime() - 48 * 60 * 60 * 1000).toISOString();
+
+  // Aggregate total, 24h, 7d, 30d, prev_24h in one query per server
+  const results = await db
+    .prepare(
+      `SELECT
+        server_id,
+        COUNT(*) as total,
+        SUM(CASE WHEN created_at > ? THEN 1 ELSE 0 END) as cnt_24h,
+        SUM(CASE WHEN created_at > ? THEN 1 ELSE 0 END) as cnt_7d,
+        SUM(CASE WHEN created_at > ? THEN 1 ELSE 0 END) as cnt_30d,
+        SUM(CASE WHEN created_at > ? AND created_at <= ? THEN 1 ELSE 0 END) as prev_24h,
+        MIN(created_at) as first_install,
+        MAX(created_at) as last_install
+       FROM install_events
+       GROUP BY server_id`
+    )
+    .bind(h24Ago, d7Ago, d30Ago, h48Ago, h24Ago)
+    .all<{
+      server_id: string;
+      total: number;
+      cnt_24h: number;
+      cnt_7d: number;
+      cnt_30d: number;
+      prev_24h: number;
+      first_install: string;
+      last_install: string;
+    }>();
+
+  let updated = 0;
+  for (const row of results.results || []) {
+    try {
+      await db
+        .prepare(
+          `INSERT INTO install_counts
+           (server_id, total_installs, installs_24h, installs_7d, installs_30d,
+            prev_24h, peak_24h, peak_date, first_install_at, last_install_at, updated_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+           ON CONFLICT(server_id) DO UPDATE SET
+             total_installs = excluded.total_installs,
+             installs_24h = excluded.installs_24h,
+             installs_7d = excluded.installs_7d,
+             installs_30d = excluded.installs_30d,
+             prev_24h = excluded.prev_24h,
+             peak_24h = CASE WHEN excluded.installs_24h > install_counts.peak_24h THEN excluded.installs_24h ELSE install_counts.peak_24h END,
+             peak_date = CASE WHEN excluded.installs_24h > install_counts.peak_24h THEN ? ELSE install_counts.peak_date END,
+             first_install_at = CASE WHEN install_counts.first_install_at IS NULL THEN excluded.first_install_at WHEN excluded.first_install_at < install_counts.first_install_at THEN excluded.first_install_at ELSE install_counts.first_install_at END,
+             last_install_at = excluded.last_install_at,
+             updated_at = excluded.updated_at`
+        )
+        .bind(
+          row.server_id, row.total, row.cnt_24h, row.cnt_7d, row.cnt_30d,
+          row.prev_24h, row.cnt_24h, isoNow.slice(0, 10),
+          row.first_install, row.last_install, isoNow,
+          isoNow.slice(0, 10)
+        )
+        .run();
+      updated++;
+    } catch (err) {
+      console.error(`Failed to update install_counts for ${row.server_id}:`, err);
+    }
+  }
+
+  // Also update the denormalized columns on servers
+  await db
+    .prepare(
+      `UPDATE servers SET
+        install_count = (SELECT total_installs FROM install_counts WHERE server_id = servers.id),
+        installs_24h = (SELECT installs_24h FROM install_counts WHERE server_id = servers.id),
+        installs_7d = (SELECT installs_7d FROM install_counts WHERE server_id = servers.id)`
+    )
+    .run();
+
+  return updated;
 }

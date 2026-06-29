@@ -1,0 +1,30 @@
+{
+  "name": "mymcpshelf",
+  "version": "0.1.0",
+  "description": "One-command installer for verified, security-checked MCP servers",
+  "type": "module",
+  "bin": {
+    "mymcpshelf": "./dist/bin.js"
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "prepublishOnly": "pnpm build"
+  },
+  "devDependencies": {
+    "tsup": "^8.4.0",
+    "typescript": "^5.7.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chesterbeard/mcp-directory",
+    "directory": "packages/cli"
+  },
+  "homepage": "https://www.mymcpshelf.com",
+  "keywords": ["mcp", "claude", "cursor", "vscode", "windsurf", "cline", "ai", "agent", "cli"]
+}

@@ -1,0 +1,340 @@
+---
+/**
+ * /topics — Verified MCP Topic Stacks
+ *
+ * Counter to mcpservers.org's 30 static topic pages.
+ * Ours are pre-verified, security-scanned, and one-command installable.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getAllTopicStacks, getFeaturedTopicStacks } from '../../data/topicStacks';
+
+const allStacks = getAllTopicStacks();
+const featuredStacks = getFeaturedTopicStacks(6);
+
+const DIFFICULTY_BADGES: Record<string, { color: string; bg: string; label: string }> = {
+  beginner: { color: '#22c55e', bg: 'rgba(34,197,94,0.1)', label: 'Beginner' },
+  intermediate: { color: '#eab308', bg: 'rgba(234,179,8,0.1)', label: 'Intermediate' },
+  advanced: { color: '#f97316', bg: 'rgba(249,115,22,0.1)', label: 'Advanced' },
+};
+---
+
+<BaseLayout title="MCP Topic Stacks — Verified & One-Command Installable | MyMCPShelf" description="Pre-verified, security-scanned MCP server stacks organized by job-to-be-done. One command installs a tested, verified stack.">
+  <div class="topics-page">
+    <div class="topics-hero">
+      <h1>MCP Topic Stacks</h1>
+      <p>Focused guides for high-intent MCP workflows — each backed by <strong>verified, security-scanned</strong> servers and installable with one command.</p>
+      <div class="topics-comparison">
+        <div class="comp-card">
+          <span class="comp-label">mcpservers.org</span>
+          <p>Static filtered lists. No security verification. "Official" badge is just a submission tag.</p>
+        </div>
+        <div class="comp-vs">vs</div>
+        <div class="comp-card comp-us">
+          <span class="comp-label">MyMCPShelf</span>
+          <p>Pre-verified stacks. Every server scanned for CVEs, tool poisoning, and typosquats. <code>npx mymcpshelf add-stack &lt;topic&gt;</code></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Featured Stacks -->
+    {featuredStacks.length > 0 && (
+      <section class="featured-section">
+        <h2>Featured Stacks</h2>
+        <div class="featured-grid">
+          {featuredStacks.map(stack => {
+            const diff = DIFFICULTY_BADGES[stack.difficulty] || DIFFICULTY_BADGES.intermediate;
+            return (
+              <a href={`/topics/${stack.slug}`} class="featured-card">
+                <span class="featured-icon">{stack.icon}</span>
+                <h3>{stack.name}</h3>
+                <p>{stack.description}</p>
+                <div class="featured-meta">
+                  <span class="diff-pill" style={`color:${diff.color};background:${diff.bg}`}>{diff.label}</span>
+                  <span class="server-count">{stack.serverIds.length} servers</span>
+                  <span class="setup-time">~{stack.estimatedSetupMinutes} min</span>
+                </div>
+                <code class="install-cmd">npx mymcpshelf add-stack {stack.slug}</code>
+              </a>
+            );
+          })}
+        </div>
+      </section>
+    )}
+
+    <!-- All Stacks -->
+    <section class="all-section">
+      <h2>All Topic Stacks</h2>
+      <div class="stacks-grid">
+        {allStacks.map(stack => {
+          const diff = DIFFICULTY_BADGES[stack.difficulty] || DIFFICULTY_BADGES.intermediate;
+          return (
+            <a href={`/topics/${stack.slug}`} class="stack-card">
+              <div class="stack-header">
+                <span class="stack-icon">{stack.icon}</span>
+                <div>
+                  <h3>{stack.name}</h3>
+                  <p>{stack.description.slice(0, 100)}{stack.description.length > 100 ? '...' : ''}</p>
+                </div>
+              </div>
+              <div class="stack-footer">
+                <span class="diff-pill" style={`color:${diff.color};background:${diff.bg}`}>{diff.label}</span>
+                <span class="server-count">{stack.serverIds.length} servers</span>
+                {stack.mcpserversOrgEquivalent && <span class="mcpservers-tag">vs mcpservers.org</span>}
+              </div>
+            </a>
+          );
+        })}
+      </div>
+    </section>
+
+    <section class="cta-section">
+      <h2>Install Your First Stack</h2>
+      <div class="cta-examples">
+        <div class="cta-example">
+          <span class="cta-label">Essential Dev Stack (2 min)</span>
+          <code>npx mymcpshelf add-stack essential-dev-mcp</code>
+        </div>
+        <div class="cta-example">
+          <span class="cta-label">Coding Agent Stack (4 min)</span>
+          <code>npx mymcpshelf add-stack coding-agent-mcp</code>
+        </div>
+        <div class="cta-example">
+          <span class="cta-label">Browser Automation (3 min)</span>
+          <code>npx mymcpshelf add-stack browser-automation-mcp</code>
+        </div>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .topics-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    color: #e2e8f0;
+  }
+
+  .topics-hero h1 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem 0;
+    background: linear-gradient(135deg, #818cf8, #c084fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .topics-hero > p {
+    color: #94a3b8;
+    font-size: 1.05rem;
+    margin: 0 0 1.5rem 0;
+    max-width: 700px;
+  }
+
+  .topics-hero strong { color: #22c55e; }
+
+  .topics-comparison {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .comp-card { flex: 1; }
+  .comp-card p { font-size: 0.8rem; color: #94a3b8; margin: 0.25rem 0 0 0; }
+  .comp-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; }
+  .comp-us .comp-label { color: #22c55e; }
+  .comp-us p { color: #86efac; }
+  .comp-vs { font-size: 0.75rem; font-weight: 700; color: #475569; padding: 0.25rem 0.5rem; border-radius: 4px; background: rgba(255,255,255,0.05); }
+
+  /* Featured */
+  .featured-section { margin-bottom: 2.5rem; }
+  .featured-section h2 { font-size: 1.25rem; font-weight: 600; margin: 0 0 1rem 0; color: #f1f5f9; }
+
+  .featured-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1rem;
+  }
+
+  .featured-card {
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem;
+    border-radius: 12px;
+    background: rgba(129,140,248,0.05);
+    border: 1px solid rgba(129,140,248,0.15);
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .featured-card:hover {
+    background: rgba(129,140,248,0.1);
+    border-color: rgba(129,140,248,0.3);
+  }
+
+  .featured-icon { font-size: 1.75rem; margin-bottom: 0.5rem; }
+
+  .featured-card h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin: 0 0 0.35rem 0;
+    color: #f1f5f9;
+  }
+
+  .featured-card p {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin: 0 0 0.75rem 0;
+    line-height: 1.4;
+  }
+
+  .featured-meta {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .diff-pill {
+    padding: 0.1rem 0.4rem;
+    border-radius: 9999px;
+    font-size: 0.65rem;
+    font-weight: 600;
+  }
+
+  .server-count, .setup-time {
+    font-size: 0.7rem;
+    color: #64748b;
+  }
+
+  .install-cmd {
+    display: block;
+    padding: 0.35rem 0.65rem;
+    border-radius: 6px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.08);
+    font-size: 0.75rem;
+    color: #a5b4fc;
+  }
+
+  /* All Stacks */
+  .all-section { margin-bottom: 2.5rem; }
+  .all-section h2 { font-size: 1.25rem; font-weight: 600; margin: 0 0 1rem 0; color: #f1f5f9; }
+
+  .stacks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .stack-card {
+    display: block;
+    padding: 1rem;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .stack-card:hover {
+    background: rgba(129,140,248,0.05);
+    border-color: rgba(129,140,248,0.2);
+  }
+
+  .stack-header {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .stack-icon { font-size: 1.5rem; }
+
+  .stack-header h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin: 0 0 0.2rem 0;
+    color: #f1f5f9;
+  }
+
+  .stack-header p {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .stack-footer {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .mcpservers-tag {
+    font-size: 0.65rem;
+    color: #64748b;
+    background: rgba(255,255,255,0.05);
+    padding: 0.1rem 0.35rem;
+    border-radius: 4px;
+  }
+
+  /* CTA */
+  .cta-section {
+    text-align: center;
+    margin-top: 2rem;
+    padding: 2rem;
+    border-radius: 12px;
+    background: rgba(129,140,248,0.06);
+    border: 1px solid rgba(129,140,248,0.15);
+  }
+
+  .cta-section h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 1rem 0;
+    color: #e2e8f0;
+  }
+
+  .cta-examples {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .cta-example {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .cta-label {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    width: 200px;
+    text-align: right;
+  }
+
+  .cta-example code {
+    padding: 0.35rem 0.75rem;
+    border-radius: 6px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(129,140,248,0.2);
+    font-size: 0.8rem;
+    color: #a5b4fc;
+  }
+
+  @media (max-width: 768px) {
+    .topics-comparison { flex-direction: column; }
+    .comp-vs { display: none; }
+    .featured-grid { grid-template-columns: 1fr; }
+    .cta-example { flex-direction: column; gap: 0.25rem; }
+    .cta-label { text-align: center; width: auto; }
+  }
+</style>
