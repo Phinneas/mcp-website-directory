@@ -57,3 +57,6 @@ MCP_REPLACEMENTS_SUMMARY.md
 github_*.log
 github_*.json
 .aider*
+
+# Local Cloudflare/Wrangler D1 state — never commit
+.wrangler/
