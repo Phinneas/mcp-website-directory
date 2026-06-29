@@ -19,6 +19,22 @@ export interface MCPServerRow {
   security_audit_json: string | null;
   green_score_json: string | null;
   reliability_score_json: string | null;
+  composite_trust_json: string | null;
+}
+
+/** Consolidated per-server recheck record (written by composite-trust-monitor). */
+export interface CompositeTrustData {
+  score: number;
+  tier: 'trusted' | 'verified' | 'review' | 'caution';
+  label: string;
+  flags: string[];
+  subscores: {
+    staleness: { score: number; tier: string; lastCommitDays?: number | null; commits90d?: number };
+    green: { score: number; tier: string; label?: string; hostingProvider?: string | null };
+    security: { score: number; tier: string; cveMatches?: number };
+    toolDiff: { score: number; tier: string; added?: string[]; modified?: string[]; suspicious?: string[] };
+  };
+  assessedAt: string;
 }
 
 export interface SecurityAuditData {
@@ -96,6 +112,7 @@ export interface MCPServer {
   securityAudit?: SecurityAuditData | null;
   greenScore?: GreenScoreData | null;
   reliability?: ReliabilityScoreData | null;
+  compositeTrust?: CompositeTrustData | null;
   fields: {
     name: string;
     description: string;
@@ -146,12 +163,22 @@ function rowToServer(row: MCPServerRow): MCPServer {
     }
   }
 
+  let compositeTrust: CompositeTrustData | null = null;
+  if (row.composite_trust_json) {
+    try {
+      compositeTrust = JSON.parse(row.composite_trust_json) as CompositeTrustData;
+    } catch {
+      // invalid JSON - leave as null
+    }
+  }
+
   return {
     id: row.id,
     deployment: row.deployment_type || 'local_stdio',
     securityAudit,
     greenScore,
     reliability,
+    compositeTrust,
     fields: {
       name: row.name,
       description: row.description || '',

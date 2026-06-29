@@ -23,6 +23,7 @@ import { getRelatedServers, getCategoryDisplayName } from '../../utils/serverDat
 import { slugify } from '../../utils/slugify.js';
 import { staticServers as fallbackServers } from '../../data/staticServers.js';
 import { getSecurityAudit, getScoreTier } from '../../data/securityAudit';
+import { CompositeTrustBadge } from '../../components/CompositeTrustBadge';
 import CustomMcpCta from '../../components/CustomMcpCta.astro';
 import { GreenBadge } from '../../components/GreenBadge';
 import ReliabilityGauge from '../../components/ReliabilityGauge.astro';
@@ -107,6 +108,7 @@ const auditData = getSecurityAudit(server.id) || (server as any).securityAudit |
 const auditTier = auditData ? getScoreTier(auditData.auditScore) : null;
 const greenScore = (server as any).greenScore || null;
 const reliability = (server as any).reliability || null;
+const compositeTrust = (server as any).compositeTrust || null;
 
 const RELIABILITY_TIER_COLORS: Record<string, string> = {
   excellent: '#22c55e',
@@ -255,6 +257,13 @@ const structuredData = {
           </h2>
           <p class="description-text">{server.fields.description}</p>
         </section>
+
+        <!-- Composite Trust — the consolidated headline signal -->
+        {compositeTrust && (
+          <section class="composite-trust-section">
+            <CompositeTrustBadge compositeTrust={compositeTrust} />
+          </section>
+        )}
 
         <!-- Installation -->
         <ServerInstallation server={server} />

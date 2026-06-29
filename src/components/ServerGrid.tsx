@@ -5,6 +5,7 @@ import { getScoreTier } from '../data/securityAudit.ts';
 import { HealthBadge } from './HealthBadge';
 import { GreenBadge } from './GreenBadge';
 import { CommunityBadge } from './CommunityBadge';
+import { CompositeTrustBadge } from './CompositeTrustBadge';
 
 interface Props {
   initialServers: MCPServer[];
@@ -152,6 +153,13 @@ function ServerCard({ server }: { server: MCPServer }) {
             : server.fields.description}
         </div>
         
+        {/* Composite Trust Badge — the consolidated headline signal */}
+        {server.compositeTrust && (
+          <div style={{ marginBottom: '0.5rem' }}>
+            <CompositeTrustBadge compositeTrust={server.compositeTrust} />
+          </div>
+        )}
+
         {/* Health Status Badge */}
         {(server as any).health_status && (
           <div className="server-health-status">
