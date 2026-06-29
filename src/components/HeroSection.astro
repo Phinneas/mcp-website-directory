@@ -59,6 +59,12 @@ const { serverCount = 600, skillsCount = 98, clientsCount = 250 } = Astro.props;
             <span class="trust-divider">•</span>
             <a href="/blog/understanding-mcp-quality-standards" class="trust-link">How We Verify?</a>
         </div>
+
+        <!-- Natural-language search CTA -->
+        <a href="/ai-search" class="hero-ai-cta">
+            <span class="hero-ai-cta-badge">New</span>
+            Ask in plain English →
+        </a>
     </div>
 </section>
 
@@ -187,7 +193,39 @@ const { serverCount = 600, skillsCount = 98, clientsCount = 250 } = Astro.props;
     .trust-link:hover {
         color: hsl(var(--primary) / 80%);
     }
-    
+
+    .hero-ai-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 1.75rem;
+        padding: 0.7rem 1.4rem;
+        border-radius: 999px;
+        background: hsl(var(--primary));
+        color: #fff;
+        font-weight: 600;
+        font-size: 1rem;
+        text-decoration: none;
+        border: 1px solid hsl(var(--primary));
+        transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .hero-ai-cta:hover {
+        transform: translateY(-2px);
+        background: hsl(var(--primary) / 90%);
+        box-shadow: 0 10px 28px rgba(238, 123, 48, 0.35);
+    }
+
+    .hero-ai-cta-badge {
+        background: rgba(255, 255, 255, 0.22);
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        padding: 0.1rem 0.45rem;
+        border-radius: 999px;
+    }
+
     @media (max-width: 768px) {
         .hero-headline {
             font-size: 2.5rem;

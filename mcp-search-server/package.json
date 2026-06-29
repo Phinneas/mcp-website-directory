@@ -1,0 +1,20 @@
+{
+  "name": "@mymcpshelf/search-mcp-server",
+  "version": "1.0.0",
+  "description": "An MCP server that searches the My MCP Shelf directory of curated MCP servers — in plain English. Dogfooding: our directory's own search is powered by this server.",
+  "type": "module",
+  "main": "server.mjs",
+  "bin": {
+    "mymcpshelf-search": "server.mjs"
+  },
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node test-handshake.mjs"
+  },
+  "keywords": ["mcp", "model-context-protocol", "search", "directory", "mcp-server"],
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "zod": "^3.25 || ^4.0"
+  }
+}

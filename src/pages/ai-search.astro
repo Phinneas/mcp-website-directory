@@ -1,0 +1,448 @@
+---
+/**
+ * ai-search.astro — "Ask in plain English" natural-language search page.
+ *
+ * Powered by the shared `src/lib/search-engine.js` via the `/api/v1/search-ai`
+ * endpoint — the same engine the dogfooded `mcp-search-server` MCP server
+ * exposes as a tool. (See blog: "Our directory's search is built on MCP".)
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const canonical = new URL('/ai-search', Astro.site ?? Astro.url).toString();
+---
+
+<BaseLayout
+  title="Ask in plain English — My MCP Shelf"
+  description="Describe what you need in plain English and get ranked, curated MCP servers — with a reason for every match. Our search is built on MCP."
+  canonical={canonical}
+>
+  <main class="nl-page">
+    <section class="nl-hero">
+      <div class="nl-hero-inner">
+        <span class="nl-eyebrow">Natural-language search</span>
+        <h1>Ask in plain English.</h1>
+        <p class="nl-lede">
+          Describe what you need and we'll rank the curated MCP servers that fit —
+          explaining <em>why</em> each one matched. No keywords required.
+        </p>
+
+        <form id="nl-search-form" class="nl-form" role="search" autocomplete="off">
+          <div class="nl-input-wrap">
+            <svg class="nl-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input
+              id="nl-search-input"
+              class="nl-input"
+              type="search"
+              name="q"
+              placeholder="e.g. I need something to read Postgres safely with row-level limits"
+              aria-label="Describe what you need"
+            />
+            <button class="nl-submit" type="submit">Search</button>
+          </div>
+        </form>
+
+        <div class="nl-examples" aria-label="Example searches">
+          <button class="nl-example" data-q="read Postgres safely with row-level limits">read Postgres safely</button>
+          <button class="nl-example" data-q="automate a headless browser to scrape a page">headless browser scraping</button>
+          <button class="nl-example" data-q="send slack messages and manage email">Slack &amp; email</button>
+          <button class="nl-example" data-q="run a local python tool to query sqlite">local Python + SQLite</button>
+          <button class="nl-example" data-q="vector embeddings and RAG over my documents">RAG &amp; embeddings</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="nl-results-section">
+      <div class="nl-results-inner">
+        <div id="nl-status" class="nl-status" hidden>
+          <div id="nl-filters" class="nl-filters" aria-live="polite"></div>
+          <div id="nl-count" class="nl-count" aria-live="polite"></div>
+        </div>
+
+        <div id="nl-loading" class="nl-loading" hidden aria-hidden="true">
+          <span class="nl-spinner" aria-hidden="true"></span> Searching curated servers…
+        </div>
+
+        <div id="nl-empty" class="nl-empty" hidden>
+          <p>No servers matched that. Try rephrasing or broadening your request.</p>
+        </div>
+
+        <div id="nl-results" class="nl-results" aria-live="polite"></div>
+
+        <aside class="nl-footnote">
+          These results come from the same engine our
+          <a href="/blog/our-search-is-built-on-mcp">MCP search server</a>
+          exposes — so what an AI assistant returns via MCP is identical to what you see here.
+        </aside>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .nl-page { --nl-radius: 14px; }
+
+  .nl-hero {
+    background: #0f172a;
+    color: #fff;
+    padding: 4.5rem 1.25rem 4rem;
+    text-align: center;
+  }
+  .nl-hero-inner { max-width: 820px; margin: 0 auto; }
+
+  .nl-eyebrow {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #fbbf24;
+    margin-bottom: 0.75rem;
+  }
+  .nl-hero h1 {
+    font-size: clamp(2rem, 5vw, 3.25rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+  }
+  .nl-lede {
+    font-size: 1.1rem;
+    color: #cbd5e1;
+    max-width: 620px;
+    margin: 0 auto 2.25rem;
+    line-height: 1.65;
+  }
+  .nl-lede em { color: #f59e0b; font-style: normal; font-weight: 600; }
+
+  .nl-form { max-width: 680px; margin: 0 auto; }
+  .nl-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border-radius: 999px;
+    padding: 0.4rem 0.4rem 0.4rem 3.25rem;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+  .nl-input-icon {
+    position: absolute;
+    left: 1.1rem;
+    width: 20px;
+    height: 20px;
+    color: #64748b;
+  }
+  .nl-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 1rem;
+    color: #1f2937;
+    padding: 0.75rem 0.5rem;
+    min-width: 0;
+  }
+  .nl-input:focus { outline: none; }
+  .nl-input::placeholder { color: #94a3b8; }
+  .nl-submit {
+    border: none;
+    background: hsl(var(--primary));
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 0.7rem 1.4rem;
+    border-radius: 999px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+  .nl-submit:hover { background: hsl(var(--primary) / 88%); transform: translateY(-1px); }
+
+  .nl-examples {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+  }
+  .nl-example {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: #e2e8f0;
+    border-radius: 999px;
+    padding: 0.4rem 0.9rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .nl-example:hover {
+    background: rgba(245, 158, 11, 0.16);
+    border-color: hsl(var(--primary));
+    color: #fff;
+  }
+
+  /* Results */
+  .nl-results-section {
+    background: hsl(var(--muted));
+    padding: 2.5rem 1.25rem 4rem;
+    min-height: 40vh;
+  }
+  .nl-results-inner { max-width: 980px; margin: 0 auto; }
+
+  .nl-status {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+  .nl-filters { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .nl-filter-chip {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    color: hsl(var(--primary));
+    border-radius: 999px;
+    padding: 0.25rem 0.7rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+  .nl-count { font-size: 0.88rem; color: hsl(var(--muted-foreground)); }
+
+  .nl-loading {
+    text-align: center;
+    color: hsl(var(--muted-foreground));
+    padding: 3rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+  }
+  .nl-spinner {
+    width: 18px; height: 18px;
+    border: 2px solid hsl(var(--border));
+    border-top-color: hsl(var(--primary));
+    border-radius: 50%;
+    animation: nl-spin 0.7s linear infinite;
+  }
+  @keyframes nl-spin { to { transform: rotate(360deg); } }
+
+  .nl-empty {
+    text-align: center;
+    color: hsl(var(--muted-foreground));
+    padding: 3rem 0;
+  }
+
+  .nl-results { display: grid; gap: 1rem; }
+  .nl-result {
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
+    border-radius: var(--nl-radius);
+    padding: 1.25rem 1.4rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  .nl-result:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+    border-color: hsl(var(--primary) / 50%);
+  }
+  .nl-result-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    margin-bottom: 0.5rem;
+  }
+  .nl-result-head h3 { font-size: 1.15rem; font-weight: 700; margin: 0; }
+  .nl-result-head h3 a { color: hsl(var(--foreground)); text-decoration: none; }
+  .nl-result-head h3 a:hover { color: hsl(var(--primary)); }
+  .nl-result-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .nl-badge {
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.18rem 0.55rem;
+    border-radius: 999px;
+    background: hsl(var(--muted));
+    color: hsl(var(--muted-foreground));
+    border: 1px solid hsl(var(--border));
+    text-transform: capitalize;
+  }
+  .nl-badge.cat { color: hsl(var(--primary)); }
+  .nl-stars { font-size: 0.82rem; color: #f59e0b; font-weight: 600; }
+
+  .nl-result-desc {
+    color: hsl(var(--muted-foreground));
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin: 0.35rem 0 0.75rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .nl-why {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-bottom: 0.85rem;
+  }
+  .nl-why-label { font-size: 0.78rem; color: hsl(var(--muted-foreground)); align-self: center; margin-right: 0.2rem; }
+  .nl-why-chip {
+    font-size: 0.74rem;
+    background: hsl(var(--primary) / 12%);
+    color: hsl(var(--primary));
+    border-radius: 6px;
+    padding: 0.15rem 0.5rem;
+    font-weight: 500;
+  }
+  .nl-result-actions { display: flex; gap: 1rem; font-size: 0.88rem; }
+  .nl-result-actions a { color: hsl(var(--primary)); text-decoration: none; font-weight: 600; }
+  .nl-result-actions a:hover { text-decoration: underline; }
+
+  .nl-footnote {
+    margin-top: 2.5rem;
+    text-align: center;
+    font-size: 0.85rem;
+    color: hsl(var(--muted-foreground));
+    max-width: 620px;
+    margin-inline: auto;
+  }
+  .nl-footnote a { color: hsl(var(--primary)); }
+
+  /* Dark mode */
+  :global(html.dark-mode) .nl-hero { background: #0b1020; }
+  :global(html.dark-mode) .nl-results-section { background: hsl(270 30% 8%); }
+  :global(html.dark-mode) .nl-result { background: hsl(270 25% 12%); border-color: hsl(270 20% 22%); }
+  :global(html.dark-mode) .nl-result:hover { box-shadow: 0 12px 34px rgba(0, 0, 0, 0.5); }
+  :global(html.dark-mode) .nl-input-wrap { background: #1e293b; }
+  :global(html.dark-mode) .nl-input { color: #e2e8f0; }
+  :global(html.dark-mode) .nl-input::placeholder { color: #64748b; }
+  :global(html.dark-mode) .nl-badge { background: hsl(270 25% 16%); }
+  :global(html.dark-mode) .nl-filter-chip { background: hsl(270 25% 16%); }
+
+  /* Mobile */
+  @media (max-width: 600px) {
+    .nl-input-wrap { padding-left: 3rem; border-radius: 16px; }
+    .nl-submit { width: 100%; margin-top: 0.5rem; border-radius: 12px; }
+    .nl-input-wrap { flex-wrap: wrap; }
+    .nl-result-head { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+
+<script>
+  const form = document.getElementById('nl-search-form');
+  const input = document.getElementById('nl-search-input') as HTMLInputElement;
+  const resultsEl = document.getElementById('nl-results')!;
+  const statusEl = document.getElementById('nl-status')!;
+  const filtersEl = document.getElementById('nl-filters')!;
+  const countEl = document.getElementById('nl-count')!;
+  const loadingEl = document.getElementById('nl-loading')!;
+  const emptyEl = document.getElementById('nl-empty')!;
+
+  const esc = (s: string) =>
+    s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
+
+  function setSearchParam(q: string) {
+    const url = new URL(window.location.href);
+    if (q) url.searchParams.set('q', q); else url.searchParams.delete('q');
+    window.history.replaceState({}, '', url);
+  }
+
+  function render(res: any) {
+    resultsEl.innerHTML = '';
+    filtersEl.innerHTML = '';
+    statusEl.hidden = true;
+    emptyEl.hidden = true;
+
+    if (res.error) {
+      countEl.textContent = 'Search is temporarily unavailable.';
+      statusEl.hidden = false;
+      return;
+    }
+
+    if (res.inferredFilters) {
+      res.inferredFilters.split(' · ').filter(Boolean).forEach((f: string) => {
+        const chip = document.createElement('span');
+        chip.className = 'nl-filter-chip';
+        chip.textContent = f;
+        filtersEl.appendChild(chip);
+      });
+    }
+    countEl.textContent = res.query
+      ? `${res.total} match${res.total === 1 ? '' : 'es'} · ${res.tookMs}ms`
+      : `${res.total} curated servers · sorted by adoption`;
+    statusEl.hidden = false;
+
+    if (!res.hits || !res.hits.length) {
+      emptyEl.hidden = false;
+      return;
+    }
+
+    resultsEl.innerHTML = res.hits
+      .map(
+        (h: any) => `
+      <article class="nl-result">
+        <div class="nl-result-head">
+          <h3><a href="/server/${esc(h.id)}">${esc(h.name)}</a></h3>
+          <div class="nl-result-meta">
+            <span class="nl-badge cat">${esc(h.category || '')}</span>
+            ${h.deployment ? `<span class="nl-badge">${esc(h.deployment)}</span>` : ''}
+            <span class="nl-stars">★ ${h.stars.toLocaleString()}</span>
+          </div>
+        </div>
+        <p class="nl-result-desc">${esc(h.description || '')}</p>
+        <div class="nl-why">
+          ${h.reasons?.length ? `<span class="nl-why-label">why</span>` : ''}
+          ${(h.reasons || []).map((r: string) => `<span class="nl-why-chip">${esc(r)}</span>`).join('')}
+        </div>
+        <div class="nl-result-actions">
+          <a href="/server/${esc(h.id)}">View server →</a>
+          ${h.github_url ? `<a href="${esc(h.github_url)}" target="_blank" rel="noopener noreferrer">Repo ↗</a>` : ''}
+        </div>
+      </article>`
+      )
+      .join('');
+  }
+
+  async function runSearch(q: string) {
+    loadingEl.hidden = false;
+    resultsEl.innerHTML = '';
+    statusEl.hidden = true;
+    emptyEl.hidden = true;
+    try {
+      const res = await fetch(`/api/v1/search-ai?q=${encodeURIComponent(q)}&limit=12`).then((r) => r.json());
+      render(res);
+    } catch {
+      render({ error: true });
+    } finally {
+      loadingEl.hidden = true;
+    }
+  }
+
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const q = input.value.trim();
+    setSearchParam(q);
+    runSearch(q);
+  });
+
+  document.querySelectorAll<HTMLButtonElement>('.nl-example').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const q = btn.dataset.q || '';
+      input.value = q;
+      setSearchParam(q);
+      runSearch(q);
+      window.scrollTo({ top: (statusEl as HTMLElement).offsetTop - 80, behavior: 'smooth' });
+    });
+  });
+
+  // Initial load: run from ?q= if present, otherwise show popular servers.
+  const initial = new URL(window.location.href).searchParams.get('q');
+  if (initial) input.value = initial;
+  runSearch(initial || '');
+</script>

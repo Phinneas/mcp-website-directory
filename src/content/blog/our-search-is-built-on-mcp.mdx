@@ -1,0 +1,120 @@
+---
+title: "Our Directory's Search Is Built on MCP"
+description: "How we dogfooded our own product: the My MCP Shelf website's natural-language search is powered by the exact same engine we ship as an MCP server. Here's the architecture, how it works, and why."
+date: "2026-06-29T09:00:00.000Z"
+author: "MCP Directory Team"
+image: "/images/quality-standards.jpg"
+tags: ["mcp", "search", "dogfooding", "natural-language", "engineering"]
+---
+
+# Our Directory's Search Is Built on MCP
+
+We sell MCP servers. So when it came time to build a better search for our own
+directory, we asked the obvious question: **why wouldn't our search *be* an MCP server?**
+
+It is. This post is the case study.
+
+## The problem with keyword search
+
+Our legacy search hit an external MeiliSearch instance. When that service was down, search
+returned a `503` and the directory effectively lost one of its most important features.
+Keyword search also has a deeper weakness: it matches *strings*, not *intent*. "Read Postgres
+safely with row-level limits" is four signals — a database, a read use case, a safety
+preference, and a specific feature — none of which a keyword index understands.
+
+Meanwhile, one of our competitors (Glama) ships an "AI chat" search. None of the
+curation-first directories do. We wanted to beat that — not by bolting on a chatbot, but by
+making search genuinely understand what a person is asking for.
+
+## The bet: one engine, two surfaces
+
+We wrote a single, dependency-free retrieval engine — `src/lib/search-engine.js` — and exposed
+it **twice**:
+
+1. **As an MCP server** (`mcp-search-server/server.mjs`) that any AI client can call as a tool.
+2. **As a website endpoint** (`/api/v1/search-ai`) that powers the [Ask in plain English](/ai-search) bar.
+
+Both import the same engine and the same curated dataset. So the ranked answer an assistant
+returns via MCP is **identical** to what you see on the website. That's the dogfooding claim,
+made literal.
+
+```
+                 ┌─────────────────────────────────────────┐
+                 │   src/lib/search-engine.js  (shared)    │
+                 └───────────────┬─────────────┬───────────┘
+                                 │             │
+            ┌────────────────────┘             └────────────────────┐
+            ▼                                                       ▼
+  /api/v1/search-ai  (website bar)              mcp-search-server (MCP tool)
+```
+
+## How the engine reasons (without an LLM call)
+
+The clever part: the engine is **deterministic**. It needs no API key and no model — but it's
+designed to be *consumed by* a model as a tool. It turns a plain-English request into ranked,
+explained results using the directory's own curation tags:
+
+1. **Query understanding** strips filler words and infers structured signals: a *category*
+   ("Postgres" → Databases), a *deployment* preference ("local" → local stdio), a *language*
+   ("python"), and *security intent* ("safely", "row-level", "read-only").
+2. **Text relevance** uses TF-IDF over the name and description — with word-boundary matching,
+   so `postgres` finds `postgresql` without `ai` accidentally matching `email`.
+3. **Tag boosting** layers on the signals we already maintain: category, deployment type, and
+   the manual **security audit** (input handling, data residency, authentication). Ask for
+   something "safe" and a server that builds shell strings from user input gets *penalized*,
+   not promoted.
+4. **Adoption** (stars, downloads) breaks near-ties only.
+5. **A reason for every result.** Each match carries a human-readable *why* — "name match:
+   'postgres' · Databases category · parameterized input handling" — so the ranking is
+   transparent rather than a black box.
+
+Ask *"read Postgres safely with row-level limits"* and the PostgreSQL server ranks #1, with the
+matching signals shown. Ask for *"a local Python tool to query SQLite"* and the SQLite server
+wins, flagged as local stdio + Python.
+
+## Try it as an MCP server
+
+```bash
+node mcp-search-server/server.mjs
+```
+
+Add it to Claude Desktop:
+
+```jsonc
+{
+  "mcpServers": {
+    "mymcpshelf-search": {
+      "command": "node",
+      "args": ["/path/to/mcp-search-server/server.mjs"]
+    }
+  }
+}
+```
+
+Then ask Claude: *"Find me an MCP server to automate a headless browser."* It calls our
+`search_mcp_servers` tool and returns curated, ranked answers — the same ones the website shows.
+
+## Why this matters
+
+Three things make this more than a gimmick:
+
+- **Reliability.** The website search now has no external dependency. It runs in-process against
+  the bundled curated dataset, so it's never "unavailable."
+- **Trust.** Explaining *why* a server ranked is the thing keyword search can't do. That
+  explanation is the whole point of curation.
+- **Dogfooding, honestly.** We didn't just "use MCP somewhere." The product's central feature —
+  search — *is* an MCP server. If our engine is wrong, both surfaces break identically, and we
+  hear about it from real MCP clients first.
+
+## What it doesn't do (yet)
+
+The engine is retrieval, not generation — it won't synthesize a novel answer or hold a
+conversation. That's deliberate: deterministic, explainable ranking is more trustworthy for a
+directory than a confident-sounding hallucination. A future iteration may wrap the tool in an
+LLM for conversational follow-ups, but the ranked retrieval underneath won't change — because
+that's the part an LLM should be calling, not rewriting.
+
+---
+
+*The search engine, the MCP server, and the website are all in the repo. The
+[Ask in plain English](/ai-search) page is live. Eat your own dog food.*
