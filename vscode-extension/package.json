@@ -1,0 +1,78 @@
+{
+  "name": "my-mcp-shelf",
+  "displayName": "My MCP Shelf",
+  "description": "Browse curated, trust-scored MCP servers from the command palette and install them with one click — curation at the moment of need, without leaving your editor.",
+  "version": "0.1.0",
+  "publisher": "mymcpshelf",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mymcpshelf/mcp-directory"
+  },
+  "engines": {
+    "vscode": "^1.88.0"
+  },
+  "categories": ["Other", "Machine Learning", "Programming Languages"],
+  "keywords": ["mcp", "model-context-protocol", "claude", "cursor", "ai", "agents"],
+  "icon": "media/icon.png",
+  "main": "./dist/extension.js",
+  "activationEvents": [
+    "onCommand:mcpShelf.browse",
+    "onCommand:mcpShelf.search",
+    "onCommand:mcpShelf.byCategory"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "mcpShelf.browse",
+        "title": "My MCP Shelf: Browse Curated Servers",
+        "category": "My MCP Shelf"
+      },
+      {
+        "command": "mcpShelf.search",
+        "title": "My MCP Shelf: Search in Plain English",
+        "category": "My MCP Shelf"
+      },
+      {
+        "command": "mcpShelf.byCategory",
+        "title": "My MCP Shelf: Browse by Category",
+        "category": "My MCP Shelf"
+      }
+    ],
+    "configuration": {
+      "title": "My MCP Shelf",
+      "properties": {
+        "myMcpShelf.liveData": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Fetch fresh staleness / green-hosting / security scores from mymcpshelf.com (falls back to the bundled snapshot when offline)."
+        },
+        "myMcpShelf.defaultInstallTarget": {
+          "type": "string",
+          "enum": ["cursor", "claude-desktop", "vscode", "clipboard", "ask"],
+          "default": "ask",
+          "markdownDescription": "Where one-click install writes the MCP config by default. `ask` shows a picker each time."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "node esbuild.mjs --production",
+    "watch": "node esbuild.mjs --watch",
+    "typecheck": "tsc --noEmit",
+    "snapshot": "tsx scripts/build-snapshot.ts",
+    "test": "tsx src/config.test.ts",
+    "package": "vsce package --no-dependencies"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/vscode": "^1.88.0",
+    "@vscode/vsce": "^3.0.0",
+    "esbuild": "^0.24.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild"]
+  }
+}
