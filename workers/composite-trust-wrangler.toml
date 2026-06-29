@@ -1,0 +1,30 @@
+name = "mcp-composite-trust-monitor"
+main = "composite-trust-monitor.js"
+compatibility_date = "2024-11-12"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# The CONSOLIDATED per-server recheck pipeline.
+#
+# One cron replaces the four separate schedules previously run by:
+#   health-monitor        (Sun 2 AM)   ─ staleness
+#   green-score-monitor   (Mon 3 AM)   ─ green hosting
+#   reliability-monitor   (Mon 4 AM)   ─ reliability/maintenance
+#   security-scanner      (daily 3 AM) ─ security scan
+#
+# This worker runs all four checks per server in a single pass and writes one
+# combined `composite_trust_json` record (plus the Composite Trust Score).
+# The four workers above are SUPERSEDED — disable their crons on next deploy.
+# ─────────────────────────────────────────────────────────────────────────────
+
+[[d1_databases]]
+binding = "DB"
+database_name = "mcp-directory"
+database_id = "527bf637-7aba-4719-8d39-b9e6e614a3b9"
+
+[triggers]
+crons = ["0 2 * * Tue"]   # Single weekly slot: Tuesday 02:00 UTC
+
+# Optional: higher GitHub API rate limits
+# [vars]
+# GITHUB_TOKEN = ""       # Set via: wrangler secret put GITHUB_TOKEN
+# SOCKET_DEV_API_KEY = "" # Set via: wrangler secret put SOCKET_DEV_API_KEY
