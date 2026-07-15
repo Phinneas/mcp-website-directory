@@ -23,6 +23,7 @@ const SSR_PAGES = [
   '/self-hosted',
   '/enterprise-saas',
   '/enterprise-readiness',
+  '/moderation',
 ];
 
 const routes = JSON.parse(readFileSync(routesPath, 'utf8'));

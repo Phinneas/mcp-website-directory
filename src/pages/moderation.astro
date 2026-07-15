@@ -1,0 +1,12 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ModerationPanel from '../components/ModerationPanel';
+---
+
+<BaseLayout title="Moderation Panel - MyMCPShelf" description="Moderation dashboard for review quality management.">
+  <Fragment slot="head">
+    <meta name="robots" content="noindex, nofollow" />
+  </Fragment>
+
+  <ModerationPanel client:load />
+</BaseLayout>

@@ -381,7 +381,7 @@ export default function ServerGrid({ initialServers, total: initialTotal, meta }
         
         {/* Local-Only (stdio) Toggle */}
         <div className="filter-toggles" style={{ display: 'flex', gap: '0.75rem', marginTop: '0.75rem', alignItems: 'center' }}>
-          <label className="local-only-toggle" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.875rem', color: localOnly ? '#22c55e' : '#94a3b8', fontWeight: localOnly ? 600 : 400, userSelect: 'none' }}>
+          <label className="local-only-toggle" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.875rem', color: localOnly ? '#22c55e' : '#000000', fontWeight: localOnly ? 600 : 400, userSelect: 'none' }}>
             <input
               type="checkbox"
               checked={localOnly}
@@ -391,7 +391,7 @@ export default function ServerGrid({ initialServers, total: initialTotal, meta }
             💻 Local-Only (stdio)
           </label>
           {localOnly && (
-            <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
+            <span style={{ fontSize: '0.75rem', color: '#000000' }}>
               Showing stdio servers with local-only data residency
             </span>
           )}

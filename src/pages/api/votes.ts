@@ -3,6 +3,7 @@
  * POST /api/votes — vote on a review (toggles if same direction)
  */
 import type { APIRoute } from 'astro';
+import { verifyAndUpsertUser, extractBearerToken, unauthorizedResponse, dbUnavailableResponse } from '../../lib/auth';
 
 export const prerender = false;
 
@@ -10,39 +11,16 @@ function generateId(): string {
   return `v_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 }
 
-async function verifyGitHubToken(token: string): Promise<string | null> {
-  try {
-    const res = await fetch('https://api.github.com/user', {
-      headers: {
-        'Authorization': `token ${token}`,
-        'User-Agent': 'MCP-Directory-Auth',
-        'Accept': 'application/vnd.github.v3+json',
-      },
-    });
-    if (!res.ok) return null;
-    const user = await res.json();
-    return user.id ? `gh_${user.id}` : null;
-  } catch {
-    return null;
-  }
-}
-
 export const POST: APIRoute = async ({ request, locals }) => {
   const db = (locals as any).runtime?.env?.DB as D1Database | undefined;
-  if (!db) {
-    return new Response(JSON.stringify({ error: 'Database unavailable' }), { status: 503, headers: { 'Content-Type': 'application/json' } });
-  }
+  if (!db) return dbUnavailableResponse();
 
-  const authHeader = request.headers.get('Authorization');
-  if (!authHeader?.startsWith('Bearer ')) {
-    return new Response(JSON.stringify({ error: 'Authentication required' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
-  }
+  const token = extractBearerToken(request.headers.get('Authorization'));
+  if (!token) return unauthorizedResponse();
 
-  const token = authHeader.slice(7);
-  const userId = await verifyGitHubToken(token);
-  if (!userId) {
-    return new Response(JSON.stringify({ error: 'Invalid or expired token' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
-  }
+  const moderatorIds = ((locals as any).runtime?.env?.MODERATOR_GITHUB_IDS || '').split(',').map((s: string) => s.trim()).filter(Boolean);
+  const user = await verifyAndUpsertUser(token, db, moderatorIds);
+  if (!user) return unauthorizedResponse();
 
   let body: any;
   try {
@@ -63,16 +41,16 @@ export const POST: APIRoute = async ({ request, locals }) => {
   // Check for existing vote
   const existing = await db
     .prepare('SELECT direction FROM user_votes WHERE review_id = ? AND user_id = ?')
-    .bind(review_id, userId)
-    .first();
+    .bind(review_id, user.userId)
+    .first<{ direction: string }>();
 
   if (existing) {
-    const existingDir = (existing as any).direction;
+    const existingDir = existing.direction;
     if (existingDir === direction) {
       // Same vote — remove it (toggle off)
       await db
         .prepare('DELETE FROM user_votes WHERE review_id = ? AND user_id = ?')
-        .bind(review_id, userId)
+        .bind(review_id, user.userId)
         .run();
 
       // Update helpful_count on review
@@ -90,7 +68,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       // Different direction — update
       await db
         .prepare('UPDATE user_votes SET direction = ? WHERE review_id = ? AND user_id = ?')
-        .bind(direction, review_id, userId)
+        .bind(direction, review_id, user.userId)
         .run();
 
       // Update helpful_count: switching from down to up = +2, up to down = -2
@@ -113,7 +91,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
   await db
     .prepare('INSERT OR IGNORE INTO user_votes (id, review_id, user_id, direction, created_at) VALUES (?, ?, ?, ?, ?)')
-    .bind(id, review_id, userId, direction, now)
+    .bind(id, review_id, user.userId, direction, now)
     .run();
 
   // Update helpful_count on review

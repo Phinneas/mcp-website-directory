@@ -12,11 +12,15 @@ interface Review {
   verified_usage: number;
   helpful_count: number;
   report_count: number;
+  status: string;
   created_at: string;
   updated_at: string;
   display_name?: string;
   github_username?: string;
   avatar_url?: string;
+  reputation_score?: number;
+  github_account_age_days?: number;
+  github_public_repos?: number;
   userVote: 'up' | 'down' | null;
 }
 
@@ -32,6 +36,14 @@ interface Props {
   serverId: string;
   initialStats?: CommunityStats | null;
 }
+
+const REPORT_REASONS = [
+  { value: 'spam', label: 'Spam' },
+  { value: 'abusive', label: 'Abusive / Harassment' },
+  { value: 'irrelevant', label: 'Irrelevant' },
+  { value: 'misleading', label: 'Misleading' },
+  { value: 'other', label: 'Other' },
+];
 
 function StarRating({ rating, interactive, onChange }: { rating: number; interactive?: boolean; onChange?: (r: number) => void }) {
   const [hover, setHover] = useState(0);
@@ -76,6 +88,15 @@ function contextLabel(ctx: string | null): string {
   return ctx ? labels[ctx] || ctx : '';
 }
 
+function repBadge(score?: number): { label: string; color: string; bg: string } | null {
+  if (score == null) return null;
+  if (score >= 50) return { label: 'Trusted Reviewer', color: '#22c55e', bg: '#22c55e22' };
+  if (score >= 20) return { label: 'Established', color: '#3b82f6', bg: '#3b82f622' };
+  if (score >= 5) return { label: 'Active', color: '#f59e0b', bg: '#f59e0b22' };
+  if (score < 5 && score >= 0) return { label: 'New', color: '#64748b', bg: '#64748b22' };
+  return null;
+}
+
 export default function ReviewSection({ serverId, initialStats }: Props) {
   const { user, userId, loading: authLoading, login, authHeaders } = useGitHubAuth();
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -87,6 +108,11 @@ export default function ReviewSection({ serverId, initialStats }: Props) {
   const [formContext, setFormContext] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
+  const [reportingReviewId, setReportingReviewId] = useState<string | null>(null);
+  const [reportReason, setReportReason] = useState('');
+  const [reportDetail, setReportDetail] = useState('');
+  const [reportSubmitting, setReportSubmitting] = useState(false);
 
   // Load reviews
   const loadReviews = useCallback(async () => {
@@ -120,6 +146,7 @@ export default function ReviewSection({ serverId, initialStats }: Props) {
 
     setSubmitting(true);
     setError('');
+    setSuccessMsg('');
 
     try {
       const res = await fetch('/api/reviews', {
@@ -135,11 +162,17 @@ export default function ReviewSection({ serverId, initialStats }: Props) {
       });
 
       if (res.ok) {
+        const data = await res.json();
         setShowForm(false);
         setFormRating(0);
         setFormTitle('');
         setFormBody('');
         setFormContext('');
+        if (data.status === 'pending') {
+          setSuccessMsg('Your review has been submitted and is held for moderation. It will be visible once approved by a moderator.');
+        } else {
+          setSuccessMsg('Review submitted successfully!');
+        }
         loadReviews();
         // Refresh stats
         const statsRes = await fetch(`/api/community/${serverId}`);
@@ -167,6 +200,46 @@ export default function ReviewSection({ serverId, initialStats }: Props) {
     } catch {}
   };
 
+  const handleReport = async (reviewId: string) => {
+    if (!userId) { login(); return; }
+    if (!reportReason) { setError('Please select a reason'); return; }
+
+    setReportSubmitting(true);
+    setError('');
+
+    try {
+      const res = await fetch('/api/reports', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...authHeaders() },
+        body: JSON.stringify({
+          review_id: reviewId,
+          reason: reportReason,
+          detail: reportDetail.trim() || undefined,
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setReportingReviewId(null);
+        setReportReason('');
+        setReportDetail('');
+        if (data.auto_flagged) {
+          setSuccessMsg('Report submitted. The review has been automatically flagged for moderator review.');
+        } else {
+          setSuccessMsg('Report submitted. Thank you for helping maintain review quality.');
+        }
+        setTimeout(() => setSuccessMsg(''), 5000);
+      } else {
+        const data = await res.json();
+        setError(data.error || 'Failed to submit report');
+      }
+    } catch {
+      setError('Network error');
+    } finally {
+      setReportSubmitting(false);
+    }
+  };
+
   // Summary section
   const avgDisplay = stats?.avgRating ? stats.avgRating.toFixed(1) : '—';
   const dist = stats?.ratingDistribution || { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
@@ -174,6 +247,21 @@ export default function ReviewSection({ serverId, initialStats }: Props) {
 
   return (
     <div className="review-section">
+      {/* Success message */}
+      {successMsg && (
+        <div style={{
+          background: '#22c55e11',
+          border: '1px solid #22c55e33',
+          borderRadius: '8px',
+          padding: '0.75rem 1rem',
+          marginBottom: '1rem',
+          color: '#22c55e',
+          fontSize: '0.85rem',
+        }}>
+          {successMsg}
+        </div>
+      )}
+
       {/* Community Summary */}
       <div className="community-summary" style={{ display: 'flex', gap: '1.5rem', marginBottom: '1.5rem', alignItems: 'flex-start' }}>
         <div className="rating-overview" style={{ textAlign: 'center', minWidth: '100px' }}>
@@ -214,7 +302,7 @@ export default function ReviewSection({ serverId, initialStats }: Props) {
         <div style={{ marginBottom: '1.5rem' }}>
           {user ? (
             <button
-              onClick={() => setShowForm(true)}
+              onClick={() => { setShowForm(true); setSuccessMsg(''); setError(''); }}
               style={{
                 background: 'linear-gradient(135deg, #f59e0b22, #f59e0b11)',
                 border: '1px solid #f59e0b44',
@@ -380,72 +468,211 @@ export default function ReviewSection({ serverId, initialStats }: Props) {
             No reviews yet. Be the first to share your experience.
           </p>
         )}
-        {reviews.map(review => (
-          <div
-            key={review.id}
-            style={{
-              background: 'rgba(255,255,255,0.03)',
-              border: '1px solid rgba(255,255,255,0.08)',
-              borderRadius: '10px',
-              padding: '1rem 1.25rem',
-              marginBottom: '0.75rem',
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                {review.avatar_url ? (
-                  <img src={review.avatar_url} alt="" style={{ width: '28px', height: '28px', borderRadius: '50%' }} />
-                ) : (
-                  <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#1e293b', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', color: '#94a3b8' }}>
-                    {(review.github_username || review.display_name || '?').charAt(0).toUpperCase()}
-                  </div>
-                )}
-                <span style={{ color: '#e2e8f0', fontWeight: 600, fontSize: '0.85rem' }}>
-                  {review.github_username || review.display_name || 'Anonymous'}
-                </span>
-                {review.verified_usage === 1 && (
-                  <span style={{ background: '#22c55e22', color: '#22c55e', padding: '0.1rem 0.4rem', borderRadius: '4px', fontSize: '0.65rem', fontWeight: 600 }}>
-                    ✓ Verified Usage
-                  </span>
-                )}
+        {reviews.map(review => {
+          const badge = repBadge(review.reputation_score);
+          const isPending = review.status === 'pending';
+          const isOwnReview = userId && review.user_id === userId;
+          return (
+            <div
+              key={review.id}
+              style={{
+                background: isPending ? 'rgba(245, 158, 11, 0.05)' : 'rgba(255,255,255,0.03)',
+                border: isPending ? '1px solid rgba(245, 158, 11, 0.2)' : '1px solid rgba(255,255,255,0.08)',
+                borderRadius: '10px',
+                padding: '1rem 1.25rem',
+                marginBottom: '0.75rem',
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  {review.avatar_url ? (
+                    <img src={review.avatar_url} alt="" style={{ width: '28px', height: '28px', borderRadius: '50%' }} />
+                  ) : (
+                    <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: '#1e293b', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', color: '#94a3b8' }}>
+                      {(review.github_username || review.display_name || '?').charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                  {review.github_username ? (
+                    <a
+                      href={`https://github.com/${review.github_username}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: '#e2e8f0', fontWeight: 600, fontSize: '0.85rem', textDecoration: 'none' }}
+                    >
+                      {review.github_username}
+                    </a>
+                  ) : (
+                    <span style={{ color: '#e2e8f0', fontWeight: 600, fontSize: '0.85rem' }}>
+                      {review.display_name || 'Anonymous'}
+                    </span>
+                  )}
+                  {review.verified_usage === 1 && (
+                    <span style={{ background: '#22c55e22', color: '#22c55e', padding: '0.1rem 0.4rem', borderRadius: '4px', fontSize: '0.65rem', fontWeight: 600 }}>
+                      ✓ Verified Usage
+                    </span>
+                  )}
+                  {badge && (
+                    <span style={{ background: badge.bg, color: badge.color, padding: '0.1rem 0.4rem', borderRadius: '4px', fontSize: '0.65rem', fontWeight: 600 }}>
+                      {badge.label}
+                    </span>
+                  )}
+                </div>
+                <span style={{ fontSize: '0.75rem', color: '#475569' }}>{formatDate(review.created_at)}</span>
               </div>
-              <span style={{ fontSize: '0.75rem', color: '#475569' }}>{formatDate(review.created_at)}</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
-              <StarRating rating={review.rating} />
-              <span style={{ fontWeight: 600, color: '#e2e8f0', fontSize: '0.9rem' }}>{review.title}</span>
-            </div>
-            {review.body && (
-              <p style={{ color: '#94a3b8', fontSize: '0.85rem', lineHeight: 1.5, margin: '0 0 0.5rem 0' }}>
-                {review.body}
-              </p>
-            )}
-            <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-              {review.usage_context && (
-                <span style={{ fontSize: '0.75rem', color: '#64748b' }}>{contextLabel(review.usage_context)}</span>
+
+              {/* Pending moderation banner for user's own pending reviews */}
+              {isPending && isOwnReview && (
+                <div style={{
+                  background: '#f59e0b11',
+                  border: '1px solid #f59e0b33',
+                  borderRadius: '6px',
+                  padding: '0.4rem 0.6rem',
+                  marginBottom: '0.5rem',
+                  fontSize: '0.75rem',
+                  color: '#f59e0b',
+                }}>
+                  ⏳ Pending moderation — your review is awaiting approval from a moderator before it becomes publicly visible.
+                </div>
               )}
-              <div style={{ marginLeft: 'auto', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                <button
-                  onClick={() => handleVote(review.id, 'up')}
-                  style={{
-                    background: review.userVote === 'up' ? '#22c55e22' : 'transparent',
-                    border: `1px solid ${review.userVote === 'up' ? '#22c55e44' : '#334155'}`,
-                    color: review.userVote === 'up' ? '#22c55e' : '#64748b',
-                    borderRadius: '6px',
-                    padding: '0.15rem 0.5rem',
-                    cursor: 'pointer',
-                    fontSize: '0.75rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.25rem',
-                  }}
-                >
-                  ▲ Helpful ({review.helpful_count})
-                </button>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
+                <StarRating rating={review.rating} />
+                <span style={{ fontWeight: 600, color: '#e2e8f0', fontSize: '0.9rem' }}>{review.title}</span>
               </div>
+              {review.body && (
+                <p style={{ color: '#94a3b8', fontSize: '0.85rem', lineHeight: 1.5, margin: '0 0 0.5rem 0' }}>
+                  {review.body}
+                </p>
+              )}
+              <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                {review.usage_context && (
+                  <span style={{ fontSize: '0.75rem', color: '#64748b' }}>{contextLabel(review.usage_context)}</span>
+                )}
+                <div style={{ marginLeft: 'auto', display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                  <button
+                    onClick={() => handleVote(review.id, 'up')}
+                    style={{
+                      background: review.userVote === 'up' ? '#22c55e22' : 'transparent',
+                      border: `1px solid ${review.userVote === 'up' ? '#22c55e44' : '#334155'}`,
+                      color: review.userVote === 'up' ? '#22c55e' : '#64748b',
+                      borderRadius: '6px',
+                      padding: '0.15rem 0.5rem',
+                      cursor: 'pointer',
+                      fontSize: '0.75rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.25rem',
+                    }}
+                  >
+                    ▲ Helpful ({review.helpful_count})
+                  </button>
+
+                  {/* Report button — only for reviews by other users */}
+                  {userId && review.user_id !== userId && (
+                    <button
+                      onClick={() => { setReportingReviewId(review.id); setError(''); }}
+                      style={{
+                        background: 'transparent',
+                        border: '1px solid #334155',
+                        color: '#64748b',
+                        borderRadius: '6px',
+                        padding: '0.15rem 0.5rem',
+                        cursor: 'pointer',
+                        fontSize: '0.7rem',
+                      }}
+                    >
+                      ⚑ Report
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Report form (inline) */}
+              {reportingReviewId === review.id && (
+                <div style={{
+                  marginTop: '0.75rem',
+                  padding: '0.75rem',
+                  background: '#0f172a',
+                  borderRadius: '8px',
+                  border: '1px solid #1e293b',
+                }}>
+                  <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginBottom: '0.5rem' }}>Report this review:</div>
+                  <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.5rem' }}>
+                    {REPORT_REASONS.map(r => (
+                      <button
+                        key={r.value}
+                        onClick={() => setReportReason(r.value)}
+                        style={{
+                          background: reportReason === r.value ? '#ef444422' : 'transparent',
+                          border: `1px solid ${reportReason === r.value ? '#ef444444' : '#334155'}`,
+                          color: reportReason === r.value ? '#ef4444' : '#94a3b8',
+                          borderRadius: '6px',
+                          padding: '0.2rem 0.6rem',
+                          cursor: 'pointer',
+                          fontSize: '0.75rem',
+                        }}
+                      >
+                        {r.label}
+                      </button>
+                    ))}
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Additional detail (optional, max 500 chars)"
+                    value={reportDetail}
+                    onChange={e => setReportDetail(e.target.value)}
+                    maxLength={500}
+                    style={{
+                      width: '100%',
+                      background: '#1e293b',
+                      border: '1px solid #334155',
+                      borderRadius: '6px',
+                      padding: '0.4rem 0.6rem',
+                      color: '#e2e8f0',
+                      fontSize: '0.8rem',
+                      outline: 'none',
+                      marginBottom: '0.5rem',
+                    }}
+                  />
+                  {error && <div style={{ color: '#ef4444', fontSize: '0.75rem', marginBottom: '0.5rem' }}>{error}</div>}
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button
+                      onClick={() => handleReport(review.id)}
+                      disabled={reportSubmitting || !reportReason}
+                      style={{
+                        background: '#ef4444',
+                        color: '#fff',
+                        border: 'none',
+                        borderRadius: '6px',
+                        padding: '0.3rem 0.8rem',
+                        cursor: (reportSubmitting || !reportReason) ? 'not-allowed' : 'pointer',
+                        fontSize: '0.75rem',
+                        fontWeight: 600,
+                        opacity: (reportSubmitting || !reportReason) ? 0.5 : 1,
+                      }}
+                    >
+                      {reportSubmitting ? 'Submitting...' : 'Submit Report'}
+                    </button>
+                    <button
+                      onClick={() => { setReportingReviewId(null); setReportReason(''); setReportDetail(''); setError(''); }}
+                      style={{
+                        background: 'transparent',
+                        border: '1px solid #334155',
+                        color: '#94a3b8',
+                        borderRadius: '6px',
+                        padding: '0.3rem 0.8rem',
+                        cursor: 'pointer',
+                        fontSize: '0.75rem',
+                      }}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

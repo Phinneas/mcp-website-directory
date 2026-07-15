@@ -171,28 +171,94 @@
 .section-title {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #f1f5f9;
+  color: #000000;
 }
 
 .section-description {
-  color: #94a3b8;
+  color: #000000;
   font-size: 0.95rem;
 }
 
 .no-results {
   text-align: center;
   padding: 3rem 0;
-  color: #64748b;
+  color: #000000;
 }
 
 .no-results h3 {
   font-size: 1.2rem;
   margin-bottom: 0.5rem;
-  color: #94a3b8;
+  color: #000000;
 }
 
 .no-results a {
-  color: #f59e0b;
+  color: #000000;
+}
+
+/* ── ServerGrid search section overrides (light background) ── */
+.search-section-heading {
+  color: #000000;
+}
+
+.search-bar {
+  position: relative;
+  max-width: 500px;
+  margin: 0 auto 2rem;
+}
+
+.search-input {
+  width: 100%;
+  padding: 1rem 1rem 1rem 3rem;
+  border: 1px solid #d1d5db;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.95);
+  color: #000000;
+  font-size: 1rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.search-input::placeholder {
+  color: #666666;
+}
+
+.search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #000000;
+}
+
+.categories {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+  width: 100%;
+  padding: 1rem 0;
+}
+
+.category-tag {
+  padding: 0.5rem 1rem;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 2rem;
+  color: #000000;
+  text-decoration: none;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.category-tag.active {
+  background: #f59e0b;
+  color: #000000;
+  border-color: #f59e0b;
+}
+
+.filter-toggles label {
+  color: #000000;
 }
 
 .comparison-section {

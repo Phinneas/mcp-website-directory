@@ -1,0 +1,76 @@
+name: MCP Server Discovery
+
+# ─────────────────────────────────────────────────────────────────────────────
+# First-party MCP discovery (task 22). Finds NEW MCP servers from sources that
+# are NOT competing directories:
+#   1. npm registry search  (packages describing/depending on MCP servers)
+#   2. GitHub search API    (repos tagged mcp-server / model-context-protocol)
+#   3. Official MCP Registry (registry.modelcontextprotocol.io — neutral)
+#
+# Verifies each npm candidate actually depends on an official MCP SDK, dedupes
+# against the live directory, and seeds the discovered_servers queue (migration
+# 010) for the scan pipeline (tasks 13/14) → API (11) → stacks (16) → newsletter.
+#
+# GITHUB_TOKEN is provided automatically (higher search rate limits).
+# ─────────────────────────────────────────────────────────────────────────────
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"      # Weekly Monday 06:00 UTC
+  workflow_dispatch:         # Manual run
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Run discovery
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/discovery/run-discovery.mjs
+
+      - name: Show top candidates
+        run: |
+          echo "## 🔭 MCP Discovery — $(date -u +'%Y-%m-%d')" >> "$GITHUB_STEP_SUMMARY"
+          node -e "
+            const d = require('./scripts/discovery/discovered.json');
+            console.log('Stats:', JSON.stringify(d.stats));
+            console.log('| Score | SDK | Server |');
+            console.log('|-------|-----|--------|');
+            for (const c of d.discovered.slice(0, 25)) {
+              console.log(\`| \${c.score} | \${c.sdkVerified ? '✓' : ' '} | [\${c.name}](${c.github_url || c.shelf_url || ''}) |\`);
+            }
+          " >> "$GITHUB_STEP_SUMMARY"
+
+      # Seed the discovery queue in D1 (requires CLOUDFLARE_API_TOKEN secret).
+      - name: Seed discovery queue (D1)
+        if: ${{ hashFiles('scripts/discovery/discovered_queue.sql') != '' }}
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "::notice::CLOUDFLARE_API_TOKEN not set — skipping D1 seed (queue SQL still in artifacts)"
+            exit 0
+          fi
+          npx wrangler d1 execute mcp-directory --remote --file=scripts/discovery/discovered_queue.sql
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: discovered-mcps
+          path: |
+            scripts/discovery/discovered.json
+            scripts/discovery/discovered_queue.sql
+          retention-days: 30

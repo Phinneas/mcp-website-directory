@@ -5,6 +5,8 @@
  * DELETE /api/reviews?id=         — delete a review
  */
 import type { APIRoute } from 'astro';
+import { verifyAndUpsertUser, extractBearerToken, unauthorizedResponse, dbUnavailableResponse } from '../../lib/auth';
+import { checkReviewSpam } from '../../lib/spam-filter';
 
 export const prerender = false;
 
@@ -75,9 +77,7 @@ async function refreshCommunityStats(db: D1Database, serverId: string): Promise<
 
 export const GET: APIRoute = async ({ request, locals }) => {
   const db = (locals as any).runtime?.env?.DB as D1Database | undefined;
-  if (!db) {
-    return new Response(JSON.stringify({ error: 'Database unavailable' }), { status: 503, headers: { 'Content-Type': 'application/json' } });
-  }
+  if (!db) return dbUnavailableResponse();
 
   const url = new URL(request.url);
   const serverId = url.searchParams.get('server_id');
@@ -87,14 +87,19 @@ export const GET: APIRoute = async ({ request, locals }) => {
     return new Response(JSON.stringify({ error: 'Missing server_id' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
   }
 
+  // Fetch active reviews (and pending reviews by the requesting user so they can see their own held review)
+  const includeStatus = userId ? `AND (r.status = 'active' OR (r.status = 'pending' AND r.user_id = ?))` : `AND r.status = 'active'`;
+  const binds = userId ? [userId, serverId] : [serverId];
+
   const reviews = await db
-    .prepare(`SELECT r.*, u.display_name, u.github_username, u.avatar_url
+    .prepare(`SELECT r.*, u.display_name, u.github_username, u.avatar_url, u.reputation_score,
+                     u.github_account_age_days, u.github_public_repos
               FROM user_reviews r
               LEFT JOIN users u ON r.user_id = u.id
-              WHERE r.server_id = ? AND r.status = 'active'
+              WHERE r.server_id = ? ${includeStatus}
               ORDER BY r.helpful_count DESC, r.created_at DESC
               LIMIT 50`)
-    .bind(serverId)
+    .bind(...binds)
     .all();
 
   // If userId provided, also fetch the user's vote state for each review
@@ -126,21 +131,14 @@ export const GET: APIRoute = async ({ request, locals }) => {
 
 export const POST: APIRoute = async ({ request, locals }) => {
   const db = (locals as any).runtime?.env?.DB as D1Database | undefined;
-  if (!db) {
-    return new Response(JSON.stringify({ error: 'Database unavailable' }), { status: 503, headers: { 'Content-Type': 'application/json' } });
-  }
+  if (!db) return dbUnavailableResponse();
 
-  // Extract user identity from auth header (GitHub OAuth token)
-  const authHeader = request.headers.get('Authorization');
-  if (!authHeader?.startsWith('Bearer ')) {
-    return new Response(JSON.stringify({ error: 'Authentication required' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
-  }
+  const token = extractBearerToken(request.headers.get('Authorization'));
+  if (!token) return unauthorizedResponse();
 
-  const token = authHeader.slice(7);
-  const userId = await verifyGitHubToken(token);
-  if (!userId) {
-    return new Response(JSON.stringify({ error: 'Invalid or expired token' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
-  }
+  const moderatorIds = ((locals as any).runtime?.env?.MODERATOR_GITHUB_IDS || '').split(',').map((s: string) => s.trim()).filter(Boolean);
+  const user = await verifyAndUpsertUser(token, db, moderatorIds);
+  if (!user) return unauthorizedResponse();
 
   let body: any;
   try {
@@ -172,27 +170,57 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return new Response(JSON.stringify({ error: 'Invalid usage_context' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
   }
 
+  // Run spam filter heuristics
+  const spamResult = await checkReviewSpam(db, user, server_id, title.trim(), (reviewBody || '').trim());
+  if (!spamResult.allowed) {
+    return new Response(JSON.stringify({ error: spamResult.reason || 'Review rejected' }), { status: 422, headers: { 'Content-Type': 'application/json' } });
+  }
+
   const now = new Date().toISOString();
   const id = generateId();
+  const reviewStatus = spamResult.status; // 'active' or 'pending'
 
   try {
-    await db
-      .prepare(`INSERT INTO user_reviews (id, server_id, user_id, rating, title, body, usage_context, deployment_type, created_at, updated_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                ON CONFLICT(server_id, user_id) DO UPDATE SET
-                  rating = excluded.rating,
-                  title = excluded.title,
-                  body = excluded.body,
-                  usage_context = excluded.usage_context,
-                  deployment_type = excluded.deployment_type,
-                  updated_at = excluded.updated_at`)
-      .bind(id, server_id, userId, rating, title, reviewBody || '', usage_context || null, deployment_type || null, now, now)
-      .run();
+    // Check if user already has a review for this server (upsert case)
+    const existing = await db
+      .prepare('SELECT id FROM user_reviews WHERE server_id = ? AND user_id = ?')
+      .bind(server_id, user.userId)
+      .first<{ id: string }>();
+
+    const reviewId = existing?.id || id;
+    const isUpdate = !!existing;
+
+    if (isUpdate) {
+      // Update existing review — keep current status unless it was hidden/flagged by a moderator
+      await db
+        .prepare(`UPDATE user_reviews SET rating = ?, title = ?, body = ?, usage_context = ?, deployment_type = ?, updated_at = ?,
+                  status = CASE WHEN status IN ('hidden', 'flagged') THEN status ELSE ? END
+                  WHERE id = ?`)
+        .bind(rating, title.trim(), reviewBody || '', usage_context || null, deployment_type || null, now, reviewStatus, reviewId)
+        .run();
+    } else {
+      await db
+        .prepare(`INSERT INTO user_reviews (id, server_id, user_id, rating, title, body, usage_context, deployment_type, status, created_at, updated_at)
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+        .bind(reviewId, server_id, user.userId, rating, title.trim(), reviewBody || '', usage_context || null, deployment_type || null, reviewStatus, now, now)
+        .run();
+
+      // Increment user's review_count
+      await db
+        .prepare('UPDATE users SET review_count = review_count + 1, updated_at = ? WHERE id = ?')
+        .bind(now, user.userId)
+        .run();
+    }
 
     // Refresh cached community stats
     await refreshCommunityStats(db, server_id);
 
-    return new Response(JSON.stringify({ success: true, review_id: id }), {
+    return new Response(JSON.stringify({
+      success: true,
+      review_id: reviewId,
+      status: reviewStatus,
+      ...(reviewStatus === 'pending' && { message: 'Your review is held for moderation and will be visible once approved.' }),
+    }), {
       status: 201,
       headers: { 'Content-Type': 'application/json' },
     });
@@ -204,20 +232,14 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
 export const DELETE: APIRoute = async ({ request, locals }) => {
   const db = (locals as any).runtime?.env?.DB as D1Database | undefined;
-  if (!db) {
-    return new Response(JSON.stringify({ error: 'Database unavailable' }), { status: 503, headers: { 'Content-Type': 'application/json' } });
-  }
+  if (!db) return dbUnavailableResponse();
 
-  const authHeader = request.headers.get('Authorization');
-  if (!authHeader?.startsWith('Bearer ')) {
-    return new Response(JSON.stringify({ error: 'Authentication required' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
-  }
+  const token = extractBearerToken(request.headers.get('Authorization'));
+  if (!token) return unauthorizedResponse();
 
-  const token = authHeader.slice(7);
-  const userId = await verifyGitHubToken(token);
-  if (!userId) {
-    return new Response(JSON.stringify({ error: 'Invalid or expired token' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
-  }
+  const moderatorIds = ((locals as any).runtime?.env?.MODERATOR_GITHUB_IDS || '').split(',').map((s: string) => s.trim()).filter(Boolean);
+  const user = await verifyAndUpsertUser(token, db, moderatorIds);
+  if (!user) return unauthorizedResponse();
 
   const url = new URL(request.url);
   const reviewId = url.searchParams.get('id');
@@ -226,43 +248,30 @@ export const DELETE: APIRoute = async ({ request, locals }) => {
     return new Response(JSON.stringify({ error: 'Missing review id' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
   }
 
-  // Only allow deleting own reviews
+  // Only allow deleting own reviews (moderators use /api/moderation)
   const review = await db
     .prepare('SELECT server_id, user_id FROM user_reviews WHERE id = ?')
     .bind(reviewId)
-    .first();
+    .first<{ server_id: string; user_id: string }>();
 
   if (!review) {
     return new Response(JSON.stringify({ error: 'Review not found' }), { status: 404, headers: { 'Content-Type': 'application/json' } });
   }
 
-  if ((review as any).user_id !== userId) {
+  if (review.user_id !== user.userId) {
     return new Response(JSON.stringify({ error: 'Not authorized to delete this review' }), { status: 403, headers: { 'Content-Type': 'application/json' } });
   }
 
   await db.prepare('DELETE FROM user_reviews WHERE id = ?').bind(reviewId).run();
-  await refreshCommunityStats(db, (review as any).server_id);
+  // Decrement user's review_count
+  await db
+    .prepare('UPDATE users SET review_count = MAX(0, review_count - 1), updated_at = ? WHERE id = ?')
+    .bind(new Date().toISOString(), user.userId)
+    .run();
+  await refreshCommunityStats(db, review.server_id);
 
   return new Response(JSON.stringify({ success: true }), {
     status: 200,
     headers: { 'Content-Type': 'application/json' },
   });
 };
-
-// GitHub OAuth token verification — calls GitHub API to validate token and get user ID
-async function verifyGitHubToken(token: string): Promise<string | null> {
-  try {
-    const res = await fetch('https://api.github.com/user', {
-      headers: {
-        'Authorization': `token ${token}`,
-        'User-Agent': 'MCP-Directory-Auth',
-        'Accept': 'application/vnd.github.v3+json',
-      },
-    });
-    if (!res.ok) return null;
-    const user = await res.json();
-    return user.id ? `gh_${user.id}` : null;
-  } catch {
-    return null;
-  }
-}

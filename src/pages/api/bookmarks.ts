@@ -5,28 +5,12 @@
  * GET    /api/bookmarks?user_id= — list user's bookmarks
  */
 import type { APIRoute } from 'astro';
+import { verifyAndUpsertUser, extractBearerToken, unauthorizedResponse, dbUnavailableResponse } from '../../lib/auth';
 
 export const prerender = false;
 
 function generateId(): string {
   return `bm_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-}
-
-async function verifyGitHubToken(token: string): Promise<string | null> {
-  try {
-    const res = await fetch('https://api.github.com/user', {
-      headers: {
-        'Authorization': `token ${token}`,
-        'User-Agent': 'MCP-Directory-Auth',
-        'Accept': 'application/vnd.github.v3+json',
-      },
-    });
-    if (!res.ok) return null;
-    const user = await res.json();
-    return user.id ? `gh_${user.id}` : null;
-  } catch {
-    return null;
-  }
 }
 
 async function refreshBookmarkCount(db: D1Database, serverId: string): Promise<void> {
@@ -56,24 +40,18 @@ async function refreshBookmarkCount(db: D1Database, serverId: string): Promise<v
 
 export const GET: APIRoute = async ({ request, locals }) => {
   const db = (locals as any).runtime?.env?.DB as D1Database | undefined;
-  if (!db) {
-    return new Response(JSON.stringify({ error: 'Database unavailable' }), { status: 503, headers: { 'Content-Type': 'application/json' } });
-  }
+  if (!db) return dbUnavailableResponse();
 
-  const authHeader = request.headers.get('Authorization');
-  if (!authHeader?.startsWith('Bearer ')) {
-    return new Response(JSON.stringify({ error: 'Authentication required' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
-  }
+  const token = extractBearerToken(request.headers.get('Authorization'));
+  if (!token) return unauthorizedResponse();
 
-  const token = authHeader.slice(7);
-  const userId = await verifyGitHubToken(token);
-  if (!userId) {
-    return new Response(JSON.stringify({ error: 'Invalid or expired token' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
-  }
+  const moderatorIds = ((locals as any).runtime?.env?.MODERATOR_GITHUB_IDS || '').split(',').map((s: string) => s.trim()).filter(Boolean);
+  const user = await verifyAndUpsertUser(token, db, moderatorIds);
+  if (!user) return unauthorizedResponse();
 
   const bookmarks = await db
     .prepare('SELECT server_id, created_at FROM user_bookmarks WHERE user_id = ? ORDER BY created_at DESC')
-    .bind(userId)
+    .bind(user.userId)
     .all();
 
   return new Response(JSON.stringify({ bookmarks: bookmarks.results || [] }), {
@@ -84,20 +62,14 @@ export const GET: APIRoute = async ({ request, locals }) => {
 
 export const POST: APIRoute = async ({ request, locals }) => {
   const db = (locals as any).runtime?.env?.DB as D1Database | undefined;
-  if (!db) {
-    return new Response(JSON.stringify({ error: 'Database unavailable' }), { status: 503, headers: { 'Content-Type': 'application/json' } });
-  }
+  if (!db) return dbUnavailableResponse();
 
-  const authHeader = request.headers.get('Authorization');
-  if (!authHeader?.startsWith('Bearer ')) {
-    return new Response(JSON.stringify({ error: 'Authentication required' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
-  }
+  const token = extractBearerToken(request.headers.get('Authorization'));
+  if (!token) return unauthorizedResponse();
 
-  const token = authHeader.slice(7);
-  const userId = await verifyGitHubToken(token);
-  if (!userId) {
-    return new Response(JSON.stringify({ error: 'Invalid or expired token' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
-  }
+  const moderatorIds = ((locals as any).runtime?.env?.MODERATOR_GITHUB_IDS || '').split(',').map((s: string) => s.trim()).filter(Boolean);
+  const user = await verifyAndUpsertUser(token, db, moderatorIds);
+  if (!user) return unauthorizedResponse();
 
   let body: any;
   try {
@@ -117,7 +89,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
   try {
     await db
       .prepare('INSERT OR IGNORE INTO user_bookmarks (id, server_id, user_id, created_at) VALUES (?, ?, ?, ?)')
-      .bind(id, server_id, userId, now)
+      .bind(id, server_id, user.userId, now)
       .run();
 
     await refreshBookmarkCount(db, server_id);
@@ -134,20 +106,14 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
 export const DELETE: APIRoute = async ({ request, locals }) => {
   const db = (locals as any).runtime?.env?.DB as D1Database | undefined;
-  if (!db) {
-    return new Response(JSON.stringify({ error: 'Database unavailable' }), { status: 503, headers: { 'Content-Type': 'application/json' } });
-  }
+  if (!db) return dbUnavailableResponse();
 
-  const authHeader = request.headers.get('Authorization');
-  if (!authHeader?.startsWith('Bearer ')) {
-    return new Response(JSON.stringify({ error: 'Authentication required' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
-  }
+  const token = extractBearerToken(request.headers.get('Authorization'));
+  if (!token) return unauthorizedResponse();
 
-  const token = authHeader.slice(7);
-  const userId = await verifyGitHubToken(token);
-  if (!userId) {
-    return new Response(JSON.stringify({ error: 'Invalid or expired token' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
-  }
+  const moderatorIds = ((locals as any).runtime?.env?.MODERATOR_GITHUB_IDS || '').split(',').map((s: string) => s.trim()).filter(Boolean);
+  const user = await verifyAndUpsertUser(token, db, moderatorIds);
+  if (!user) return unauthorizedResponse();
 
   let body: any;
   try {
@@ -163,7 +129,7 @@ export const DELETE: APIRoute = async ({ request, locals }) => {
 
   await db
     .prepare('DELETE FROM user_bookmarks WHERE server_id = ? AND user_id = ?')
-    .bind(server_id, userId)
+    .bind(server_id, user.userId)
     .run();
 
   await refreshBookmarkCount(db, server_id);
