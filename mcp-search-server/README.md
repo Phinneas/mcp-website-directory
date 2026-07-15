@@ -1,93 +1,95 @@
-# My MCP Shelf — Search MCP Server
+# mymcpshelf-mcp
 
-An **MCP server that searches our own directory** of curated MCP servers — in plain
-English. This is us dogfooding: the My MCP Shelf website's natural-language search is
-powered by the exact same engine this server exposes.
+An installable MCP server that queries the **My MCP Shelf** directory of curated,
+security-graded MCP servers. Every result includes trust badges: composite trust
+score, reliability tier, green-hosting status, and security scan grade.
 
-> **The pitch:** "Our directory's search is built on MCP." This package is the proof —
-> the same `searchServers()` engine that the website's `/api/v1/search-ai` endpoint calls
-> is what this MCP server exposes as a tool. One engine, two surfaces.
-
-## What it does
-
-Exposes two tools over stdio:
-
-| Tool | Description |
-| --- | --- |
-| `search_mcp_servers(query, limit?)` | Plain-English search → ranked servers, each with a human-readable **why** (name/category/deployment/security signals) and the filters inferred from the query. |
-| `get_server(id)` | Full details for a single server by id. |
-
-The engine is **deterministic** — no LLM call, no API key, fully offline. It's designed to
-be *consumed by* an LLM as a tool, which is precisely the dogfooding point. It ranks using:
-
-- TF-IDF text relevance over name + description (word-boundary matched, so `postgres` finds
-  `postgresql` without `ai` matching `email`),
-- the directory's existing **category** and **deployment-type** tags as boosters,
-- the manual **security audit** (input handling, data residency, auth) when a query signals
-  safety intent (e.g. *"safely"*, *"row-level"*, *"read-only"*),
-- and adoption (stars/downloads) as a tiebreaker.
-
-## Run it
+## Quick start
 
 ```bash
-# from this directory (resolves the shared engine + data from the repo root)
-node server.mjs
+npx -y mymcpshelf-mcp
 ```
 
 It speaks MCP over stdio, so point any MCP-compatible client at it.
 
-## Add it to Claude Desktop
+## Add to Claude Desktop
 
 Edit `claude_desktop_config.json`:
 
 ```jsonc
 {
   "mcpServers": {
-    "mymcpshelf-search": {
-      "command": "node",
-      "args": ["/absolute/path/to/mcp-search-server/server.mjs"]
+    "mymcpshelf": {
+      "command": "npx",
+      "args": ["-y", "mymcpshelf-mcp"]
     }
   }
 }
 ```
 
-Restart Claude Desktop, then ask things like:
+## Tools
 
-- *"Find me an MCP server to read Postgres safely with row-level limits"*
-- *"What can automate a headless browser to scrape a page?"*
-- *"I want a local Python tool to query SQLite"*
+| Tool | Description |
+| --- | --- |
+| `search_mcp_servers(query, limit?)` | Plain-English search → ranked servers with trust badges (composite trust, reliability, green score, scan badge) and a human-readable "why". |
+| `get_server(id)` | Full details for a single server including security grade, reliability, green-hosting status, and CLI-installable command/args. |
+| `get_server_security_grade(id)` | Detailed security grade: composite trust score, reliability tier, green-hosting status, individual scan results, and CVE matches. |
 
-Claude will call `search_mcp_servers` and return curated, ranked answers with reasons.
+### Example output
 
-## Verify it works
+```
+1. Playwright Browser Automation  (id: playwright-browser-automation)
+   browser-automation · local_stdio · ★28403 · score 95
+   Pure local browser automation via Playwright API...
+   why: name match: "playwright" | Browser Automation category | local stdio
+   trust: Trusted (82/100) · High Activity · Local / Green · Scanned 82/100
+   repo: https://github.com/microsoft/playwright-mcp
+```
+
+## Architecture
+
+```
+┌─────────────────────────────┐
+│   mymcpshelf-mcp (this pkg) │
+│   search_mcp_servers()      │
+│   get_server()              │
+│   get_server_security_grade │
+└──────────────┬──────────────┘
+               │  fetch() live API (default)
+               │  ↓ fallback to bundled static-data.json
+    ┌──────────┴──────────┐
+    ▼                     ▼
+/api/v1/search-ai   /api/v1/servers/{id}
+/api/v1/security/scan-status
+```
+
+The server **queries the live API by default** so results are always fresh.
+If the API is unreachable, it falls back to a bundled static dataset
+(574 curated servers with manual security audits).
+
+Set `MYMCPSHELF_API_URL` to point to a different instance:
 
 ```bash
-npm test
-# or: node test-handshake.mjs
+MYMCPSHELF_API_URL=https://staging.mymcpshelf.com npx -y mymcpshelf-mcp
 ```
 
-This spins up the server with the official MCP SDK client, lists the tools, and runs a
-sample `search_mcp_servers` call so you can see the ranked output.
+## Public JSON API
 
-## Architecture (single source of truth)
+The same data is available as plain HTTP JSON endpoints (no auth required):
 
-```
-                 ┌─────────────────────────────────────────┐
-                 │   src/lib/search-engine.js  (shared)    │
-                 │   understandQuery() · searchServers()   │
-                 └───────────────┬─────────────┬───────────┘
-                                 │             │
-            ┌────────────────────┘             └────────────────────┐
-            ▼                                                       ▼
-  src/pages/api/v1/search-ai.ts                        mcp-search-server/server.mjs
-   (the website's "Ask in plain English" bar)           (this MCP server — stdio tool)
-                                 │
-                                 ▼
-                  src/data/staticServers.js  (574 curated servers)
-```
+- `GET https://www.mymcpshelf.com/api/v1/search-ai?q=postgres+safe&limit=5`
+- `GET https://www.mymcpshelf.com/api/v1/servers/{id}`
+- `GET https://www.mymcpshelf.com/api/v1/security/scan-status?server_id={id}`
 
-Both the website and this MCP server import the same engine and the same data — so a result
-you get from Claude via this tool is identical to one on the website.
+See `https://www.mymcpshelf.com/llms.txt` for full endpoint documentation.
+
+## Registry submissions
+
+- [ ] Official MCP registry — https://registry.modelcontextprotocol.io
+- [ ] mcpservers.org
+- [ ] mcp.so
+- [ ] Glama — https://glama.ai/mcp/servers
+- [ ] PulseMCP — https://www.pulsemcp.com
 
 ## License
 

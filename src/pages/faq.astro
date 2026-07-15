@@ -5,6 +5,30 @@ import { FolderIcon, ToolboxIcon, ComputerIcon, VintageIcon } from '../component
 import HeaderNewsletter from '../components/HeaderNewsletter.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import CustomMcpCta from '../components/CustomMcpCta.astro';
+import { getTotalServerCount, getVerifiedServerCount } from '../utils/d1';
+import agentSkills from '../data/agent-skills.json';
+import cursorSkills from '../data/cursor-skills.json';
+import clients from '../../clients.json';
+
+const db = (Astro.locals as any).runtime?.env?.DB as D1Database | undefined;
+
+let totalServers = 0;
+let verifiedServers = 0;
+const skillsCount = (agentSkills as any[]).length + (cursorSkills as any[]).length;
+const clientsCount = (clients as any[]).length;
+
+if (db) {
+  try {
+    const [dbTotal, dbVerified] = await Promise.all([
+      getTotalServerCount(db),
+      getVerifiedServerCount(db),
+    ]);
+    totalServers = dbTotal;
+    verifiedServers = dbVerified;
+  } catch (error) {
+    console.error('Error fetching counts for FAQ page:', error);
+  }
+}
 
 const faqSections = [
     {
@@ -41,11 +65,11 @@ const faqSections = [
             },
             {
                 question: "How is MyMCPShelf different from mcp.so?",
-                answer: "mcp.so lists 17,000+ servers with minimal curation, including abandoned projects and low-effort forks. We curate 600+ verified servers based on GitHub activity, community adoption, and maintenance status. Our approach prioritizes quality over quantity—we skip unmaintained projects and focus on servers that are actively used and well-documented, saving you research time."
+                answer: `mcp.so lists 17,000+ servers with minimal curation, including abandoned projects and low-effort forks. We curate ${verifiedServers.toLocaleString()}+ verified servers from ${totalServers.toLocaleString()}+ listed and scanned. Our approach prioritizes quality over quantity—we skip unmaintained projects and focus on servers that are actively used and well-documented, saving you research time.`
             },
             {
-                question: "Why only 600 servers?",
-                answer: "We intentionally skip abandoned projects, low-effort forks, and inactive codebases. Our 600+ servers are actively maintained, have real adoption evidenced by GitHub stars and usage, and solve real problems. This curatorial approach saves you from wasting time on projects that don't work, lack documentation, or are no longer supported. Quality directories help you find what you need faster."
+                question: `Why only ${verifiedServers.toLocaleString()}+ servers?`,
+                answer: `We intentionally skip abandoned projects, low-effort forks, and inactive codebases. Our ${verifiedServers.toLocaleString()}+ verified servers are actively maintained, have real adoption evidenced by GitHub stars and usage, and solve real problems. We list ${totalServers.toLocaleString()}+ total servers in our index, but only those passing automated security, activity, and documentation checks earn verified status. This curatorial approach saves you from wasting time on projects that don't work, lack documentation, or are no longer supported. Quality directories help you find what you need faster.`
             },
             {
                 question: "How do you verify servers?",
@@ -73,12 +97,12 @@ const faqSections = [
                 answer: "Use our category filters (Databases, Web Services, File Systems, Cloud Platforms, etc.) to narrow down by functionality, or search by keyword to find specific tools. Each server listing includes detailed descriptions, GitHub statistics, and usage information. For detailed recommendations by use case, read our blog post 'MCP Tools: The Complete Guide to Finding & Using Tools in 2025' which provides specific suggestions for common scenarios."
             },
             {
-                question: "How do I choose between 250+ MCP clients?",
+                question: `How do I choose between ${clientsCount.toLocaleString()}+ MCP clients?`,
                 answer: "Start with our 'MCP Client Comparison' blog post which breaks down the key differences. For developers, popular choices include Cursor (IDE integration), Cline (terminal-based), and Claude Desktop (official reference). For general users, Claude Desktop is simplest. Consider factors like your operating system, whether you need local or cloud access, IDE integration needs, and whether you need to connect to multiple servers simultaneously."
             },
             {
                 question: "What's the difference between MCP Servers, Clients, and Skills?",
-                answer: "MCP Servers (600+): Tools and data sources that expose specific functionality through the MCP protocol—these are what you connect TO. MCP Clients (250+): Applications that connect TO servers (like Claude Desktop, Cursor, Cline)—these are how you access servers. Agent Skills (98): Pre-built capabilities that enhance AI agents' native abilities, sometimes leveraging MCP servers to perform complex tasks. Servers provide tools, clients access them, and skills enhance the AI's ability to use them effectively."
+                answer: `MCP Servers (${verifiedServers.toLocaleString()}+ verified, ${totalServers.toLocaleString()}+ listed): Tools and data sources that expose specific functionality through the MCP protocol—these are what you connect TO. MCP Clients (${clientsCount.toLocaleString()}+): Applications that connect TO servers (like Claude Desktop, Cursor, Cline)—these are how you access servers. Agent Skills (${skillsCount.toLocaleString()}): Pre-built capabilities that enhance AI agents' native abilities, sometimes leveraging MCP servers to perform complex tasks. Servers provide tools, clients access them, and skills enhance the AI's ability to use them effectively.`
             },
             {
                 question: "Can I use multiple MCP servers at once?",
@@ -133,6 +157,9 @@ const faqSections = [
         ]
     }
 ];
+
+const totalQuestions = faqSections.reduce((sum, s) => sum + s.items.length, 0);
+const totalTopics = faqSections.length;
 ---
 
 <BaseLayout
@@ -147,11 +174,11 @@ const faqSections = [
 
             <div class="stats-bar">
                 <div class="stat-item">
-                    <div class="stat-value">26+</div>
+                    <div class="stat-value">{totalQuestions}+</div>
                     <div class="stat-label">Answers</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-value">5</div>
+                    <div class="stat-value">{totalTopics}</div>
                     <div class="stat-label">Topics</div>
                 </div>
                 <div class="stat-item">

@@ -1,9 +1,9 @@
 /**
  * GET /api/v1/servers/:id
  *
- * Public API route for the mymcpshelf CLI.
+ * Public API route for the mymcpshelf CLI and MCP server.
  * Returns full server detail including security audit, reliability, env schema,
- * and the CLI-installable command/args configuration.
+ * composite trust, green score, and the CLI-installable command/args configuration.
  */
 import type { APIRoute } from 'astro';
 import { getServerBySlug } from '../../../../utils/d1';
@@ -87,18 +87,33 @@ export const GET: APIRoute = async ({ params, locals }) => {
 
   // Read raw row to access scan columns
   const row = await db
-    .prepare('SELECT env_schema_json, badge_tier, last_scan_at, scan_summary_json FROM servers WHERE id = ?')
+    .prepare('SELECT env_schema_json, badge_tier, last_scan_at, scan_summary_json, composite_trust_json, security_audit_json FROM servers WHERE id = ?')
     .bind(serverId)
-    .first<{ env_schema_json: string | null; badge_tier: string | null; last_scan_at: string | null; scan_summary_json: string | null }>();
+    .first<{ env_schema_json: string | null; badge_tier: string | null; last_scan_at: string | null; scan_summary_json: string | null; composite_trust_json: string | null; security_audit_json: string | null }>();
 
   const audit = server.securityAudit;
   const reliability = server.reliability;
 
-  // Badge tier from security scanning (Task 13)
-  const badgeTier = row?.badge_tier || 'unverified';
+  // Badge tier from security scanning (Task 13) or unified recheck (Task 19)
+  let badgeTier = row?.badge_tier || 'unverified';
   let scanSummary: any = null;
   if (row?.scan_summary_json) {
     try { scanSummary = JSON.parse(row.scan_summary_json); } catch {}
+  }
+  if (badgeTier === 'unverified') {
+    if (row?.composite_trust_json) {
+      try {
+        const ct = JSON.parse(row.composite_trust_json);
+        const tier = ct?.tier;
+        if (tier === 'trusted' || tier === 'verified' || tier === 'review') {
+          badgeTier = 'scanned';
+          scanSummary = { overall_score: ct?.score ?? null, badge_tier: badgeTier };
+        }
+      } catch {}
+    } else if (audit && audit.auditScore >= 50) {
+      badgeTier = 'scanned';
+      scanSummary = { overall_score: audit.auditScore, badge_tier: badgeTier };
+    }
   }
 
   // Compute verified status: audit ≥ 50 AND dependencyHealth !== 'critical' AND badge_tier !== 'unverified'
@@ -158,6 +173,8 @@ export const GET: APIRoute = async ({ params, locals }) => {
       tier: reliability.tier,
       label: reliability.label,
     } : null,
+    composite_trust: server.compositeTrust,
+    green_score: server.greenScore,
     verified,
     category: server.fields.category,
     language: server.fields.language,

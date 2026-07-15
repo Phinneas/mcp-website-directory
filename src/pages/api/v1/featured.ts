@@ -117,19 +117,32 @@ export const GET: APIRoute = async ({ url, locals }) => {
       .all<{ server_id: string }>();
     const recentIds = (recent.results || []).map((r) => r.server_id);
 
-    const servers = (candidates.results || []).map((r: any) => ({
-      id: r.id,
-      name: r.name,
-      description: r.description,
-      stars: r.stars || 0,
-      github_url: r.github_url || null,
-      npm_package: r.npm_package || null,
-      author: r.author || '@unknown',
-      badge_tier: r.badge_tier || 'unverified',
-      last_scan_at: r.last_scan_at || null,
-      compositeTrust: r.composite_trust_json || null, // pickFeatured parses JSON
-      updated_at: r.updated_at || null,
-    }));
+    const servers = (candidates.results || []).map((r: any) => {
+      // Derive badge tier from composite trust when no scan exists yet
+      let badgeTier = r.badge_tier || 'unverified';
+      if (badgeTier === 'unverified' && r.composite_trust_json) {
+        try {
+          const ct = JSON.parse(r.composite_trust_json);
+          const tier = ct?.tier;
+          if (tier === 'trusted' || tier === 'verified' || tier === 'review') {
+            badgeTier = 'scanned';
+          }
+        } catch {}
+      }
+      return {
+        id: r.id,
+        name: r.name,
+        description: r.description,
+        stars: r.stars || 0,
+        github_url: r.github_url || null,
+        npm_package: r.npm_package || null,
+        author: r.author || '@unknown',
+        badge_tier: badgeTier,
+        last_scan_at: r.last_scan_at || null,
+        compositeTrust: r.composite_trust_json || null, // pickFeatured parses JSON
+        updated_at: r.updated_at || null,
+      };
+    });
 
     let pick = pickFeatured({ servers, recentIds, weekKey, stacks: TOPIC_STACKS });
 

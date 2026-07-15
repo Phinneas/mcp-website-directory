@@ -42,7 +42,7 @@ if (db) {
     const rows = await db
       .prepare(
         `SELECT id, name, description, npm_package, stars, badge_tier,
-                install_count, security_audit_json, scan_summary_json
+                install_count, security_audit_json, scan_summary_json, composite_trust_json
          FROM servers WHERE id IN (${placeholders})`
       )
       .bind(...stack.serverIds)
@@ -58,13 +58,29 @@ if (db) {
         try { scanData = JSON.parse(row.scan_summary_json); } catch {}
       }
 
+      // Derive badge tier from composite trust / security audit when no scan exists
+      let badgeTier = row.badge_tier || 'unverified';
+      if (badgeTier === 'unverified') {
+        if (row.composite_trust_json) {
+          try {
+            const ct = JSON.parse(row.composite_trust_json);
+            const tier = ct?.tier;
+            if (tier === 'trusted' || tier === 'verified' || tier === 'review') {
+              badgeTier = 'scanned';
+            }
+          } catch {}
+        } else if (securityAudit && securityAudit.auditScore >= 50) {
+          badgeTier = 'scanned';
+        }
+      }
+
       servers.push({
         id: row.id,
         name: row.name,
         description: (row.description || '').slice(0, 200),
         npm_package: row.npm_package,
         stars: row.stars || 0,
-        badge_tier: row.badge_tier || 'unverified',
+        badge_tier: badgeTier,
         install_count: row.install_count || 0,
         security_audit: securityAudit,
         scan_data: scanData,

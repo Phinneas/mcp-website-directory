@@ -1,5 +1,5 @@
 ---
-import { getServersPage, getFeaturedServers } from '../utils/d1';
+import { getServersPage, getFeaturedServers, getTotalServerCount, getVerifiedServerCount } from '../utils/d1';
 import type { MCPServer } from '../utils/d1';
 import HeroSection from '../components/HeroSection.astro';
 import TrustSection from '../components/TrustSection.astro';
@@ -10,6 +10,9 @@ import AskAI from '../components/AskAI.astro';
 import ServerGrid from '../components/ServerGrid';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { staticServers } from '../data/staticServers.js';
+import agentSkills from '../data/agent-skills.json';
+import cursorSkills from '../data/cursor-skills.json';
+import clients from '../../clients.json';
 
 const FEATURED_IDS = [
   'playwright-browser-automation', 
@@ -65,11 +68,30 @@ if (db) {
   total = staticServers.length;
   featuredServers = (staticServers as any[]).filter(s => FEATURED_IDS.includes(s.id)) as MCPServer[];
 }
+
+// ── Single source of truth for all homepage counts ──
+let totalServers = total;
+let verifiedServers = 0;
+const skillsCount = (agentSkills as any[]).length + (cursorSkills as any[]).length;
+const clientsCount = (clients as any[]).length;
+
+if (db) {
+  try {
+    const [dbTotal, dbVerified] = await Promise.all([
+      getTotalServerCount(db),
+      getVerifiedServerCount(db),
+    ]);
+    totalServers = dbTotal;
+    verifiedServers = dbVerified;
+  } catch (error) {
+    console.error('Error fetching site counts from DB:', error);
+  }
+}
 ---
 
 <BaseLayout
   title="My MCP Shelf"
-  description="Your curated collection of 165+ premium Model Context Protocol servers for enhanced AI capabilities"
+  description={`Your curated collection of ${totalServers.toLocaleString()}+ Model Context Protocol servers for enhanced AI capabilities`}
   canonical="https://www.mymcpshelf.com/"
 >
 
@@ -602,10 +624,10 @@ if (db) {
     </style>
 
     <!-- Hero Section -->
-    <HeroSection serverCount={total || 600} skillsCount={68} clientsCount={250} />
+    <HeroSection serverCount={totalServers} skillsCount={skillsCount} clientsCount={clientsCount} faqCount={26} />
 
     <!-- Trust Section -->
-    <TrustSection />
+    <TrustSection verifiedCount={verifiedServers} totalCount={totalServers} />
 
     <!-- Leaderboard CTA -->
     <section class="leaderboard-cta">
@@ -625,11 +647,39 @@ if (db) {
     <!-- Featured MCP Servers -->
     <FeaturedMcpServers servers={featuredServers} />
 
+    <!-- Listed vs Verified tiering explanation -->
+    <section class="tiering-notice">
+      <p>
+        <strong>{totalServers.toLocaleString()}+ servers</strong> scanned and listed in our index;
+        <strong>{verifiedServers.toLocaleString()}+ verified</strong> through automated security, activity, and documentation checks.
+      </p>
+    </section>
+
     <!-- Server Grid (search + categories + paginated cards) -->
     <ServerGrid client:load initialServers={initialServers} total={total} />
 
+    <!-- For AI Agents -->
+    <section class="agent-section">
+      <div class="agent-card">
+        <h2>Built for AI Agents Too</h2>
+        <p class="agent-lead">
+          If you are an AI agent: query our directory via JSON API or install our MCP server.
+        </p>
+        <div class="agent-code">
+          <code>curl https://www.mymcpshelf.com/api/v1/search-ai?q=postgres+safe+read</code>
+        </div>
+        <p class="agent-note">
+          Every response includes security grade, staleness score, and green hosting status.
+        </p>
+        <div class="agent-links">
+          <a href="/llms.txt" class="agent-link">Read llms.txt</a>
+          <a href="https://www.npmjs.com/package/mymcpshelf-mcp" class="agent-link">npm: mymcpshelf-mcp</a>
+        </div>
+      </div>
+    </section>
+
     <!-- FAQ Section -->
-    <FAQSection />
+    <FAQSection verifiedCount={verifiedServers} totalCount={totalServers} skillsCount={skillsCount} clientsCount={clientsCount} faqCount={26} />
 
     <!-- Ask an AI for a second opinion -->
     <AskAI />
@@ -677,5 +727,81 @@ if (db) {
     color: #818cf8;
     font-size: 1.25rem;
     font-weight: 700;
+  }
+  .tiering-notice {
+    max-width: 1200px;
+    margin: 0 auto 1.5rem;
+    padding: 0 1.5rem;
+    text-align: center;
+  }
+  .tiering-notice p {
+    font-size: 0.95rem;
+    color: hsl(var(--muted-foreground));
+    line-height: 1.6;
+  }
+  .tiering-notice strong {
+    color: hsl(var(--foreground));
+  }
+  .agent-section {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+  }
+  .agent-card {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(129, 140, 248, 0.2);
+    border-radius: 16px;
+    padding: 2rem;
+    text-align: center;
+  }
+  .agent-card h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    margin-bottom: 0.75rem;
+  }
+  .agent-lead {
+    color: #94a3b8;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+  .agent-code {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    overflow-x: auto;
+  }
+  .agent-code code {
+    color: #a5b4fc;
+    font-family: 'SF Mono', Monaco, monospace;
+    font-size: 0.85rem;
+  }
+  .agent-note {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin-bottom: 1.25rem;
+  }
+  .agent-links {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .agent-link {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    background: rgba(129, 140, 248, 0.1);
+    border: 1px solid rgba(129, 140, 248, 0.25);
+    color: #818cf8;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+  .agent-link:hover {
+    background: rgba(129, 140, 248, 0.2);
+    border-color: rgba(129, 140, 248, 0.4);
+    color: #a5b4fc;
   }
 </style>

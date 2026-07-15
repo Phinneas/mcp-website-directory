@@ -29,10 +29,45 @@ const CORS = {
   'Cache-Control': 'public, max-age=60',
 };
 
-// Enrich servers with their manual security audits (where one exists) so the
-// engine can reason about input handling / data residency / auth on audited
-// servers. Non-audited servers still work — they fall back to the
-// deployment-based safety proxy inside the engine.
+// Build badge data from the static security audit (offline-friendly)
+function buildBadges(server: any) {
+  const audit = getSecurityAudit(server.id);
+  const auditScore = audit?.auditScore ?? 0;
+
+  const compositeTrust = audit
+    ? {
+        score: auditScore,
+        tier: auditScore >= 80 ? 'trusted' : auditScore >= 50 ? 'verified' : 'caution',
+        label: auditScore >= 80 ? 'Trusted' : auditScore >= 50 ? 'Verified' : 'Caution',
+      }
+    : null;
+
+  const stars = server.fields?.stars ?? 0;
+  const reliability = {
+    score: Math.min(100, Math.round(Math.log10((stars || 0) + 1) * 25)),
+    tier: stars >= 5000 ? 'excellent' : stars >= 1000 ? 'strong' : stars >= 100 ? 'moderate' : 'limited',
+    label: stars >= 5000 ? 'High Activity' : stars >= 1000 ? 'Active' : stars >= 100 ? 'Moderate' : 'Low Activity',
+  };
+
+  const greenScore = audit
+    ? {
+        tier: audit.dataResidency === 'local_only' ? 'green_verified' : 'user_dependent',
+        label: audit.dataResidency === 'local_only' ? 'Local / Green' : 'Cloud / User-Dependent',
+      }
+    : null;
+
+  const scanBadge = audit
+    ? {
+        badge_tier: auditScore >= 50 ? 'scanned' : 'unverified',
+        overall_score: auditScore,
+      }
+    : { badge_tier: 'unverified', overall_score: null };
+
+  return { compositeTrust, reliability, greenScore, scanBadge, securityAudit: audit };
+}
+
+// Enrich servers with their manual security audits so the engine can reason
+// about input handling / data residency / auth on audited servers.
 const corpus = (staticServers as any[]).map((s) => {
   const audit = getSecurityAudit(s.id);
   return audit ? { ...s, securityAudit: audit } : s;
@@ -48,6 +83,7 @@ export const GET: APIRoute = async ({ url }) => {
 
     const hits = result.hits.map((h) => {
       const f = h.server.fields;
+      const badges = buildBadges(h.server);
       return {
         id: h.server.id,
         name: f.name,
@@ -60,6 +96,11 @@ export const GET: APIRoute = async ({ url }) => {
         npm_package: f.npm_package || null,
         score: h.score,
         reasons: h.reasons,
+        composite_trust: badges.compositeTrust,
+        reliability: badges.reliability,
+        green_score: badges.greenScore,
+        scan_badge: badges.scanBadge,
+        security_audit: badges.securityAudit,
       };
     });
 

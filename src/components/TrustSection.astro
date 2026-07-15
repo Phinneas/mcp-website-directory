@@ -1,6 +1,13 @@
 ---
 // TrustSection.astro - Trust building section with three columns
 import { GlobeIcon, VintageIcon } from './VintageIcon';
+
+interface Props {
+    verifiedCount?: number;
+    totalCount?: number;
+}
+
+const { verifiedCount = 0, totalCount = 0 } = Astro.props;
 ---
 
 <section class="trust-section">
@@ -9,8 +16,7 @@ import { GlobeIcon, VintageIcon } from './VintageIcon';
             <div class="trust-icon"><VintageIcon client:load name="VisualStudioCheckmark" size={40} /></div>
             <h3 class="trust-title">Curated Servers</h3>
             <p class="trust-description">
-                We verify based on GitHub activity, community adoption, and active maintenance. 
-                No abandoned projects. 600 verified vs competitors' 17k+ unverified.
+                We list {totalCount.toLocaleString()}+ scanned servers, but only mark {verifiedCount.toLocaleString()}+ as verified after passing automated security, activity, and documentation checks. Quality over quantity.
             </p>
             <a href="/blog/understanding-mcp-quality-standards" class="trust-cta">Our verification process →</a>
         </div>

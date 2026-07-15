@@ -1,18 +1,34 @@
 {
-  "name": "@mymcpshelf/search-mcp-server",
+  "name": "mymcpshelf-mcp",
   "version": "1.0.0",
-  "description": "An MCP server that searches the My MCP Shelf directory of curated MCP servers — in plain English. Dogfooding: our directory's own search is powered by this server.",
+  "description": "An installable MCP server that searches the My MCP Shelf directory of curated MCP servers — with security grades, reliability scores, and green-hosting badges in every result.",
   "type": "module",
   "main": "server.mjs",
   "bin": {
-    "mymcpshelf-search": "server.mjs"
+    "mymcpshelf-mcp": "server.mjs"
   },
+  "files": [
+    "server.mjs",
+    "README.md",
+    "data/static-data.json",
+    "lib/search-engine.js"
+  ],
   "scripts": {
     "start": "node server.mjs",
     "test": "node test-handshake.mjs"
   },
-  "keywords": ["mcp", "model-context-protocol", "search", "directory", "mcp-server"],
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "search",
+    "directory",
+    "mcp-server",
+    "mymcpshelf"
+  ],
   "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
     "zod": "^3.25 || ^4.0"

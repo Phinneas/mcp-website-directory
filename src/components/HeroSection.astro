@@ -6,9 +6,10 @@ interface Props {
     serverCount?: number;
     skillsCount?: number;
     clientsCount?: number;
+    faqCount?: number;
 }
 
-const { serverCount = 600, skillsCount = 98, clientsCount = 250 } = Astro.props;
+const { serverCount = 0, skillsCount = 0, clientsCount = 0, faqCount = 0 } = Astro.props;
 ---
 
 <section class="hero-section">
@@ -43,7 +44,7 @@ const { serverCount = 600, skillsCount = 98, clientsCount = 250 } = Astro.props;
             <a href="/faq" class="directory-card">
                 <div class="card-icon"><HelpIcon client:load size={40} /></div>
                 <h3 class="card-title">FAQ & Help</h3>
-                <div class="card-count">26+ Answers</div>
+                <div class="card-count">{faqCount}+ Answers</div>
                 <div class="card-subtitle">Get your questions answered</div>
                 <span class="card-cta">View FAQ →</span>
             </a>

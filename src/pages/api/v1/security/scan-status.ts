@@ -34,11 +34,11 @@ export const GET: APIRoute = async ({ url, locals }) => {
     const placeholders = ids.map(() => '?').join(', ');
     const rows = await db
       .prepare(
-        `SELECT id, name, badge_tier, last_scan_at, scan_summary_json
+        `SELECT id, name, badge_tier, last_scan_at, scan_summary_json, composite_trust_json
          FROM servers WHERE id IN (${placeholders})`
       )
       .bind(...ids)
-      .all<{ id: string; name: string; badge_tier: string; last_scan_at: string | null; scan_summary_json: string | null }>();
+      .all<{ id: string; name: string; badge_tier: string; last_scan_at: string | null; scan_summary_json: string | null; composite_trust_json: string | null }>();
 
     const servers: Record<string, any> = {};
     for (const row of rows.results || []) {
@@ -46,9 +46,19 @@ export const GET: APIRoute = async ({ url, locals }) => {
       if (row.scan_summary_json) {
         try { summary = JSON.parse(row.scan_summary_json); } catch {}
       }
+      let badgeTier = row.badge_tier || 'unverified';
+      if (badgeTier === 'unverified' && row.composite_trust_json) {
+        try {
+          const ct = JSON.parse(row.composite_trust_json);
+          const tier = ct?.tier;
+          if (tier === 'trusted' || tier === 'verified' || tier === 'review') {
+            badgeTier = 'scanned';
+          }
+        } catch {}
+      }
       servers[row.id] = {
         name: row.name,
-        badge_tier: row.badge_tier || 'unverified',
+        badge_tier: badgeTier,
         last_scan_at: row.last_scan_at,
         scan_summary: summary,
       };
@@ -67,10 +77,10 @@ export const GET: APIRoute = async ({ url, locals }) => {
   if (serverId) {
     const row = await db
       .prepare(
-        'SELECT id, name, badge_tier, last_scan_at, scan_summary_json FROM servers WHERE id = ?'
+        'SELECT id, name, badge_tier, last_scan_at, scan_summary_json, composite_trust_json FROM servers WHERE id = ?'
       )
       .bind(serverId)
-      .first<{ id: string; name: string; badge_tier: string; last_scan_at: string | null; scan_summary_json: string | null }>();
+      .first<{ id: string; name: string; badge_tier: string; last_scan_at: string | null; scan_summary_json: string | null; composite_trust_json: string | null }>();
 
     if (!row) {
       return new Response(
@@ -82,6 +92,17 @@ export const GET: APIRoute = async ({ url, locals }) => {
     let summary = null;
     if (row.scan_summary_json) {
       try { summary = JSON.parse(row.scan_summary_json); } catch {}
+    }
+
+    let badgeTier = row.badge_tier || 'unverified';
+    if (badgeTier === 'unverified' && row.composite_trust_json) {
+      try {
+        const ct = JSON.parse(row.composite_trust_json);
+        const tier = ct?.tier;
+        if (tier === 'trusted' || tier === 'verified' || tier === 'review') {
+          badgeTier = 'scanned';
+        }
+      } catch {}
     }
 
     // Also get individual scan results
@@ -122,7 +143,7 @@ export const GET: APIRoute = async ({ url, locals }) => {
     return new Response(JSON.stringify({
       server_id: row.id,
       name: row.name,
-      badge_tier: row.badge_tier || 'unverified',
+      badge_tier: badgeTier,
       last_scan_at: row.last_scan_at,
       scan_summary: summary,
       scans: scanResults,

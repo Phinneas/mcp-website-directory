@@ -30,20 +30,40 @@ export const GET: APIRoute = async ({ params, url, locals }) => {
       try {
         const rows = await db
           .prepare(
-            `SELECT id, name, description, npm_package, stars, badge_tier, install_count
+            `SELECT id, name, description, npm_package, stars, badge_tier, install_count,
+                    composite_trust_json, security_audit_json
              FROM servers WHERE id IN (${placeholders})`
           )
           .bind(...stack.serverIds)
           .all<any>();
 
         for (const row of rows.results || []) {
+          let badgeTier = row.badge_tier || 'unverified';
+          if (badgeTier === 'unverified') {
+            if (row.composite_trust_json) {
+              try {
+                const ct = JSON.parse(row.composite_trust_json);
+                const tier = ct?.tier;
+                if (tier === 'trusted' || tier === 'verified' || tier === 'review') {
+                  badgeTier = 'scanned';
+                }
+              } catch {}
+            } else if (row.security_audit_json) {
+              try {
+                const audit = JSON.parse(row.security_audit_json);
+                if (audit?.auditScore >= 50) {
+                  badgeTier = 'scanned';
+                }
+              } catch {}
+            }
+          }
           serverDetails.push({
             id: row.id,
             name: row.name,
             description: (row.description || '').slice(0, 120),
             npm_package: row.npm_package,
             stars: row.stars,
-            badge_tier: row.badge_tier || 'unverified',
+            badge_tier: badgeTier,
             install_count: row.install_count || 0,
           });
         }

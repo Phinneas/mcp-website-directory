@@ -1,0 +1,76 @@
+---
+// GET /llms.txt — Machine-readable documentation for AI agents
+export const prerender = false;
+
+const body = `# My MCP Shelf — LLM Discovery Endpoints
+
+> https://www.mymcpshelf.com/llms.txt
+
+My MCP Shelf is a curated, security-graded directory of Model Context Protocol (MCP) servers.
+Every listed server carries a composite trust score, reliability tier, green-hosting badge,
+and security scan result. Use these endpoints to query the directory programmatically.
+
+## Public JSON Endpoints
+
+All endpoints accept GET requests, require no authentication, and return JSON with CORS headers.
+
+### 1. Search (plain English)
+GET https://www.mymcpshelf.com/api/v1/search-ai?q={query}&limit={limit}
+- Natural-language search across the curated directory.
+- Response includes: id, name, description, category, stars, composite_trust, reliability, green_score, scan_badge, security_audit.
+- Example: curl "https://www.mymcpshelf.com/api/v1/search-ai?q=postgres+safe+read&limit=5"
+
+### 2. List servers (paginated)
+GET https://www.mymcpshelf.com/api/v1/servers?q={query}&category={category}&limit={limit}&offset={offset}
+- Paginated server list with full badge data.
+- Response includes: servers[], total, offset, limit, has_more.
+- Each server includes: composite_trust, reliability, green_score, scan_badge, install_count, installs_24h, installs_7d.
+
+### 3. Server detail
+GET https://www.mymcpshelf.com/api/v1/servers/{id}
+- Full server details including security audit, reliability breakdown, env schema, CLI command/args.
+- Response includes: composite_trust, green_score, scan, reliability, security, verified.
+
+### 4. Security scan status
+GET https://www.mymcpshelf.com/api/v1/security/scan-status?server_id={id}
+GET https://www.mymcpshelf.com/api/v1/security/scan-status?ids={id1},{id2},... (batch, max 100)
+- Returns badge_tier, scan_summary, individual scan results, and CVE matches.
+
+### 5. Featured servers
+GET https://www.mymcpshelf.com/api/v1/featured
+- Curated featured servers for homepage display.
+
+## MCP Server (installable)
+Install the directory as an MCP server so agents can query it directly:
+  npx -y mymcpshelf-mcp
+
+Tools exposed:
+  - search_mcp_servers(query, limit?) — ranked results with trust badges
+  - get_server(id) — full details + security grade
+  - get_server_security_grade(id) — composite trust, reliability, green score
+
+The MCP server queries the live API by default and falls back to bundled static data when offline.
+
+## Authentication
+None required. All public endpoints are open.
+
+## Rate Limits
+- Search endpoints: 60 requests per minute per IP.
+- Detail endpoints: 300 requests per minute per IP.
+
+## Key Differentiators in Every Response
+- composite_trust: unified score from automated security, activity, and documentation checks.
+- reliability: score based on stars trajectory, issue response time, fork activity, download trends, and commit frequency.
+- green_score: hosting sustainability badge (green_verified / user_dependent / unknown).
+- scan_badge: security scan tier (scanned / manually_reviewed / unverified) with overall score.
+`;
+
+export async function GET() {
+  return new Response(body, {
+    status: 200,
+    headers: {
+      'Content-Type': 'text/plain; charset=utf-8',
+      'Cache-Control': 'public, max-age=3600',
+    },
+  });
+}

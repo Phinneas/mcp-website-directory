@@ -198,6 +198,32 @@ function rowToServer(row: MCPServerRow): MCPServer {
     } catch {}
   } else if (row.badge_tier && row.badge_tier !== 'unverified') {
     scanData = { badge_tier: row.badge_tier, last_scan_at: row.last_scan_at };
+  } else if (compositeTrust) {
+    // Derive verification badge from task-19 unified recheck record when no scan exists yet
+    const tier = compositeTrust.tier;
+    const badgeTier = tier === 'trusted' || tier === 'verified' || tier === 'review'
+      ? 'scanned'
+      : 'unverified';
+    scanData = {
+      overall_score: compositeTrust.score ?? null,
+      badge_tier: badgeTier,
+      last_scan_at: compositeTrust.assessedAt || null,
+      static_analysis: null,
+      socket_dev: null,
+      mcp_scan: null,
+      cve_watchlist: null,
+    };
+  } else if (securityAudit && securityAudit.auditScore >= 50) {
+    // Fallback to security audit score if composite trust is absent
+    scanData = {
+      overall_score: securityAudit.auditScore,
+      badge_tier: 'scanned',
+      last_scan_at: securityAudit.auditDate || null,
+      static_analysis: null,
+      socket_dev: null,
+      mcp_scan: null,
+      cve_watchlist: null,
+    };
   }
 
   return {
@@ -357,6 +383,13 @@ export async function getTotalServerCount(db: D1Database): Promise<number> {
   return result?.total ?? 0;
 }
 
+export async function getVerifiedServerCount(db: D1Database): Promise<number> {
+  const result = await db
+    .prepare("SELECT COUNT(*) as total FROM servers WHERE badge_tier IN ('scanned', 'manually_reviewed')")
+    .first<{ total: number }>();
+  return result?.total ?? 0;
+}
+
 // ── Install Count / Leaderboard Queries ─────────────────────────────────
 
 export interface InstallCountRow {
@@ -483,7 +516,7 @@ export async function getLeaderboard(
       installs_24h: installs24h,
       installs_7d: row.installs_7d || 0,
       trend,
-      badge_tier: row.badge_tier || 'unverified',
+      badge_tier: server.scanData?.badge_tier || row.badge_tier || 'unverified',
     };
   });
 

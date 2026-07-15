@@ -1,8 +1,9 @@
 /**
  * GET /api/v1/servers
  *
- * Public search API for the mymcpshelf CLI.
- * Returns a list of servers matching a query, with security audit summaries.
+ * Public search API for the mymcpshelf CLI and MCP server.
+ * Returns a list of servers matching a query, with full badge data
+ * (composite trust, reliability, green score, scan badge, install counts).
  */
 import type { APIRoute } from 'astro';
 import { getServersPage } from '../../../../utils/d1';
@@ -43,6 +44,13 @@ export const GET: APIRoute = async ({ request, locals, url }) => {
       tier: audit ? (auditScore >= 80 ? 'Secure' : auditScore >= 50 ? 'Moderate' : 'At Risk') : null,
       dependency_health: depHealth,
       verified,
+      composite_trust: server.compositeTrust,
+      reliability: server.reliability,
+      green_score: server.greenScore,
+      scan_badge: server.scanData,
+      install_count: server.installCount ?? 0,
+      installs_24h: server.installs24h ?? 0,
+      installs_7d: server.installs7d ?? 0,
     };
   });
 

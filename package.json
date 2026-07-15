@@ -29,7 +29,9 @@
     "newsletter:preview-monthly": "npx tsx scripts/newsletter/cli.ts preview-monthly",
     "cli:build": "pnpm --filter mymcpshelf build",
     "cli:dev": "pnpm --filter mymcpshelf dev",
-    "backfill:env-schema": "node scripts/backfill-env-schema.js"
+    "backfill:env-schema": "node scripts/backfill-env-schema.js",
+    "build:mcp-data": "npx tsx scripts/build-mcp-data.ts",
+    "publish:mcp": "cd mcp-search-server && npm publish"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.12",

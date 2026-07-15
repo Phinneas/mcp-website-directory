@@ -1,17 +1,27 @@
 ---
 // FAQSection.astro - Expandable FAQ accordion section with most important questions
+interface Props {
+    verifiedCount?: number;
+    totalCount?: number;
+    skillsCount?: number;
+    clientsCount?: number;
+    faqCount?: number;
+}
+
+const { verifiedCount = 0, totalCount = 0, skillsCount = 0, clientsCount = 0, faqCount = 0 } = Astro.props;
+
 const faqs = [
     {
         question: "How do you verify servers?",
         answer: `We evaluate GitHub activity, star count (real adoption), and maintenance status. If it has active development and community usage, it qualifies. We also check for proper documentation, security practices, and working examples. See our full verification process in the <a href='/blog/understanding-mcp-quality-standards' class='faq-link'>Quality Standards guide</a>.`
     },
     {
-        question: "Why 600 servers instead of 17,000?",
-        answer: "Quality over quantity. We skip abandoned projects and low-effort forks so you can find what actually works. Every server in our directory has been verified for active maintenance, community adoption, and proper documentation. Other directories include everything ever created—we curate only what's worth using and maintainable."
+        question: `Why ${verifiedCount.toLocaleString()}+ servers instead of 17,000?`,
+        answer: `Quality over quantity. We list ${totalCount.toLocaleString()}+ servers in our index, but only ${verifiedCount.toLocaleString()}+ earn verified status after passing automated security, activity, and documentation checks. We skip abandoned projects and low-effort forks so you can find what actually works. Other directories include everything ever created—we curate only what's worth using and maintainable.`
     },
     {
         question: "What's the difference between Servers, Clients, and Skills?",
-        answer: "MCP Servers (600+): Tools/data sources that expose functionality through MCP. MCP Clients (250+): Applications that connect TO servers. Agent Skills (98): Pre-built capabilities that enhance AI agents. Servers provide tools, clients access them, and skills enhance the AI's ability to use them effectively."
+        answer: `MCP Servers (${verifiedCount.toLocaleString()}+ verified, ${totalCount.toLocaleString()}+ listed): Tools/data sources that expose functionality through MCP. MCP Clients (${clientsCount.toLocaleString()}+): Applications that connect TO servers. Agent Skills (${skillsCount.toLocaleString()}): Pre-built capabilities that enhance AI agents. Servers provide tools, clients access them, and skills enhance the AI's ability to use them effectively.`
     },
     {
         question: "How do I choose an MCP client?",
@@ -19,7 +29,7 @@ const faqs = [
     },
     {
         question: "Can I submit my server?",
-        answer: `Yes! Click <a href='#' onclick='alert(\"Submit feature coming soon! Email server details to: chester@mymcpshelf.com\"); return false;' class='faq-link'>\"Submit Your Server\"</a> or email us your repository. Requirements: 10+ GitHub stars, active maintenance, proper docs, and working examples. We review submissions weekly.`
+        answer: `Yes! Click <a href='#' onclick='alert("Submit feature coming soon! Email server details to: chester@mymcpshelf.com"); return false;' class='faq-link'>"Submit Your Server"</a> or email us your repository. Requirements: 10+ GitHub stars, active maintenance, proper docs, and working examples. We review submissions weekly.`
     }
 ];
 ---
@@ -44,7 +54,7 @@ const faqs = [
         </div>
         
         <div class="faq-cta-wrapper">
-            <p class="faq-more-text">Have more questions? Check our complete FAQ with 26+ Q&A</p>
+            <p class="faq-more-text">Have more questions? Check our complete FAQ with {faqCount}+ Q&A</p>
             <a href="/faq" class="faq-view-all">View Full FAQ →</a>
         </div>
     </div>
