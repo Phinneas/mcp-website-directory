@@ -8,7 +8,7 @@ const isActive = (href: string) => {
 };
 
 // Check if we're on a deployment category page
-const isDeploymentPage = ['/local-stdio', '/cloud-native', '/self-hosted', '/enterprise-saas'].some(path => isActive(path));
+const isDeploymentPage = ['/local-stdio', '/cloud-native', '/self-hosted', '/enterprise-saas', '/remote-servers'].some(path => isActive(path));
 const isHome = pathname === '/' || isDeploymentPage;
 
 // Deployment navigation items
@@ -46,6 +46,15 @@ const deploymentNavItems = [
     badge: 'Enterprise',
     active: isActive('/enterprise-saas'),
     enterprise: true
+  },
+  {
+    href: '/remote-servers',
+    label: 'Remote',
+    icon: '🌐',
+    description: 'SSE/HTTP cloud & hosted',
+    badge: 'Remote',
+    active: isActive('/remote-servers'),
+    highlight: true
   }
 ];
 

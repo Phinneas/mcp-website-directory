@@ -19,11 +19,13 @@ export const GET: APIRoute = async ({ request, locals }) => {
   const category = url.searchParams.get('category') || '';
   const search = url.searchParams.get('search') || '';
   const deployment = url.searchParams.get('deployment') || '';
+  const deploymentsParam = url.searchParams.get('deployments') || '';
+  const deployments = deploymentsParam ? deploymentsParam.split(',') : [];
   const localOnly = url.searchParams.get('local_only') === 'true';
 
   let page;
   try {
-    page = await getServersPage(db, { offset, limit, category, search, deployment, localOnly });
+    page = await getServersPage(db, { offset, limit, category, search, deployment, deployments, localOnly });
 
     return new Response(JSON.stringify(page), {
       status: 200,

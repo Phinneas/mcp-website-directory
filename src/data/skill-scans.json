@@ -1,0 +1,2748 @@
+{
+  "generatedAt": "2026-07-15T22:58:03.500Z",
+  "totalSkills": 114,
+  "badgeSummary": {
+    "unverified": 0,
+    "scanned": 102,
+    "manually_reviewed": 12
+  },
+  "flagRate": 0,
+  "results": {
+    "marketing-skills": {
+      "score": 100,
+      "tier": "manually_reviewed",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.414Z"
+    },
+    "superpowers": {
+      "score": 100,
+      "tier": "manually_reviewed",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.419Z"
+    },
+    "gitnexus": {
+      "score": 100,
+      "tier": "manually_reviewed",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.419Z"
+    },
+    "mcp-builder": {
+      "score": 100,
+      "tier": "manually_reviewed",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.422Z"
+    },
+    "impeccable-design": {
+      "score": 100,
+      "tier": "manually_reviewed",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.422Z"
+    },
+    "find-skills": {
+      "score": 100,
+      "tier": "manually_reviewed",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.423Z"
+    },
+    "vercel-react-best-practices": {
+      "score": 100,
+      "tier": "manually_reviewed",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.424Z"
+    },
+    "web-design-guidelines": {
+      "score": 100,
+      "tier": "manually_reviewed",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.424Z"
+    },
+    "remotion-best-practices": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.424Z"
+    },
+    "frontend-design": {
+      "score": 100,
+      "tier": "manually_reviewed",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.425Z"
+    },
+    "azure-ai": {
+      "score": 100,
+      "tier": "manually_reviewed",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.427Z"
+    },
+    "azure-observability": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.428Z"
+    },
+    "azure-cost-optimization": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.429Z"
+    },
+    "azure-storage": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.429Z"
+    },
+    "azure-deploy": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.430Z"
+    },
+    "azure-diagnostics": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.430Z"
+    },
+    "microsoft-foundry": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.430Z"
+    },
+    "entra-app-registration": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.431Z"
+    },
+    "azure-kusto": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.431Z"
+    },
+    "azure-resource-visualizer": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.431Z"
+    },
+    "appinsights-instrumentation": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.432Z"
+    },
+    "azure-prepare": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.432Z"
+    },
+    "azure-rbac": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.434Z"
+    },
+    "azure-compliance": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.435Z"
+    },
+    "azure-validate": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.435Z"
+    },
+    "azure-aigateway": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.435Z"
+    },
+    "azure-resource-lookup": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.435Z"
+    },
+    "azure-messaging": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.436Z"
+    },
+    "agent-tools": {
+      "score": 100,
+      "tier": "manually_reviewed",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.436Z"
+    },
+    "remotion-render": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.436Z"
+    },
+    "ai-image-generation": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.437Z"
+    },
+    "agent-browser": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.438Z"
+    },
+    "ai-video-generation": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.438Z"
+    },
+    "twitter-automation": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.439Z"
+    },
+    "expo-skills": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.440Z"
+    },
+    "docx": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.441Z"
+    },
+    "pdf": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.441Z"
+    },
+    "pptx": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.442Z"
+    },
+    "xlsx": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.442Z"
+    },
+    "markdown-to-epub-converter": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.455Z"
+    },
+    "artifacts-builder": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.455Z"
+    },
+    "aws-skills": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.466Z"
+    },
+    "changelog-generator": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.466Z"
+    },
+    "claude-code-terminal-title": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.466Z"
+    },
+    "d3.js-visualization": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.467Z"
+    },
+    "ffuf-web-fuzzing": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.467Z"
+    },
+    "finishing-a-development-branch": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.467Z"
+    },
+    "ios-simulator": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.468Z"
+    },
+    "move-code-quality-skill": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.469Z"
+    },
+    "playwright-browser-automation": {
+      "score": 100,
+      "tier": "manually_reviewed",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.470Z"
+    },
+    "pypict-claude-skill": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.470Z"
+    },
+    "skill-creator": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.470Z"
+    },
+    "skill-seekers": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.471Z"
+    },
+    "test-driven-development": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.471Z"
+    },
+    "using-git-worktrees": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.471Z"
+    },
+    "webapp-testing": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.471Z"
+    },
+    "csv-data-summarizer": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.472Z"
+    },
+    "root-cause-tracing": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.473Z"
+    },
+    "brand-guidelines": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.473Z"
+    },
+    "competitive-ads-extractor": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.473Z"
+    },
+    "domain-name-brainstormer": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.473Z"
+    },
+    "internal-comms": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.473Z"
+    },
+    "lead-research-assistant": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.473Z"
+    },
+    "article-extractor": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.473Z"
+    },
+    "brainstorming": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.474Z"
+    },
+    "content-research-writer": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.474Z"
+    },
+    "family-history-research": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.475Z"
+    },
+    "meeting-insights-analyzer": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.475Z"
+    },
+    "notebooklm-integration": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.475Z"
+    },
+    "canvas-design": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.476Z"
+    },
+    "image-enhancer": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.476Z"
+    },
+    "slack-gif-creator": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.476Z"
+    },
+    "theme-factory": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.476Z"
+    },
+    "video-downloader": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.476Z"
+    },
+    "youtube-transcript": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.476Z"
+    },
+    "file-organizer": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.481Z"
+    },
+    "invoice-organizer": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.481Z"
+    },
+    "raffle-winner-picker": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.481Z"
+    },
+    "ship-learn-next": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.482Z"
+    },
+    "tapestry": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.482Z"
+    },
+    "git-pushing": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.483Z"
+    },
+    "review-implementing": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.483Z"
+    },
+    "test-fixing": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.484Z"
+    },
+    "computer-forensics": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.485Z"
+    },
+    "file-deletion": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.486Z"
+    },
+    "metadata-extraction": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.486Z"
+    },
+    "threat-hunting-with-sigma-rules": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.487Z"
+    },
+    "claude-skills-overview": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.487Z"
+    },
+    "skills-user-guide": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.487Z"
+    },
+    "creating-custom-skills": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.487Z"
+    },
+    "skills-api-documentation": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.487Z"
+    },
+    "agent-skills-blog-post": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.487Z"
+    },
+    "claude-community": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.487Z"
+    },
+    "skills-marketplace": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.487Z"
+    },
+    "lenny's-newsletter": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.487Z"
+    },
+    "notion-skills": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.487Z"
+    },
+    "mongodb-connection": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.489Z"
+    },
+    "mongodb-mcp-setup": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.490Z"
+    },
+    "mongodb-natural-language-querying": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.492Z"
+    },
+    "mongodb-query-optimizer": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.496Z"
+    },
+    "mongodb-schema-design": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.496Z"
+    },
+    "mongodb-search-and-ai": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.497Z"
+    },
+    "atlas-stream-processing": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.497Z"
+    },
+    "qdrant-clients-sdk": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.497Z"
+    },
+    "qdrant-deployment-options": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.497Z"
+    },
+    "qdrant-model-migration": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.498Z"
+    },
+    "qdrant-monitoring": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.498Z"
+    },
+    "qdrant-performance-optimization": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.498Z"
+    },
+    "qdrant-scaling": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.498Z"
+    },
+    "qdrant-search-quality": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.499Z"
+    },
+    "qdrant-version-upgrade": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.499Z"
+    },
+    "neo4j-cypher-skill": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.500Z"
+    },
+    "neo4j-cli-tools-skill": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.500Z"
+    },
+    "neo4j-migration-skill": {
+      "score": 100,
+      "tier": "scanned",
+      "findings": [],
+      "layers": {
+        "promptInjection": {
+          "score": 100,
+          "findings": []
+        },
+        "scriptSafety": {
+          "score": 100,
+          "findings": []
+        },
+        "secretExposure": {
+          "score": 100,
+          "findings": []
+        },
+        "dependencyRisk": {
+          "score": 100,
+          "findings": []
+        }
+      },
+      "scannedAt": "2026-07-15T22:58:03.500Z"
+    }
+  }
+}

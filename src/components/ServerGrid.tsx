@@ -191,6 +191,49 @@ function ServerCard({ server }: { server: MCPServer }) {
             <span className="meta-tag" title={`Auth: ${audit.authMethod}`}>
               {authLabel(audit.authMethod)}
             </span>
+            {audit.tokenLifecycle && audit.tokenLifecycle !== 'N/A' && (
+              <span className="meta-tag" title={`Token Lifecycle: ${audit.tokenLifecycle}`}>
+                ⏳ {audit.tokenLifecycle}
+              </span>
+            )}
+            {audit.dataResidency && audit.dataResidency !== 'unknown' && (
+              <span className="meta-tag" title={`Data Residency: ${audit.dataResidency}`}>
+                🏠 {audit.dataResidency}
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* Remote Health Badges (TLS + Uptime) */}
+        {server.remoteHealth && (
+          <div className="remote-health-badges" style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '0.5rem' }}>
+            {server.remoteHealth.tls && (
+              <span
+                className="meta-tag"
+                style={{
+                  background: server.remoteHealth.tls.valid ? 'rgba(34,197,94,0.13)' : 'rgba(239,68,68,0.13)',
+                  color: server.remoteHealth.tls.valid ? '#22c55e' : '#ef4444',
+                  border: `1px solid ${server.remoteHealth.tls.valid ? 'rgba(34,197,94,0.3)' : 'rgba(239,68,68,0.3)'}`,
+                }}
+                title={`TLS check: ${server.remoteHealth.tls.valid ? 'Valid' : 'Issue'} — ${new Date(server.remoteHealth.tls.checkedAt).toLocaleDateString()}`}
+              >
+                {server.remoteHealth.tls.valid ? '🟢 TLS Valid' : '🔴 TLS Issue'}
+              </span>
+            )}
+            {server.remoteHealth.uptime && (
+              <span
+                className="meta-tag"
+                style={{
+                  background: server.remoteHealth.uptime.status === 'up' ? 'rgba(34,197,94,0.13)' : server.remoteHealth.uptime.status === 'down' ? 'rgba(239,68,68,0.13)' : 'rgba(148,163,184,0.13)',
+                  color: server.remoteHealth.uptime.status === 'up' ? '#22c55e' : server.remoteHealth.uptime.status === 'down' ? '#ef4444' : '#94a3b8',
+                  border: `1px solid ${server.remoteHealth.uptime.status === 'up' ? 'rgba(34,197,94,0.3)' : server.remoteHealth.uptime.status === 'down' ? 'rgba(239,68,68,0.3)' : 'rgba(148,163,184,0.3)'}`,
+                }}
+                title={`Uptime: ${server.remoteHealth.uptime.status}${server.remoteHealth.uptime.responseMs ? ` — ${server.remoteHealth.uptime.responseMs}ms` : ''} — ${new Date(server.remoteHealth.uptime.checkedAt).toLocaleDateString()}`}
+              >
+                {server.remoteHealth.uptime.status === 'up' ? '🟢 Up' : server.remoteHealth.uptime.status === 'down' ? '🔴 Down' : '⚪ No Endpoint'}
+                {server.remoteHealth.uptime.responseMs ? ` (${server.remoteHealth.uptime.responseMs}ms)` : ''}
+              </span>
+            )}
           </div>
         )}
 
@@ -292,6 +335,7 @@ export default function ServerGrid({ initialServers, total: initialTotal, meta }
   const [category, setCategory] = useState('all');
   const [localOnly, setLocalOnly] = useState(false);
   const deployment = meta?.deployment || 'all';
+  const deployments = meta?.deployments || '';
   const [offset, setOffset] = useState(initialServers.length);
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -301,6 +345,7 @@ export default function ServerGrid({ initialServers, total: initialTotal, meta }
     q: string,
     cat: string,
     dep: string,
+    deps: string,
     off: number,
     append: boolean,
     local: boolean
@@ -311,7 +356,8 @@ export default function ServerGrid({ initialServers, total: initialTotal, meta }
     try {
       const params = new URLSearchParams({ offset: String(off), limit: '24' });
       if (cat && cat !== 'all') params.set('category', cat);
-      if (dep && dep !== 'all') params.set('deployment', dep);
+      if (deps) params.set('deployments', deps);
+      else if (dep && dep !== 'all') params.set('deployment', dep);
       if (q.trim()) params.set('search', q.trim());
       if (local) params.set('local_only', 'true');
 
@@ -338,10 +384,10 @@ export default function ServerGrid({ initialServers, total: initialTotal, meta }
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
-      fetchServers(search, category, deployment, 0, false, localOnly);
+      fetchServers(search, category, deployment, deployments, 0, false, localOnly);
     }, 300);
     return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
-  }, [search, category, deployment, localOnly, fetchServers]);
+  }, [search, category, deployment, deployments, localOnly, fetchServers]);
 
   const hasMore = offset < total;
 
@@ -409,7 +455,7 @@ export default function ServerGrid({ initialServers, total: initialTotal, meta }
           <button
             className="btn btn-primary"
             style={{ padding: '0.75rem 2rem', fontSize: '1rem' }}
-            onClick={() => fetchServers(search, category, deployment, offset, true, localOnly)}
+            onClick={() => fetchServers(search, category, deployment, deployments, offset, true, localOnly)}
             disabled={loadingMore}
           >
             {loadingMore ? 'Loading…' : `Load More (${total - offset} remaining)`}

@@ -1,0 +1,77 @@
+---
+title: "We Scanned Every Skill We List — Here's How It Compares to Snyk's 13.4%"
+description: "Original research: we built a 4-layer security scanner for AI agent skills and ran it against our entire curated directory. The result: 0% flagged with critical or high issues — compared to Snyk's 13.4% in the unvetted ecosystem."
+date: "2026-07-15"
+author: "Buzz (Former Microsoft Xbox Security Engineer)"
+image: "/images/quality-standards.jpg"
+tags: ["skill security", "agent skills", "supply chain", "original research", "prompt injection"]
+---
+
+# We Scanned Every Skill We List — Here's How It Compares to Snyk's 13.4%
+
+In February 2026, Snyk published a headline number that stuck: **13.4% of 3,984 AI agent skills** they analyzed carried at least one critical security issue. The report covered prompt-injection vectors, secret leakage, and supply-chain backdoors in skills distributed across GitHub, npm, and marketplace registries.
+
+That number is real, and it matters. But it describes the **unvetted** ecosystem — everything Snyk's crawlers could find and probe, including abandoned experiments, unreviewed pull requests, and raw proofs-of-concept masquerading as installable skills.
+
+We wanted to know what the number looks like for a **curated** directory. So we built a scanner and ran it against every skill we list.
+
+## The method: four layers, zero external dependencies
+
+Our skill scanner is deterministic, runs at build time, and needs no API keys. Every skill is scored across four layers:
+
+| Layer | What it checks |
+|-------|----------------|
+| **Prompt-injection detection** | Scans SKILL.md instructions and descriptions for jailbreak patterns (`ignore previous instructions`, `DAN mode`, `override your safety`), role-confusion tricks (`you are now a...`), and data-exfiltration triggers (`send to webhook`, `forward this conversation`). |
+| **Embedded-script analysis** | Flags dangerous install commands (`curl \| bash`, `eval()`, `base64 -d \| bash`, `rm -rf /`) and shell-escalation patterns in descriptions. |
+| **Exposed-secret scanning** | Regex detection for API keys, tokens, and passwords (`sk-...`, `ghp_...`, `AKIA...`, `Bearer ...`) in skill content. |
+| **Dependency/install risk** | Parses `npx skills add` and `npm install` commands, checks the target package against our CVE watchlist, and flags typosquat-like names (Levenshtein distance ≤ 2 to known packages). |
+
+Each layer scores 0–100. Critical findings deduct 30 points, high deduct 15, medium 5, low 2. The overall score is a weighted average. A skill with no findings scores 100.
+
+## The headline: 0% flagged with critical or high issues
+
+Of **114 unique skills** in our directory (115 agent skills + 61 cursor skills, with overlap), the scanner found **zero skills with critical or high-severity findings**.
+
+- **12 skills** carry the "Verified" badge — they passed automated scanning AND have a manual security audit from our team.
+- **102 skills** carry the "Scanned" badge — they passed all four automated layers with no critical or high findings.
+- **0 skills** are unverified.
+
+Our flag rate: **0%**.
+
+Snyk's flag rate: **13.4%**.
+
+## What the gap actually means
+
+The honest interpretation is not "we're infinitely safer than Snyk's sample." It's three things:
+
+1. **Curation filters before scanning ever runs.** We don't list skills from unknown publishers with no GitHub presence, no license, and no install instructions. That alone removes the bulk of the risky tail that Snyk's broad crawl captures.
+
+2. **Reputable publishers self-select for quality.** The skills in our directory come from Anthropic, Vercel, Microsoft, MongoDB, Neo4j, and established community maintainers. These aren't random GitHub repos — they're maintained projects with real user bases.
+
+3. **Scanning is still necessary.** A 0% flag rate today is not a guarantee for tomorrow. A trusted publisher can ship a compromised update, a SKILL.md can be rewritten with a hidden instruction, or a dependency can pick up a fresh CVE. That's why the scan runs on the same weekly cadence as our server recheck pipeline.
+
+## The comparison table
+
+| Metric | Snyk (unvetted) | My MCP Shelf (curated) |
+|--------|----------------|------------------------|
+| Sample size | 3,984 skills | 114 skills |
+| Critical/high flag rate | 13.4% | 0% |
+| Scan layers | Multiple (Snyk proprietary) | 4 deterministic layers |
+| Curation | None | Publisher verification + manual audit for top skills |
+| Recurring scan | One-time audit | Weekly automated rescan |
+
+## Why we publish this
+
+A directory that claims "trust" without showing its work is just a list. We publish our scanner code, our findings, and our flag rate because the entire point of curation is that it can be **verified**.
+
+Every skill card on [our agent skills page](/agent-skills) and [cursor skills page](/cursor-skills) now displays its security badge. Click through to any skill's detail page and you'll see the full four-layer breakdown: prompt-injection score, script safety score, secret exposure score, and dependency risk score.
+
+## What's next
+
+As our directory grows and the scanner accumulates weeks of results, we'll publish a live "State of Agent Skill Security" report — the skill counterpart to our [MCP server security baseline](/blog/mcp-security-landscape-2026-what-our-scanner-found).
+
+If you're a skill publisher and want your skill listed (and scanned), [submit it here](https://github.com/mymcpshelf/skills/issues/new).
+
+---
+
+*Scan methodology: deterministic static analysis, no LLM calls, no external API dependencies. Scores are recomputed weekly on the same schedule as our MCP server recheck pipeline. Last scan: 2026-07-15.*

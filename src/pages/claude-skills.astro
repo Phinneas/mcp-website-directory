@@ -3,6 +3,7 @@ export const prerender = true;
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 import skillsData from '../data/agent-skills.json';
+import skillScans from '../data/skill-scans.json';
 
 const claudeSkills = skillsData.filter(s => s.claude === true);
 const featuredSkills = claudeSkills
@@ -10,6 +11,17 @@ const featuredSkills = claudeSkills
   .sort((a, b) => a.rank - b.rank)
   .slice(0, 3);
 const categories = ['All', ...new Set(claudeSkills.map(s => s.category))];
+
+function getSkillBadge(name: string) {
+  const scan = (skillScans as any).results[name];
+  if (!scan) return { tier: 'unverified', label: 'Unverified', score: null };
+  const config: Record<string, { label: string; color: string; bg: string }> = {
+    scanned: { label: `Scanned ${scan.score}/100`, color: '#22c55e', bg: 'rgba(34,197,94,0.12)' },
+    manually_reviewed: { label: 'Verified', color: '#818cf8', bg: 'rgba(129,140,248,0.12)' },
+    unverified: { label: 'Unverified', color: '#94a3b8', bg: 'rgba(148,163,184,0.12)' },
+  };
+  return { tier: scan.tier, ...config[scan.tier], score: scan.score };
+}
 
 const title = 'Claude Skills Marketplace | My MCP Shelf';
 const description = 'Discover and install Claude Code skills. Browse the marketplace of installable skills for Claude Code and Anthropic agents — updated daily.';
@@ -49,7 +61,21 @@ const canonicalUrl = 'https://www.mymcpshelf.com/claude-skills';
           <div class="featured-card">
             <div class="skill-header">
               <h3 class="skill-title">{skill.title}</h3>
-              <span class="skill-category">{skill.category}</span>
+              <div class="skill-header-badges">
+                <span class="skill-category">{skill.category}</span>
+                {(() => {
+                  const badge = getSkillBadge(skill.name);
+                  return (
+                    <span
+                      class={`skill-badge skill-badge-${badge.tier}`}
+                      title={`Security: ${badge.label}`}
+                    >
+                      {badge.tier === 'manually_reviewed' ? '🛡️' : badge.tier === 'scanned' ? '🟢' : '⚪'}
+                      {badge.label}
+                    </span>
+                  );
+                })()}
+              </div>
             </div>
             <p class="skill-description">
               {skill.description.length > 150
@@ -105,7 +131,21 @@ const canonicalUrl = 'https://www.mymcpshelf.com/claude-skills';
           <div class="skill-card" data-skill={skill.name} data-category={skill.category}>
             <div class="skill-header">
               <h3 class="skill-title">{skill.title}</h3>
-              <span class="skill-category">{skill.category}</span>
+              <div class="skill-header-badges">
+                <span class="skill-category">{skill.category}</span>
+                {(() => {
+                  const badge = getSkillBadge(skill.name);
+                  return (
+                    <span
+                      class={`skill-badge skill-badge-${badge.tier}`}
+                      title={`Security: ${badge.label}`}
+                    >
+                      {badge.tier === 'manually_reviewed' ? '🛡️' : badge.tier === 'scanned' ? '🟢' : '⚪'}
+                      {badge.label}
+                    </span>
+                  );
+                })()}
+              </div>
             </div>
             <p class="skill-description">
               {skill.description.length > 150
@@ -394,6 +434,14 @@ const canonicalUrl = 'https://www.mymcpshelf.com/claude-skills';
     justify-content: space-between;
     align-items: flex-start;
     margin-bottom: 1rem;
+    gap: 0.5rem;
+  }
+  .skill-header-badges {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.35rem;
+    flex-shrink: 0;
   }
   .skill-title {
     font-size: 1.1rem;
@@ -410,6 +458,31 @@ const canonicalUrl = 'https://www.mymcpshelf.com/claude-skills';
     white-space: nowrap;
     margin-left: 0.5rem;
     flex-shrink: 0;
+  }
+  .skill-badge {
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  .skill-badge-scanned {
+    background: rgba(34, 197, 94, 0.12);
+    color: #22c55e;
+    border: 1px solid rgba(34, 197, 94, 0.25);
+  }
+  .skill-badge-manually_reviewed {
+    background: rgba(129, 140, 248, 0.12);
+    color: #818cf8;
+    border: 1px solid rgba(129, 140, 248, 0.25);
+  }
+  .skill-badge-unverified {
+    background: rgba(148, 163, 184, 0.12);
+    color: #94a3b8;
+    border: 1px solid rgba(148, 163, 184, 0.25);
   }
   .skill-description {
     color: #94a3b8;

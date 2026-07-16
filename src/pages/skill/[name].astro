@@ -1,0 +1,509 @@
+---
+export const prerender = true;
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+import agentSkills from '../../data/agent-skills.json';
+import cursorSkills from '../../data/cursor-skills.json';
+import skillScans from '../../data/skill-scans.json';
+
+// Build unified skill list
+const byName = new Map();
+for (const s of agentSkills as any[]) byName.set(s.name, s);
+for (const s of cursorSkills as any[]) if (!byName.has(s.name)) byName.set(s.name, s);
+const allSkills = Array.from(byName.values());
+
+export function getStaticPaths() {
+  return allSkills.map((skill: any) => ({
+    params: { name: skill.name },
+    props: { skill },
+  }));
+}
+
+const { skill } = Astro.props;
+const scan = (skillScans as any).results[skill.name];
+
+const related = allSkills
+  .filter((s: any) => s.category === skill.category && s.name !== skill.name)
+  .slice(0, 4);
+
+const title = `${skill.title} | Skill Detail | My MCP Shelf`;
+const description = scan
+  ? `${skill.description.slice(0, 120)}… Security: ${scan.tier === 'manually_reviewed' ? 'Verified' : 'Scanned ' + scan.score + '/100'}.`
+  : skill.description;
+
+function badgeConfig(tier: string) {
+  const map: Record<string, { label: string; icon: string; color: string; bg: string; border: string }> = {
+    scanned: { label: 'Scanned', icon: '🟢', color: '#22c55e', bg: 'rgba(34,197,94,0.1)', border: 'rgba(34,197,94,0.3)' },
+    manually_reviewed: { label: 'Verified', icon: '🛡️', color: '#818cf8', bg: 'rgba(129,140,248,0.1)', border: 'rgba(129,140,248,0.3)' },
+    unverified: { label: 'Unverified', icon: '⚪', color: '#94a3b8', bg: 'rgba(148,163,184,0.1)', border: 'rgba(148,163,184,0.3)' },
+  };
+  return map[tier] || map.unverified;
+}
+
+const badge = badgeConfig(scan?.tier || 'unverified');
+---
+
+<BaseLayout title={title} description={description} canonical={`https://www.mymcpshelf.com/skill/${skill.name}`}>
+  <div class="page-container">
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+      <a href="/agent-skills">Skills</a>
+      <span>/</span>
+      <span>{skill.title}</span>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-badges">
+        <span class="category-badge">{skill.category}</span>
+        <span class="security-badge" style={`color:${badge.color};background:${badge.bg};border-color:${badge.border}`}>
+          {badge.icon} {badge.label}{scan?.score != null ? ` ${scan.score}/100` : ''}
+        </span>
+      </div>
+      <h1 class="title">{skill.title}</h1>
+      <p class="description">{skill.description || 'No description available.'}</p>
+    </section>
+
+    <!-- Install -->
+    <section class="install-section">
+      <h2>Install</h2>
+      <div class="install-code" id="installCode">
+        <code>{skill.install}</code>
+        <button class="copy-btn" id="copyBtn">📋 Copy</button>
+      </div>
+    </section>
+
+    <!-- Scan Details -->
+    {scan && (
+      <section class="scan-section">
+        <h2>Security Scan</h2>
+        <div class="scan-grid">
+          <div class="scan-card">
+            <div class="scan-label">Overall Score</div>
+            <div class="scan-score" style={`color:${badge.color}`}>{scan.score}/100</div>
+          </div>
+          <div class="scan-card">
+            <div class="scan-label">Prompt Injection</div>
+            <div class="scan-score" style={`color:${scan.layers.promptInjection.score >= 80 ? '#22c55e' : scan.layers.promptInjection.score >= 60 ? '#f59e0b' : '#ef4444'}`}>
+              {scan.layers.promptInjection.score}/100
+            </div>
+          </div>
+          <div class="scan-card">
+            <div class="scan-label">Script Safety</div>
+            <div class="scan-score" style={`color:${scan.layers.scriptSafety.score >= 80 ? '#22c55e' : scan.layers.scriptSafety.score >= 60 ? '#f59e0b' : '#ef4444'}`}>
+              {scan.layers.scriptSafety.score}/100
+            </div>
+          </div>
+          <div class="scan-card">
+            <div class="scan-label">Secret Exposure</div>
+            <div class="scan-score" style={`color:${scan.layers.secretExposure.score >= 80 ? '#22c55e' : scan.layers.secretExposure.score >= 60 ? '#f59e0b' : '#ef4444'}`}>
+              {scan.layers.secretExposure.score}/100
+            </div>
+          </div>
+          <div class="scan-card">
+            <div class="scan-label">Dependency Risk</div>
+            <div class="scan-score" style={`color:${scan.layers.dependencyRisk.score >= 80 ? '#22c55e' : scan.layers.dependencyRisk.score >= 60 ? '#f59e0b' : '#ef4444'}`}>
+              {scan.layers.dependencyRisk.score}/100
+            </div>
+          </div>
+        </div>
+
+        {scan.findings.length > 0 && (
+          <div class="findings">
+            <h3>Findings</h3>
+            {scan.findings.map((f: any) => (
+              <div class={`finding finding-${f.severity}`}>
+                <span class="finding-severity">{f.severity.toUpperCase()}</span>
+                <span class="finding-category">{f.category.replace('_', ' ')}</span>
+                <p class="finding-message">{f.message}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {scan.findings.length === 0 && (
+          <div class="findings clean">
+            <p>✅ No security findings detected in this skill.</p>
+          </div>
+        )}
+      </section>
+    )}
+
+    <!-- Meta -->
+    <section class="meta-section">
+      <h2>Details</h2>
+      <dl class="meta-list">
+        <div class="meta-row">
+          <dt>Publisher</dt>
+          <dd>{skill.publisher}</dd>
+        </div>
+        <div class="meta-row">
+          <dt>Source</dt>
+          <dd>{skill.source}</dd>
+        </div>
+        <div class="meta-row">
+          <dt>License</dt>
+          <dd>{skill.license || 'Not specified'}</dd>
+        </div>
+        <div class="meta-row">
+          <dt>Category</dt>
+          <dd>{skill.category}</dd>
+        </div>
+        {skill.version && (
+          <div class="meta-row">
+            <dt>Version</dt>
+            <dd>{skill.version}</dd>
+          </div>
+        )}
+      </dl>
+      {skill.url && (
+        <a href={skill.url} target="_blank" rel="noopener noreferrer" class="github-link">
+          🔗 View on GitHub
+        </a>
+      )}
+    </section>
+
+    <!-- Related -->
+    {related.length > 0 && (
+      <section class="related-section">
+        <h2>Related Skills</h2>
+        <div class="related-grid">
+          {related.map((r: any) => {
+            const rScan = (skillScans as any).results[r.name];
+            const rBadge = badgeConfig(rScan?.tier || 'unverified');
+            return (
+              <a href={`/skill/${r.name}`} class="related-card">
+                <div class="related-badges">
+                  <span class="related-category">{r.category}</span>
+                  <span class="related-badge" style={`color:${rBadge.color};background:${rBadge.bg};border-color:${rBadge.border}`}>
+                    {rBadge.icon}
+                  </span>
+                </div>
+                <h3 class="related-title">{r.title}</h3>
+                <p class="related-desc">{r.description?.slice(0, 100) || ''}…</p>
+              </a>
+            );
+          })}
+        </div>
+      </section>
+    )}
+  </div>
+
+  <script>
+    const copyBtn = document.getElementById('copyBtn');
+    const installCode = document.getElementById('installCode');
+    if (copyBtn && installCode) {
+      copyBtn.addEventListener('click', () => {
+        const code = installCode.querySelector('code')?.textContent || '';
+        navigator.clipboard.writeText(code).then(() => {
+          copyBtn.textContent = '✅ Copied!';
+          setTimeout(() => copyBtn.textContent = '📋 Copy', 1500);
+        });
+      });
+    }
+  </script>
+</BaseLayout>
+
+<style>
+  .page-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  .breadcrumb {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #64748b;
+    margin-bottom: 1.5rem;
+  }
+  .breadcrumb a {
+    color: #f59e0b;
+    text-decoration: none;
+  }
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+  .hero {
+    margin-bottom: 2rem;
+  }
+  .hero-badges {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+  .category-badge {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+  .security-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border: 1px solid;
+  }
+  .title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin-bottom: 0.75rem;
+  }
+  .description {
+    color: #94a3b8;
+    line-height: 1.7;
+    font-size: 1.05rem;
+  }
+
+  .install-section {
+    margin-bottom: 2rem;
+  }
+  .install-section h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #f1f5f9;
+    margin-bottom: 0.75rem;
+  }
+  .install-code {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+  }
+  .install-code code {
+    font-family: 'SF Mono', Monaco, monospace;
+    font-size: 0.9rem;
+    color: #a5b4fc;
+    flex: 1;
+    word-break: break-all;
+  }
+  .copy-btn {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .copy-btn:hover {
+    background: #f59e0b;
+    color: white;
+  }
+
+  .scan-section {
+    margin-bottom: 2rem;
+  }
+  .scan-section h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #f1f5f9;
+    margin-bottom: 1rem;
+  }
+  .scan-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .scan-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+  }
+  .scan-label {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin-bottom: 0.5rem;
+  }
+  .scan-score {
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+
+  .findings {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 1.25rem;
+  }
+  .findings h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #f1f5f9;
+    margin-bottom: 0.75rem;
+  }
+  .findings.clean p {
+    color: #22c55e;
+    margin: 0;
+  }
+  .finding {
+    padding: 0.75rem;
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+    background: rgba(255, 255, 255, 0.03);
+  }
+  .finding:last-child {
+    margin-bottom: 0;
+  }
+  .finding-critical {
+    border-left: 3px solid #ef4444;
+  }
+  .finding-high {
+    border-left: 3px solid #f59e0b;
+  }
+  .finding-medium {
+    border-left: 3px solid #3b82f6;
+  }
+  .finding-low {
+    border-left: 3px solid #64748b;
+  }
+  .finding-severity {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    margin-right: 0.5rem;
+  }
+  .finding-critical .finding-severity { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+  .finding-high .finding-severity { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+  .finding-medium .finding-severity { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+  .finding-low .finding-severity { background: rgba(100, 116, 139, 0.2); color: #64748b; }
+  .finding-category {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    text-transform: capitalize;
+  }
+  .finding-message {
+    color: #cbd5e1;
+    font-size: 0.9rem;
+    margin: 0.35rem 0 0 0;
+    line-height: 1.5;
+  }
+
+  .meta-section {
+    margin-bottom: 2rem;
+  }
+  .meta-section h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #f1f5f9;
+    margin-bottom: 1rem;
+  }
+  .meta-list {
+    display: grid;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+  .meta-row {
+    display: flex;
+    gap: 1rem;
+  }
+  .meta-row dt {
+    color: #64748b;
+    font-size: 0.9rem;
+    min-width: 100px;
+  }
+  .meta-row dd {
+    color: #f1f5f9;
+    font-size: 0.9rem;
+    margin: 0;
+  }
+  .github-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: #f59e0b;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border: 1px solid #f59e0b;
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
+  .github-link:hover {
+    background: #f59e0b;
+    color: white;
+  }
+
+  .related-section {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .related-section h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #f1f5f9;
+    margin-bottom: 1rem;
+  }
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+  .related-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 1rem;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .related-card:hover {
+    border-color: #f59e0b;
+    transform: translateY(-2px);
+  }
+  .related-badges {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  .related-category {
+    background: rgba(245, 158, 11, 0.1);
+    color: #f59e0b;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 500;
+  }
+  .related-badge {
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    border: 1px solid;
+  }
+  .related-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #f1f5f9;
+    margin-bottom: 0.35rem;
+  }
+  .related-desc {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 600px) {
+    .page-container { padding: 1rem; }
+    .title { font-size: 1.5rem; }
+    .scan-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>

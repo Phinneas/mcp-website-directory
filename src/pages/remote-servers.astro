@@ -1,0 +1,167 @@
+---
+import { getServersPage } from '../utils/d1';
+import type { MCPServer } from '../utils/d1';
+import ServerGrid from '../components/ServerGrid';
+import { staticServers } from '../data/staticServers.js';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CustomMcpCta from '../components/CustomMcpCta.astro';
+import '../styles/deployment-page.css';
+
+const REMOTE_DEPLOYMENTS = ['cloud_native', 'self_hosted', 'enterprise_saas'];
+
+const DEPLOYMENT_CONFIG = {
+  deploymentType: 'remote',
+  title: 'Remote MCP Servers',
+  subtitle: 'SSE/HTTP cloud & hosted services',
+  description: 'Discover remote MCP servers designed for SSE and HTTP transport. These servers run in the cloud, on your VPC, or as managed SaaS — wherever agents need reliable, secure, always-on endpoints.',
+  heroTitle: 'Remote MCP Servers',
+  heroDescription: 'Explore MCP servers built for remote operation with SSE and HTTP support. Every listing shows auth method, token lifecycle, data residency, TLS status, and uptime — because remote infrastructure demands verifiable trust.',
+  tagline: 'Deploy remotely, verify continuously',
+  features: [
+    'SSE & HTTP transport for universal client support',
+    'Auth-method transparency (None / API Key / OAuth2 / SSO-SAML)',
+    'Token-lifecycle and data-residency disclosure',
+    'TLS reachability and uptime monitoring',
+    'Scales from single-instance to multi-region',
+    'Enterprise-ready with audit trails',
+  ],
+  requirements: [
+    'Internet-accessible endpoint',
+    'Valid TLS certificate for production',
+    'Configured authentication (recommended)',
+    'Token lifecycle policy defined',
+  ],
+  useCases: [
+    'Cloud-native SaaS integrations',
+    'Self-hosted VPC deployments',
+    'Enterprise-managed SaaS connectors',
+    'Multi-tenant agent platforms',
+    'Remote team collaboration',
+    'API-gateway fronted services',
+  ],
+};
+
+const db = (Astro.locals as any).runtime?.env?.DB as D1Database | undefined;
+let initialServers: MCPServer[] = [];
+let total = 0;
+
+if (db) {
+  try {
+    const result = await getServersPage(db, { limit: 48, deployments: REMOTE_DEPLOYMENTS });
+    initialServers = result.servers;
+    total = result.total;
+  } catch (error) {
+    console.error('Error fetching remote servers:', error);
+  }
+} else {
+  const filteredServers = (staticServers as any[] as MCPServer[]).filter(
+    (s) => REMOTE_DEPLOYMENTS.includes(s.deployment)
+  );
+  initialServers = filteredServers.slice(0, 48);
+  total = filteredServers.length;
+}
+
+const canonicalUrl = 'https://www.mymcpshelf.com/remote-servers';
+const pageTitle = `${DEPLOYMENT_CONFIG.title} | My MCP Shelf`;
+const pageDescription = `${DEPLOYMENT_CONFIG.description} Browse ${total}+ remote MCP servers with auth, TLS, and uptime transparency.`;
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: DEPLOYMENT_CONFIG.title,
+  description: pageDescription,
+  url: canonicalUrl,
+};
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  canonical={canonicalUrl}
+  structuredData={structuredData}
+>
+  <div transition:name="main-content">
+    <section class="hero-section">
+      <div class="hero-content">
+        <div class="hero-text">
+          <h1 class="page-title">{DEPLOYMENT_CONFIG.heroTitle}</h1>
+          <p class="page-subtitle">{DEPLOYMENT_CONFIG.heroDescription}</p>
+          <div class="tagline-badge">
+            <span>🌐</span>
+            {DEPLOYMENT_CONFIG.tagline}
+          </div>
+        </div>
+        <div class="hero-badges">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <span class="stat-value">{total}</span>
+              <span class="stat-label">Servers</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-value">SSE</span>
+              <span class="stat-label">Protocol</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-value">TLS</span>
+              <span class="stat-label">Checked</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <main class="page-container">
+      <section class="deployment-info">
+        <h2>About {DEPLOYMENT_CONFIG.title}</h2>
+        <p>{DEPLOYMENT_CONFIG.description}</p>
+        <div class="info-grid">
+          <div class="info-section">
+            <h3>✨ Key Features</h3>
+            <ul class="info-list">
+              {DEPLOYMENT_CONFIG.features.map(f => <li>{f}</li>)}
+            </ul>
+          </div>
+          <div class="info-section">
+            <h3>⚙️ Requirements</h3>
+            <ul class="info-list">
+              {DEPLOYMENT_CONFIG.requirements.map(r => <li>{r}</li>)}
+            </ul>
+          </div>
+          <div class="info-section">
+            <h3>💡 Use Cases</h3>
+            <ul class="info-list">
+              {DEPLOYMENT_CONFIG.useCases.map(u => <li>{u}</li>)}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid-section">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">{initialServers.length > 0 ? `${total}+ ${DEPLOYMENT_CONFIG.title}` : 'Browse Servers'}</h2>
+            <p class="section-description">Discover the best MCP servers optimized for {DEPLOYMENT_CONFIG.subtitle}</p>
+          </div>
+        </div>
+        {initialServers.length > 0 ? (
+          <ServerGrid client:load initialServers={initialServers} total={total} meta={{ deployment: 'all', deployments: REMOTE_DEPLOYMENTS.join(',') }} />
+        ) : (
+          <div class="no-results">
+            <h3>No remote servers found yet</h3>
+            <p>Check back soon or <a href="/submit-server">submit a new server</a>.</p>
+          </div>
+        )}
+      </section>
+
+      <CustomMcpCta variant="banner" context="Remote MCP" />
+
+      <section class="comparison-section">
+        <h2>Not sure which deployment is right for you?</h2>
+        <p>Compare deployment options and find the best fit for your infrastructure needs.</p>
+        <div class="comparison-cta">
+          <a href="/enterprise-readiness" class="btn">Compare Deployment Options →</a>
+        </div>
+      </section>
+    </main>
+  </div>
+</BaseLayout>

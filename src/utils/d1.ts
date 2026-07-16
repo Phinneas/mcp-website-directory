@@ -26,6 +26,7 @@ export interface MCPServerRow {
   installs_24h: number | null;
   installs_7d: number | null;
   composite_trust_json: string | null;
+  remote_health_json: string | null;
 }
 
 /** Consolidated per-server recheck record (written by composite-trust-monitor). */
@@ -41,6 +42,11 @@ export interface CompositeTrustData {
     toolDiff: { score: number; tier: string; added?: string[]; modified?: string[]; suspicious?: string[] };
   };
   assessedAt: string;
+}
+
+export interface RemoteHealthData {
+  tls: { valid: boolean; checkedAt: string };
+  uptime: { status: 'up' | 'down' | 'unknown'; responseMs: number | null; checkedAt: string };
 }
 
 export interface SecurityAuditData {
@@ -119,6 +125,7 @@ export interface MCPServer {
   greenScore?: GreenScoreData | null;
   reliability?: ReliabilityScoreData | null;
   compositeTrust?: CompositeTrustData | null;
+  remoteHealth?: RemoteHealthData | null;
   scanData?: any | null;
   installCount?: number;
   installs24h?: number;
@@ -182,6 +189,15 @@ function rowToServer(row: MCPServerRow): MCPServer {
     }
   }
 
+  let remoteHealth: RemoteHealthData | null = null;
+  if (row.remote_health_json) {
+    try {
+      remoteHealth = JSON.parse(row.remote_health_json) as RemoteHealthData;
+    } catch {
+      // invalid JSON — leave as null
+    }
+  }
+
   let scanData: any = null;
   if (row.scan_summary_json) {
     try {
@@ -233,6 +249,7 @@ function rowToServer(row: MCPServerRow): MCPServer {
     greenScore,
     reliability,
     compositeTrust,
+    remoteHealth,
     scanData,
     installCount: row.install_count || 0,
     installs24h: row.installs_24h || 0,
@@ -261,6 +278,7 @@ export async function getServersPage(
     category = '',
     search = '',
     deployment = '',
+    deployments = [],
     localOnly = false,
     sort = 'stars',
   }: {
@@ -269,6 +287,7 @@ export async function getServersPage(
     category?: string;
     search?: string;
     deployment?: string;
+    deployments?: string[];
     localOnly?: boolean;
     sort?: 'stars' | 'installs' | 'trending';
   } = {}
@@ -281,7 +300,11 @@ export async function getServersPage(
     params.push(category);
   }
 
-  if (deployment && deployment !== 'all') {
+  if (deployments && deployments.length > 0) {
+    const placeholders = deployments.map(() => '?').join(', ');
+    conditions.push(`deployment_type IN (${placeholders})`);
+    params.push(...deployments);
+  } else if (deployment && deployment !== 'all') {
     conditions.push('deployment_type = ?');
     params.push(deployment);
   }

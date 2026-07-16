@@ -22,7 +22,7 @@ jobs:
           cd scripts/tavily && pnpm install --frozen-lockfile
       - name: Compile TypeScript
         run: cd scripts/tavily && npx tsc
-      - name: Run Weekly Scan
+      - name: Run Weekly Server Scan
         env:
           TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -31,3 +31,13 @@ jobs:
           node scripts/tavily/weekly-scan.js
           # Upsert results to D1 (assuming weekly-scan outputs to data/servers.json)
           node scripts/upsert-to-d1.js data/servers.json servers
+      - name: Scan Skills
+        run: |
+          npx tsx scripts/scan-skills.ts
+          git diff --quiet src/data/skill-scans.json || (
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add src/data/skill-scans.json
+            git commit -m "chore: weekly skill scan [$(date -u +%Y-%m-%d)]"
+            git push
+          )

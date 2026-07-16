@@ -9,7 +9,8 @@
  *   ┌─ staleness  (GitHub commit recency + volume + archived)
  *   ├─ green      (Green Web Foundation Greencheck)
  *   ├─ security   (npm static-analysis + Socket.dev + CVE watchlist)  ← reuses src/
- *   └─ tool-diff  (README tool set diff vs prior snapshot → rug-pull / tool-poisoning)
+ *   ├─ tool-diff  (README tool set diff vs prior snapshot → rug-pull / tool-poisoning)
+ *   └─ remote     (TLS reachability + uptime ping for SSE/HTTP servers)
  *
  * It also back-fills the individual columns (green_score_json, badge_tier,
  * scan_summary_json) so existing badges keep working until they migrate to the
@@ -57,6 +58,62 @@ async function gh(url, token) {
   const res = await fetch(url, { headers });
   if (!res.ok) return null;
   return res.json();
+}
+
+// ── 0. Remote health inputs (TLS + uptime for SSE/HTTP servers) ─────────────
+
+async function fetchRemoteHealth(server) {
+  const deployment = server.deployment_type || 'local_stdio';
+  if (deployment === 'local_stdio') {
+    return { tls: null, uptime: null };
+  }
+
+  const now = new Date().toISOString();
+  let tls = null;
+  let uptime = null;
+
+  // TLS check: try to HEAD the GitHub domain over HTTPS
+  const domain = server.github_url ? extractDomain(server.github_url) : null;
+  if (domain) {
+    try {
+      const start = Date.now();
+      const res = await fetch(`https://${domain}`, { method: 'HEAD', redirect: 'follow' });
+      tls = { valid: res.ok, checkedAt: now };
+    } catch {
+      tls = { valid: false, checkedAt: now };
+    }
+  }
+
+  // Uptime check: try to discover an endpoint from npm metadata, then HEAD it
+  const npmPackage = server.npm_package;
+  if (npmPackage) {
+    try {
+      const resp = await fetch(`${NPM}/${encodeURIComponent(npmPackage)}`);
+      if (resp.ok) {
+        const pkg = await resp.json();
+        const endpoint = pkg.homepage || pkg.bugs?.url || null;
+        if (endpoint && endpoint.startsWith('http')) {
+          try {
+            const start = Date.now();
+            const res = await fetch(endpoint, { method: 'HEAD', redirect: 'follow' });
+            uptime = {
+              status: res.ok ? 'up' : 'down',
+              responseMs: Date.now() - start,
+              checkedAt: now,
+            };
+          } catch {
+            uptime = { status: 'down', responseMs: null, checkedAt: now };
+          }
+        }
+      }
+    } catch { /* leave uptime null — endpoint unknown */ }
+  }
+
+  if (!uptime) {
+    uptime = { status: 'unknown', responseMs: null, checkedAt: now };
+  }
+
+  return { tls, uptime };
 }
 
 // ── 1. Staleness inputs ─────────────────────────────────────────────────────
@@ -202,11 +259,12 @@ function extractTools(readme) {
 // ── Per-server assessment ───────────────────────────────────────────────────
 
 async function assessOne(server, prevComposite, env, token) {
-  const [stalenessInputs, greenInputs, secLayers, toolMap] = await Promise.all([
+  const [stalenessInputs, greenInputs, secLayers, toolMap, remoteHealth] = await Promise.all([
     fetchStalenessInputs(server, token),
     fetchGreenInputs(server),
     runSecurityLayers(server, env),
     fetchToolMap(server, token),
+    fetchRemoteHealth(server),
   ]);
 
   const staleness = scoreStaleness(stalenessInputs);
@@ -233,7 +291,7 @@ async function assessOne(server, prevComposite, env, token) {
     assessedAt: new Date().toISOString(),
   };
 
-  return { record, composite, green, security };
+  return { record, composite, green, security, remoteHealth };
 }
 
 // ── Orchestration ───────────────────────────────────────────────────────────
@@ -252,8 +310,9 @@ async function runAll(env) {
     return;
   }
 
-  // Ensure the composite column exists (idempotent).
+  // Ensure columns exist (idempotent).
   try { await env.DB.prepare('ALTER TABLE servers ADD COLUMN composite_trust_json TEXT').run(); } catch { /* exists */ }
+  try { await env.DB.prepare('ALTER TABLE servers ADD COLUMN remote_health_json TEXT').run(); } catch { /* exists */ }
 
   const batchSize = 15;
   let processed = 0;
@@ -265,7 +324,7 @@ async function runAll(env) {
       let prev = null;
       try { prev = server.composite_trust_json ? JSON.parse(server.composite_trust_json) : null; } catch { prev = null; }
       try {
-        const { record, composite, green, security } = await assessOne(server, prev, env, token);
+        const { record, composite, green, security, remoteHealth } = await assessOne(server, prev, env, token);
         if (composite.flags.length) flagged++;
 
         // ONE combined record (the consolidated source of truth) …
@@ -279,6 +338,10 @@ async function runAll(env) {
         const badgeTier = prev && composite.tier === 'trusted' ? 'manually_reviewed' : 'scanned';
         await env.DB.prepare('UPDATE servers SET badge_tier = ?, last_scan_at = ?, scan_summary_json = ? WHERE id = ?')
           .bind(badgeTier, record.assessedAt, JSON.stringify({ overall_score: security.score, ...security }), server.id).run();
+
+        // 5th layer: remote health (TLS + uptime)
+        await env.DB.prepare('UPDATE servers SET remote_health_json = ? WHERE id = ?')
+          .bind(JSON.stringify(remoteHealth), server.id).run();
 
         processed++;
       } catch (err) {
