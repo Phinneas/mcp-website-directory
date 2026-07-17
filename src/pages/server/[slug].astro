@@ -325,6 +325,42 @@ const structuredData = {
           <SecurityBadge client:load serverId={server.id} scan={scanData} />
         </section>
 
+        <!-- Execution Test Badge — MCP handshake / endpoint test -->
+        {(server as any).execution && (
+          <section class="execution-test-section">
+            <h2>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              Execution Test
+            </h2>
+            {(server as any).execution.status === 'tested' ? (
+              <div class="execution-tested">
+                <span class="execution-badge tested">✅ Works: tested</span>
+                <p class="execution-detail">
+                  MCP endpoint responded successfully on {(server as any).execution.testedAt ? new Date((server as any).execution.testedAt).toLocaleDateString() : 'unknown date'}.
+                  {(server as any).execution.responseMs ? ` Response time: ${(server as any).execution.responseMs}ms.` : ''}
+                </p>
+              </div>
+            ) : (server as any).execution.status === 'handshake' ? (
+              <div class="execution-handshake">
+                <span class="execution-badge handshake">🔵 Handshake verified</span>
+                <p class="execution-detail">
+                  npm package verified as MCP-related on {(server as any).execution.testedAt ? new Date((server as any).execution.testedAt).toLocaleDateString() : 'unknown date'}.
+                  {(server as any).execution.packageVerified ? ' Package contains MCP SDK dependency or keyword.' : ' Package metadata checked.'}
+                </p>
+              </div>
+            ) : (
+              <div class="execution-failed">
+                <span class="execution-badge failed">❌ Test failed</span>
+                <p class="execution-detail">
+                  Could not verify MCP functionality on {(server as any).execution.testedAt ? new Date((server as any).execution.testedAt).toLocaleDateString() : 'unknown date'}.
+                </p>
+              </div>
+            )}
+          </section>
+        )}
+
         <!-- Installation -->
         <ServerInstallation server={server} />
 
@@ -618,6 +654,31 @@ const structuredData = {
           <BookmarkToggle client:load serverId={server.id} />
         </div>
         <ServerMetadata server={server} />
+
+        {/* Embeddable Badge — shown for verified/scanned servers */}
+        {scanData && scanData.badge_tier && scanData.badge_tier !== 'unverified' && (
+          <div class="sidebar-badge-section">
+            <h3>Verified Badge</h3>
+            <p class="badge-description">Show your users this server is verified on My MCP Shelf.</p>
+            <div class="badge-preview">
+              <img
+                src={`/api/v1/badge/${slug}.svg`}
+                alt={`Verification badge for ${serverName}`}
+                loading="lazy"
+                width="148"
+                height="20"
+              />
+            </div>
+            <div class="badge-snippet-wrapper">
+              <pre class="badge-snippet"><code>{`[![Verified on My MCP Shelf](https://www.mymcpshelf.com/api/v1/badge/${slug}.svg)](https://www.mymcpshelf.com/server/${slug})`}</code></pre>
+              <button
+                class="badge-copy-btn"
+                onclick={`navigator.clipboard.writeText(this.previousElementSibling.textContent); this.textContent='Copied!'; setTimeout(()=>this.textContent='Copy',1500)`}
+              >Copy</button>
+            </div>
+          </div>
+        )}
+
         {server.fields.github_url && (
           <GitHubHealthVitals
             client:load
@@ -1086,6 +1147,121 @@ const structuredData = {
   @media (max-width: 1024px) {
     .content-layout { grid-template-columns: 1fr; }
     .sidebar { order: -1; }
+  }
+
+  /* Badge Section */
+  .sidebar-badge-section {
+    background: rgba(255,255,255,0.04);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .sidebar-badge-section h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #f1f5f9;
+    margin: 0 0 0.5rem 0;
+  }
+  .badge-description {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+  }
+  .badge-preview {
+    margin-bottom: 0.75rem;
+    padding: 0.75rem;
+    background: rgba(0,0,0,0.2);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .badge-preview img {
+    display: block;
+  }
+  .badge-snippet-wrapper {
+    position: relative;
+  }
+  .badge-snippet {
+    background: #0f172a;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    padding: 0.75rem;
+    color: #e2e8f0;
+    font-family: 'SF Mono', Monaco, monospace;
+    font-size: 0.75rem;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+    margin: 0;
+  }
+  .badge-copy-btn {
+    position: absolute;
+    top: 0.35rem;
+    right: 0.35rem;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #e2e8f0;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .badge-copy-btn:hover {
+    background: rgba(255,255,255,0.2);
+  }
+
+  /* Execution Test Section */
+  .execution-test-section {
+    background: rgba(255,255,255,0.04);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .execution-test-section h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #f1f5f9;
+    margin: 0 0 1rem 0;
+  }
+  .execution-test-section h2 svg { color: #94a3b8; }
+  .execution-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  .execution-badge.tested {
+    background: rgba(34,197,94,0.13);
+    color: #22c55e;
+    border: 1px solid rgba(34,197,94,0.3);
+  }
+  .execution-badge.handshake {
+    background: rgba(59,130,246,0.13);
+    color: #3b82f6;
+    border: 1px solid rgba(59,130,246,0.3);
+  }
+  .execution-badge.failed {
+    background: rgba(239,68,68,0.13);
+    color: #ef4444;
+    border: 1px solid rgba(239,68,68,0.3);
+  }
+  .execution-detail {
+    font-size: 0.9rem;
+    color: #94a3b8;
+    margin: 0;
+    line-height: 1.5;
   }
 
   @media (max-width: 768px) {

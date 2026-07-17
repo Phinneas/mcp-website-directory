@@ -27,6 +27,7 @@ export interface MCPServerRow {
   installs_7d: number | null;
   composite_trust_json: string | null;
   remote_health_json: string | null;
+  execution_json: string | null;
 }
 
 /** Consolidated per-server recheck record (written by composite-trust-monitor). */
@@ -47,6 +48,18 @@ export interface CompositeTrustData {
 export interface RemoteHealthData {
   tls: { valid: boolean; checkedAt: string };
   uptime: { status: 'up' | 'down' | 'unknown'; responseMs: number | null; checkedAt: string };
+}
+
+export interface ExecutionData {
+  status: 'tested' | 'handshake' | 'failed';
+  tier: string;
+  score: number;
+  endpoint?: string | null;
+  responseMs?: number | null;
+  packageVerified?: boolean;
+  hasMcpSdk?: boolean;
+  hasMcpKeyword?: boolean;
+  testedAt: string;
 }
 
 export interface SecurityAuditData {
@@ -126,6 +139,7 @@ export interface MCPServer {
   reliability?: ReliabilityScoreData | null;
   compositeTrust?: CompositeTrustData | null;
   remoteHealth?: RemoteHealthData | null;
+  execution?: ExecutionData | null;
   scanData?: any | null;
   installCount?: number;
   installs24h?: number;
@@ -198,6 +212,15 @@ function rowToServer(row: MCPServerRow): MCPServer {
     }
   }
 
+  let execution: ExecutionData | null = null;
+  if (row.execution_json) {
+    try {
+      execution = JSON.parse(row.execution_json) as ExecutionData;
+    } catch {
+      // invalid JSON — leave as null
+    }
+  }
+
   let scanData: any = null;
   if (row.scan_summary_json) {
     try {
@@ -250,6 +273,7 @@ function rowToServer(row: MCPServerRow): MCPServer {
     reliability,
     compositeTrust,
     remoteHealth,
+    execution,
     scanData,
     installCount: row.install_count || 0,
     installs24h: row.installs_24h || 0,

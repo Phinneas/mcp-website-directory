@@ -90,6 +90,16 @@ const platforms = [
     </div>
 
     <p class="ask-ai-note">Opens in a new tab · Your conversation stays private to you and the AI.</p>
+
+    <div class="ask-ai-comparisons">
+      <span class="comparisons-label">Or read our honest comparisons:</span>
+      <div class="comparisons-links">
+        <a href="/vs-glama">vs Glama</a>
+        <a href="/vs-smithery">vs Smithery</a>
+        <a href="/vs-mcp.so">vs mcp.so</a>
+        <a href="/vs-skills.sh">vs skills.sh</a>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -210,6 +220,47 @@ const platforms = [
     font-size: 0.82rem;
     color: var(--aa-body);
     opacity: 0.85;
+  }
+
+  .ask-ai-comparisons {
+    margin-top: 1.75rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--aa-border);
+  }
+
+  .comparisons-label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--aa-body);
+    margin-bottom: 0.6rem;
+  }
+
+  .comparisons-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+  }
+
+  .comparisons-links a {
+    padding: 0.35rem 0.75rem;
+    background: var(--aa-surface);
+    border: 1px solid var(--aa-border);
+    border-radius: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--aa-body);
+    text-decoration: none;
+    transition: all 0.15s ease;
+  }
+
+  .comparisons-links a:hover {
+    border-color: hsl(var(--primary));
+    color: hsl(var(--primary));
+    transform: translateY(-1px);
   }
 
   /* Dark mode (html.dark-mode) — Warm Earth dark palette values */

@@ -1,0 +1,162 @@
+---
+title: "How to Choose an MCP Server (A Developer Decision Framework)"
+description: "A five-criteria framework for choosing an MCP server. Covers maintenance status, auth, transport compatibility, and the archived-server trap most tutorials miss."
+date: 2026-07-16
+author: "Buzz"
+tags: ["mcp", "mcp-servers", "decision-framework"]
+---
+
+{/* PRE-PUBLISH CHECKLIST
+- [ ] Verify frontmatter fields match site schema
+- [ ] Verify slug: /blog/how-to-choose-an-mcp-server
+- [ ] Confirm internal link paths resolve: /blog/quality-standards (verify actual slug), /category/ links, /submit-server
+- [ ] Re-verify volatile data before publish:
+      - servers-archived repo contents and maintained reference list (Everything, Fetch, Filesystem, Git, Memory, Sequential Thinking, Time)
+      - npm install figure for @modelcontextprotocol/server-postgres (~312k/mo as of April 2026, per dev.to/spencerpauly May 2026)
+      - GitHub MCP ~30.8k stars, Playwright MCP ~34.1k stars (June 2026 figures)
+      - Atlassian SSE sunset date June 30, 2026 — if publishing after, change tense to past
+      - korotovsky/slack-mcp-server latest release (v1.3.0, May 2026)
+      - Current MCP spec revision (2025-11-25 at time of writing)
+- [ ] Add FAQ schema markup if site supports it
+- [ ] Confirm quality-filter URL for directory CTA
+*/}
+
+Most of the MCP servers people call "official" are no longer maintained. Anthropic moved fourteen of its reference servers into an archive repo with a blunt warning. No security updates. No bug fixes. Use at your own risk. Yet the archived Postgres server alone was still pulling roughly 312,000 npm installs a month as of spring 2026. The install command works. The npm page says nothing about the archive. Thousands of developers are wiring abandoned code into their agents without knowing it.
+
+That is why choosing an MCP server deserves more than a directory search and a copy-pasted config. This guide gives you a five-criteria framework for evaluating any server before you connect it. It is written for developers picking servers for their own projects. If you want to know how we evaluate servers for the MyMCPShelf directory itself, see our [quality standards](/blog/quality-standards) post.
+
+## Why your MCP server choice matters
+
+An MCP server is code that runs with real credentials against real systems. A bad choice costs you in four ways.
+
+**Security exposure.** Unmaintained servers get no patches. If a dependency vulnerability lands in an archived server, nobody fixes it. You inherit the risk the moment you add it to your config. Prompt injection through tool results is already a documented attack surface. A server that nobody audits makes it worse.
+
+**Maintenance burden.** MCP is a young protocol and the spec still moves. The transport layer changed in March 2025. OAuth guidance changed in June 2025. A server that tracks the spec keeps working as clients update. A stale one breaks quietly, and you become its de facto maintainer.
+
+**Auth complexity.** Some servers need nothing beyond a local path. Others want a personal access token pasted into a plaintext config file. The best remote servers now handle OAuth for you. The difference determines how much credential hygiene you have to manage yourself.
+
+**Context bloat.** Every tool a server exposes consumes context window, whether the model uses it or not. A server with forty tools you don't need makes your agent slower and less accurate at picking the right tool. Tool count is a real cost, not a feature list.
+
+## The five-criteria framework
+
+Score each candidate server from one to five on each criterion. Anything that scores a one on maintenance or security-relevant criteria should be disqualified outright, not averaged up.
+
+### 1. Use case fit
+
+Does the server do exactly what you need, and not much else?
+
+Start from the task, not the server. "I need my agent to read pull requests and post review comments" is a spec you can evaluate against. "I should probably add a GitHub server" is not. Read the tool list in the server's README before anything else. Count the tools you would actually call. Then count the ones you wouldn't.
+
+A focused server with eight tools often beats a sprawling one with fifty. The Slack ecosystem shows the range. Community servers expose around eight tools. Slack's own hosted server exposes a curated fifteen. Managed platforms expose the full API surface. More is not better. More is more context spent and more permissions granted.
+
+Scoring guidance is simple here. Five means every tool maps to something in your workflow. One means you would use fewer than a quarter of them.
+
+### 2. Maintenance status
+
+This is the criterion most tutorials skip, and it is the one that disqualifies the most servers.
+
+The MCP ecosystem sorted itself into a clear hierarchy during 2025 and early 2026. Prefer first-party vendor servers when they exist. GitHub maintains its own server. So do Notion, Sentry, Brave, Stripe, and Linear. These replaced the early Anthropic reference implementations, which were split in two. Seven reference servers remain maintained by the MCP steering group — Everything, Fetch, Filesystem, Git, Memory, Sequential Thinking, and Time. The other fourteen, including Postgres, Slack, GitHub, Google Drive, Puppeteer, and Redis, now live in the `servers-archived` repo.
+
+Here is the trap. Archiving happened on GitHub, not on npm. The old packages still install and still run. `npx @modelcontextprotocol/server-postgres` works today. Nothing in the command output tells you the code is abandoned. If you learned MCP from a tutorial written in early 2025, there is a good chance it points you at archived code.
+
+What to check, in order.
+
+- Last commit date and release cadence on the actual repo. Follow the npm package back to its source. Confirm the source is where you think it is.
+- Whether a first-party vendor server exists for the same service. If it does, the community or reference version needs a specific reason to win.
+- Open issue count against maintainer response time. Fifty open issues with recent maintainer replies is healthy. Twelve open issues with six months of silence is not.
+
+Five means an actively maintained first-party server. Three means a community server with recent releases and responsive maintainers. One means archived or silent for over six months. A one here ends the evaluation.
+
+### 3. Auth complexity
+
+How hard is it to connect, and how much credential risk do you carry afterward?
+
+MCP servers cluster into three auth patterns. Local servers with no credentials sit at the low-risk end. The Filesystem and Git reference servers need only a directory path. There is no token to leak because there is no token.
+
+Token-in-config servers occupy the middle. Most community servers ask you to generate an API key or personal access token and paste it into a JSON config file. This works, but the token sits in plaintext on disk, and scoping discipline is on you. If the server asks for broader scopes than its tools require, treat that as a red flag in its own right.
+
+OAuth-based remote servers are the current best practice for hosted services. GitHub's remote endpoint replaced the old PAT-in-config pattern with an OAuth flow. Slack's official hosted server works the same way. You authorize once, the provider manages the credential lifecycle, and revocation happens in one place.
+
+Match the pattern to your context. A local prototype can tolerate a scoped PAT. Anything shared, long-running, or production-adjacent should push you toward OAuth remotes or a managed layer.
+
+### 4. Transport compatibility
+
+MCP defines two standard transports, and knowing which one you need takes about a minute.
+
+STDIO runs the server as a local process. Your client launches it and talks to it over stdin and stdout. This is the default for anything that touches your machine, like filesystem access or local Git operations. It requires no network configuration and no auth handshake.
+
+Streamable HTTP is the transport for remote and hosted servers. The client talks to a single HTTP endpoint. This is what GitHub's remote server, Slack's hosted server, and most vendor offerings use.
+
+There used to be a third option. The original spec defined an HTTP+SSE transport, and it was deprecated in the 2025-03-26 revision when Streamable HTTP replaced it. The current spec keeps SSE documented only for backward compatibility. Vendors are now sunsetting it. Atlassian shut down its SSE endpoint on June 30, 2026.
+
+This gives you a useful tell. If a server's documentation still leads with SSE setup instructions, its maintainers have not touched the docs in over a year. That is a maintenance signal wearing a transport costume. Check your client's supported transports, confirm the server offers one of them, and treat SSE-only servers as legacy.
+
+### 5. Community and ecosystem
+
+Stars are a weak signal on their own. The archived reference repo has over 87,000 of them, and most point at code the maintainers tell you not to use. Read community signals as a set instead.
+
+Look for presence in the official MCP Registry, which now serves as the canonical index for published servers. Look for the server appearing in multiple independent client docs, not just its own README. Look for a Discord or discussion forum where the maintainers actually answer questions. Look for third-party writeups that postdate the last major spec revision.
+
+Two numbers are worth knowing as calibration points. GitHub's official server sits around 30,000 stars and Microsoft's Playwright server around 34,000. Both pair those stars with weekly releases and fast issue response. That combination is what a five looks like. Stars without release activity is what a two looks like.
+
+## Quick picks by use case
+
+These are maintained, defensible starting points as of July 2026. Verify maintenance status yourself before connecting anything. That is the whole point of this post.
+
+| If you need to... | Start with | Why |
+| --- | --- | --- |
+| Work with repos, PRs, and issues | GitHub official server | First-party, OAuth remote endpoint, replaced the archived reference version |
+| Automate a browser | Playwright MCP (Microsoft) | Most-starred vendor server, replaced the archived Puppeteer reference |
+| Read and write local files | Filesystem reference server | One of the seven still-maintained reference servers |
+| Run local Git operations | Git reference server | Maintained reference set, no credentials needed |
+| Query Postgres | Postgres MCP Pro (Crystal DBA) | The Anthropic reference Postgres server is archived |
+| Manage a Supabase project | Supabase official server | First-party, covers database plus auth and storage |
+| Connect to Slack | Slack official hosted server, or korotovsky/slack-mcp-server self-hosted | The reference Slack server was archived in February 2026 |
+| Read and write Notion docs | Notion official server | First-party, maintained |
+| Ground agents in current library docs | Context7 | Consistently recommended as an always-on server across independent guides |
+| Search the web | Tavily, Exa, or Brave's official server | Brave moved its server first-party after the reference version was archived |
+| Triage errors | Sentry official server | First-party, replaced the archived reference |
+
+Notice the pattern down the "Why" column. In almost every category, the right answer is a first-party vendor server that replaced an archived reference implementation. When a vendor ships and maintains its own server, that is nearly always your default.
+
+## Red flags that should stop you
+
+Some findings end the evaluation regardless of how the other criteria score.
+
+**Archived upstream, alive on npm.** Trace every package to its source repo before installing. If the repo lives under `servers-archived` or carries an archive banner, walk away. The install working proves nothing.
+
+**No releases and no changelog.** A server without tagged releases gives you no way to pin a known-good version and no record of what changed. You cannot audit what you cannot diff.
+
+**More than six months of silence.** The spec had two significant revisions in under a year. A server that slept through them is behind on transport, auth, or both.
+
+**SSE-only transport.** Covered above. It is legacy, vendors are shutting endpoints down, and docs that lead with it date themselves.
+
+**Scope creep in permissions.** A server whose tools read messages should not request write scopes. Excess permissions expand your blast radius for no benefit and suggest the maintainers were not thinking about your risk.
+
+**Directory padding.** Public registries list dozens of servers in every category, and many are undocumented weekend projects. A listing is not an endorsement. Evaluate the implementation, not the category count.
+
+## Going deeper
+
+This framework is the individual-developer version of the evaluation we run at directory scale. Our [quality standards](/blog/quality-standards) post covers the full methodology, including how we verify implementations rather than counting listings, and why our directory holds 600+ verified servers instead of every server that exists.
+
+## Choose from servers that already pass the bar
+
+Every server in the [MyMCPShelf directory](/category/) has been evaluated against these criteria before listing. Browse by category, check the maintenance signals we surface on each listing, and skip the archaeology. If you maintain a server that clears the bar, [submit it here](/submit-server).
+
+## FAQ
+
+**Which MCP server should I use?**
+
+Start from your task, then prefer the first-party vendor server for that service if one exists. GitHub for repos, Playwright for browsers, Notion for docs, the maintained Filesystem and Git reference servers for local work. Check the quick-picks table above for eleven common use cases.
+
+**How do I know if an MCP server is safe?**
+
+Trace the package back to its source repository and confirm the repo is not archived. Check for releases within the last six months. Confirm the requested permission scopes match what the tools actually do. Prefer OAuth-based remote servers over pasting tokens into config files.
+
+**What makes a good MCP server?**
+
+Active maintenance, a focused tool set, an auth pattern appropriate to its risk level, support for the current standard transports (STDIO or Streamable HTTP), and a maintainer who responds to issues. A good server scores well on all five criteria in this framework, not just one.
+
+**Should I use archived official MCP servers?**
+
+No. The archived reference servers, including Postgres, Slack, and the old GitHub implementation, receive no security updates or bug fixes. Maintained replacements exist for nearly all of them. Use the first-party vendor server or an actively maintained community alternative instead.

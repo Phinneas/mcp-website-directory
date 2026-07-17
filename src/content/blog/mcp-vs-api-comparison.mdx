@@ -10,7 +10,7 @@ tags: ["mcp", "api", "architecture", "ai-agents", "comparison"]
 
 **Bottom line up front:** MCP (Model Context Protocol) and traditional APIs solve different problems for different users. APIs are built for developers who write explicit code against known endpoints. MCP is built for AI agents that need to *discover* what tools exist at runtime and reason about how to use them. MCP doesn't replace APIs — most MCP servers are just intelligent wrappers around REST APIs underneath. If you're building a traditional app, use an API. If you're building an AI agent that needs to orchestrate multiple services, MCP is the better fit.
 
-| | Traditional API | MCP |
+| Dimension | Traditional API | MCP |
 |---|---|---|
 | **Built for** | Developers writing code | AI agents reasoning about goals |
 | **Discovery** | Static docs, design-time | Runtime introspection |

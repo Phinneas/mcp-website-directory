@@ -1,0 +1,546 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { COMPARISONS } from '../data/comparisons';
+
+const pageTitle = 'Changelog & Feeds | My MCP Shelf';
+const pageDescription =
+  'Newly verified MCP servers and security flags from our unified recheck pipeline. Subscribe via RSS or JSON feed.';
+const canonicalUrl = 'https://www.mymcpshelf.com/changelog';
+
+const db = (Astro.locals as any).runtime?.env?.DB as D1Database | undefined;
+const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+
+interface FeedItem {
+  id: string;
+  name: string;
+  author: string | null;
+  category: 'verified' | 'security';
+  slug: string;
+  stars: number;
+  badge_tier: string | null;
+  score: number | null;
+  flags: string[];
+  description: string | null;
+  published_at: string;
+}
+
+function slugify(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+let newlyVerified: FeedItem[] = [];
+let securityFlags: FeedItem[] = [];
+let error: string | null = null;
+
+if (db) {
+  try {
+    const [verifiedRows, flaggedRows] = await Promise.all([
+      db
+        .prepare(
+          `SELECT id, name, author, description, category, stars, badge_tier, composite_trust_json, last_scan_at
+           FROM servers
+           WHERE badge_tier IN ('scanned', 'manually_reviewed')
+             AND last_scan_at > ?
+           ORDER BY stars DESC
+           LIMIT 50`
+        )
+        .bind(weekAgo)
+        .all<any>(),
+      db
+        .prepare(
+          `SELECT id, name, author, description, category, stars, badge_tier, composite_trust_json, last_scan_at
+           FROM servers
+           WHERE composite_trust_json IS NOT NULL
+           ORDER BY stars DESC
+           LIMIT 200`
+        )
+        .all<any>(),
+    ]);
+
+    newlyVerified = (verifiedRows.results || []).map((r) => {
+      let score: number | null = null;
+      let flags: string[] = [];
+      if (r.composite_trust_json) {
+        try {
+          const ct = JSON.parse(r.composite_trust_json);
+          score = ct?.score ?? null;
+          flags = ct?.flags ?? [];
+        } catch {}
+      }
+      return {
+        id: r.id,
+        name: r.name,
+        author: r.author,
+        category: 'verified',
+        slug: slugify(r.name),
+        stars: r.stars || 0,
+        badge_tier: r.badge_tier,
+        score,
+        flags,
+        description: r.description,
+        published_at: r.last_scan_at || new Date().toISOString(),
+      };
+    });
+
+    securityFlags = (flaggedRows.results || [])
+      .map((r) => {
+        let score: number | null = null;
+        let flags: string[] = [];
+        let tier = '';
+        if (r.composite_trust_json) {
+          try {
+            const ct = JSON.parse(r.composite_trust_json);
+            score = ct?.score ?? null;
+            flags = ct?.flags ?? [];
+            tier = ct?.tier ?? '';
+          } catch {}
+        }
+        return {
+          id: r.id,
+          name: r.name,
+          author: r.author,
+          category: 'security' as const,
+          slug: slugify(r.name),
+          stars: r.stars || 0,
+          badge_tier: r.badge_tier,
+          score,
+          flags,
+          description: r.description,
+          published_at: r.last_scan_at || new Date().toISOString(),
+          tier,
+        };
+      })
+      .filter((item) => item.tier === 'caution' || item.flags.length > 0)
+      .slice(0, 50);
+  } catch (err: any) {
+    console.error('changelog query error:', err);
+    error = err.message;
+  }
+} else {
+  error = 'Database unavailable';
+}
+
+const generatedAt = new Date().toISOString();
+---
+
+<BaseLayout title={pageTitle} description={pageDescription} canonical={canonicalUrl}>
+  <div class="page-wrapper">
+    <section class="hero-section">
+      <div class="hero-content">
+        <span class="hero-eyebrow">Live from the pipeline</span>
+        <h1 class="page-title">Changelog & Feeds</h1>
+        <p class="page-subtitle">
+          Newly verified MCP servers and security flags from the unified recheck pipeline.
+        </p>
+        <div class="feed-buttons">
+          <a href="/api/v1/feed/rss.xml" class="feed-btn">
+            <span class="feed-icon">📡</span> RSS Feed
+          </a>
+          <a href="/api/v1/feed/feed.json" class="feed-btn">
+            <span class="feed-icon">📋</span> JSON Feed
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <main class="page-container">
+      {error && (
+        <div class="error-banner">
+          <p>Feed data temporarily unavailable: {error}</p>
+        </div>
+      )}
+
+      <!-- Newly Verified -->
+      <section class="section">
+        <div class="section-header">
+          <h2 class="section-title">✅ Newly Verified Servers <span class="count-badge">{newlyVerified.length}</span></h2>
+          <p class="section-description">
+            Servers that reached <strong>scanned</strong> or <strong>manually_reviewed</strong> status in the last 7 days.
+          </p>
+        </div>
+
+        {newlyVerified.length === 0 ? (
+          <div class="empty-state">
+            <p>No new verifications in the last 7 days. The pipeline runs weekly — check back soon.</p>
+          </div>
+        ) : (
+          <div class="feed-grid">
+            {newlyVerified.map((item) => (
+              <a href={`/server/${item.slug}`} class="feed-card verified">
+                <div class="feed-card-header">
+                  <span class="feed-badge verified-badge">Verified</span>
+                  <span class="feed-stars">⭐ {item.stars.toLocaleString()}</span>
+                </div>
+                <h3 class="feed-card-title">{item.name}</h3>
+                <p class="feed-card-desc">{item.description || 'MCP server'}</p>
+                <div class="feed-card-meta">
+                  {item.score != null && <span class="meta-score">Trust {item.score}/100</span>}
+                  <span class="meta-date">{new Date(item.published_at).toLocaleDateString()}</span>
+                </div>
+              </a>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <!-- Security Flags -->
+      <section class="section">
+        <div class="section-header">
+          <h2 class="section-title">⚠️ Security Flags <span class="count-badge">{securityFlags.length}</span></h2>
+          <p class="section-description">
+            Servers with caution-tier composite trust or open flags from the unified recheck.
+          </p>
+        </div>
+
+        {securityFlags.length === 0 ? (
+          <div class="empty-state">
+            <p>No security flags currently. All monitored servers are in trusted or verified tiers.</p>
+          </div>
+        ) : (
+          <div class="feed-grid">
+            {securityFlags.map((item) => (
+              <a href={`/server/${item.slug}`} class="feed-card security">
+                <div class="feed-card-header">
+                  <span class="feed-badge security-badge">Flagged</span>
+                  <span class="feed-stars">⭐ {item.stars.toLocaleString()}</span>
+                </div>
+                <h3 class="feed-card-title">{item.name}</h3>
+                <p class="feed-card-desc">{item.description || 'MCP server'}</p>
+                {item.flags.length > 0 && (
+                  <div class="flag-list">
+                    {item.flags.map((flag) => (
+                      <span class="flag-tag">{flag}</span>
+                    ))}
+                  </div>
+                )}
+                <div class="feed-card-meta">
+                  {item.score != null && <span class="meta-score">Trust {item.score}/100</span>}
+                  <span class="meta-date">{new Date(item.published_at).toLocaleDateString()}</span>
+                </div>
+              </a>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <!-- Comparison CTA -->
+      <section class="section">
+        <h2 class="section-title">See how we compare</h2>
+        <div class="comparison-links">
+          {Object.values(COMPARISONS).map((c) => (
+            <a href={`/vs-${c.key}`} class="comparison-link">My MCP Shelf vs {c.name} →</a>
+          ))}
+        </div>
+      </section>
+
+      <footer class="page-footer">
+        <p>Generated at {new Date(generatedAt).toUTCString()} · Data from the unified recheck pipeline</p>
+      </footer>
+    </main>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hero-section {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+    padding: 4rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+  }
+
+  .hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .hero-eyebrow {
+    display: inline-block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #f59e0b;
+    margin-bottom: 0.75rem;
+  }
+
+  .page-title {
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+    color: #f1f5f9;
+  }
+
+  .page-subtitle {
+    font-size: 1.25rem;
+    color: #94a3b8;
+    margin-bottom: 1.5rem;
+    font-weight: 400;
+  }
+
+  .feed-buttons {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .feed-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.25rem;
+    background: #1e293b;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    color: #f1f5f9;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.15s ease;
+  }
+
+  .feed-btn:hover {
+    border-color: #f59e0b;
+    color: #f59e0b;
+    transform: translateY(-1px);
+  }
+
+  .feed-icon {
+    font-size: 1.1rem;
+  }
+
+  .page-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    flex: 1;
+  }
+
+  .error-banner {
+    margin: 2rem 0;
+    padding: 1rem 1.25rem;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 8px;
+    color: #fca5a5;
+  }
+
+  .section {
+    margin: 3rem 0;
+  }
+
+  .section-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .section-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #f1f5f9;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .count-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.15rem 0.6rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #cbd5e1;
+  }
+
+  .section-description {
+    font-size: 1rem;
+    color: #94a3b8;
+    margin-top: 0.5rem;
+    line-height: 1.6;
+  }
+
+  .empty-state {
+    padding: 2rem;
+    background: #1e293b;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    text-align: center;
+    color: #94a3b8;
+  }
+
+  .feed-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+
+  .feed-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1.25rem;
+    background: #1e293b;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s ease;
+  }
+
+  .feed-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .feed-card.verified:hover {
+    border-color: #10b981;
+  }
+
+  .feed-card.security:hover {
+    border-color: #f59e0b;
+  }
+
+  .feed-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .feed-badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .verified-badge {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+  }
+
+  .security-badge {
+    background: rgba(245, 158, 11, 0.15);
+    color: #f59e0b;
+  }
+
+  .feed-stars {
+    font-size: 0.8rem;
+    color: #94a3b8;
+  }
+
+  .feed-card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #f1f5f9;
+    margin: 0;
+  }
+
+  .feed-card-desc {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .flag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .flag-tag {
+    padding: 0.15rem 0.5rem;
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+    border-radius: 4px;
+    font-size: 0.72rem;
+    color: #f59e0b;
+  }
+
+  .feed-card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .meta-score {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #cbd5e1;
+  }
+
+  .meta-date {
+    font-size: 0.75rem;
+    color: #64748b;
+  }
+
+  .comparison-links {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+  }
+
+  .comparison-link {
+    padding: 0.6rem 1.25rem;
+    background: #1e293b;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: #cbd5e1;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.15s ease;
+  }
+
+  .comparison-link:hover {
+    border-color: #f59e0b;
+    color: #f59e0b;
+    transform: translateY(-1px);
+  }
+
+  .page-footer {
+    margin: 3rem 0 2rem;
+    text-align: center;
+    font-size: 0.8rem;
+    color: #64748b;
+  }
+
+  @media (max-width: 768px) {
+    .page-title {
+      font-size: 2rem;
+    }
+
+    .feed-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .section-title {
+      font-size: 1.4rem;
+    }
+  }
+</style>

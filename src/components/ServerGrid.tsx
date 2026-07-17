@@ -237,6 +237,23 @@ function ServerCard({ server }: { server: MCPServer }) {
           </div>
         )}
 
+        {/* Execution Test Badge */}
+        {server.execution && (
+          <div className="execution-badges" style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '0.5rem' }}>
+            <span
+              className="meta-tag"
+              style={{
+                background: server.execution.status === 'tested' ? 'rgba(34,197,94,0.13)' : server.execution.status === 'handshake' ? 'rgba(59,130,246,0.13)' : 'rgba(239,68,68,0.13)',
+                color: server.execution.status === 'tested' ? '#22c55e' : server.execution.status === 'handshake' ? '#3b82f6' : '#ef4444',
+                border: `1px solid ${server.execution.status === 'tested' ? 'rgba(34,197,94,0.3)' : server.execution.status === 'handshake' ? 'rgba(59,130,246,0.3)' : 'rgba(239,68,68,0.3)'}`,
+              }}
+              title={`Execution test: ${server.execution.status === 'tested' ? 'Endpoint tested' : server.execution.status === 'handshake' ? 'Package handshake verified' : 'Test failed'} — ${server.execution.testedAt ? new Date(server.execution.testedAt).toLocaleDateString() : 'unknown'}`}
+            >
+              {server.execution.status === 'tested' ? '✅ Works: tested' : server.execution.status === 'handshake' ? '🔵 Handshake verified' : '❌ Test failed'}
+            </span>
+          </div>
+        )}
+
         {/* Green Score Badge */}
         {(server as any).greenScore && (
           <div style={{ marginBottom: '0.5rem' }}>
@@ -332,7 +349,8 @@ export default function ServerGrid({ initialServers, total: initialTotal, meta }
   const [servers, setServers] = useState<MCPServer[]>(initialServers);
   const [total, setTotal] = useState(initialTotal);
   const [search, setSearch] = useState('');
-  const [category, setCategory] = useState('all');
+  const initialCategory = meta?.category || 'all';
+  const [category, setCategory] = useState(initialCategory);
   const [localOnly, setLocalOnly] = useState(false);
   const deployment = meta?.deployment || 'all';
   const deployments = meta?.deployments || '';
@@ -340,6 +358,7 @@ export default function ServerGrid({ initialServers, total: initialTotal, meta }
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hasFetchedOnMount = useRef(false);
 
   const fetchServers = useCallback(async (
     q: string,
@@ -382,12 +401,19 @@ export default function ServerGrid({ initialServers, total: initialTotal, meta }
 
   // On search/category/deployment/localOnly change, debounce and reset
   useEffect(() => {
+    if (!hasFetchedOnMount.current) {
+      hasFetchedOnMount.current = true;
+      // Skip redundant initial fetch when state already matches the server-rendered data
+      if (category === initialCategory && !search && !localOnly) {
+        return;
+      }
+    }
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
       fetchServers(search, category, deployment, deployments, 0, false, localOnly);
     }, 300);
     return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
-  }, [search, category, deployment, deployments, localOnly, fetchServers]);
+  }, [search, category, deployment, deployments, localOnly, fetchServers, initialCategory]);
 
   const hasMore = offset < total;
 

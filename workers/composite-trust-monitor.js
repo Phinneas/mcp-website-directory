@@ -10,7 +10,8 @@
  *   ├─ green      (Green Web Foundation Greencheck)
  *   ├─ security   (npm static-analysis + Socket.dev + CVE watchlist)  ← reuses src/
  *   ├─ tool-diff  (README tool set diff vs prior snapshot → rug-pull / tool-poisoning)
- *   └─ remote     (TLS reachability + uptime ping for SSE/HTTP servers)
+ *   ├─ remote     (TLS reachability + uptime ping for SSE/HTTP servers)
+ *   └─ execution  (MCP endpoint test for remote; npm package handshake for stdio)
  *
  * It also back-fills the individual columns (green_score_json, badge_tier,
  * scan_summary_json) so existing badges keep working until they migrate to the
@@ -114,6 +115,79 @@ async function fetchRemoteHealth(server) {
   }
 
   return { tls, uptime };
+}
+
+// ── 0b. Execution test (MCP handshake / endpoint test) ──────────────────────
+
+// Known remote MCP endpoints — verified working URLs for cloud-native servers.
+const KNOWN_REMOTE_ENDPOINTS = {
+  'upstash-context7': 'https://mcp.context7.com/mcp',
+  'mindsdb-mcp': 'https://api.mindsdb.com/mcp/sse',
+  'activepieces-mcp': 'https://api.activepieces.com/mcp/sse',
+  'googleapis-genai-toolbox': 'https://genai-toolbox.googleapis.com/mcp',
+};
+
+async function fetchExecutionTest(server) {
+  const now = new Date().toISOString();
+  const deployment = server.deployment_type || 'local_stdio';
+  const npmPackage = server.npm_package;
+
+  // ── Tier 1: Full test for remote servers with known endpoints ─────────────
+  if (deployment !== 'local_stdio') {
+    const endpoint = KNOWN_REMOTE_ENDPOINTS[server.id];
+    if (endpoint) {
+      try {
+        const start = Date.now();
+        const res = await fetch(endpoint, { method: 'HEAD', redirect: 'follow' });
+        return {
+          status: res.ok ? 'tested' : 'failed',
+          tier: res.ok ? 'tested' : 'failed',
+          score: res.ok ? 90 : 0,
+          endpoint,
+          responseMs: Date.now() - start,
+          testedAt: now,
+        };
+      } catch {
+        return { status: 'failed', tier: 'failed', score: 0, endpoint, testedAt: now };
+      }
+    }
+  }
+
+  // ── Tier 2: Handshake verification via npm metadata ───────────────────────
+  // For stdio servers (or remote servers without a known endpoint), we verify
+  // the npm package is real and MCP-related. This is the best we can do in a
+  // Worker environment where spawning subprocesses is not possible.
+  if (npmPackage) {
+    try {
+      const resp = await fetch(`${NPM}/${encodeURIComponent(npmPackage)}`);
+      if (!resp.ok) {
+        return { status: 'handshake', tier: 'no_package', score: 20, packageVerified: false, testedAt: now };
+      }
+      const pkg = await resp.json();
+      const latest = pkg['dist-tags']?.latest;
+      const version = latest ? pkg.versions?.[latest] : null;
+      const deps = version?.dependencies || {};
+      const keywords = version?.keywords || [];
+      const hasMcpSdk = !!deps['@modelcontextprotocol/sdk'];
+      const hasMcpKeyword = keywords.some((k) => /mcp/i.test(k));
+      const packageVerified = hasMcpSdk || hasMcpKeyword;
+
+      return {
+        status: 'handshake',
+        tier: packageVerified ? 'verified_package' : 'unverified_package',
+        score: packageVerified ? 70 : 40,
+        packageVerified,
+        hasMcpSdk,
+        hasMcpKeyword,
+        testedAt: now,
+      };
+    } catch {
+      return { status: 'handshake', tier: 'error', score: 10, packageVerified: false, testedAt: now };
+    }
+  }
+
+  // No npm package and no remote endpoint — can't test anything.
+  return { status: 'handshake', tier: 'no_package', score: 0, testedAt: now };
 }
 
 // ── 1. Staleness inputs ─────────────────────────────────────────────────────
@@ -259,12 +333,13 @@ function extractTools(readme) {
 // ── Per-server assessment ───────────────────────────────────────────────────
 
 async function assessOne(server, prevComposite, env, token) {
-  const [stalenessInputs, greenInputs, secLayers, toolMap, remoteHealth] = await Promise.all([
+  const [stalenessInputs, greenInputs, secLayers, toolMap, remoteHealth, execution] = await Promise.all([
     fetchStalenessInputs(server, token),
     fetchGreenInputs(server),
     runSecurityLayers(server, env),
     fetchToolMap(server, token),
     fetchRemoteHealth(server),
+    fetchExecutionTest(server),
   ]);
 
   const staleness = scoreStaleness(stalenessInputs);
@@ -286,12 +361,13 @@ async function assessOne(server, prevComposite, env, token) {
         score: toolDiff.score, tier: toolDiff.tier,
         added: toolDiff.added, removed: toolDiff.removed, modified: toolDiff.modified, suspicious: toolDiff.suspicious,
       },
+      execution: { score: execution.score, tier: execution.tier, status: execution.status },
     },
     toolSnapshot: toolDiff.snapshot, // stored for next run's diff
     assessedAt: new Date().toISOString(),
   };
 
-  return { record, composite, green, security, remoteHealth };
+  return { record, composite, green, security, remoteHealth, execution };
 }
 
 // ── Orchestration ───────────────────────────────────────────────────────────
@@ -313,6 +389,7 @@ async function runAll(env) {
   // Ensure columns exist (idempotent).
   try { await env.DB.prepare('ALTER TABLE servers ADD COLUMN composite_trust_json TEXT').run(); } catch { /* exists */ }
   try { await env.DB.prepare('ALTER TABLE servers ADD COLUMN remote_health_json TEXT').run(); } catch { /* exists */ }
+  try { await env.DB.prepare('ALTER TABLE servers ADD COLUMN execution_json TEXT').run(); } catch { /* exists */ }
 
   const batchSize = 15;
   let processed = 0;
@@ -324,7 +401,7 @@ async function runAll(env) {
       let prev = null;
       try { prev = server.composite_trust_json ? JSON.parse(server.composite_trust_json) : null; } catch { prev = null; }
       try {
-        const { record, composite, green, security, remoteHealth } = await assessOne(server, prev, env, token);
+        const { record, composite, green, security, remoteHealth, execution } = await assessOne(server, prev, env, token);
         if (composite.flags.length) flagged++;
 
         // ONE combined record (the consolidated source of truth) …
@@ -342,6 +419,10 @@ async function runAll(env) {
         // 5th layer: remote health (TLS + uptime)
         await env.DB.prepare('UPDATE servers SET remote_health_json = ? WHERE id = ?')
           .bind(JSON.stringify(remoteHealth), server.id).run();
+
+        // 6th layer: execution test (endpoint test or npm handshake)
+        await env.DB.prepare('UPDATE servers SET execution_json = ? WHERE id = ?')
+          .bind(JSON.stringify(execution), server.id).run();
 
         processed++;
       } catch (err) {

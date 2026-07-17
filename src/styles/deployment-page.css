@@ -111,7 +111,7 @@
 }
 
 .deployment-info > p {
-  color: #94a3b8;
+  color: #cbd5e1;
   font-size: 0.95rem;
 }
 
@@ -144,7 +144,7 @@
   align-items: flex-start;
   gap: 0.5rem;
   font-size: 0.875rem;
-  color: #94a3b8;
+  color: #cbd5e1;
 }
 
 .info-list li::before {
@@ -156,7 +156,11 @@
 }
 
 .grid-section {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 2rem;
   margin-bottom: 3rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
 .section-header {
@@ -171,33 +175,33 @@
 .section-title {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #000000;
+  color: #000000 !important;
 }
 
 .section-description {
-  color: #000000;
+  color: #000000 !important;
   font-size: 0.95rem;
 }
 
 .no-results {
   text-align: center;
   padding: 3rem 0;
-  color: #000000;
+  color: #000000 !important;
 }
 
 .no-results h3 {
   font-size: 1.2rem;
   margin-bottom: 0.5rem;
-  color: #000000;
+  color: #000000 !important;
 }
 
 .no-results a {
-  color: #000000;
+  color: #000000 !important;
 }
 
 /* ── ServerGrid search section overrides (light background) ── */
 .search-section-heading {
-  color: #000000;
+  color: #000000 !important;
 }
 
 .search-bar {
@@ -212,13 +216,13 @@
   border: 1px solid #d1d5db;
   border-radius: 1rem;
   background: rgba(255, 255, 255, 0.95);
-  color: #000000;
+  color: #000000 !important;
   font-size: 1rem;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
 .search-input::placeholder {
-  color: #666666;
+  color: #666666 !important;
 }
 
 .search-icon {
@@ -226,7 +230,7 @@
   left: 1rem;
   top: 50%;
   transform: translateY(-50%);
-  color: #000000;
+  color: #000000 !important;
 }
 
 .categories {
@@ -241,10 +245,10 @@
 
 .category-tag {
   padding: 0.5rem 1rem;
-  background: #f3f4f6;
-  border: 1px solid #d1d5db;
+  background: #f3f4f6 !important;
+  border: 1px solid #d1d5db !important;
   border-radius: 2rem;
-  color: #000000;
+  color: #000000 !important;
   text-decoration: none;
   font-size: 0.9rem;
   cursor: pointer;
@@ -252,13 +256,13 @@
 }
 
 .category-tag.active {
-  background: #f59e0b;
-  color: #000000;
-  border-color: #f59e0b;
+  background: #f59e0b !important;
+  color: #000000 !important;
+  border-color: #f59e0b !important;
 }
 
 .filter-toggles label {
-  color: #000000;
+  color: #000000 !important;
 }
 
 .comparison-section {

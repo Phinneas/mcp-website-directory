@@ -6,14 +6,17 @@ import agentSkills from '../../data/agent-skills.json';
 import cursorSkills from '../../data/cursor-skills.json';
 import skillScans from '../../data/skill-scans.json';
 
-// Build unified skill list
 const byName = new Map();
 for (const s of agentSkills as any[]) byName.set(s.name, s);
 for (const s of cursorSkills as any[]) if (!byName.has(s.name)) byName.set(s.name, s);
 const allSkills = Array.from(byName.values());
 
 export function getStaticPaths() {
-  return allSkills.map((skill: any) => ({
+  const byName = new Map();
+  for (const s of agentSkills as any[]) byName.set(s.name, s);
+  for (const s of cursorSkills as any[]) if (!byName.has(s.name)) byName.set(s.name, s);
+  const skills = Array.from(byName.values());
+  return skills.map((skill: any) => ({
     params: { name: skill.name },
     props: { skill },
   }));

@@ -1,0 +1,521 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { COMPARISONS, COMPETITOR_KEYS } from '../data/comparisons';
+
+export function getStaticPaths() {
+  return COMPETITOR_KEYS.map((key) => ({ params: { competitor: key } }));
+}
+
+const { competitor } = Astro.params;
+const data = COMPARISONS[competitor];
+
+if (!data) {
+  return new Response('Not found', { status: 404 });
+}
+
+const pageTitle = `My MCP Shelf vs ${data.name} — Honest Feature Comparison`;
+const pageDescription = `Compare My MCP Shelf with ${data.name}: verification depth, security scans, execution tests, and agent-specific features. Honest pros and cons.`;
+const canonicalUrl = `https://www.mymcpshelf.com/vs-${competitor}`;
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: pageTitle,
+  description: pageDescription,
+  url: canonicalUrl,
+  mainEntity: {
+    '@type': 'Table',
+    about: `Feature comparison between My MCP Shelf and ${data.name}`,
+  },
+};
+
+function fmt(val: any): string {
+  if (val === true) return '✓ Yes';
+  if (val === false) return '✗ No';
+  if (val === 'partial') return '~ Partial';
+  return String(val);
+}
+
+function cellClass(val: any): string {
+  if (val === true) return 'cell-yes';
+  if (val === false) return 'cell-no';
+  if (val === 'partial') return 'cell-partial';
+  return 'cell-text';
+}
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  canonical={canonicalUrl}
+  structuredData={structuredData}
+>
+  <div class="page-wrapper">
+    <section class="hero-section">
+      <div class="hero-content">
+        <span class="hero-eyebrow">Honest comparison</span>
+        <h1 class="page-title">My MCP Shelf <span class="vs-word">vs</span> {data.name}</h1>
+        <p class="page-subtitle">{data.tagline}</p>
+        <p class="page-lead">{data.theirPositioning}</p>
+      </div>
+    </section>
+
+    <main class="page-container">
+      <!-- Scale context -->
+      <section class="scale-bar">
+        <div class="scale-item">
+          <strong>My MCP Shelf</strong>
+          <span>4,200+ listed · verified subset security-scanned</span>
+        </div>
+        <div class="scale-divider">vs</div>
+        <div class="scale-item">
+          <strong>{data.name}</strong>
+          <span>{data.theirScale}</span>
+        </div>
+      </section>
+
+      <!-- Feature Comparison Table -->
+      <section class="section">
+        <h2 class="section-title">Feature Comparison</h2>
+        <p class="section-description">
+          Honest side-by-side. We highlight where {data.name} wins on scale and where we win on verification depth.
+        </p>
+
+        <div class="comparison-table">
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Feature</th>
+                  <th class="col-us">My MCP Shelf</th>
+                  <th class="col-them">{data.name}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.rows.map((row) => (
+                  <tr>
+                    <td class="feature-cell">
+                      {row.feature}
+                      {row.note && <span class="feature-note">{row.note}</span>}
+                    </td>
+                    <td class={cellClass(row.us)}>{fmt(row.us)}</td>
+                    <td class={cellClass(row.them)}>{fmt(row.them)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section class="section">
+        <h2 class="section-title">Common Questions</h2>
+        <div class="faq-grid">
+          {data.faq.map((item) => (
+            <div class="faq-item">
+              <h3>{item.q}</h3>
+              <p>{item.a}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section class="cta-section">
+        <h2 class="cta-title">{data.cta.headline}</h2>
+        <p class="cta-description">{data.cta.body}</p>
+        <div class="cta-buttons">
+          <a href={data.cta.primaryHref} class="btn-white">{data.cta.primaryLabel}</a>
+          <a href={data.cta.secondaryHref} class="btn-outline-white">{data.cta.secondaryLabel}</a>
+        </div>
+      </section>
+
+      <!-- Other comparisons -->
+      <section class="section other-comparisons">
+        <h2 class="section-title">Compare with others</h2>
+        <div class="comparison-links">
+          {COMPETITOR_KEYS.filter((k) => k !== competitor).map((k) => (
+            <a href={`/vs-${k}`} class="comparison-link">My MCP Shelf vs {COMPARISONS[k].name} →</a>
+          ))}
+        </div>
+      </section>
+    </main>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hero-section {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+    padding: 4rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+  }
+
+  .hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .hero-eyebrow {
+    display: inline-block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #f59e0b;
+    margin-bottom: 0.75rem;
+  }
+
+  .page-title {
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+    color: #f1f5f9;
+  }
+
+  .vs-word {
+    color: #94a3b8;
+    font-weight: 400;
+  }
+
+  .page-subtitle {
+    font-size: 1.25rem;
+    color: #94a3b8;
+    margin-bottom: 1rem;
+    font-weight: 400;
+  }
+
+  .page-lead {
+    font-size: 1.05rem;
+    color: #cbd5e1;
+    line-height: 1.7;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .page-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    flex: 1;
+  }
+
+  .scale-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    margin: 2.5rem 0;
+    padding: 1.25rem 1.5rem;
+    background: #1e293b;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    flex-wrap: wrap;
+  }
+
+  .scale-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .scale-item strong {
+    color: #f1f5f9;
+    font-size: 1rem;
+  }
+
+  .scale-item span {
+    color: #94a3b8;
+    font-size: 0.85rem;
+  }
+
+  .scale-divider {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #f59e0b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .section {
+    margin: 3rem 0;
+  }
+
+  .section-title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-align: center;
+    color: #f1f5f9;
+  }
+
+  .section-description {
+    font-size: 1.1rem;
+    color: #94a3b8;
+    text-align: center;
+    margin-bottom: 2rem;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .comparison-table {
+    background: #1e293b;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .table-wrapper {
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  thead {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: #f1f5f9;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  th.col-us {
+    color: #f59e0b;
+  }
+
+  th.col-them {
+    color: #94a3b8;
+  }
+
+  td {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    vertical-align: top;
+  }
+
+  tr:hover {
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .feature-cell {
+    font-weight: 500;
+    color: #f1f5f9;
+    min-width: 280px;
+  }
+
+  .feature-note {
+    display: block;
+    font-size: 0.78rem;
+    color: #64748b;
+    font-weight: 400;
+    margin-top: 0.25rem;
+    line-height: 1.4;
+  }
+
+  .cell-yes {
+    color: #10b981;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .cell-no {
+    color: #ef4444;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .cell-partial {
+    color: #f59e0b;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .cell-text {
+    color: #cbd5e1;
+  }
+
+  .faq-grid {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .faq-item {
+    background: #1e293b;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .faq-item h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #f1f5f9;
+    margin-bottom: 0.75rem;
+  }
+
+  .faq-item p {
+    color: #94a3b8;
+    line-height: 1.7;
+  }
+
+  .cta-section {
+    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+    border-radius: 12px;
+    padding: 3rem;
+    text-align: center;
+    color: white;
+    margin: 3rem 0;
+  }
+
+  .cta-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+
+  .cta-description {
+    font-size: 1.05rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-white {
+    background: white;
+    color: #1e40af;
+    padding: 0.75rem 1.75rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.15s ease;
+  }
+
+  .btn-white:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.25);
+  }
+
+  .btn-outline-white {
+    background: transparent;
+    color: white;
+    border: 2px solid white;
+    padding: 0.75rem 1.75rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.15s ease;
+  }
+
+  .btn-outline-white:hover {
+    background: white;
+    color: #1e40af;
+  }
+
+  .other-comparisons {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+  .comparison-links {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+  }
+
+  .comparison-link {
+    padding: 0.6rem 1.25rem;
+    background: #1e293b;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: #cbd5e1;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.15s ease;
+  }
+
+  .comparison-link:hover {
+    border-color: #f59e0b;
+    color: #f59e0b;
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 768px) {
+    .page-title {
+      font-size: 2rem;
+    }
+
+    .scale-bar {
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .scale-divider {
+      display: none;
+    }
+
+    th,
+    td {
+      padding: 0.75rem 0.5rem;
+      font-size: 0.82rem;
+    }
+
+    .feature-cell {
+      min-width: 180px;
+    }
+
+    .cta-section {
+      padding: 2rem 1.25rem;
+    }
+
+    .cta-buttons {
+      flex-direction: column;
+    }
+
+    .btn-white,
+    .btn-outline-white {
+      width: 100%;
+    }
+
+    .comparison-links {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .comparison-link {
+      text-align: center;
+    }
+  }
+</style>

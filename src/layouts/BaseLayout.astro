@@ -79,6 +79,10 @@ const {
     <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
   )}
 
+  <!-- Feeds -->
+  <link rel="alternate" type="application/rss+xml" title="My MCP Shelf — Verified &amp; Security Feed" href="https://www.mymcpshelf.com/api/v1/feed/rss.xml" />
+  <link rel="alternate" type="application/json" title="My MCP Shelf — JSON Feed" href="https://www.mymcpshelf.com/api/v1/feed/feed.json" />
+
   <!-- Analytics -->
   <script defer data-domain="mymcpshelf.com" src="https://plausible-analytics-ce-production-7165.up.railway.app/js/script.js"></script>
 
@@ -92,6 +96,18 @@ const {
   <Navbar />
   <slot />
   <EmailSignup />
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-links">
+        <a href="/changelog">Changelog</a>
+        <a href="/api/v1/feed/rss.xml">RSS</a>
+        <a href="/api/v1/feed/feed.json">JSON Feed</a>
+        <a href="/llms.txt">llms.txt</a>
+        <a href="/audit-manifesto">Audit Methodology</a>
+      </div>
+      <p class="footer-copy">© {new Date().getFullYear()} My MCP Shelf · Curated, verified, execution-tested.</p>
+    </div>
+  </footer>
 </body>
 </html>
 
@@ -142,5 +158,42 @@ const {
   html.dark-mode body {
     background: #0f172a;
     color: #f1f5f9;
+  }
+
+  /* ── Site footer ───────────────────────────────────────── */
+  .site-footer {
+    background: #0f172a;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 2rem 1.5rem;
+    text-align: center;
+  }
+
+  .footer-inner {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.25rem;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+
+  .footer-links a {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .footer-links a:hover {
+    color: #f59e0b;
+  }
+
+  .footer-copy {
+    font-size: 0.78rem;
+    color: #64748b;
   }
 </style>

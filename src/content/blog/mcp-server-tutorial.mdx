@@ -1,0 +1,289 @@
+---
+title: "MCP Server Tutorial — How to Build an MCP Server in 15 Minutes"
+description: "A hands-on MCP server tutorial. Learn how to build an MCP server in Python or TypeScript with the official SDKs, connect it to Claude, and avoid the common mistakes."
+date: 2026-07-16
+author: "Buzz"
+tags: ["mcp", "mcp-server", "tutorial", "python", "typescript"]
+---
+
+{/* PRE-PUBLISH CHECKLIST
+- [ ] Meta title (targets both keywords): "MCP Server Tutorial: How to Build an MCP Server (Python & TypeScript)"
+- [ ] Verify slug: /blog/mcp-server-tutorial
+- [ ] H1 contains both "mcp server tutorial" and "how to build an mcp server" — confirmed in title above
+- [ ] Confirm internal link paths: /blog/how-to-choose-an-mcp-server, /category/, /submit-server
+- [ ] Volatile data to re-verify at publish:
+      - Python SDK v1 pin ("mcp>=1.27,<2") — v2 stable targeted 2026-07-27
+      - TypeScript SDK v1.29.0 (Mar 2026) — v2 stable (@modelcontextprotocol/server) targeted 2026-07-28
+      - IMPORTANT: if publishing after ~July 28 2026, re-check v2 release status and update the "note on SDK v2" section tense
+      - MCP Inspector invocation (npx @modelcontextprotocol/inspector)
+      - Claude Desktop config file paths
+- [ ] Test both code samples locally before publish
+- [ ] Add FAQ schema markup if site supports it
+*/}
+
+An MCP server is a lightweight service that exposes tools, data, or context to AI models using Anthropic's Model Context Protocol — allowing agents to call APIs, read files, and run functions without custom integrations. This tutorial shows you how to build one from scratch. You will write a working server in Python or TypeScript, connect it to Claude, and test it with the official debugging tool. No prior MCP experience required.
+
+## What you'll need
+
+| Language | SDK | Runtime | Time estimate |
+| --- | --- | --- | --- |
+| Python | `mcp` (official, v1.x) | Python 3.10+ | ~15 minutes |
+| TypeScript | `@modelcontextprotocol/sdk` (official, v1.x) | Node.js 18+ | ~20 minutes |
+
+> **Most simple MCP servers can be built in under 15 minutes using the official Python or TypeScript SDK.** The SDK handles the protocol layer. You write plain functions.
+
+You will also need an MCP client for testing. Claude Desktop, Claude Code, and Cursor all work. The examples below use Claude Desktop and Claude Code.
+
+## How an MCP server works
+
+An MCP server exposes three kinds of primitives. **Tools** are functions the model can call, like "fetch this URL" or "query this table." **Resources** are data the client can read, like a config file or a database schema. **Prompts** are reusable templates the user can invoke. Most servers only need tools. This tutorial covers tools and resources.
+
+The server talks to its client over a transport. STDIO runs the server as a local child process. Streamable HTTP serves remote clients over a single endpoint. Local development uses STDIO, and that is what we build here. If you are deciding between existing servers rather than building one, start with our guide on [how to choose an MCP server](/blog/how-to-choose-an-mcp-server).
+
+Under the hood, every message is JSON-RPC. You will never write any of it. The SDK generates tool schemas from your function signatures and handles the wire format.
+
+## How to build an MCP server in Python
+
+The official Python SDK includes FastMCP, a decorator-based API that turns ordinary functions into MCP tools. We will build a small server that does unit conversions and exposes a config resource.
+
+### Step 1 — Set up the project
+
+Create a directory and a virtual environment.
+
+```bash
+mkdir converter-mcp && cd converter-mcp
+python -m venv .venv
+source .venv/bin/activate
+```
+
+Install the SDK. Pin below 2.x — version 2 is in pre-release and changes the API.
+
+```bash
+pip install "mcp>=1.27,<2"
+```
+
+### Step 2 — Write the server
+
+Create `server.py`.
+
+```python
+from mcp.server.fastmcp import FastMCP
+
+mcp = FastMCP("converter")
+
+
+@mcp.tool()
+def celsius_to_fahrenheit(celsius: float) -> float:
+    """Convert a temperature from Celsius to Fahrenheit."""
+    return celsius * 9 / 5 + 32
+
+
+@mcp.tool()
+def km_to_miles(kilometers: float) -> float:
+    """Convert a distance from kilometers to miles."""
+    return kilometers * 0.621371
+
+
+@mcp.resource("config://units")
+def supported_units() -> str:
+    """List the unit conversions this server supports."""
+    return "celsius_to_fahrenheit, km_to_miles"
+
+
+if __name__ == "__main__":
+    mcp.run()
+```
+
+That is the entire server. Three things are worth noticing.
+
+The type hints matter. FastMCP reads `celsius: float` and generates a JSON Schema that tells the model exactly what input the tool accepts. Wrong inputs get rejected before your function runs.
+
+The docstrings matter more. The model reads them to decide when to call each tool. "Convert a temperature from Celsius to Fahrenheit" is a usable description. "Converts stuff" is not.
+
+`mcp.run()` defaults to STDIO. The client will launch this script as a child process and talk to it over stdin and stdout.
+
+### Step 3 — Test with the MCP Inspector
+
+The Inspector is the official debugging UI. It connects to your server, lists its tools, and lets you call them by hand.
+
+```bash
+npx @modelcontextprotocol/inspector python server.py
+```
+
+Open the URL it prints. Click List Tools. Call `celsius_to_fahrenheit` with `100` and confirm you get `212`. Testing here first saves you a client-restart loop later.
+
+## How to build an MCP server in TypeScript
+
+The TypeScript version of the same server uses the official SDK plus Zod for input schemas.
+
+### Step 1 — Set up the project
+
+```bash
+mkdir converter-mcp && cd converter-mcp
+npm init -y
+npm install @modelcontextprotocol/sdk zod
+npm install -D typescript @types/node
+mkdir src
+```
+
+Add `"type": "module"` and a build script to `package.json`.
+
+```json
+{
+  "type": "module",
+  "scripts": {
+    "build": "tsc"
+  }
+}
+```
+
+Create `tsconfig.json`.
+
+```json
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "outDir": "./build",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*"]
+}
+```
+
+### Step 2 — Write the server
+
+Create `src/index.ts`.
+
+```typescript
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { z } from "zod";
+
+const server = new McpServer({
+  name: "converter",
+  version: "1.0.0",
+});
+
+server.registerTool(
+  "celsius_to_fahrenheit",
+  {
+    description: "Convert a temperature from Celsius to Fahrenheit.",
+    inputSchema: { celsius: z.number() },
+  },
+  async ({ celsius }) => ({
+    content: [{ type: "text", text: String((celsius * 9) / 5 + 32) }],
+  })
+);
+
+server.registerTool(
+  "km_to_miles",
+  {
+    description: "Convert a distance from kilometers to miles.",
+    inputSchema: { kilometers: z.number() },
+  },
+  async ({ kilometers }) => ({
+    content: [{ type: "text", text: String(kilometers * 0.621371) }],
+  })
+);
+
+async function main() {
+  const transport = new StdioServerTransport();
+  await server.connect(transport);
+  // stdout is the transport channel — log to stderr only
+  console.error("[converter] ready on stdio");
+}
+
+main().catch((err) => {
+  console.error("Fatal:", err);
+  process.exit(1);
+});
+```
+
+The Zod schemas play the same role the Python type hints did. The SDK converts them to JSON Schema for the client. The handler returns a content array rather than a bare value — that is the MCP response format, and every tool result uses it.
+
+Build and test.
+
+```bash
+npm run build
+npx @modelcontextprotocol/inspector node build/index.js
+```
+
+### A note on SDK v2
+
+Both official SDKs have v2 releases scheduled for late July 2026, alongside the 2026-07-28 spec revision. The TypeScript v2 moves to new package names (`@modelcontextprotocol/server` and `@modelcontextprotocol/client`). The v1 code above remains supported and continues to receive fixes after v2 ships. Build on v1 today. Migrate when v2 is stable and your client supports the new spec.
+
+## Connect your server to a client
+
+A server on its own does nothing. It needs a client to launch it.
+
+### Claude Code
+
+One command registers the server.
+
+```bash
+# Python
+claude mcp add converter -- python /absolute/path/to/server.py
+
+# TypeScript
+claude mcp add converter -- node /absolute/path/to/build/index.js
+```
+
+### Claude Desktop
+
+Edit the config file. On macOS it lives at `~/Library/Application Support/Claude/claude_desktop_config.json`. On Windows it lives at `%APPDATA%\Claude\claude_desktop_config.json`.
+
+```json
+{
+  "mcpServers": {
+    "converter": {
+      "command": "python",
+      "args": ["/absolute/path/to/server.py"]
+    }
+  }
+}
+```
+
+Restart Claude Desktop. Ask it to convert 37 degrees Celsius to Fahrenheit. You should see it call your tool and answer with 98.6.
+
+Use absolute paths in both configs. Relative paths are the single most common setup failure because the client launches your server from its own working directory, not yours.
+
+## Common mistakes
+
+**Printing to stdout.** Over STDIO, stdout carries the protocol. One stray `print()` or `console.log()` corrupts the JSON-RPC stream and the client disconnects. Log to stderr instead.
+
+**Vague tool descriptions.** The model chooses tools by reading descriptions. If two tools have similar names and thin descriptions, it will pick wrong. Write descriptions the way you would write them for a new teammate.
+
+**Skipping input schemas.** A tool that accepts untyped input pushes validation into your function body and gives the model no guidance. Type hints in Python and Zod schemas in TypeScript cost one line each.
+
+**Testing in the client first.** Restarting Claude Desktop after every code change is slow. The Inspector gives you the same tool calls with instant reloads. Debug there, then connect the client once.
+
+**Too many tools.** Every tool you register consumes context window in every conversation. Register the tools your use case needs and stop. We cover this trade-off in the [server selection framework](/blog/how-to-choose-an-mcp-server).
+
+## Where to go next
+
+Your server runs locally over STDIO. The natural next steps are remote deployment over Streamable HTTP, adding resources and prompts, and packaging for distribution. The official SDK docs cover all three.
+
+When your server is ready for users, [submit it to the MyMCPShelf directory](/submit-server). Every listing is verified against our quality criteria, and a maintained server with clear docs clears the bar easily. To see how yours compares, browse the [directory by category](/category/).
+
+## FAQ
+
+**How long does it take to build an MCP server?**
+
+A simple server takes about 15 minutes with the official Python SDK and about 20 with TypeScript. Most of that is project setup. The server code itself is under 30 lines for a basic tool. Production concerns like auth, remote transport, and error handling add time beyond that.
+
+**What language do I need to build an MCP server?**
+
+Any language with an official SDK. Python and TypeScript are the most common choices and have the most documentation. Official SDKs also exist for C#, Go, Java, Kotlin, PHP, Ruby, Rust, and Swift. The protocol is language-agnostic because everything reduces to JSON-RPC messages.
+
+**Do I need Anthropic's API to run an MCP server?**
+
+No. An MCP server needs no API key from Anthropic and makes no calls to Anthropic. It runs locally and talks to whatever MCP client launches it. Claude Desktop, Claude Code, Cursor, and other compliant clients can all use the same server. Your server only needs credentials for the systems it accesses, like a database or a third-party API.
+
+**Should I use Python or TypeScript?**
+
+Use the language your team already ships. The APIs are equivalent for basic servers. Python's FastMCP decorators are slightly terser. TypeScript gets you closer to the npm distribution path most published servers use. There is no wrong answer at tutorial scale.

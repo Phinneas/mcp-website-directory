@@ -1,0 +1,100 @@
+---
+title: "What Is an MCP Server and How Does It Work"
+description: "An MCP server exposes tools, resources, and prompts that AI models discover and invoke at runtime. Learn how MCP servers work, the four server types, and how to connect one to Claude."
+date: 2026-07-16
+author: "Buzz"
+tags: ["mcp", "mcp-server", "foundation"]
+---
+
+{/* PRE-PUBLISH CHECKLIST — PILLAR POST
+- [ ] Verify slug: /blog/what-is-an-mcp-server
+- [ ] Meta title suggestion: "What Is an MCP Server? How MCP Servers Work (2026)" — colon in meta only
+- [ ] Internal links to verify before publish:
+      - /blog/mcp-tutorial-build-first-server-15-minutes (live, confirmed)
+      - /blog/mcp-security-standard (live, confirmed)
+      - /blog/mcp-vs-api-comparison (live, confirmed)
+      - /blog/mcp-vs-rest-api-architecture (live, confirmed — verify this is the intended "architecture guide" or swap for the anchor post of the architecture cluster)
+      - /blog/how-to-choose-an-mcp-server (DRAFT — publish before or after pillar, then verify link)
+      - / (directory homepage)
+- [ ] REQUIRED COMPANION EDITS before/at publish (see pillar-launch-patch-list.md):
+      - /blog/mcp-definition FAQ must link here or the two posts compete
+      - Add links TO this pillar from tutorial, security, MCP vs API posts
+- [ ] Volatile data to re-verify:
+      - "600+ verified servers across 40+ categories" — confirm live directory count and category count
+      - MCP spec revision reference (2025-11-25 current; 2026-07-28 pending)
+      - Official SDK language list
+- [ ] Add FAQ schema markup
+*/}
+
+An MCP server is a software component that implements Anthropic's Model Context Protocol, exposing tools, resources, and prompts that AI models can discover and invoke at runtime. In practice it is the piece that lets Claude query your database, read your files, or call your company's API without anyone writing custom integration code. This guide explains how MCP servers work, the four types you will encounter, and how to start using or building one.
+
+> As of July 2026, MyMCPShelf has catalogued 600+ verified MCP servers across 40+ categories.
+
+## Where the server sits in MCP architecture
+
+The Model Context Protocol has three participants. The **host** is the application the user touches, like Claude Desktop, Claude Code, or Cursor. The **client** lives inside the host and manages the connection. The **server** is the program at the other end of that connection, holding the capabilities the model wants to use.
+
+One host can run many clients, and each client pairs with one server. That is how a single Claude conversation can reach your filesystem, GitHub, and a Postgres database at the same time. Three servers, three connections, one chat.
+
+The part that makes MCP different from ordinary integrations is discovery. When the connection opens, the client asks the server what it can do. The server answers with a machine-readable list of its tools, each with a name, a description, and an input schema. The model reads that list and decides for itself when to call what. Nobody hardcodes the wiring. This is the core distinction from a traditional API, which we cover in depth in [MCP vs API](/blog/mcp-vs-api-comparison).
+
+## What an MCP server exposes
+
+Every MCP server offers some combination of three primitives.
+
+**Tools** are functions the model can invoke. Fetch a URL, run a query, create an issue, send a message. Tools are the reason most servers exist, and many servers expose nothing else.
+
+**Resources** are data the client can read. A config file, a database schema, a document. Resources give the model context without giving it the ability to act.
+
+**Prompts** are reusable templates a user can invoke. A code-review checklist, a report format. Prompts are the least used of the three but useful for standardizing repeated workflows.
+
+## The four types of MCP servers
+
+| Type | What it exposes | Example use case | Best for |
+| --- | --- | --- | --- |
+| Tool server | Functions and API calls | A GitHub server that creates issues and reviews PRs | Letting agents act on external systems |
+| Resource server | Files and data | A server exposing project docs or a database schema | Grounding the model in your data without write access |
+| Prompt server | Reusable templates | A server offering standardized report and review formats | Teams standardizing repeated workflows |
+| Composite server | All three primitives | A full workspace server with tools, docs, and templates | Deep integrations where one service owns many jobs |
+
+Most servers in the wild are tool servers. Composite servers are common among first-party vendors, since a company integrating its own product tends to expose everything at once.
+
+## How servers connect
+
+MCP defines two standard transports. **STDIO** runs the server as a local process on your machine. The client launches it directly, and no network or credentials are involved. Local file and Git servers work this way. **Streamable HTTP** serves remote clients over a single endpoint, and it is how hosted servers from GitHub, Slack, and Notion operate, typically with OAuth handling auth.
+
+Local servers give you privacy and zero setup. Remote servers give you access to hosted services without running anything yourself. Most working setups mix both.
+
+## Running an MCP server safely
+
+An MCP server runs with whatever access you grant it. A filesystem server can read the directories you point it at. A database server holds your connection string. That makes server selection a security decision, not just a features decision.
+
+Two resources cover this in depth. Our [MCP Security Standard](/blog/mcp-security-standard) defines the six-dimension framework we apply to every directory listing. And for the architectural reasons a poorly designed server creates risk, see [why an MCP server shouldn't just be a REST proxy](/blog/mcp-vs-rest-api-architecture).
+
+## How to start
+
+**To use existing servers**, browse the [MyMCPShelf directory](/). Every listing is verified against our quality criteria before it appears. Filter by category, check the transport and auth details on each listing, and add the config to your client.
+
+**To build your own**, the official SDKs make a first server a 15-minute job. Our [MCP tutorial](/blog/mcp-tutorial-build-first-server-15-minutes) walks through a working Python server from scratch. Official SDKs also exist for TypeScript, C#, Go, Java, Kotlin, PHP, Ruby, Rust, and Swift.
+
+## FAQ
+
+**What does an MCP server do?**
+
+An MCP server gives AI models controlled access to external capabilities. It advertises its tools, resources, and prompts in a machine-readable format, then executes requests the model sends. The server handles the real work, like calling an API or reading a file, and returns results the model can use in its response.
+
+**How is an MCP server different from an API?**
+
+A traditional API requires a developer to write integration code against known endpoints before anything works. An MCP server is discovered at runtime. The model reads the server's tool descriptions and decides when to call them, with no pre-wired integration. Most MCP servers wrap existing APIs and add the discovery layer on top. Our [MCP vs API guide](/blog/mcp-vs-api-comparison) covers the full comparison.
+
+**Is an MCP server the same as an AI agent?**
+
+No. The agent is the reasoning system that decides what to do. The MCP server is one of the things it uses to do it. An agent might call three different MCP servers in a single task, the same way a person uses several apps to finish one job. The server never reasons and never initiates. It waits for requests and answers them.
+
+**What MCP servers are available?**
+
+Thousands exist across public registries, though quality varies widely. Maintained first-party servers exist for GitHub, Slack, Notion, Sentry, Stripe, Cloudflare, and most major developer platforms. The [MyMCPShelf directory](/) catalogues 600+ servers that pass verification, organized into 40+ categories.
+
+**How do I connect an MCP server to Claude?**
+
+For Claude Code, one command registers a server, like `claude mcp add github`. For Claude Desktop, add the server to `claude_desktop_config.json` and restart the app. Remote servers connect through an OAuth authorization flow instead of a local config entry. Our [tutorial](/blog/mcp-tutorial-build-first-server-15-minutes) includes working config examples for both.

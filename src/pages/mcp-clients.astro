@@ -5,6 +5,7 @@ import clientsData from '../../clients.json';
 import HeaderNewsletter from '../components/HeaderNewsletter.astro';
 import { SearchIcon, ComputerIcon, CheckCircleIcon, ExternalLinkIcon, GithubIcon } from '../components/VintageIcon';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { AGENT_PAGE_CONFIGS } from '../data/agentPages';
 
 // Get today's date for "Last Updated"
 const lastUpdated = new Date().toLocaleDateString('en-US', {
@@ -150,6 +151,22 @@ const categories = ['All', 'Verified', 'GitHub', 'Desktop', 'CLI'];
                             </a>
                         </div>
                     </div>
+                ))}
+            </div>
+        </section>
+
+        {/* Agent-specific server recommendations */}
+        <section style="margin-top: 3rem; padding: 2rem; background: rgba(255,255,255,0.03); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+            <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.75rem; color: #f1f5f9;">Best MCP Servers by Agent</h2>
+            <p style="color: #94a3b8; margin-bottom: 1.5rem;">Verified server picks with security scores, one-command install, and agent-specific config for the most popular coding assistants.</p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;">
+                {AGENT_PAGE_CONFIGS.map(agent => (
+                    <a href={`/best-mcp-servers-for-${agent.slug}`} style="text-decoration: none;">
+                        <div style="padding: 1rem; background: rgba(255,255,255,0.04); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); transition: all 0.2s ease; cursor: pointer;" onmouseenter="this.style.borderColor='#f59e0b'" onmouseleave="this.style.borderColor='rgba(255,255,255,0.08)'">
+                            <div style="font-weight: 600; color: #f1f5f9; margin-bottom: 0.25rem;">{agent.name}</div>
+                            <div style="font-size: 0.8rem; color: #94a3b8;">{agent.tagline}</div>
+                        </div>
+                    </a>
                 ))}
             </div>
         </section>

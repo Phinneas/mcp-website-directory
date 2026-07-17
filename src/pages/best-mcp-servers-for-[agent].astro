@@ -1,0 +1,275 @@
+---
+import { getServersPage } from '../utils/d1';
+import type { MCPServer } from '../utils/d1';
+import { staticServers } from '../data/staticServers.js';
+import { AGENT_PAGE_CONFIGS, AGENT_CONFIG_FORMATS, selectServersForAgent } from '../data/agentPages';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/deployment-page.css';
+
+export const prerender = true;
+
+// Generate all agent pages at build time
+export async function getStaticPaths() {
+  return AGENT_PAGE_CONFIGS.map((config) => ({
+    params: { agent: config.slug },
+    props: { config },
+  }));
+}
+
+const { config } = Astro.props;
+const { agent } = Astro.params;
+
+// Validate agent exists
+if (!config) {
+  return Astro.redirect('/404');
+}
+
+// Load servers — prefer D1, fallback to static
+const db = (Astro.locals as any).runtime?.env?.DB as D1Database | undefined;
+let allServers: MCPServer[] = [];
+
+if (db) {
+  try {
+    const result = await getServersPage(db, { limit: 500, sort: 'stars' });
+    allServers = result.servers;
+  } catch (err) {
+    console.error(`Error fetching servers for agent page ${config.slug}:`, err);
+  }
+}
+
+if (allServers.length === 0) {
+  allServers = staticServers as unknown as MCPServer[];
+}
+
+// Select top picks for this agent
+const picks = selectServersForAgent(allServers, config);
+
+// Generate config snippet
+const configServers = picks.map((s) => ({
+  name: s.fields.name.replace(/[^a-zA-Z0-9_-]/g, '-').toLowerCase(),
+  command: s.fields.npm_package ? 'npx' : undefined,
+  args: s.fields.npm_package ? ['-y', s.fields.npm_package] : undefined,
+  env: undefined,
+}));
+
+const configFormat = AGENT_CONFIG_FORMATS[config.configClientKey];
+const configSnippet = JSON.stringify(configFormat.format(configServers), null, 2);
+
+const canonicalUrl = `https://www.mymcpshelf.com/best-mcp-servers-for-${config.slug}`;
+const pageTitle = `Best MCP Servers for ${config.name} | My MCP Shelf`;
+const pageDescription = `Discover the best verified MCP servers for ${config.name}. ${picks.length}+ security-scanned picks with one-command install and ${config.name}-specific configuration.`;
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: `Best MCP Servers for ${config.name}`,
+  description: pageDescription,
+  url: canonicalUrl,
+};
+
+function getScoreTier(server: MCPServer) {
+  const audit = server.securityAudit;
+  if (!audit) return null;
+  if (audit.auditScore >= 80) return { color: '#22c55e', label: 'Strong', emoji: '🟢' };
+  if (audit.auditScore >= 60) return { color: '#3b82f6', label: 'Good', emoji: '🔵' };
+  if (audit.auditScore >= 40) return { color: '#f59e0b', label: 'Fair', emoji: '🟡' };
+  return { color: '#ef4444', label: 'Weak', emoji: '🔴' };
+}
+
+function getVerifiedStatus(server: MCPServer) {
+  const tier = server.scanData?.badge_tier;
+  if (tier === 'manually_reviewed') return { label: 'Manually Reviewed', color: '#10b981', bg: 'rgba(16,185,129,0.13)' };
+  if (tier === 'scanned') return { label: 'Scanned', color: '#3b82f6', bg: 'rgba(59,130,246,0.13)' };
+  return { label: 'Unverified', color: '#94a3b8', bg: 'rgba(148,163,184,0.13)' };
+}
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  canonical={canonicalUrl}
+  structuredData={structuredData}
+>
+  <div transition:name="main-content">
+    <section class="hero-section">
+      <div class="hero-content">
+        <div class="hero-text">
+          <h1 class="page-title">Best MCP Servers for {config.name}</h1>
+          <p class="page-subtitle">{config.description}</p>
+          <div class="tagline-badge">
+            <span>🤖</span>
+            {config.tagline}
+          </div>
+        </div>
+        <div class="hero-badges">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <span class="stat-value">{picks.length}</span>
+              <span class="stat-label">Verified Picks</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-value">{configFormat.name}</span>
+              <span class="stat-label">Config Format</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-value">1-click</span>
+              <span class="stat-label">Install</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <main class="page-container">
+      {/* Install Command Section */}
+      <section class="deployment-info" style={{ marginBottom: '2rem' }}>
+        <h2>One-Command Install</h2>
+        <p>Install all {picks.length} recommended servers for {config.name} with a single command:</p>
+        <div class="code-block-wrapper">
+          <pre class="code-block"><code>{config.installCommand} {picks.map(s => s.fields.name.toLowerCase().replace(/\s+/g, '-')).join(' ')}</code></pre>
+          <button
+            class="copy-btn"
+            onclick="navigator.clipboard.writeText(this.previousElementSibling.textContent); this.textContent='Copied!'; setTimeout(()=>this.textContent='Copy',1500)"
+          >Copy</button>
+        </div>
+      </section>
+
+      {/* Config Snippet Section */}
+      <section class="deployment-info" style={{ marginBottom: '2rem' }}>
+        <h2>{config.name} Configuration</h2>
+        <p>Add this to <code>{config.configPath}</code>:</p>
+        <div class="code-block-wrapper">
+          <pre class="code-block"><code>{configSnippet}</code></pre>
+          <button
+            class="copy-btn"
+            onclick="navigator.clipboard.writeText(this.previousElementSibling.textContent); this.textContent='Copied!'; setTimeout(()=>this.textContent='Copy',1500)"
+          >Copy</button>
+        </div>
+      </section>
+
+      {/* Server Picks Grid */}
+      <section class="grid-section">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Verified Picks for {config.name}</h2>
+            <p class="section-description">Security-scanned, ranked by relevance and popularity</p>
+          </div>
+        </div>
+
+        <div class="servers-grid">
+          {picks.map((server) => {
+            const tier = getScoreTier(server);
+            const verified = getVerifiedStatus(server);
+            const slug = server.fields.name.toLowerCase().replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '');
+            return (
+              <div class="server-card">
+                <a href={`/server/${slug}`} class="server-card-link">
+                  <div class="server-header">
+                    <div class="server-title">
+                      <h3>{server.fields.name}</h3>
+                      <div class="server-author">{server.fields.author || ''}</div>
+                    </div>
+                  </div>
+                  <div class="server-description">
+                    {(server.fields.description || '').length > 120
+                      ? (server.fields.description || '').slice(0, 120).trimEnd() + '…'
+                      : server.fields.description}
+                  </div>
+
+                  {/* Security Badges */}
+                  <div class="security-badges" style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '0.5rem' }}>
+                    {tier && (
+                      <span class="meta-tag" style={{ background: tier.color + '22', color: tier.color, border: `1px solid ${tier.color}44` }}>
+                        {tier.emoji} {server.securityAudit?.auditScore}/100
+                      </span>
+                    )}
+                    <span class="meta-tag" style={{ background: verified.bg, color: verified.color, border: `1px solid ${verified.color}44` }}>
+                      {verified.label}
+                    </span>
+                    <span class="meta-tag">
+                      ★ {server.fields.stars >= 1000 ? (server.fields.stars / 1000).toFixed(1) + 'k' : server.fields.stars}
+                    </span>
+                    <span class="meta-tag">{server.fields.language}</span>
+                  </div>
+                </a>
+                <div class="server-actions">
+                  <a href={`/server/${slug}`} class="btn btn-primary">🔗 View Details</a>
+                  {server.fields.npm_package && (
+                    <button
+                      class="btn btn-secondary copy-btn"
+                      onclick={`navigator.clipboard.writeText('npx -y ${server.fields.npm_package}'); this.textContent='✅ Copied!'; setTimeout(()=>this.textContent='📋 Copy',1500)`}
+                    >
+                      📋 Copy
+                    </button>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Editorial Cross-Link */}
+      {config.editorialUrl && (
+        <section class="comparison-section">
+          <h2>Deep Dive: {config.name} + MCP</h2>
+          <p>Read the editorial guide for detailed setup instructions, advanced configurations, and real-world use cases.</p>
+          <div class="comparison-cta">
+            <a href={config.editorialUrl} class="btn">Read the Guide →</a>
+          </div>
+        </section>
+      )}
+
+      {/* Browse Other Agents */}
+      <section class="deployment-info" style={{ marginTop: '2rem' }}>
+        <h2>Other Agents</h2>
+        <p>Find MCP server recommendations for your preferred coding assistant:</p>
+        <div class="info-grid" style={{ marginTop: '1rem' }}>
+          {AGENT_PAGE_CONFIGS.filter(a => a.slug !== config.slug).map(a => (
+            <a href={`/best-mcp-servers-for-${a.slug}`} class="nav-link" style={{ textDecoration: 'none' }}>
+              <div class="stat-card" style={{ textAlign: 'left', cursor: 'pointer' }}>
+                <span style={{ fontSize: '1.2rem', fontWeight: 700, color: '#f1f5f9' }}>{a.name}</span>
+                <span style={{ fontSize: '0.8rem', color: '#94a3b8', display: 'block', marginTop: '0.25rem' }}>{a.tagline}</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    </main>
+  </div>
+</BaseLayout>
+
+<style>
+  .code-block-wrapper {
+    position: relative;
+    margin-top: 1rem;
+  }
+  .code-block {
+    background: #0f172a;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 1rem;
+    color: #e2e8f0;
+    font-family: 'SF Mono', Monaco, monospace;
+    font-size: 0.85rem;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .code-block-wrapper .copy-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #e2e8f0;
+    padding: 0.3rem 0.7rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .code-block-wrapper .copy-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+</style>
