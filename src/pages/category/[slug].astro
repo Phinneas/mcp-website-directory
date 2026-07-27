@@ -30,9 +30,29 @@ if (db) {
 const canonicalUrl = `https://www.mymcpshelf.com/category/${slug}`;
 const pageTitle = `${categoryName} MCP Servers | My MCP Shelf`;
 const pageDescription = `Browse ${total}+ MCP servers in the ${categoryName} category. Find the best tools for your workflow.`;
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: `${categoryName} MCP Servers`,
+  description: pageDescription,
+  numberOfItems: total,
+  itemListElement: servers.map((s, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    item: {
+      '@type': 'SoftwareApplication',
+      name: s.fields.name,
+      description: s.fields.description,
+      applicationCategory: 'DeveloperApplication',
+      ...(s.fields.github_url && { codeRepository: s.fields.github_url }),
+      ...(s.fields.language && { programmingLanguage: s.fields.language }),
+    },
+  })),
+};
 ---
 
-<BaseLayout title={pageTitle} description={pageDescription} canonical={canonicalUrl}>
+<BaseLayout title={pageTitle} description={pageDescription} canonical={canonicalUrl} structuredData={structuredData}>
   <div transition:name="main-content">
     <div class="hero-section">
       <div class="hero-content">

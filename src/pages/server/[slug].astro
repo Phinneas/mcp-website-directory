@@ -210,11 +210,6 @@ function getDeploymentRequirements(dt: string): string {
   return r[dt] || 'Cross-platform compatible';
 }
 
-function calculateRatingFromStars(stars: number): string {
-  const rating = Math.max(1, Math.min(5, 1 + (stars / 100) * 4));
-  return rating.toFixed(1);
-}
-
 const currentDeployment = server.deployment || 'hybrid';
 
 const structuredData = {
@@ -239,15 +234,6 @@ const structuredData = {
   softwareCategory: categoryDisplay,
   datePublished: server.fields.updated || new Date().toISOString(),
   dateModified: server.fields.updated || new Date().toISOString(),
-  ...(server.fields.stars && {
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: calculateRatingFromStars(server.fields.stars),
-      reviewCount: Math.max(1, Math.floor(server.fields.stars / 10)),
-      bestRating: '5',
-      worstRating: '1',
-    },
-  }),
 };
 ---
 

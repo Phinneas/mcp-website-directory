@@ -1,24 +1,24 @@
 ---
-// Email Signup Component - Ghost Signup Form Embed
+// Sitewide newsletter section — three-publication picker (Beehiiv).
+// Publication data + embed URLs live in src/data/newsletters.ts.
+import { NEWSLETTERS } from '../data/newsletters';
 ---
 
 <div class="email-signup">
     <div class="signup-container">
-        <script
-            src="https://cdn.jsdelivr.net/ghost/signup-form@~0.2/umd/signup-form.min.js"
-            data-background-color="#08090c"
-            data-text-color="#FFFFFF"
-            data-button-color="#FF1A75"
-            data-button-text-color="#FFFFFF"
-            data-title="BrainScriblr"
-            data-description="AI and MCP News"
-            data-icon="https://ghost-production-5d84.up.railway.app/content/images/size/w192h192/size/w256h256/2026/02/brainscriblr-logo-with-just-an-outline-o_zsa1GE-VQdmUY3kF3mHI5A_HowW9EU2T9etjgePuCs7ow_hd.png"
-            data-site="https://ghost-production-5d84.up.railway.app/"
-            data-locale="en"
-            async
-        ></script>
+        <h2 class="signup-heading">Three newsletters, one shelf</h2>
+        <p class="signup-subheading">Pick the coverage you want — subscribers get new posts by email a day before they go live on the site.</p>
+        <div class="pub-grid">
+            {NEWSLETTERS.map((n) => (
+                <a href={`/newsletters#${n.track}`} class="pub-card">
+                    <h3 class="pub-name">{n.name}</h3>
+                    <p class="pub-tagline">{n.tagline}</p>
+                    <span class="pub-cta">Subscribe →</span>
+                </a>
+            ))}
+        </div>
     </div>
-    
+
     <!-- Custom MCP System CTA -->
     <div class="custom-mcp-cta">
         <div class="cta-content">
@@ -41,9 +41,68 @@
     }
 
     .signup-container {
-        max-width: 600px;
+        max-width: 900px;
         margin: 0 auto;
-        min-height: 360px;
+        text-align: center;
+    }
+
+    .signup-heading {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin-bottom: 0.5rem;
+        font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .signup-subheading {
+        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.9);
+        margin-bottom: 1.75rem;
+    }
+
+    .pub-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+    }
+
+    .pub-card {
+        background: rgba(0, 0, 0, 0.25);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 12px;
+        padding: 1.25rem;
+        text-decoration: none;
+        text-align: left;
+        transition: all 0.2s ease;
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+
+    .pub-card:hover {
+        transform: translateY(-3px);
+        background: rgba(0, 0, 0, 0.35);
+        border-color: rgba(255, 255, 255, 0.35);
+    }
+
+    .pub-name {
+        color: #ffffff;
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .pub-tagline {
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 0.9rem;
+        margin: 0;
+        flex: 1;
+    }
+
+    .pub-cta {
+        color: #ffffff;
+        font-weight: 600;
+        font-size: 0.9rem;
     }
 
     .custom-mcp-cta {
@@ -117,21 +176,27 @@
         color: #333;
     }
 
+    @media (max-width: 768px) {
+        .pub-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
     @media (max-width: 600px) {
         .email-signup {
             padding: 2rem 1.5rem;
             margin: 2rem 0;
         }
-        
+
         .custom-mcp-cta {
             margin: 1.5rem auto 0;
             padding: 1.25rem;
         }
-        
+
         .cta-heading {
             font-size: 1.1rem;
         }
-        
+
         .cta-text {
             font-size: 0.9rem;
         }

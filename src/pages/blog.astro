@@ -3,22 +3,43 @@ export const prerender = true;
 import { getCollection } from 'astro:content';
 import HeaderNewsletter from '../components/HeaderNewsletter.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { NEWSLETTERS } from '../data/newsletters';
 
-// Get all blog posts
-const blogPosts = await getCollection('blog');
+const blogPosts = (await getCollection('blog')).filter((post) => !post.data.draft);
 
 // Sort by date (newest first)
 const sortedPosts = blogPosts.sort((a, b) =>
   new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
 );
 
+// Only offer filter chips for tracks that actually have posts
+const activeTracks = NEWSLETTERS.filter((n) =>
+  sortedPosts.some((post) => post.data.track === n.track)
+);
+
 const pageTitle = "My MCP Shelf Blog";
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'Blog',
+  name: pageTitle,
+  url: 'https://www.mymcpshelf.com/blog',
+  description: 'Insights, updates, and guides for the MCP ecosystem',
+  blogPost: sortedPosts.map((post) => ({
+    '@type': 'BlogPosting',
+    headline: post.data.title,
+    datePublished: new Date(post.data.date).toISOString(),
+    author: { '@type': 'Person', name: post.data.author },
+    url: `https://www.mymcpshelf.com/blog/${post.slug}`,
+  })),
+};
 ---
 
 <BaseLayout
   title={pageTitle}
   description="Insights, updates, and guides for the MCP ecosystem"
   canonical="https://www.mymcpshelf.com/blog"
+  structuredData={structuredData}
 >
   <div class="container">
     <section class="hero-section">
@@ -47,10 +68,18 @@ const pageTitle = "My MCP Shelf Blog";
     </div>
 
     <main>
+      {activeTracks.length > 0 && (
+        <div class="track-filter" role="group" aria-label="Filter posts by track">
+          <button class="track-chip active" data-track="">All</button>
+          {activeTracks.map((n) => (
+            <button class="track-chip" data-track={n.track}>{n.name}</button>
+          ))}
+        </div>
+      )}
       {sortedPosts.length > 0 ? (
         <div class="blog-grid">
           {sortedPosts.map((post) => (
-            <article class="blog-card">
+            <article class="blog-card" data-track={post.data.track ?? ''}>
               <h3>
                 <a href={`/blog/${post.slug}`}>
                   {post.data.title}
@@ -139,6 +168,41 @@ const pageTitle = "My MCP Shelf Blog";
     color: #64748b;
   }
 
+  .track-filter {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+  }
+
+  .track-chip {
+    background: #ffffff;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .track-chip:hover {
+    border-color: #f59e0b;
+    color: #b45309;
+  }
+
+  .track-chip.active {
+    background: rgba(245, 158, 11, 0.15);
+    border-color: #f59e0b;
+    color: #b45309;
+    font-weight: 600;
+  }
+
+  .blog-card[hidden] {
+    display: none;
+  }
+
   .blog-grid {
     display: grid;
     gap: 2rem;
@@ -210,3 +274,35 @@ const pageTitle = "My MCP Shelf Blog";
     .hero-title { font-size: 2rem; }
   }
 </style>
+
+<script>
+  function initTrackFilter() {
+    const chips = document.querySelectorAll<HTMLButtonElement>('.track-chip');
+    if (chips.length === 0) return;
+    const cards = document.querySelectorAll<HTMLElement>('.blog-card');
+
+    function apply(track: string) {
+      chips.forEach((chip) => chip.classList.toggle('active', chip.dataset.track === track));
+      cards.forEach((card) => {
+        card.hidden = track !== '' && card.dataset.track !== track;
+      });
+    }
+
+    chips.forEach((chip) => {
+      chip.addEventListener('click', () => {
+        const track = chip.dataset.track ?? '';
+        const url = new URL(window.location.href);
+        if (track) url.searchParams.set('track', track);
+        else url.searchParams.delete('track');
+        history.replaceState(null, '', url);
+        apply(track);
+      });
+    });
+
+    const initial = new URLSearchParams(window.location.search).get('track') ?? '';
+    apply(initial);
+  }
+
+  initTrackFilter();
+  document.addEventListener('astro:page-load', initTrackFilter);
+</script>

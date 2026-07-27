@@ -19,6 +19,7 @@ interface Props {
   description?: string;
   canonical?: string;
   ogImage?: string;
+  ogType?: string;
   structuredData?: object;
   bodyClass?: string;
 }
@@ -28,6 +29,7 @@ const {
   description = 'Your curated collection of Model Context Protocol servers for enhanced AI capabilities',
   canonical = Astro.url.href,
   ogImage = 'https://www.mymcpshelf.com/og-image.jpg',
+  ogType = 'website',
   structuredData,
   bodyClass = '',
 } = Astro.props;
@@ -61,7 +63,7 @@ const {
   <link rel="icon" href="/favicon.png" type="image/png">
 
   <!-- Open Graph -->
-  <meta property="og:type" content="website">
+  <meta property="og:type" content={ogType}>
   <meta property="og:url" content={canonical}>
   <meta property="og:title" content={title}>
   <meta property="og:description" content={description}>
@@ -80,6 +82,7 @@ const {
   )}
 
   <!-- Feeds -->
+  <link rel="alternate" type="application/rss+xml" title="My MCP Shelf — Blog" href="https://www.mymcpshelf.com/rss.xml" />
   <link rel="alternate" type="application/rss+xml" title="My MCP Shelf — Verified &amp; Security Feed" href="https://www.mymcpshelf.com/api/v1/feed/rss.xml" />
   <link rel="alternate" type="application/json" title="My MCP Shelf — JSON Feed" href="https://www.mymcpshelf.com/api/v1/feed/feed.json" />
 
@@ -100,6 +103,8 @@ const {
     <div class="footer-inner">
       <div class="footer-links">
         <a href="/changelog">Changelog</a>
+        <a href="/newsletters">Newsletters</a>
+        <a href="/rss.xml">Blog RSS</a>
         <a href="/api/v1/feed/rss.xml">RSS</a>
         <a href="/api/v1/feed/feed.json">JSON Feed</a>
         <a href="/llms.txt">llms.txt</a>

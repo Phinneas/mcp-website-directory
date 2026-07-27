@@ -1,0 +1,145 @@
+---
+export const prerender = true;
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TrackSubscribe from '../components/TrackSubscribe.astro';
+import { NEWSLETTERS } from '../data/newsletters';
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'My MCP Shelf Newsletters',
+  url: 'https://www.mymcpshelf.com/newsletters',
+  description: 'Three focused newsletters from My MCP Shelf: OSS Spotlight, Signal Field, and AI Field Notes.',
+};
+---
+
+<BaseLayout
+  title="Newsletters | My MCP Shelf"
+  description="Three focused newsletters: OSS Spotlight (open-source tool evaluations), Signal Field (data & infrastructure), and AI Field Notes (AI commentary). Subscribers get posts a day early."
+  canonical="https://www.mymcpshelf.com/newsletters"
+  structuredData={structuredData}
+>
+  <div class="container">
+    <section class="hero-section">
+      <h1 class="hero-title">Newsletters</h1>
+      <p class="hero-subtitle">
+        Everything we write is published in full on this site — no gates, no teasers.
+        Subscribing gets you each post by email a day before it goes live, in whichever
+        lane you care about.
+      </p>
+    </section>
+
+    <div class="newsletter-list">
+      {NEWSLETTERS.map((n) => (
+        <section id={n.track} class="newsletter-entry">
+          <div class="entry-header">
+            <h2>{n.name}</h2>
+            <a class="feed-link" href={n.feedPath} title={`${n.name} RSS feed`}>RSS</a>
+          </div>
+          <p class="entry-description">{n.description}</p>
+          <p class="entry-blog-link">
+            <a href={`/blog?track=${n.track}`}>Read recent {n.name} posts →</a>
+          </p>
+          <TrackSubscribe newsletter={n} compact />
+        </section>
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  .hero-section {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 2rem 0 0;
+  }
+
+  .hero-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #f59e0b 0%, #3b82f6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.15rem;
+    color: #94a3b8;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .newsletter-list {
+    display: grid;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+
+  .newsletter-entry {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 2rem;
+  }
+
+  .entry-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .newsletter-entry h2 {
+    color: #0f172a;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .feed-link {
+    color: #b45309;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid #f59e0b;
+    border-radius: 15px;
+    padding: 0.15rem 0.75rem;
+  }
+
+  .feed-link:hover {
+    background: rgba(245, 158, 11, 0.15);
+  }
+
+  .entry-description {
+    color: #334155;
+    margin-bottom: 0.75rem;
+  }
+
+  .entry-blog-link {
+    margin-bottom: 1rem;
+  }
+
+  .entry-blog-link a {
+    color: #1d4ed8;
+    font-size: 0.95rem;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .entry-blog-link a:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 768px) {
+    .container { padding: 1rem; }
+    .hero-title { font-size: 2rem; }
+    .newsletter-entry { padding: 1.5rem; }
+  }
+</style>

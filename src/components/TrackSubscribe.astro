@@ -1,0 +1,79 @@
+---
+/**
+ * TrackSubscribe.astro — subscribe CTA for one newsletter track.
+ * Renders the Beehiiv embed form when the publication exists; until then
+ * falls back to the track's RSS link (see src/data/newsletters.ts).
+ */
+import type { NewsletterInfo } from '../data/newsletters';
+
+interface Props {
+  newsletter: NewsletterInfo;
+  compact?: boolean;
+}
+
+const { newsletter, compact = false } = Astro.props;
+---
+
+<div class:list={['track-subscribe', { compact }]}>
+  <div class="track-subscribe-copy">
+    <h3>Subscribe to {newsletter.name}</h3>
+    <p>{newsletter.tagline}. Subscribers get new posts by email a day before they go live on the site.</p>
+  </div>
+  {newsletter.beehiivEmbedUrl ? (
+    <iframe
+      src={newsletter.beehiivEmbedUrl}
+      title={`Subscribe to ${newsletter.name}`}
+      class="track-subscribe-embed"
+      frameborder="0"
+      scrolling="no"
+    ></iframe>
+  ) : (
+    <p class="track-subscribe-fallback">
+      Email signup is coming soon — in the meantime,
+      <a href={newsletter.feedPath}>follow the {newsletter.name} RSS feed</a>.
+    </p>
+  )}
+</div>
+
+<style>
+  .track-subscribe {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid #f59e0b;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .track-subscribe.compact {
+    margin: 0;
+  }
+
+  .track-subscribe-copy h3 {
+    color: #0f172a;
+    font-size: 1.15rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .track-subscribe-copy p {
+    color: #475569;
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .track-subscribe-embed {
+    width: 100%;
+    height: 52px;
+    border-radius: 6px;
+  }
+
+  .track-subscribe-fallback {
+    color: #475569;
+    font-size: 0.95rem;
+  }
+
+  .track-subscribe-fallback a {
+    color: #b45309;
+    font-weight: 600;
+  }
+</style>

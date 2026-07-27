@@ -1,12 +1,14 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import TrackSubscribe from '../../components/TrackSubscribe.astro';
+import { newsletterForTrack } from '../../data/newsletters';
 
 export const prerender = true;
 
 // Generate static paths for all blog posts
 export async function getStaticPaths() {
-  const posts = await getCollection('blog');
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
   return posts.map((post) => ({
     params: { slug: post.slug },
     props: post,
@@ -17,12 +19,34 @@ type Props = CollectionEntry<'blog'>;
 
 const post = Astro.props;
 const { Content } = await post.render();
+
+const newsletter = newsletterForTrack(post.data.track);
+const canonical = `https://www.mymcpshelf.com/blog/${post.slug}`;
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: post.data.title,
+  description: post.data.description,
+  datePublished: new Date(post.data.date).toISOString(),
+  author: { '@type': 'Person', name: post.data.author },
+  publisher: {
+    '@type': 'Organization',
+    name: 'My MCP Shelf',
+    url: 'https://www.mymcpshelf.com',
+  },
+  mainEntityOfPage: canonical,
+  ...(post.data.image ? { image: `https://www.mymcpshelf.com${post.data.image}` } : {}),
+  ...(post.data.tags ? { keywords: post.data.tags.join(', ') } : {}),
+};
 ---
 
 <BaseLayout
     title={`${post.data.title} | My MCP Shelf Blog`}
     description={post.data.description}
-    canonical={`https://www.mymcpshelf.com/blog/${post.slug}`}
+    canonical={canonical}
+    ogType="article"
+    structuredData={structuredData}
 >
     <div class="container">
         <main>
@@ -48,6 +72,8 @@ const { Content } = await post.render();
                 <div class="content">
                     <Content />
                 </div>
+
+                {newsletter && <TrackSubscribe newsletter={newsletter} />}
             </article>
         </main>
     </div>

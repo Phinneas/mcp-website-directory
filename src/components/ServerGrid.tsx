@@ -1,11 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import type { MCPServer, SecurityAuditData, ReliabilityScoreData } from '../utils/d1';
-import { getDeploymentBadge } from '../utils/serverData.js';
-import { getScoreTier } from '../data/securityAudit.ts';
-import { HealthBadge } from './HealthBadge';
-import { GreenBadge } from './GreenBadge';
-import { CommunityBadge } from './CommunityBadge';
-import SecurityBadge from './SecurityBadge';
+import type { MCPServer } from '../utils/d1';
+import { getCategoryDisplayName } from '../utils/serverData.js';
 import { CompositeTrustBadge } from './CompositeTrustBadge';
 
 interface Props {
@@ -55,24 +50,6 @@ function formatStars(stars?: number): string {
   return `★ ${stars}`;
 }
 
-function formatInstalls(n?: number): string {
-  if (!n || n === 0) return '';
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
-  return String(n);
-}
-
-function getReliabilityColor(tier: string): string {
-  const colors: Record<string, string> = {
-    excellent: '#22c55e',
-    strong: '#3b82f6',
-    moderate: '#f59e0b',
-    limited: '#f97316',
-    minimal: '#ef4444',
-  };
-  return colors[tier] || '#64748b';
-}
-
 function SkeletonCard() {
   return (
     <div className="server-card skeleton-card" style={{ opacity: 0.6 }}>
@@ -93,26 +70,13 @@ function SkeletonCard() {
   );
 }
 
+// ponytail: card shows only name/description/category/stars + composite trust.
+// Full metadata (security audit, health, execution, green, reliability, community)
+// lives on the /server/[slug] detail page.
 function ServerCard({ server }: { server: MCPServer }) {
   const slug = slugify(server.fields.name);
   const logoUrl = server.fields.logoUrl || null;
   const [logoFailed, setLogoFailed] = useState(false);
-  
-  // Get deployment badge info
-  const deploymentInfo = server.deployment ? getDeploymentBadge(server.deployment) : null;
-  const secondaryDeployments = server.deployment_metadata?.secondary_deployments || [];
-
-  // Security audit data
-  const audit = server.securityAudit;
-  const tier = audit ? getScoreTier(audit.auditScore) : null;
-
-  const transportLabel = (t: string) => t === 'stdio' ? 'Stdio' : t === 'sse_http' ? 'SSE' : 'Both';
-  const authLabel = (a: string) => {
-    if (a === 'None') return '⚠️ No Auth';
-    if (a === 'OAuth2') return '🔒 OAuth2';
-    if (a === 'SSO-SAML') return '🔐 SSO/SAML';
-    return '🔑 API Key';
-  };
 
   return (
     <div className="server-card" data-category={server.fields.category || 'other'}>
@@ -141,18 +105,6 @@ function ServerCard({ server }: { server: MCPServer }) {
             <h3>{server.fields.name}</h3>
             <div className="server-author">{server.fields.author || ''}</div>
           </div>
-          
-          {/* Deployment Badge */}
-          {deploymentInfo && (
-            <div className={`deployment-badge deployment-${deploymentInfo.color}`} 
-                 title={`Deployment: ${deploymentInfo.tooltip}`}>
-              <span className="badge-icon">{deploymentInfo.icon}</span>
-              <span className="badge-text">{deploymentInfo.label}</span>
-              {secondaryDeployments.length > 0 && (
-                <span className="badge-secondary">+{secondaryDeployments.length}</span>
-              )}
-            </div>
-          )}
         </div>
         
         <div className="server-description">
@@ -168,156 +120,11 @@ function ServerCard({ server }: { server: MCPServer }) {
           </div>
         )}
 
-        {/* Health Status Badge */}
-        {(server as any).health_status && (
-          <div className="server-health-status">
-            <HealthBadge 
-              healthStatus={(server as any).health_status}
-              lastCommitDate={(server as any).last_commit_date}
-              showLabel={true}
-            />
-          </div>
-        )}
-
-        {/* Security Audit Badges */}
-        {audit && (
-          <div className="security-badges" style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '0.5rem' }}>
-            <span className="meta-tag" style={{ background: tier?.color + '22', color: tier?.color, border: `1px solid ${tier?.color}44` }} title={`Security Score: ${audit.auditScore}/100 — ${tier?.label}`}>
-              {tier?.emoji} {audit.auditScore}
-            </span>
-            <span className="meta-tag" title={`Transport: ${transportLabel(audit.transport)}`}>
-              📡 {transportLabel(audit.transport)}
-            </span>
-            <span className="meta-tag" title={`Auth: ${audit.authMethod}`}>
-              {authLabel(audit.authMethod)}
-            </span>
-            {audit.tokenLifecycle && audit.tokenLifecycle !== 'N/A' && (
-              <span className="meta-tag" title={`Token Lifecycle: ${audit.tokenLifecycle}`}>
-                ⏳ {audit.tokenLifecycle}
-              </span>
-            )}
-            {audit.dataResidency && audit.dataResidency !== 'unknown' && (
-              <span className="meta-tag" title={`Data Residency: ${audit.dataResidency}`}>
-                🏠 {audit.dataResidency}
-              </span>
-            )}
-          </div>
-        )}
-
-        {/* Remote Health Badges (TLS + Uptime) */}
-        {server.remoteHealth && (
-          <div className="remote-health-badges" style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '0.5rem' }}>
-            {server.remoteHealth.tls && (
-              <span
-                className="meta-tag"
-                style={{
-                  background: server.remoteHealth.tls.valid ? 'rgba(34,197,94,0.13)' : 'rgba(239,68,68,0.13)',
-                  color: server.remoteHealth.tls.valid ? '#22c55e' : '#ef4444',
-                  border: `1px solid ${server.remoteHealth.tls.valid ? 'rgba(34,197,94,0.3)' : 'rgba(239,68,68,0.3)'}`,
-                }}
-                title={`TLS check: ${server.remoteHealth.tls.valid ? 'Valid' : 'Issue'} — ${new Date(server.remoteHealth.tls.checkedAt).toLocaleDateString()}`}
-              >
-                {server.remoteHealth.tls.valid ? '🟢 TLS Valid' : '🔴 TLS Issue'}
-              </span>
-            )}
-            {server.remoteHealth.uptime && (
-              <span
-                className="meta-tag"
-                style={{
-                  background: server.remoteHealth.uptime.status === 'up' ? 'rgba(34,197,94,0.13)' : server.remoteHealth.uptime.status === 'down' ? 'rgba(239,68,68,0.13)' : 'rgba(148,163,184,0.13)',
-                  color: server.remoteHealth.uptime.status === 'up' ? '#22c55e' : server.remoteHealth.uptime.status === 'down' ? '#ef4444' : '#94a3b8',
-                  border: `1px solid ${server.remoteHealth.uptime.status === 'up' ? 'rgba(34,197,94,0.3)' : server.remoteHealth.uptime.status === 'down' ? 'rgba(239,68,68,0.3)' : 'rgba(148,163,184,0.3)'}`,
-                }}
-                title={`Uptime: ${server.remoteHealth.uptime.status}${server.remoteHealth.uptime.responseMs ? ` — ${server.remoteHealth.uptime.responseMs}ms` : ''} — ${new Date(server.remoteHealth.uptime.checkedAt).toLocaleDateString()}`}
-              >
-                {server.remoteHealth.uptime.status === 'up' ? '🟢 Up' : server.remoteHealth.uptime.status === 'down' ? '🔴 Down' : '⚪ No Endpoint'}
-                {server.remoteHealth.uptime.responseMs ? ` (${server.remoteHealth.uptime.responseMs}ms)` : ''}
-              </span>
-            )}
-          </div>
-        )}
-
-        {/* Execution Test Badge */}
-        {server.execution && (
-          <div className="execution-badges" style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '0.5rem' }}>
-            <span
-              className="meta-tag"
-              style={{
-                background: server.execution.status === 'tested' ? 'rgba(34,197,94,0.13)' : server.execution.status === 'handshake' ? 'rgba(59,130,246,0.13)' : 'rgba(239,68,68,0.13)',
-                color: server.execution.status === 'tested' ? '#22c55e' : server.execution.status === 'handshake' ? '#3b82f6' : '#ef4444',
-                border: `1px solid ${server.execution.status === 'tested' ? 'rgba(34,197,94,0.3)' : server.execution.status === 'handshake' ? 'rgba(59,130,246,0.3)' : 'rgba(239,68,68,0.3)'}`,
-              }}
-              title={`Execution test: ${server.execution.status === 'tested' ? 'Endpoint tested' : server.execution.status === 'handshake' ? 'Package handshake verified' : 'Test failed'} — ${server.execution.testedAt ? new Date(server.execution.testedAt).toLocaleDateString() : 'unknown'}`}
-            >
-              {server.execution.status === 'tested' ? '✅ Works: tested' : server.execution.status === 'handshake' ? '🔵 Handshake verified' : '❌ Test failed'}
-            </span>
-          </div>
-        )}
-
-        {/* Green Score Badge */}
-        {(server as any).greenScore && (
-          <div style={{ marginBottom: '0.5rem' }}>
-            <GreenBadge greenScore={(server as any).greenScore} compact />
-          </div>
-        )}
-
-        {/* Reliability Score Badge */}
-        {server.reliability && (
-          <div style={{ marginBottom: '0.5rem' }}>
-            <span
-              style={{
-                display: 'inline-block',
-                padding: '0.15rem 0.5rem',
-                borderRadius: '4px',
-                fontSize: '0.7rem',
-                fontWeight: 700,
-                background: getReliabilityColor(server.reliability.tier) + '22',
-                color: getReliabilityColor(server.reliability.tier),
-                border: `1px solid ${getReliabilityColor(server.reliability.tier)}44`,
-              }}
-              title={`Reliability: ${server.reliability.score}/100 — ${server.reliability.label}`}
-            >
-              📊 {server.reliability.score}/100
-            </span>
-          </div>
-        )}
-
-        {/* Community Badge */}
-        <div style={{ marginBottom: '0.5rem' }}>
-          <CommunityBadge serverId={server.id} />
-        </div>
-
-        {/* Security Scan Badge (Task 13) */}
-        <div style={{ marginBottom: '0.5rem' }}>
-          <SecurityBadge
-            serverId={server.id}
-            scan={(server as any).scanData || null}
-            compact
-          />
-        </div>
-        
         <div className="server-meta">
-          {server.fields.language && <span className="meta-tag">{server.fields.language}</span>}
-          {server.fields.author && (
-            <span className="meta-tag">
-              {server.fields.author.includes('@') ? 'Official' : 'Community'}
-            </span>
+          {server.fields.category && (
+            <span className="meta-tag">{getCategoryDisplayName(server.fields.category)}</span>
           )}
           {server.fields.stars ? <span className="meta-tag">{formatStars(server.fields.stars)}</span> : null}
-
-          {/* Real install count from CLI */}
-          {server.installCount && server.installCount > 0 ? (
-            <span className="meta-tag install-tag" title={`${server.installCount} installs via CLI`}>
-              ⬇ {formatInstalls(server.installCount)}
-            </span>
-          ) : null}
-          
-          {/* Enterprise Features Badge */}
-          {server.enterprise_features && server.enterprise_features.includes('enterprise_ready') && (
-            <span className="meta-tag enterprise-tag" title="Enterprise Ready">
-              🏢 Enterprise
-            </span>
-          )}
         </div>
       </a>
       

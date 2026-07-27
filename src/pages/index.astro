@@ -87,12 +87,32 @@ if (db) {
     console.error('Error fetching site counts from DB:', error);
   }
 }
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'MCP Server Directory',
+  description: `Curated directory of ${totalServers.toLocaleString()}+ Model Context Protocol servers`,
+  numberOfItems: totalServers,
+  itemListElement: initialServers.map((s, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    item: {
+      '@type': 'SoftwareApplication',
+      name: s.fields.name,
+      description: s.fields.description,
+      applicationCategory: 'DeveloperApplication',
+      ...(s.fields.github_url && { codeRepository: s.fields.github_url }),
+      ...(s.fields.language && { programmingLanguage: s.fields.language }),
+    },
+  })),
+};
 ---
 
 <BaseLayout
   title="My MCP Shelf"
   description={`Your curated collection of ${totalServers.toLocaleString()}+ Model Context Protocol servers for enhanced AI capabilities`}
   canonical="https://www.mymcpshelf.com/"
+  structuredData={structuredData}
 >
 
 <style is:global>

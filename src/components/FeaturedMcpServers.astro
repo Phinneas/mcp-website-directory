@@ -2,6 +2,7 @@
 // FeaturedMcpServers.astro - Featured MCP servers section
 import { slugify } from '../utils/slugify.js';
 import { enrichServersWithLogos } from '../utils/logoResolver.js';
+import { getCategoryDisplayName } from '../utils/serverData.js';
 
 interface MCPServer {
   id: string;
@@ -172,9 +173,7 @@ try {
                 : server.fields.description}
             </div>
             <div class="server-meta">
-              {server.fields.language && <span class="meta-tag">{server.fields.language}</span>}
-              {server.fields.author && <span class="meta-tag">{server.fields.author.includes('@') ? 'Official' : 'Community'}</span>}
-              {server.fields.category && <span class="meta-tag">{server.fields.category}</span>}
+              {server.fields.category && <span class="meta-tag">{getCategoryDisplayName(server.fields.category)}</span>}
             </div>
             {server.fields.stars && (
               <div class="repo-stats">
