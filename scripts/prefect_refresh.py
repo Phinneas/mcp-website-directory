@@ -463,7 +463,19 @@ def write_to_d1(servers: list[dict]) -> bool:
 
         try:
             result = subprocess.run(
-                ["npx", "wrangler", "d1", "execute", "mcp-directory", "--command", sql],
+                # --remote is required: without it wrangler targets a local
+                # SQLite file, which on a CI runner is empty and every
+                # statement fails with "no such table: servers".
+                [
+                    "npx",
+                    "wrangler",
+                    "d1",
+                    "execute",
+                    "mcp-directory",
+                    "--remote",
+                    "--command",
+                    sql,
+                ],
                 capture_output=True,
                 text=True,
                 timeout=120,

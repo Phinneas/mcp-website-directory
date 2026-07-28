@@ -113,7 +113,9 @@ jobs:
       # ── 2.1 Setup Wrangler (for D1 writes) ──────────────────────────────────
       - name: Setup Wrangler CLI
         run: |
-          npm install -g wrangler
+          # Pinned to a major: an unpinned `npm install -g wrangler` silently
+          # picked up a new major and broke the D1 write path in June 2026.
+          npm install -g wrangler@4
           wrangler --version
           echo "Wrangler installed successfully"
 

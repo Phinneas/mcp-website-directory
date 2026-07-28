@@ -1,4 +1,3 @@
-import { Database } from 'duckdb'; // Or just use the CLI approach as planned
 import { execSync } from 'child_process';
 import fs from 'fs';
 
@@ -31,7 +30,9 @@ async function upsertData() {
     
     try {
       // Execute via wrangler
-      execSync(`npx wrangler d1 execute mcp-directory --command="${sql}"`, { stdio: 'inherit' });
+      // --remote is required: without it wrangler writes to a local SQLite file,
+      // which on a CI runner is empty ("no such table: servers").
+      execSync(`npx wrangler d1 execute mcp-directory --remote --command="${sql}"`, { stdio: 'inherit' });
     } catch (e) {
       console.error(`Failed to upsert item: ${item.title || item.name}`);
     }
