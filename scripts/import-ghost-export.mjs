@@ -19,12 +19,17 @@ const [exportPath, ...flags] = process.argv.slice(2);
 const dryRun = flags.includes('--dry-run');
 const flagValue = (name) => flags.find((f) => f.startsWith(`${name}=`))?.split('=')[1];
 // --since skips older posts (the Brainscriblr import drops a duplicated launch-day batch);
+// --only cherry-picks specific slugs, for posts a --since cutoff excluded collaterally;
 // --track presets the track so only the exceptions need hand-triage afterwards.
 const since = flagValue('--since');
 const defaultTrack = flagValue('--track');
+const only = flagValue('--only')?.split(',').map((s) => s.trim()).filter(Boolean);
 
 if (!exportPath) {
-  console.error('Usage: node scripts/import-ghost-export.mjs <ghost-export.json> [--dry-run] [--since=YYYY-MM-DD] [--track=<track>]');
+  console.error(
+    'Usage: node scripts/import-ghost-export.mjs <ghost-export.json> [--dry-run]\n' +
+      '         [--since=YYYY-MM-DD] [--only=slug1,slug2] [--track=<track>]'
+  );
   process.exit(1);
 }
 
@@ -52,6 +57,14 @@ let skipped = 0;
 
 for (const post of posts) {
   const slug = post.slug;
+
+  // --only bypasses the --since window entirely: an explicit slug list is a
+  // deliberate cherry-pick and should not be re-filtered by date.
+  if (only && !only.includes(slug)) {
+    skipped++;
+    continue;
+  }
+
   const outPath = join(outDir, `${slug}.md`);
   if (existsSync(outPath)) {
     console.warn(`skip (exists): ${slug}`);
@@ -70,11 +83,11 @@ for (const post of posts) {
   const description = post.custom_excerpt || post.plaintext?.slice(0, 160).replace(/\s+/g, ' ').trim() || post.title;
   const date = post.published_at || post.created_at;
 
-  if (since && (date ?? '') < since) {
+  if (!only && since && (date ?? '') < since) {
     skipped++;
     continue;
   }
-  const author = authorByPost.get(post.id) || 'Buzz';
+  const author = authorByPost.get(post.id) || 'Chester Beard';
   const isDraft = post.status !== 'published';
 
   const frontmatter = [
