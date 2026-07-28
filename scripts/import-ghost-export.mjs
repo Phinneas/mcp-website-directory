@@ -17,9 +17,14 @@ import TurndownService from 'turndown';
 
 const [exportPath, ...flags] = process.argv.slice(2);
 const dryRun = flags.includes('--dry-run');
+const flagValue = (name) => flags.find((f) => f.startsWith(`${name}=`))?.split('=')[1];
+// --since skips older posts (the Brainscriblr import drops a duplicated launch-day batch);
+// --track presets the track so only the exceptions need hand-triage afterwards.
+const since = flagValue('--since');
+const defaultTrack = flagValue('--track');
 
 if (!exportPath) {
-  console.error('Usage: node scripts/import-ghost-export.mjs <ghost-export.json> [--dry-run]');
+  console.error('Usage: node scripts/import-ghost-export.mjs <ghost-export.json> [--dry-run] [--since=YYYY-MM-DD] [--track=<track>]');
   process.exit(1);
 }
 
@@ -64,6 +69,11 @@ for (const post of posts) {
   const markdown = turndown.turndown(html);
   const description = post.custom_excerpt || post.plaintext?.slice(0, 160).replace(/\s+/g, ' ').trim() || post.title;
   const date = post.published_at || post.created_at;
+
+  if (since && (date ?? '') < since) {
+    skipped++;
+    continue;
+  }
   const author = authorByPost.get(post.id) || 'Buzz';
   const isDraft = post.status !== 'published';
 
@@ -75,8 +85,9 @@ for (const post of posts) {
     `author: "${yamlEscape(author)}"`,
     ...(post.feature_image ? [`image: "${yamlEscape(post.feature_image)}"`] : []),
     ...(isDraft ? ['draft: true'] : []),
-    '# TODO: assign track (oss-spotlight | signal-field | ai-field-notes) or delete this line',
-    '# track: ai-field-notes',
+    ...(defaultTrack
+      ? [`track: ${defaultTrack}`]
+      : ['# TODO: assign track (oss-spotlight | signal-field | ai-field-notes) or delete this line']),
     '---',
     '',
   ].join('\n');
@@ -92,4 +103,4 @@ for (const post of posts) {
 }
 
 console.log(`\n${dryRun ? 'Would import' : 'Imported'} ${written} posts, skipped ${skipped}.`);
-console.log('Next: assign track per post, check image URLs (feature images still point at the Ghost host), then rebuild.');
+console.log('Next: re-triage tracks on any post that is not really its default track, then rebuild.');

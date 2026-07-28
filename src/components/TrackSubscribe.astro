@@ -45,8 +45,14 @@ const { newsletter, compact = false } = Astro.props;
     margin: 2rem 0;
   }
 
+  /* compact = /newsletters, which has no cards and sits on the dark page
+     background. Strip the card chrome and re-tone the text for dark. */
   .track-subscribe.compact {
     margin: 0;
+    background: none;
+    border: none;
+    border-radius: 0;
+    padding: 0;
   }
 
   .track-subscribe-copy h3 {
@@ -59,6 +65,19 @@ const { newsletter, compact = false } = Astro.props;
     color: #475569;
     font-size: 0.95rem;
     margin-bottom: 0.75rem;
+  }
+
+  .track-subscribe.compact .track-subscribe-copy h3 {
+    color: #f1f5f9;
+  }
+
+  .track-subscribe.compact .track-subscribe-copy p,
+  .track-subscribe.compact .track-subscribe-fallback {
+    color: #94a3b8;
+  }
+
+  .track-subscribe.compact .track-subscribe-fallback a {
+    color: #f59e0b;
   }
 
   .track-subscribe-embed {

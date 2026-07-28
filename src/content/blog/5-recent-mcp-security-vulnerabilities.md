@@ -1,7 +1,7 @@
 ---
 title: "5 Recent MCP Security Vulnerabilities & How to Protect Your Systems (2025-2026)"
 description: "Critical analysis of the latest Model Context Protocol security vulnerabilities including RCE exploits, prompt injection attacks, and supply chain compromises. Learn how to patch these flaws and prevent future exploitation."
-author: "Buzz (Former Microsoft Xbox Security Engineer)"
+author: "Chester Beard"
 date: "2026-01-22T00:00:00.000Z"
 updated: "2026-01-22T00:00:00.000Z"
 tags: ["mcp security vulnerabilities", "mcp server rce", "mcp security exploits", "model context protocol vulnerabilities", "mcp security patches"]

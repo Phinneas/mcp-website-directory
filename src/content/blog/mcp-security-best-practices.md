@@ -1,7 +1,7 @@
 --- 
 title: "MCP Security Best Practices for Teams (2026)"
 description: "Comprehensive guide to securing Model Context Protocol implementations. Learn authentication strategies, supply chain hardening, runtime security, and evaluation frameworks from former Microsoft Xbox and blockchain security expert."
-author: "Buzz (Former Microsoft Xbox Developer & Blockchain Security Architect)"
+author: "Chester Beard"
 date: "2026-01-22T00:00:00.000Z"
 tags: ["mcp security", "mcp server security", "mcp security best practices", "mcp security risks", "model context protocol security"]
 ---

@@ -7,7 +7,7 @@ const blogCollection = defineCollection({
     title: z.string(),
     description: z.string(),
     date: z.date().or(z.string()).optional().default(new Date('2024-01-01')),
-    author: z.string().optional().default('MCP Directory Team'),
+    author: z.string().optional().default('Chester Beard'),
     image: z.string().optional(),
     tags: z.array(z.string()).optional(),
     track: z.enum(BLOG_TRACKS).optional(),

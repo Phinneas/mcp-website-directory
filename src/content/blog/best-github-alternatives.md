@@ -1,7 +1,7 @@
 ---
 title: "Best GitHub Alternative Open Source Platforms: The Complete 2025 Guide"
 description: "A comprehensive guide to self-hosted and managed open-source Git platforms."
-author: "Your Name"
+author: "Chester Beard"
 date: "2025-10-07T00:00:00.000Z"
 image: "/images/placeholder.jpg"
 tags: ["github", "alternatives", "open-source", "devops", "gitea", "gitlab"]
