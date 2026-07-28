@@ -603,3 +603,197 @@ Build passes, no console errors. One thing you may notice now that the card boun
 I don't commit or push unless you ask, which is why it's all still local. Want me to commit and push it? If so I'd suggest splitting it into three commits — content import, author normalization, newsletters styling — rather than one blob, since the import is 28 files and easier to revert on its own.
 
 Worth settling the Partner Spotlight / "Worth Your Inbox" question first if you want that in the same batch, since it touches 22 of the posts that would be going in.
+
+**You:** https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/ a number of the refresh runs are not firing. they are github actions. please check the github ations
+
+**Claude:** Let me look at the actual workflows and their run history rather than assume the changelog is the cause.
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && ls .github/workflows/ && echo "=== gh auth ===" && gh auth status 2>&1 | head -3 && echo "=== remote ===" && git r`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && gh workflow list --all 2>&1`
+
+**Claude:** All five are active, so the 60-day auto-disable rule isn't it. Checking actual run history:
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && gh run list --limit 25 2>&1 | head -30`
+
+**Claude:** They **are** firing — every scheduled run triggered on time. They're all failing instead. Let me see why:
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && for id in 30266267869 30255821131; do echo "########## run $id ##########"; gh run view $id --log-failed 2>&1 | ta`
+
+**Claude:** Node 20 is only a **warning** here — GitHub is already force-running these on Node 24. The failures are separate, real bugs. Let me get the actual error from each workflow:
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && for id in 30266267869 30261312559 30260785628 30246598622; do echo "########## $id ##########"; gh run view $id --`
+
+**Claude:** Four distinct root causes, none of them Node 20. Verifying each against the repo:
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && echo "=== duckdb in package.json? ===" && grep -n "duckdb" package.json || echo " NOT a dependency" && echo && ech`
+
+**Claude:** Both confirmed: `duckdb` is imported but never declared as a dependency, and `BEEHIIV_API_KEY`/`BEEHIIV_PUBLICATION_ID` don't exist as secrets. Now the discovery script's shell bug:
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && grep -n 'c.github_url\|c.score\|node -e\|<<.*EOF\|shell:' .github/workflows/mcp-discovery.yml | head -12`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && echo "=== last SUCCESS per workflow ===" && for w in "MCP Server Discovery" "MCP Monthly Deep Dive" "MCP Weekly Se`
+
+**Claude:** Four of the five have **never** succeeded once. Let me check the cron schedules too, since Monthly Deep Dive appears to be running daily:
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && for f in .github/workflows/*.yml; do echo "=== $(basename $f) ==="; grep -A4 "schedule:" $f | grep "cron:" ; done`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && gh run view 30246598622 --log-failed 2>&1 | grep -B3 -A6 "database is locked" | head -30`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && gh run view 30246598622 --log-failed 2>&1 | grep -iE "##\[error\]|Traceback|^.*Error:.*$" | grep -viE "prefect.eve`
+
+**Claude:** The refresh killer is `D1 write completed with 200 failed chunk(s) out of 200 total` — every chunk failed. Let me find the underlying D1 error:
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && gh run view 30246598622 --log-failed 2>&1 | grep -iE "chunk|D1|401|403|unauthoriz|forbidden|authentication|token"`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && gh run view 30246598622 --log 2>&1 | grep -iE "chunk.*fail|failed chunk|d1 write|wrangler|error.*d1|HTTP [45][0-9]`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && gh run view 30246598622 --log 2>&1 | grep -iE "410|chunk" | grep -ciE "410"; echo "--- unique D1/write-stage messa`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && sed -n '455,495p' scripts/prefect_refresh.py`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && gh run view 30246598622 --log 2>&1 | grep -oE "D1 write failed at chunk [0-9-]+: exit=[0-9]+ stderr=.{0,320}" | he`
+
+**Claude:** Checked all five. **They're firing fine — every scheduled run triggered on time. They're failing instead**, and Node 20 isn't the cause.
+
+Node 20 shows up in every log, but only as a warning: GitHub is *already* force-running these on Node 24. It's a real maintenance item (`actions/checkout@v4`, `actions/setup-node@v4`, `pnpm/action-setup@v4` all need bumping to v5) but it isn't breaking anything today.
+
+**Track record: 82 failures / 18 successes in the last 100 runs. Four of the five workflows have never succeeded once.** Only Refresh ever has, most recently 2026-06-29.
+
+## Four separate root causes
+
+**1. Refresh MCP Server Data** — the one that used to work
+```
+no such table: servers: SQLITE_ERROR   ×200 chunks (200/200 failed)
+```
+[prefect_refresh.py:465](CascadeProjects/mcp-website-directory/scripts/prefect_refresh.py:465) runs `wrangler d1 execute mcp-directory --command …` **with no `--remote` flag**, so wrangler writes to an empty local SQLite file on the runner instead of your production D1. The workflow also does `npm install -g wrangler` unpinned — it worked until 2026-06-29, so a wrangler release almost certainly changed the local/remote default underneath you. Fix is `--remote` plus a pinned wrangler version.
+
+Separately, the upstream source is dying: **71 × `HTTP 410 Gone`** from PulseMCP's paginated endpoint. That API has been retired or changed shape. Even with the D1 fix, this pipeline won't return good data until that's addressed.
+
+**2 & 3. Weekly Server Scan + Monthly Deep Dive** — same cause
+```
+Cannot find package 'duckdb' imported from scripts/upsert-to-d1.js
+```
+`duckdb` is imported but **is not in package.json**, so `pnpm install` never installs it. These two have never run to completion.
+
+**4. Newsletter Automation**
+```
+BEEHIIV_API_KEY environment variable is required
+```
+That secret doesn't exist. Your repo has exactly four: `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_API_TOKEN`, `MCPACTIONDPAT`, `TAVILY_API_KEY`. Worth deciding whether this workflow should exist at all, given you're rebuilding the newsletter on Beehiiv by hand.
+
+**5. Server Discovery**
+```
+bad substitution
+```
+[mcp-discovery.yml:53](CascadeProjects/mcp-website-directory/.github/workflows/mcp-discovery.yml:53) — an inline `node -e "…"` in double quotes. `\${c.score}` is escaped but `${c.github_url || c.shelf_url || ''}` isn't, so bash tries to expand it and dies.
+
+## Plus a cron bug you didn't ask about
+
+`mcp-monthly-review.yml` uses `0 8 1-7 * 1` commented *"First Monday of each month"*. Cron **OR**s day-of-month and day-of-week when both are restricted — so it fires on days 1–7 *and* every Monday, roughly 10–11 times a month. That's why Monthly Deep Dive ran on Jul 1, 2, 3, 4, 5, and 7.
+
+## Why this matters beyond CI
+
+This explains the data discrepancy from earlier in the session: `servers.json` is stamped `generated_at: 2026-04-14`, and your homepage reads 574 servers from D1 while the static file claims 5,000. The refresh pipeline has been failing to write to production D1 for a month, and the scan/review jobs have never written anything.
+
+Want me to fix these? I'd suggest three commits: the mechanical bugs (`--remote` + pin wrangler, add `duckdb`, escape the discovery script, correct the cron), then the Node 24 action bumps, and leave the two judgment calls — the retired PulseMCP endpoint and whether the newsletter workflow survives — for you to decide first.
+
+**You:** yes break it into 3 commits
+
+**Claude:** Working through the mechanical fixes. Let me read the relevant code first.
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && echo "=== wrangler d1 execute call ===" && grep -n "wrangler" scripts/prefect_refresh.py && echo && echo "=== wran`
+  - `Bash: cd /tmp && for r in actions/checkout actions/setup-node pnpm/action-setup actions/upload-artifact actions/setup-python; do printf "%-26s latest=%s\n" "$r" "$(gh`
+  - `Bash: cd /tmp && for spec in actions/checkout:v5 actions/checkout:v7 actions/setup-node:v5 actions/setup-node:v7 pnpm/action-setup:v5 pnpm/action-setup:v6; do r="${sp`
+  - `Bash: cd /tmp && for spec in actions/checkout:v5 actions/checkout:v7 actions/setup-node:v5 actions/setup-node:v7 pnpm/action-setup:v4 pnpm/action-setup:v6; do r="${sp`
+  - `Bash: cd /tmp && for t in v5 v7; do echo "=== actions/checkout@$t ==="; gh api "repos/actions/checkout/contents/action.yml?ref=$t" --jq .content 2>/dev/null | base64`
+  - `Bash: cd /tmp && for spec in "actions/setup-node v7" "pnpm/action-setup v6" "actions/upload-artifact v7" "actions/setup-python v7"; do set -- $spec; printf "%-26s %s`
+  - `Bash: cd /tmp && for spec in "actions/setup-node v7" "pnpm/action-setup v6"; do set -- $spec; echo "=== $1@$2 ==="; gh api "repos/$1/contents/action.yml?ref=$2" --jq`
+  - `Bash: cd /tmp && echo "--- setup-node v7 ---" && gh api "repos/actions/setup-node/contents/action.yml?ref=v7" --jq .content | base64 -d | tail -5 && echo "--- pnpm/ac`
+  - `Bash: cd /tmp && echo -n "upload-artifact@v4: " && gh api "repos/actions/upload-artifact/contents/action.yml?ref=v4" --jq .content | base64 -d | grep -m1 "using:" &&`
+
+**Claude:** All five actions are on node20 — including two the warning didn't flag. Let me check what's already pending in package.json before I touch it:
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && git diff package.json`
+
+**Claude:** package.json is clean — good, `duckdb` will be an isolated change. Let me check for other places with the same missing `--remote` bug:
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && echo "=== all wrangler d1 execute calls ===" && grep -rn "d1.*execute\|d1 execute" --include="*.py" --include="*.j`
+
+**Claude:** Two live call sites have the missing-`--remote` bug, and `upsert-to-d1.js` has *both* it and the duckdb issue — fixing duckdb alone would just move that failure downstream. Let me read both:
+  - `Read: /Users/chesterbeard/CascadeProjects/mcp-website-directory/scripts/upsert-to-d1.js`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && sed -n '108,125p' .github/workflows/refresh-mcp-data.yml && echo "=== discovery 40-60 ===" && sed -n '40,60p' .git`
+
+**Claude:** `upsert-to-d1.js` line 1 imports `duckdb` — but `Database` is **never used anywhere in the file**. The comment even says *"Or just use the CLI approach as planned"*; they took the CLI approach and left the import behind. So the fix is deleting a dead import, not adding a heavyweight native dependency.
+
+Commit 1 — the D1 write path:
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/scripts/upsert-to-d1.js`
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/scripts/upsert-to-d1.js`
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/scripts/prefect_refresh.py`
+
+**Claude:** Those Pyright warnings are pre-existing (prefect is a CI-only dep, not installed locally) — not from my edit. Now pinning wrangler:
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && echo "=== local wrangler dep ===" && grep -n '"wrangler"' package.json || echo " none in package.json" && echo "==`
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/.github/workflows/refresh-mcp-data.yml`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && node --check scripts/upsert-to-d1.js && echo "upsert-to-d1.js: syntax OK" && python3 -m py_compile scripts/prefect`
+
+**Claude:** All three syntax checks passed and the files staged (only my `git status` flag was wrong). Committing:
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && git diff --cached --stat && git commit -q -F - <<'MSG' && git log --oneline -1 fix(ci): write to remote D1 and pin`
+
+**Claude:** Commit 2 — the discovery escaping and the cron. Using a quoted heredoc so bash does no expansion at all, rather than patching one escape:
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/.github/workflows/mcp-discovery.yml`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && sed -n '1,32p' .github/workflows/mcp-monthly-review.yml`
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/.github/workflows/mcp-monthly-review.yml`
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/.github/workflows/mcp-monthly-review.yml`
+
+**Claude:** That gate was clunky — it needed an `if:` on every step and I added a meaningless job condition. Let me redo it as a proper gate job so the existing steps stay untouched:
+  - `Read: /Users/chesterbeard/CascadeProjects/mcp-website-directory/.github/workflows/mcp-monthly-review.yml`
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/.github/workflows/mcp-monthly-review.yml`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && python3 -c " import yaml for f in ['.github/workflows/mcp-monthly-review.yml','.github/workflows/mcp-discovery.yml`
+
+**Claude:** Now verifying the heredoc actually fixes the substitution — testing the exact pattern:
+  - `Bash: cd /private/tmp/claude-501/-Users-chesterbeard/6ec08f7c-faca-45cd-8fbd-90c134cbc83a/scratchpad 2>/dev/null || cd /tmp; mkdir -p gh-test/scripts/discovery && cd`
+
+**Claude:** The heredoc renders correctly, including the `||` fallback that was crashing before. Committing:
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && git add .github/workflows/mcp-discovery.yml .github/workflows/mcp-monthly-review.yml && git diff --cached --stat &`
+
+**Claude:** Commit 3 — the Node 24 action bumps. All five actions are on node20, including `upload-artifact` and `setup-python` which the warning didn't flag:
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && sed -i '' \ -e 's|actions/checkout@v4|actions/checkout@v7|g' \ -e 's|actions/setup-node@v4|actions/setup-node@v7|g`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && python3 -c " import yaml,glob for f in sorted(glob.glob('.github/workflows/*.yml')): yaml.safe_load(open(f)); prin`
+
+**Claude:** All five validate, and `packageManager: pnpm@10.33.0` is in package.json so `action-setup@v6` will resolve the version without a `version:` input. Committing:
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && git add .github/workflows/ && git diff --cached --stat && git commit -q -F - <<'MSG' && git log --oneline -3 chore`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && echo "=== working tree (content work still uncommitted) ===" && git status --short | awk '{print $1}' | sort | uni`
+
+**Claude:** The working tree dropped from 30 untracked / 36 modified to 1 / 2. Let me check what happened to the content work:
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && git log --oneline -6 && echo "=== remaining uncommitted ===" && git status --short && echo "=== is the imported co`
+
+**Claude:** Mystery solved — you committed the content work yourself as `1dd9428` while I was working. Let me clean up the `__pycache__` my syntax check created:
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && rm -rf scripts/__pycache__ && echo "removed scripts/__pycache__ (artifact of my py_compile check)" && echo "=== is`
+
+**Claude:** Three commits made, **not pushed** — you're `ahead 3` on `main`.
+
+```bash
+git push
+```
+
+| Commit | What it fixes |
+|---|---|
+| `7acd700` | D1 remote writes + pin wrangler@4 |
+| `4a72820` | Discovery heredoc + monthly cron |
+| `1e5f460` | Node 24 action bumps |
+
+Two things changed from the plan I gave you, both because the code said otherwise once I read it:
+
+**I didn't add `duckdb` as a dependency.** `upsert-to-d1.js` imports it on line 1 with the comment *"Or just use the CLI approach as planned"* — and `Database` is never referenced anywhere in the file. They took the CLI path and left the import. Deleting a dead line beats installing a large native binary.
+
+**The `--remote` bug was in two places, not one.** `upsert-to-d1.js` had it too — so fixing only its duckdb import would have moved weekly-scan and monthly-review from a startup crash to a silent D1 write failure. Both call sites are fixed. `set-deployment-types.js` already documented `--remote` as the correct pattern, which confirms the intent.
+
+I also bumped `upload-artifact` and `setup-python`, which the runner warning never flagged — their `action.yml` files declare `using: node20` too, so they'd have broken on the same deadline.
+
+Verified before committing: all three syntax checks pass, all five workflows parse as YAML, the gate logic returns run/run/skip/skip for days 3/7/8/21, and I executed the heredoc against fixture data to confirm the `||` fallback that was crashing now renders.
+
+Two follow-ups worth knowing about. `__pycache__` isn't in `.gitignore` — my syntax check created one and I removed it, but any `git add .` will sweep one in eventually. And the fixes don't touch the two judgment calls: **PulseMCP returned 71 × HTTP 410** on the last refresh, so that pipeline will run correctly and still fetch nothing until the upstream API change is dealt with, and the newsletter workflow will keep failing on the missing `BEEHIIV_API_KEY` until you either add the secret or retire the workflow.
+
+**You:** add pychache to the gitignore
+  - `Read: /Users/chesterbeard/CascadeProjects/mcp-website-directory/.gitignore`
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/.gitignore`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && mkdir -p scripts/__pycache__ && touch scripts/__pycache__/test.cpython-312.pyc && echo "=== does git see the test`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && git add .gitignore && git commit -q -F - <<'MSG' && git log --oneline -1 && git status -sb | head -1 chore: gitign`
+
+**Claude:** Added and committed as `7b2a15d`.
+
+```
+__pycache__/
+*.py[cod]
+```
+
+Placed under the dependencies section. The `*.py[cod]` glob catches `.pyc`, `.pyo`, and `.pyd` for cases where bytecode lands outside a `__pycache__` directory.
+
+Verified rather than assumed: I created a throwaway `scripts/__pycache__/test.cpython-312.pyc`, confirmed `git status` no longer sees it, and had `git check-ignore -v` name the exact rule doing the work (`.gitignore:11:__pycache__/`), then deleted it. Also checked nothing bytecode-related is *already* tracked — if it were, the ignore rule wouldn't have helped and the files would need `git rm --cached` first. Nothing is.
+
+You're now `ahead 4` and still unpushed.
+
+```bash
+git push
+```
