@@ -1,14 +1,35 @@
 name: MCP Monthly Deep Dive
 on:
   schedule:
-    - cron: '0 8 1-7 * 1'  # First Monday of each month at 8:00am UTC
+    # Cron ORs day-of-month with day-of-week when both are restricted, so the
+    # previous '0 8 1-7 * 1' fired on days 1-7 AND every Monday (~10x/month).
+    # Run every Monday and gate to the first one in the job below.
+    - cron: '0 8 * * 1'  # Every Monday 08:00 UTC; job exits unless it is the 1st Monday
   workflow_dispatch:  # Manual trigger option
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 jobs:
+  # Cheap gate so the real job keeps a single condition instead of an `if:`
+  # on every step. Manual runs always pass.
+  gate:
+    runs-on: ubuntu-latest
+    outputs:
+      run: ${{ steps.check.outputs.run }}
+    steps:
+      - id: check
+        run: |
+          if [ "${{ github.event_name }}" != "schedule" ] || [ "$(date -u +%d)" -le 7 ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Day $(date -u +%d) is not the first Monday — skipping."
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          fi
+
   review:
+    needs: gate
+    if: needs.gate.outputs.run == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

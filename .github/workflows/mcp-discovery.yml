@@ -44,15 +44,18 @@ jobs:
       - name: Show top candidates
         run: |
           echo "## 🔭 MCP Discovery — $(date -u +'%Y-%m-%d')" >> "$GITHUB_STEP_SUMMARY"
-          node -e "
-            const d = require('./scripts/discovery/discovered.json');
-            console.log('Stats:', JSON.stringify(d.stats));
-            console.log('| Score | SDK | Server |');
-            console.log('|-------|-----|--------|');
-            for (const c of d.discovered.slice(0, 25)) {
-              console.log(\`| \${c.score} | \${c.sdkVerified ? '✓' : ' '} | [\${c.name}](${c.github_url || c.shelf_url || ''}) |\`);
-            }
-          " >> "$GITHUB_STEP_SUMMARY"
+          # Quoted heredoc ('NODE') — bash performs no expansion inside, so JS
+          # template literals need no escaping. The previous `node -e "..."`
+          # form let bash try to expand ${c.github_url || ...} -> "bad substitution".
+          node <<'NODE' >> "$GITHUB_STEP_SUMMARY"
+          const d = require('./scripts/discovery/discovered.json');
+          console.log('Stats:', JSON.stringify(d.stats));
+          console.log('| Score | SDK | Server |');
+          console.log('|-------|-----|--------|');
+          for (const c of d.discovered.slice(0, 25)) {
+            console.log(`| ${c.score} | ${c.sdkVerified ? '✓' : ' '} | [${c.name}](${c.github_url || c.shelf_url || ''}) |`);
+          }
+          NODE
 
       # Seed the discovery queue in D1 (requires CLOUDFLARE_API_TOKEN secret).
       - name: Seed discovery queue (D1)
