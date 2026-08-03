@@ -38,7 +38,8 @@
     --secondary-foreground: 270 5% 10%;
 
     --muted: 270 30% 96%;
-    --muted-foreground: 270 5% 40%;
+    /* Body copy is black site-wide — the old 40%-lightness grey was hard to read. */
+    --muted-foreground: 0 0% 0%;
 
     --accent: 170 20% 60%; /* #8AA8A1 - Muted Teal */
     --accent-rgb: 138, 168, 161; /* RGB equivalent of #8AA8A1 */
@@ -120,12 +121,48 @@
 @layer base {
   body {
     font-family: 'Libre Franklin', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background-color: var(--background) !important;
+    /* The tokens hold bare HSL components ("30 25% 97%"), so they must be
+       wrapped. `var(--background)` alone is an invalid colour, which computed
+       to transparent and left every page with no background at all — the
+       canvas fell back to the browser's light/dark default. */
+    background-color: hsl(var(--background)) !important;
+    color: #000000;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
+}
+
+/* ── Dark surfaces keep light text ──────────────────────────────────────────
+   Body copy is black site-wide, but a few surfaces paint their own dark
+   background (code samples, config blocks, the gradient CTA panel). Text
+   inside them must stay light or it disappears. */
+.code-block,
+.code-block *,
+.code-header,
+.code-header *,
+pre[class*="language-"],
+pre[class*="language-"] *,
+.copy-button,
+.custom-mcp-cta:not(.compact),
+.custom-mcp-cta:not(.compact) *,
+.pub-card,
+.pub-card * {
+  color: #e2e8f0;
+}
+
+/* The compact CTA sits on a 6%-opacity amber tint over the light page, not on
+   the dark gradient panel — it needs black like the rest of the body. */
+.custom-mcp-cta.compact,
+.custom-mcp-cta.compact * {
+  color: #000000;
+}
+
+/* Buttons paint a white background, so their label stays dark regardless. */
+.custom-mcp-cta .cta-button,
+.cta-button.btn-primary {
+  color: #1a181b;
 }
 
 /* Deployment Filter and Badge Styles */
@@ -139,7 +176,7 @@
 .filter-label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--muted-foreground);
+  color: hsl(var(--muted-foreground));
   margin-bottom: 0.75rem;
   display: block;
 }
@@ -160,21 +197,21 @@
   font-weight: 500;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  color: var(--muted-foreground);
+  color: hsl(var(--muted-foreground));
   cursor: pointer;
   transition: all 0.15s ease;
   user-select: none;
 }
 
 .deployment-chip:hover {
-  border-color: var(--primary);
-  color: var(--primary);
+  border-color: hsl(var(--primary));
+  color: hsl(var(--primary));
   background: rgba(238, 123, 48, 0.1);
 }
 
 .deployment-chip.active {
-  background: var(--primary);
-  border-color: var(--primary);
+  background: hsl(var(--primary));
+  border-color: hsl(var(--primary));
   color: white;
 }
 

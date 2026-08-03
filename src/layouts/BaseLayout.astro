@@ -22,6 +22,9 @@ interface Props {
   ogType?: string;
   structuredData?: object;
   bodyClass?: string;
+  /** Suppress the sitewide newsletter picker — set on /newsletters, which is
+      itself the picker and would otherwise render all three twice. */
+  hideNewsletterCta?: boolean;
 }
 
 const {
@@ -32,6 +35,7 @@ const {
   ogType = 'website',
   structuredData,
   bodyClass = '',
+  hideNewsletterCta = false,
 } = Astro.props;
 ---
 
@@ -98,7 +102,7 @@ const {
 <body class={bodyClass}>
   <Navbar />
   <slot />
-  <EmailSignup />
+  {!hideNewsletterCta && <EmailSignup />}
   <footer class="site-footer">
     <div class="footer-inner">
       <div class="footer-links">
@@ -131,8 +135,9 @@ const {
   body {
     font-family: 'Libre Franklin', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     line-height: 1.7;
-    color: #f1f5f9;
-    background: #0f172a;
+    /* Black body copy site-wide. This rule is unlayered, so it beats the
+       @layer base default in global.css — both must agree. */
+    color: #000000;
     min-height: 100vh;
   }
 

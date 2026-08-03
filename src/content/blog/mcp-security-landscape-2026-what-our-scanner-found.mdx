@@ -15,11 +15,32 @@ Statistics borrowed from someone else's research only get you so far. So we did 
 
 > This piece is the first in a series. As our scanner accumulates weeks of results, we'll publish a live, versioned "State of MCP Security" report. The numbers below are the inaugural baseline.
 
+## Key findings at a glance
+
+| Metric | Result |
+|--------|--------|
+| Servers scanned | **574** (every server in the directory) |
+| Servers shipping an attributable npm package | **543 — 94.6%** |
+| Servers flagged with a known CVE or IOC | **8 — 1.4% of the directory** |
+| Of those, critical severity | **3** |
+| Of those, high severity | **5** |
+| Highest CVSS score found | **10.0** (MCP Inspector, CVE-2025-49596) |
+| CVEs filed against MCP projects, Jan–Feb 2026 | **30+** |
+| Entries in our CVE/IOC watchlist | **50** |
+| Scan layers run per server | **4** |
+| Baseline date | **June 2026** |
+
+> **1.4% of a curated directory still carried a known vulnerability — and three of those eight were critical, including a CVSS 10.0 remote code execution in the official MCP Inspector.**
+
 ## Why we stopped trusting "it has 5,000 stars, it's probably fine"
 
 Star count is a popularity signal, not a safety signal. Some of the most-installed MCP tooling in the world carried critical vulnerabilities in early 2026 — including a CVSS 10.0 remote code execution in the official MCP Inspector, and a three-vulnerability RCE chain in Anthropic's Git MCP server. Both are exactly the kind of server a developer adds without a second thought.
 
-The early-2026 disclosures were a turning point. Between January and February 2026 alone, security researchers filed more than **30 CVEs** against MCP servers, clients, and infrastructure. Three patterns dominated:
+The early-2026 disclosures were a turning point. Between January and February 2026 alone, security researchers filed more than **30 CVEs** against MCP servers, clients, and infrastructure.
+
+> **More than 30 CVEs were filed against MCP servers, clients, and infrastructure in January–February 2026 alone.**
+
+Three patterns dominated:
 
 1. **Command injection / RCE** via unsanitized `stdio` arguments and shell-string construction.
 2. **Tool-description poisoning** — where a malicious or tampered tool description subverts the agent itself (the "MCPoison" and "CurXecute" disclosures).
@@ -43,6 +64,8 @@ For this baseline, the headline number comes from the **CVE/IOC watchlist layer*
 ## The findings: 8 servers flagged, 3 of them critical
 
 Of 574 listed servers, **543 (94.6%) ship an npm package** we can attribute and scan. Cross-referencing those against the watchlist flagged **8 servers — 1.4% of the directory** — with a known vulnerability or indicator of compromise. By highest severity, that's **3 critical and 5 high**.
+
+> **8 of 543 scannable servers (1.4%) matched a known CVE or indicator of compromise. 3 were critical.**
 
 That 1.4% rate looks reassuringly low next to the ~1-in-3 SSRF figure reported for the unvetted ecosystem — and it should. Curation plus scanning filters out the obvious junk. But it would be a mistake to read "1.4%" as "safe." Three of those eight are **critical**, and every one of them is a server people genuinely use:
 
@@ -79,6 +102,21 @@ Our 1.4% figure describes a different population: a **curated** directory where 
 
 That second point is the entire reason we ship this as a *recurring* pipeline rather than a one-time audit. A server that's clean today can ship a poisoned tool description tomorrow.
 
+## How this maps to the MCP Security Standard
+
+The four scan layers above are the *automated* half of our assessment. They sit on top of the [MCP Security Standard](/blog/mcp-security-standard) we published on 4 June 2026 — a reproducible, six-dimension framework scoring each server 0–100, backed by a 48-item checklist anyone can run themselves.
+
+| # | Dimension | Points | What it measures |
+|---|-----------|--------|------------------|
+| 1 | **Transport Encryption** | 0–20 | How the server is reached. Local `stdio` scores highest (20); SSE/HTTP without authentication scores 5. |
+| 2 | **Authentication Method** | 0–20 | SSO/SAML (20), OAuth2 with PKCE (16), API key (10), none (0). |
+| 3 | **Token Lifecycle** | 0–20 | Short-lived credentials with refresh (20) versus long-lived static tokens (8). |
+| 4 | **Input Validation** | 0–20 | Parameterized handling (20) down to shell-string concatenation (2) — the RCE vector behind several findings above. |
+| 5 | **Data Flow** | 0–20 | Where data actually goes: local only (20), hybrid (12), cloud (6), unknown (0). |
+| 6 | **Dependency Health** | 0–20 | CVEs in the dependency tree. Automated via Socket.dev in Phase 2; scored separately from the core 0–100 rating until then. |
+
+The relationship between the two is worth being precise about: the **Standard** is how we assess a server's design, and the **scanner** is how we detect when a previously-assessed server changes. Dimension 4 (Input Validation) is the one most directly implicated in this scan's findings — the command-injection and path-traversal entries in the table above are all failures of parameterized input handling.
+
 ## What we changed in the directory because of this
 
 This research directly shaped the product:
@@ -98,6 +136,28 @@ This research directly shaped the product:
 ## What's next
 
 This is the baseline. As the scanner continues its weekly run, two things will make this research more valuable over time: the **trend** (is the flagged share rising or falling as projects patch?), and the **tool-poisoning diff** catching real rug-pulls in the wild. We'll publish updated figures and, if our pipeline flags a novel incident first, you'll read it here — sourced from our own data, not someone else's press release.
+
+## Frequently asked questions
+
+### How do I know if an MCP server is safe?
+
+No single signal tells you. Star count is popularity, not safety — the CVSS 10.0 RCE in this scan was in the official MCP Inspector. Check four things instead: whether the project has a **disclosed-CVE history** and has patched it; how it handles **input** (parameterized arguments rather than shell-string concatenation); what **credentials** it demands and whether they're short-lived; and whether its **advertised tool set has changed** since you installed it. The last one catches rug-pulls, which no static audit will. Our [six-dimension Security Standard](/blog/mcp-security-standard) is the full 48-item version of that checklist.
+
+### How many MCP servers have security issues?
+
+In our June 2026 baseline, **8 of 574 listed servers — 1.4%** — matched a known CVE or indicator of compromise, of which 3 were critical and 5 high. That figure describes a *curated* directory where 94.6% of entries ship an attributable npm package. Research into the **unvetted** ecosystem reports far higher rates — roughly one in three sampled servers vulnerable to SSRF. Both numbers are real; they describe different populations, and neither transfers to the other.
+
+### Which MCP servers had critical vulnerabilities in 2026?
+
+Three in this scan. **MCP Inspector** (`@modelcontextprotocol/inspector`) — CVE-2025-49596, remote code execution, CVSS 10.0. **GitHub Official MCP** (`@github/mcp-server`) — CVE-2025-68145, a chained RCE combining path-validation bypass with unrestricted `git` operations. **Google Workspace MCP** (`mcp-gsuite`) — prompt injection embedded in a Google Doc that auto-executes when the agent fetches it. Five further servers were rated high; the full list is in the table above. Check each project's advisories and run the patched version.
+
+### What is CVE-2025-49596?
+
+An unauthenticated remote code execution in the **MCP Inspector**, scored **CVSS 10.0** — the maximum. It matters disproportionately because the Inspector is the tool developers use to *debug* MCP servers, so it tends to run on developer machines with broad local access. It is the clearest available evidence that "official and widely used" is not a substitute for "audited."
+
+### Which MCP registries are secure?
+
+We have not tested other registries, and we won't publish a comparison we haven't run. What we can offer is the criteria we'd apply to any of them, including ours: does the registry state a **published, reproducible standard** rather than an unexplained badge? Does it **re-check listings on a schedule**, or only at submission? Does it **diff tool descriptions** over time to catch rug-pulls? Does it distinguish *scanned* from *human-reviewed* from *unassessed* — and say so on every listing? A registry that cannot answer those four questions is asserting trust rather than demonstrating it.
 
 ---
 

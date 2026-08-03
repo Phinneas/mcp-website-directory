@@ -9,15 +9,17 @@ const structuredData = {
   '@type': 'CollectionPage',
   name: 'My MCP Shelf Newsletters',
   url: 'https://www.mymcpshelf.com/newsletters',
-  description: 'Three focused newsletters from My MCP Shelf: OSS Spotlight, Signal Field, and AI Field Notes.',
+  description: 'Three focused newsletters from My MCP Shelf: OpenSourceScribes, Signal Field, and AI Field Notes.',
 };
 ---
 
 <BaseLayout
   title="Newsletters | My MCP Shelf"
-  description="Three focused newsletters: OSS Spotlight (open-source tool evaluations), Signal Field (data & infrastructure), and AI Field Notes (AI commentary). Subscribers get posts a day early."
+  description="Three focused newsletters: OpenSourceScribes (open-source tool evaluations), Signal Field (data & infrastructure), and AI Field Notes (AI commentary). Subscribers get posts a day early."
   canonical="https://www.mymcpshelf.com/newsletters"
   structuredData={structuredData}
+  hideNewsletterCta
+  bodyClass="newsletters-page"
 >
   <div class="container">
     <section class="hero-section">
@@ -47,6 +49,23 @@ const structuredData = {
   </div>
 </BaseLayout>
 
+<!-- Global, but every selector is prefixed with the page-specific body class,
+     so nothing here can leak to other pages. -->
+<style is:global>
+  /* Black text needs a background we control. The ambient one is undefined —
+     it painted dark in dev and white in production, so text was invisible in
+     one or the other. Paint it white here and inherit black throughout. */
+  body.newsletters-page {
+    background: #ffffff;
+    color: #000000;
+  }
+
+  body.newsletters-page .container,
+  body.newsletters-page .container * {
+    color: #000000;
+  }
+</style>
+
 <style>
   .container {
     max-width: 800px;
@@ -63,16 +82,13 @@ const structuredData = {
   .hero-title {
     font-size: 2.5rem;
     font-weight: 800;
-    background: linear-gradient(135deg, #f59e0b 0%, #3b82f6 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #000000;
     margin-bottom: 1rem;
   }
 
   .hero-subtitle {
     font-size: 1.15rem;
-    color: #94a3b8;
+    color: #000000;
     max-width: 600px;
     margin: 0 auto;
   }
@@ -85,7 +101,7 @@ const structuredData = {
 
   /* No card chrome — entries sit directly on the page, separated by a hairline. */
   .newsletter-entry + .newsletter-entry {
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(0, 0, 0, 0.15);
     padding-top: 3rem;
   }
 
@@ -97,28 +113,29 @@ const structuredData = {
   }
 
   .newsletter-entry h2 {
-    color: #f1f5f9;
+    color: #000000;
     font-size: 1.5rem;
     margin-bottom: 0.5rem;
   }
 
+  /* Links stay black per the page's black-only rule; they are underlined so
+     they remain identifiable without relying on colour. */
   .feed-link {
-    color: #f59e0b;
+    color: #000000;
     font-size: 0.85rem;
     font-weight: 600;
     text-decoration: none;
-    border: 1px solid rgba(245, 158, 11, 0.5);
+    border: 1px solid #000000;
     border-radius: 15px;
     padding: 0.15rem 0.75rem;
   }
 
   .feed-link:hover {
-    background: rgba(245, 158, 11, 0.15);
-    border-color: #f59e0b;
+    background: rgba(0, 0, 0, 0.08);
   }
 
   .entry-description {
-    color: #94a3b8;
+    color: #000000;
     margin-bottom: 0.75rem;
   }
 
@@ -127,14 +144,10 @@ const structuredData = {
   }
 
   .entry-blog-link a {
-    color: #60a5fa;
+    color: #000000;
     font-size: 0.95rem;
-    text-decoration: none;
-    font-weight: 500;
-  }
-
-  .entry-blog-link a:hover {
     text-decoration: underline;
+    font-weight: 500;
   }
 
   @media (max-width: 768px) {

@@ -67,17 +67,16 @@ const { newsletter, compact = false } = Astro.props;
     margin-bottom: 0.75rem;
   }
 
-  .track-subscribe.compact .track-subscribe-copy h3 {
-    color: #f1f5f9;
-  }
-
+  /* /newsletters is a black-text-only page on the default white canvas. */
+  .track-subscribe.compact .track-subscribe-copy h3,
   .track-subscribe.compact .track-subscribe-copy p,
   .track-subscribe.compact .track-subscribe-fallback {
-    color: #94a3b8;
+    color: #000000;
   }
 
   .track-subscribe.compact .track-subscribe-fallback a {
-    color: #f59e0b;
+    color: #000000;
+    text-decoration: underline;
   }
 
   .track-subscribe-embed {

@@ -17,7 +17,7 @@ export interface NewsletterInfo {
 export const NEWSLETTERS: NewsletterInfo[] = [
   {
     track: 'oss-spotlight',
-    name: 'OSS Spotlight',
+    name: 'OpenSourceScribes',
     tagline: 'Open-source tool evaluations',
     description:
       'Hands-on evaluations of open-source tools, MCP servers, and frameworks — deep dives into what they do, how they hold up, and whether they belong on your shelf.',

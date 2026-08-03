@@ -133,7 +133,7 @@ const categories = ['All', 'Verified', 'GitHub', 'Desktop', 'CLI'];
                                         </span>
                                     )}
                                 </h3>
-                                <div style="font-size: 0.8rem; color: #94a3b8;">
+                                <div style="font-size: 0.8rem; color: #000000;">
                                     {client.url.includes('github.com') ? 'Open Source' : 'Native App'}
                                 </div>
                             </div>
@@ -157,14 +157,14 @@ const categories = ['All', 'Verified', 'GitHub', 'Desktop', 'CLI'];
 
         {/* Agent-specific server recommendations */}
         <section style="margin-top: 3rem; padding: 2rem; background: rgba(255,255,255,0.03); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
-            <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.75rem; color: #f1f5f9;">Best MCP Servers by Agent</h2>
-            <p style="color: #94a3b8; margin-bottom: 1.5rem;">Verified server picks with security scores, one-command install, and agent-specific config for the most popular coding assistants.</p>
+            <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.75rem; color: #000000;">Best MCP Servers by Agent</h2>
+            <p style="color: #000000; margin-bottom: 1.5rem;">Verified server picks with security scores, one-command install, and agent-specific config for the most popular coding assistants.</p>
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;">
                 {AGENT_PAGE_CONFIGS.map(agent => (
                     <a href={`/best-mcp-servers-for-${agent.slug}`} style="text-decoration: none;">
                         <div style="padding: 1rem; background: rgba(255,255,255,0.04); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); transition: all 0.2s ease; cursor: pointer;" onmouseenter="this.style.borderColor='#f59e0b'" onmouseleave="this.style.borderColor='rgba(255,255,255,0.08)'">
-                            <div style="font-weight: 600; color: #f1f5f9; margin-bottom: 0.25rem;">{agent.name}</div>
-                            <div style="font-size: 0.8rem; color: #94a3b8;">{agent.tagline}</div>
+                            <div style="font-weight: 600; color: #000000; margin-bottom: 0.25rem;">{agent.name}</div>
+                            <div style="font-size: 0.8rem; color: #000000;">{agent.tagline}</div>
                         </div>
                     </a>
                 ))}
@@ -251,7 +251,7 @@ const categories = ['All', 'Verified', 'GitHub', 'Desktop', 'CLI'];
 
     .hero-subtitle {
         font-size: 1.2rem;
-        color: #94a3b8;
+        color: #000000;
         max-width: 600px;
         margin: 0 auto 2rem;
     }
@@ -279,7 +279,7 @@ const categories = ['All', 'Verified', 'GitHub', 'Desktop', 'CLI'];
 
     .stat-label {
         font-size: 0.9rem;
-        color: #94a3b8;
+        color: #000000;
     }
 
     .search-section {
@@ -301,7 +301,7 @@ const categories = ['All', 'Verified', 'GitHub', 'Desktop', 'CLI'];
         outline: none;
         transition: all 0.3s ease;
         background: rgba(255,255,255,0.04);
-        color: #f1f5f9;
+        color: #000000;
     }
 
     .search-input:focus {
@@ -325,7 +325,7 @@ const categories = ['All', 'Verified', 'GitHub', 'Desktop', 'CLI'];
         transition: all 0.2s ease;
         border: 1px solid rgba(255,255,255,0.1);
         background: rgba(255,255,255,0.04);
-        color: #94a3b8;
+        color: #000000;
     }
 
     .category-pill:hover, .category-pill.active {
@@ -383,7 +383,7 @@ const categories = ['All', 'Verified', 'GitHub', 'Desktop', 'CLI'];
     .client-title {
         font-size: 1.2rem;
         font-weight: 700;
-        color: #f1f5f9;
+        color: #000000;
         display: flex;
         align-items: center;
         gap: 0.4rem;
@@ -395,7 +395,7 @@ const categories = ['All', 'Verified', 'GitHub', 'Desktop', 'CLI'];
     }
 
     .client-description {
-        color: #94a3b8;
+        color: #000000;
         font-size: 0.95rem;
         line-height: 1.6;
         margin-bottom: 1.5rem;
@@ -418,7 +418,7 @@ const categories = ['All', 'Verified', 'GitHub', 'Desktop', 'CLI'];
         display: flex;
         gap: 0.75rem;
         font-size: 0.85rem;
-        color: #94a3b8;
+        color: #000000;
     }
 
     .client-btn {
@@ -465,7 +465,7 @@ const categories = ['All', 'Verified', 'GitHub', 'Desktop', 'CLI'];
     .last-updated {
         text-align: center;
         font-size: 0.85rem;
-        color: #94a3b8;
+        color: #000000;
         margin-top: 4rem;
         padding: 2rem;
         border-top: 1px solid rgba(255,255,255,0.1);
