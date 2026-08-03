@@ -35,7 +35,7 @@ export const NEWSLETTERS: NewsletterInfo[] = [
   },
   {
     track: 'ai-field-notes',
-    name: 'AI Field Notes',
+    name: 'AI Horizons Dispatch',
     tagline: 'Broader AI commentary',
     description:
       'Commentary and field notes on the AI ecosystem — models, agents, tooling shifts, and what they mean in practice.',

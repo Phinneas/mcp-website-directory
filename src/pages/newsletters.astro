@@ -1,21 +1,27 @@
 ---
 export const prerender = true;
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import TrackSubscribe from '../components/TrackSubscribe.astro';
 import { NEWSLETTERS } from '../data/newsletters';
+
+// A track with no issues yet shouldn't advertise a "read recent posts" link
+// that lands on an empty filter.
+const published = await getCollection('blog', ({ data }) => !data.draft);
+const postCount = (track: string) => published.filter((p) => p.data.track === track).length;
 
 const structuredData = {
   '@context': 'https://schema.org',
   '@type': 'CollectionPage',
   name: 'My MCP Shelf Newsletters',
   url: 'https://www.mymcpshelf.com/newsletters',
-  description: 'Three focused newsletters from My MCP Shelf: OpenSourceScribes, Signal Field, and AI Field Notes.',
+  description: 'Three focused newsletters from My MCP Shelf: OpenSourceScribes, Signal Field, and AI Horizons Dispatch.',
 };
 ---
 
 <BaseLayout
   title="Newsletters | My MCP Shelf"
-  description="Three focused newsletters: OpenSourceScribes (open-source tool evaluations), Signal Field (data & infrastructure), and AI Field Notes (AI commentary). Subscribers get posts a day early."
+  description="Three focused newsletters: OpenSourceScribes (open-source tool evaluations), Signal Field (data & infrastructure), and AI Horizons Dispatch (AI commentary). Subscribers get posts a day early."
   canonical="https://www.mymcpshelf.com/newsletters"
   structuredData={structuredData}
   hideNewsletterCta
@@ -39,9 +45,11 @@ const structuredData = {
             <a class="feed-link" href={n.feedPath} title={`${n.name} RSS feed`}>RSS</a>
           </div>
           <p class="entry-description">{n.description}</p>
-          <p class="entry-blog-link">
-            <a href={`/blog?track=${n.track}`}>Read recent {n.name} posts →</a>
-          </p>
+          {postCount(n.track) > 0 && (
+            <p class="entry-blog-link">
+              <a href={`/blog?track=${n.track}`}>Read recent {n.name} posts →</a>
+            </p>
+          )}
           <TrackSubscribe newsletter={n} compact />
         </section>
       ))}
