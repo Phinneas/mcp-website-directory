@@ -1265,3 +1265,127 @@ So the narrow fix is a genuine fork, and I'm not going to pick for you again:
 - **Change only the specific greys you dislike** — leave the background bug alone entirely, and I adjust just the offending declarations on the pages you name.
 
 Which one? And nothing is pushed — the revert is local, so remote still has the light version until you push.
+
+**You:** on the newsletter page the 'Subscribe' button is almost hidden. the text color and the background around the button are the same color. also, OSS Spotlight should be OpenSourceScribes. also, https://www.mymcpshelf.com/server/scrapling on this page the 'Description' text is too light or too close to the background color. dont need to change the rest of the site at this point  from the page source on the Scrapling page it is the main>generic>heading>text:leaf https://www.mymcpshelf.com/server/scrapling needs to change to a darker color.  and under paragraph the text:leaf needs to be black. text:leaf needs to be black in color. i can't read the actual current color. does this give claude the direction it needs to make the proper change
+
+**Claude:** That's exactly what I need — element paths and specific complaints. Let me look at the live site, since your local revert isn't pushed and you're seeing production.
+  - `mcp__Claude_Browser__navigate: https://www.mymcpshelf.com/newsletters/`
+  - `mcp__Claude_Browser__preview_start: https://www.mymcpshelf.com/newsletters/`
+  - `mcp__Claude_Browser__javascript_tool: javascript_exec`
+  - `mcp__Claude_Browser__computer: screenshot`
+
+**You:** [Request interrupted by user]
+
+**You:** i think the problem might be the hero text-color is a grey and the background is a dark color which a black text color might not show well. does that make sense?
+
+**Claude:** Yes — that makes complete sense, and it's the key thing I got wrong earlier. Let me verify what the background actually is on the live pages.
+  - `mcp__Claude_Browser__javascript_tool: javascript_exec`
+
+**Claude:** That confirms your instinct exactly, and it's the whole problem:
+
+| On the live page right now | |
+|---|---|
+| `body` background | `rgba(0, 0, 0, 0)` — **nothing paints it** |
+| Your browser | `prefers-color-scheme: dark` |
+| `body` text | `rgb(0, 0, 0)` — black, from my change |
+
+So the dark you're seeing isn't the design's `#0f172a` — it's **your browser's own dark canvas** showing through, because no background is painted anywhere on the site. Then my change put black text on top of it. Black on dark. That's why it's unreadable.
+
+And critically: **no text colour can be correct until a background is actually painted**, because right now the background differs per visitor. Light-mode visitors see a white page; you see a dark one. Same HTML.
+
+The blocker is one line in `global.css`:
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && echo "=== the blocking line (local, post-revert) ===" && grep -n "background-color: var(--background)" src/styles/`
+
+**Claude:** That's the culprit. It's invalid (bare HSL components), but `!important` makes it win the cascade and compute to transparent — actively blocking BaseLayout's `#0f172a`. Removing it lets the intended dark background paint:
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/src/styles/global.css`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && pnpm build 2>&1 | grep -iE "\berror\b|failed|Complete!" | grep -v SESSION | head -3`
+  - `mcp__Claude_Browser__preview_start: mymcpshelf`
+  - `mcp__Claude_Browser__navigate: http://localhost:4323/server/scrapling`
+  - `mcp__Claude_Browser__javascript_tool: javascript_exec`
+
+**Claude:** One line, and both Scrapling complaints resolve without touching a single text colour:
+
+| | Before | Now |
+|---|---|---|
+| `body` background | transparent (browser theme) | **`rgb(15,23,42)`** — the intended dark |
+| "Description" heading | unreadable | contrast **16.3** |
+| Paragraph text | unreadable | contrast **6.96** |
+  - `mcp__Claude_Browser__computer: screenshot`
+
+**Claude:** That error overlay is a local-only D1 issue (`no such table: user_reviews` — the local database lacks that table), unrelated to CSS. My measurements came from the real DOM before it appeared. Now your other two items — the revert undid the OpenSourceScribes rename:
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && echo "=== where 'OSS Spotlight' survives after the revert ===" && grep -rn "OSS Spotlight" src/ --include="*.astro`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && sed -i '' 's/OSS Spotlight/OpenSourceScribes/g' src/data/newsletters.ts src/pages/llms.txt.astro src/pages/rss/oss`
+
+**Claude:** Now the Subscribe button. Let me measure it on the rebuilt local page with the dark background actually painting:
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && pnpm build 2>&1 | grep -iE "\berror\b|failed|Complete!" | grep -v SESSION | head -2`
+  - `mcp__Claude_Browser__navigate: http://localhost:4323/newsletters`
+  - `mcp__Claude_Browser__javascript_tool: javascript_exec`
+
+**Claude:** Local page has the right names and a white background. My selector was too strict — let me check whether the duplicate signup block is even rendering, since I may never have wired the prop I added:
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && echo "=== is hideNewsletterCta actually USED in BaseLayout? ===" && grep -n "hideNewsletterCta\|<EmailSignup" src/`
+  - `mcp__Claude_Browser__javascript_tool: javascript_exec`
+
+**Claude:** Found it. The signup panel is a gradient from orange `rgb(228,135,68)` → light beige `rgb(219,202,179)`. The cards sit on `rgba(0,0,0,0.25)`, which over the **beige end** composites to roughly `rgb(164,152,134)` — white "Subscribe →" on that is about 2.5:1. That's your almost-hidden button.
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && grep -n "background: rgba(0, 0, 0, 0.25)\|\.pub-card {" src/components/EmailSignup.astro`
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/src/components/EmailSignup.astro`
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/src/components/EmailSignup.astro`
+
+**Claude:** Now wiring the `hideNewsletterCta` prop — I added it earlier but never actually used it, which is why the three publications still duplicate at the bottom of `/newsletters`:
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/src/layouts/BaseLayout.astro`
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/src/layouts/BaseLayout.astro`
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/src/layouts/BaseLayout.astro`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && pnpm build 2>&1 | grep -iE "\berror\b|failed|Complete!" | grep -v SESSION | head -2`
+  - `mcp__Claude_Browser__navigate: http://localhost:4323/newsletters`
+  - `mcp__Claude_Browser__javascript_tool: javascript_exec`
+
+**Claude:** `/newsletters` is clean — duplicate block gone, correct names. Now verifying the Subscribe contrast fix on a page that still shows the panel:
+  - `mcp__Claude_Browser__navigate: http://localhost:4323/faq`
+  - `mcp__Claude_Browser__javascript_tool: javascript_exec`
+  - `mcp__Claude_Browser__javascript_tool: javascript_exec`
+  - `mcp__Claude_Browser__computer: screenshot`
+
+**Claude:** Contrast now **5.72** at the beige end and **8.19** at the orange end, both clearing WCAG AA. The dark background is painting throughout. Committing:
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && git add -- src/styles/global.css src/layouts/BaseLayout.astro src/components/EmailSignup.astro src/data/newsletter`
+
+**Claude:** Yes, your instinct was exactly right — and it turned out to be the whole thing.
+
+## What you spotted
+
+The background isn't the design's dark navy. **Nothing was painting a background at all.** What you were seeing was your own browser's dark canvas. `global.css` had:
+
+```css
+background-color: var(--background) !important;
+```
+
+The tokens store bare HSL components (`30 25% 97%`) with no `hsl()` wrapper, so that value is invalid. But `!important` meant it still won the cascade and then computed to **transparent** — blocking BaseLayout's `background: #0f172a` the whole time.
+
+That's why the same page looked white to me and dark to you, and why my "make it black" fix was doomed: with no painted background, *no* text colour can be right.
+
+## Removing that one line fixed Scrapling by itself
+
+Without changing a single text colour:
+
+| Element | Contrast now |
+|---|---|
+| "Description" heading | **16.3 : 1** |
+| Body paragraphs | **6.96 : 1** |
+
+Both were unreadable; both now clear WCAG AA comfortably. The grey text was never the problem — it just had nothing to sit on.
+
+## The other two
+
+**Subscribe button** — the panel is a gradient from orange to light beige, and the cards used `rgba(0,0,0,0.25)`. At the beige end that composites to about `rgb(164,152,134)`, putting white text at ~2.5:1. Bumped to `0.5`: now **5.72** at the beige end, **8.19** at the orange end.
+
+**OpenSourceScribes** — the revert had undone it. Restored across `newsletters.ts`, `llms.txt`, and the feed title.
+
+I also wired `hideNewsletterCta`, which I'd declared earlier but never actually used — that's why all three publications were still duplicating at the foot of `/newsletters`.
+
+Six files, 18 insertions. No design-system changes. Committed `1236110`, local only.
+
+```bash
+git push
+```
+
+One thing worth flagging: production still has my earlier light-mode commit, so **the live site won't match your local until you push** — and the revert plus this fix need to go together.
+
+Also, `/server/scrapling` throws a local-only error (`D1_ERROR: no such table: user_reviews`) because your local D1 lacks that table. Pre-existing and unrelated to CSS, but it'll keep interrupting local checks on server pages.
