@@ -22,6 +22,8 @@ interface Props {
   ogType?: string;
   structuredData?: object;
   bodyClass?: string;
+  /** /newsletters already lists every publication — suppress the duplicate CTA there. */
+  hideNewsletterCta?: boolean;
 }
 
 const {
@@ -32,6 +34,7 @@ const {
   ogType = 'website',
   structuredData,
   bodyClass = '',
+  hideNewsletterCta = false,
 } = Astro.props;
 ---
 
@@ -98,7 +101,7 @@ const {
 <body class={bodyClass}>
   <Navbar />
   <slot />
-  <EmailSignup />
+  {!hideNewsletterCta && <EmailSignup />}
   <footer class="site-footer">
     <div class="footer-inner">
       <div class="footer-links">

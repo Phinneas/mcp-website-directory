@@ -120,7 +120,12 @@
 @layer base {
   body {
     font-family: 'Libre Franklin', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background-color: var(--background) !important;
+    /* Removed: `background-color: var(--background) !important`.
+       The tokens hold bare HSL components ("30 25% 97%") with no hsl()
+       wrapper, so the value was invalid. Being !important it still won the
+       cascade, then computed to transparent — which is why no page painted a
+       background and every visitor saw their own browser theme instead.
+       BaseLayout sets the intended #0f172a; this line was blocking it. */
   }
 
   h1, h2, h3, h4, h5, h6 {

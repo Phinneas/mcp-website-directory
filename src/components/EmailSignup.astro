@@ -67,7 +67,10 @@ import { NEWSLETTERS } from '../data/newsletters';
     }
 
     .pub-card {
-        background: rgba(0, 0, 0, 0.25);
+        /* The panel gradient ends in a light beige. At 0.25 the white card text
+           dropped to ~2.5:1 over that end and the "Subscribe" label all but
+           vanished. 0.5 keeps it legible across the whole gradient. */
+        background: rgba(0, 0, 0, 0.5);
         border: 1px solid rgba(255, 255, 255, 0.15);
         border-radius: 12px;
         padding: 1.25rem;
@@ -81,7 +84,7 @@ import { NEWSLETTERS } from '../data/newsletters';
 
     .pub-card:hover {
         transform: translateY(-3px);
-        background: rgba(0, 0, 0, 0.35);
+        background: rgba(0, 0, 0, 0.62);
         border-color: rgba(255, 255, 255, 0.35);
     }
 
