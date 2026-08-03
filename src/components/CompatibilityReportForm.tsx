@@ -346,7 +346,7 @@ const styles = `
 
 .status-badge.partial {
   background: rgba(245, 158, 11, 0.15);
-  color: #f59e0b;
+  color: #b45309;
 }
 
 .status-badge.broken {
@@ -374,7 +374,7 @@ const styles = `
 }
 
 .report-item .status.works { color: #22c55e; }
-.report-item .status.partial { color: #f59e0b; }
+.report-item .status.partial { color: #b45309; }
 .report-item .status.broken { color: #ef4444; }
 
 .report-item .version {

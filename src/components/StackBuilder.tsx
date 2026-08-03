@@ -626,7 +626,7 @@ const styles = `
 }
 
 .env-warning {
-  color: #f59e0b !important;
+  color: #b45309 !important;
   display: flex;
   align-items: center;
   gap: 0.35rem;

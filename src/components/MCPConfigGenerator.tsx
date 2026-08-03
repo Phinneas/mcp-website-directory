@@ -920,7 +920,7 @@ const styles = `
   border-radius: 4px;
   font-size: 0.75rem;
   font-family: 'SF Mono', Monaco, monospace;
-  color: #f59e0b;
+  color: #b45309;
 }
 
 @media (max-width: 768px) {

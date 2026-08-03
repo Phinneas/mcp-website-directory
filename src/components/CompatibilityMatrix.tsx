@@ -54,7 +54,7 @@ export default function CompatibilityMatrix({ servers }: CompatibilityMatrixProp
       case 'yes':
         return { icon: '✓', label: 'Works', color: '#10b981', bg: 'rgba(16, 185, 129, 0.1)' };
       case 'partial':
-        return { icon: '◐', label: 'Partial', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.1)' };
+        return { icon: '◐', label: 'Partial', color: '#b45309', bg: 'rgba(245, 158, 11, 0.1)' };
       case 'no':
         return { icon: '✗', label: 'No', color: '#ef4444', bg: 'rgba(239, 68, 68, 0.1)' };
       case 'unknown':
@@ -146,7 +146,7 @@ export default function CompatibilityMatrix({ servers }: CompatibilityMatrixProp
         </div>
         <div className="legend-item">
           <div className="legend-cell" style={{ backgroundColor: 'rgba(245, 158, 11, 0.1)' }}>
-            <span style={{ color: '#f59e0b' }}>◐</span>
+            <span style={{ color: '#b45309' }}>◐</span>
           </div>
           <span>Partial</span>
         </div>
@@ -832,7 +832,7 @@ const styles = `
 
 .result-badge.partial {
   background: rgba(245, 158, 11, 0.2);
-  color: #f59e0b;
+  color: #b45309;
 }
 
 .result-badge.unknown {
@@ -851,7 +851,7 @@ const styles = `
 
 .compatibility-note.warning {
   background: rgba(245, 158, 11, 0.1);
-  color: #f59e0b;
+  color: #b45309;
 }
 
 .note-icon {
@@ -946,7 +946,7 @@ const styles = `
 
 .aggregate-status.partial {
   background: rgba(245, 158, 11, 0.15);
-  color: #f59e0b;
+  color: #b45309;
 }
 
 .aggregate-status.broken {
@@ -988,7 +988,7 @@ const styles = `
 }
 
 .report-status.works { color: #22c55e; }
-.report-status.partial { color: #f59e0b; }
+.report-status.partial { color: #b45309; }
 .report-status.broken { color: #ef4444; }
 
 .report-details {

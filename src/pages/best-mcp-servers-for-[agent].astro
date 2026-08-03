@@ -72,7 +72,7 @@ function getScoreTier(server: MCPServer) {
   if (!audit) return null;
   if (audit.auditScore >= 80) return { color: '#22c55e', label: 'Strong', emoji: '🟢' };
   if (audit.auditScore >= 60) return { color: '#3b82f6', label: 'Good', emoji: '🔵' };
-  if (audit.auditScore >= 40) return { color: '#f59e0b', label: 'Fair', emoji: '🟡' };
+  if (audit.auditScore >= 40) return { color: '#b45309', label: 'Fair', emoji: '🟡' };
   return { color: '#ef4444', label: 'Weak', emoji: '🔴' };
 }
 
@@ -249,7 +249,7 @@ function getVerifiedStatus(server: MCPServer) {
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
     padding: 1rem;
-    color: #e2e8f0;
+    color: #000000;
     font-family: 'SF Mono', Monaco, monospace;
     font-size: 0.85rem;
     overflow-x: auto;
@@ -262,7 +262,7 @@ function getVerifiedStatus(server: MCPServer) {
     right: 0.5rem;
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #e2e8f0;
+    color: #000000;
     padding: 0.3rem 0.7rem;
     border-radius: 4px;
     font-size: 0.75rem;

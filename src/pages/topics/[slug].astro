@@ -186,7 +186,7 @@ const totalServers = servers.length;
             ? 'color:#818cf8;background:rgba(129,140,248,0.1)'
             : server.badge_tier === 'scanned'
               ? 'color:#22c55e;background:rgba(34,197,94,0.1)'
-              : 'color:#94a3b8;background:rgba(148,163,184,0.1)';
+              : 'color: #000000;background:rgba(148,163,184,0.1)';
           return (
             <div class="stack-server">
               <div class="ss-number">{i + 1}</div>
@@ -225,7 +225,7 @@ const totalServers = servers.length;
           {Object.entries(stack.envVars).map(([key, val]: [string, any]) => (
             <div class="env-row">
               <code class="env-key">{key}</code>
-              <span class="env-required" style={val.required ? 'color:#ef4444' : 'color:#64748b'}>{val.required ? 'Required' : 'Optional'}</span>
+              <span class="env-required" style={val.required ? 'color:#ef4444' : 'color: #000000'}>{val.required ? 'Required' : 'Optional'}</span>
               <span class="env-desc">{val.description}</span>
             </div>
           ))}
@@ -250,7 +250,7 @@ const totalServers = servers.length;
     max-width: 900px;
     margin: 0 auto;
     padding: 2rem 1.5rem;
-    color: #e2e8f0;
+    color: #000000;
   }
 
   .back-link {
@@ -273,11 +273,11 @@ const totalServers = servers.length;
     font-size: 1.75rem;
     font-weight: 700;
     margin: 0 0 0.35rem 0;
-    color: #f1f5f9;
+    color: #000000;
   }
 
   .topic-header p {
-    color: #94a3b8;
+    color: #000000;
     font-size: 0.95rem;
     margin: 0;
   }
@@ -302,14 +302,14 @@ const totalServers = servers.length;
   .diff-value {
     font-size: 1.15rem;
     font-weight: 700;
-    color: #f1f5f9;
+    color: #000000;
   }
 
   .diff-value.diff-install { color: #818cf8; font-size: 1rem; }
 
   .diff-label {
     font-size: 0.7rem;
-    color: #64748b;
+    color: #000000;
   }
 
   /* VS banner */
@@ -336,7 +336,7 @@ const totalServers = servers.length;
 
   .vs-why {
     font-size: 0.75rem;
-    color: #64748b;
+    color: #000000;
     margin-left: auto;
   }
 
@@ -368,7 +368,7 @@ const totalServers = servers.length;
     display: block;
     margin-top: 0.5rem;
     font-size: 0.75rem;
-    color: #94a3b8;
+    color: #000000;
   }
 
   /* Servers */
@@ -409,7 +409,7 @@ const totalServers = servers.length;
   .ss-name {
     font-weight: 600;
     font-size: 0.95rem;
-    color: #f1f5f9;
+    color: #000000;
     text-decoration: none;
   }
 
@@ -424,12 +424,12 @@ const totalServers = servers.length;
 
   .ss-score {
     font-size: 0.7rem;
-    color: #64748b;
+    color: #000000;
   }
 
   .ss-desc {
     font-size: 0.8rem;
-    color: #94a3b8;
+    color: #000000;
     margin: 0.35rem 0;
     line-height: 1.4;
   }
@@ -438,10 +438,10 @@ const totalServers = servers.length;
     display: flex;
     gap: 0.75rem;
     font-size: 0.7rem;
-    color: #64748b;
+    color: #000000;
   }
 
-  .ss-npm { color: #94a3b8; }
+  .ss-npm { color: #000000; }
 
   /* Benefits */
   .benefits-section { margin-bottom: 2rem; }
@@ -459,7 +459,7 @@ const totalServers = servers.length;
   .benefits-list li {
     padding: 0.35rem 0;
     font-size: 0.85rem;
-    color: #cbd5e1;
+    color: #000000;
   }
 
   /* Env vars */
@@ -500,7 +500,7 @@ const totalServers = servers.length;
 
   .env-desc {
     font-size: 0.8rem;
-    color: #94a3b8;
+    color: #000000;
   }
 
   /* Prerequisites */
@@ -517,7 +517,7 @@ const totalServers = servers.length;
 
   .prereqs-list li {
     font-size: 0.85rem;
-    color: #94a3b8;
+    color: #000000;
     padding: 0.2rem 0;
   }
 

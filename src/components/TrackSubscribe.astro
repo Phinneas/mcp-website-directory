@@ -68,16 +68,17 @@ const { newsletter, compact = false } = Astro.props;
   }
 
   .track-subscribe.compact .track-subscribe-copy h3 {
-    color: #f1f5f9;
+    color: #000000;
   }
 
   .track-subscribe.compact .track-subscribe-copy p,
   .track-subscribe.compact .track-subscribe-fallback {
-    color: #94a3b8;
+    color: #000000;
   }
 
   .track-subscribe.compact .track-subscribe-fallback a {
-    color: #f59e0b;
+    /* amber-700, not amber-500: #f59e0b only reaches 2.15:1 on the light page. */
+    color: #b45309;
   }
 
   .track-subscribe-embed {

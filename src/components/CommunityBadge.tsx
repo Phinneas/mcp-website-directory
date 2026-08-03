@@ -51,7 +51,7 @@ export function CommunityBadge({ serverId, avgRating, reviewCount, bookmarkCount
             fontSize: '0.7rem',
             fontWeight: 600,
             background: '#f59e0b22',
-            color: '#f59e0b',
+            color: '#b45309',
             border: '1px solid #f59e0b44',
           }}
           title={`${stats.reviewCount} review${stats.reviewCount !== 1 ? 's' : ''}, avg ${stats.avgRating?.toFixed(1) || '—'}`}

@@ -337,7 +337,7 @@ const styles = `
   color: rgba(255, 255, 255, 0.6);
 }
 
-.stat-item.pending .stat-value { color: #f59e0b; }
+.stat-item.pending .stat-value { color: #b45309; }
 .stat-item.approved .stat-value { color: #22c55e; }
 .stat-item.rejected .stat-value { color: #ef4444; }
 
@@ -419,7 +419,7 @@ const styles = `
 
 .status-badge.pending {
   background: rgba(245, 158, 11, 0.15);
-  color: #f59e0b;
+  color: #b45309;
 }
 
 .status-badge.approved {

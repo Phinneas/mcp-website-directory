@@ -25,7 +25,6 @@ const structuredData = {
   canonical="https://www.mymcpshelf.com/newsletters"
   structuredData={structuredData}
   hideNewsletterCta
-  bodyClass="newsletters-page"
 >
   <div class="container">
     <section class="hero-section">
@@ -56,23 +55,6 @@ const structuredData = {
     </div>
   </div>
 </BaseLayout>
-
-<!-- Global, but every selector is prefixed with the page-specific body class,
-     so nothing here can leak to other pages. -->
-<style is:global>
-  /* Black text needs a background we control. The ambient one is undefined —
-     it painted dark in dev and white in production, so text was invisible in
-     one or the other. Paint it white here and inherit black throughout. */
-  body.newsletters-page {
-    background: #ffffff;
-    color: #000000;
-  }
-
-  body.newsletters-page .container,
-  body.newsletters-page .container * {
-    color: #000000;
-  }
-</style>
 
 <style>
   .container {

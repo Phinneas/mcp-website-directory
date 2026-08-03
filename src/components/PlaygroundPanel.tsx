@@ -236,7 +236,7 @@ export default function PlaygroundPanel({ serverId, serverName, compact = false 
           🔬 Playground
         </h3>
         {init && (
-          <button onClick={resetSession} style={{ padding: '0.35rem 0.75rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.05)', color: '#94a3b8', cursor: 'pointer', fontSize: '0.8rem' }}>
+          <button onClick={resetSession} style={{ padding: '0.35rem 0.75rem', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.2)', background: 'rgba(255,255,255,0.05)', color: '#000000', cursor: 'pointer', fontSize: '0.8rem' }}>
             Reset
           </button>
         )}
@@ -252,7 +252,7 @@ export default function PlaygroundPanel({ serverId, serverName, compact = false 
               📊 {init.reliability.score}/100 {init.reliability.tier}
             </span>
           )}
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem', padding: '0.2rem 0.55rem', borderRadius: '12px', fontSize: '0.7rem', fontWeight: 600, backgroundColor: 'rgba(255,255,255,0.05)', color: '#94a3b8', border: '1px solid rgba(255,255,255,0.1)' }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem', padding: '0.2rem 0.55rem', borderRadius: '12px', fontSize: '0.7rem', fontWeight: 600, backgroundColor: 'rgba(255,255,255,0.05)', color: '#000000', border: '1px solid rgba(255,255,255,0.1)' }}>
             {init.mode === 'remote' ? '🌐 Remote' : '💻 Stdio Sandbox'}
           </span>
         </div>
@@ -261,7 +261,7 @@ export default function PlaygroundPanel({ serverId, serverName, compact = false 
       {/* Connection status */}
       {!init && !loading && (
         <div style={{ textAlign: 'center', padding: '2rem 0' }}>
-          <p style={{ color: '#94a3b8', margin: '0 0 1rem 0', fontSize: '0.9rem' }}>
+          <p style={{ color: '#000000', margin: '0 0 1rem 0', fontSize: '0.9rem' }}>
             Try {serverName} live in the browser with security context.
           </p>
           <button
@@ -275,7 +275,7 @@ export default function PlaygroundPanel({ serverId, serverName, compact = false 
 
       {loading && (
         <div style={{ textAlign: 'center', padding: '1.5rem 0' }}>
-          <p style={{ color: '#94a3b8' }}>Initializing sandbox...</p>
+          <p style={{ color: '#000000' }}>Initializing sandbox...</p>
         </div>
       )}
 
@@ -290,7 +290,7 @@ export default function PlaygroundPanel({ serverId, serverName, compact = false 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
           {/* Left: Tools & Input */}
           <div>
-            <h4 style={{ margin: '0 0 0.75rem 0', fontSize: '0.9rem', color: '#e2e8f0' }}>Available Tools</h4>
+            <h4 style={{ margin: '0 0 0.75rem 0', fontSize: '0.9rem', color: '#000000' }}>Available Tools</h4>
             <div style={{ maxHeight: '200px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
               {(init.tools || []).map((tool, i) => (
                 <div
@@ -305,14 +305,14 @@ export default function PlaygroundPanel({ serverId, serverName, compact = false 
                     fontSize: '0.8rem',
                   }}
                 >
-                  <div style={{ fontWeight: 600, color: '#e2e8f0' }}>{tool.name}</div>
-                  <div style={{ color: '#94a3b8', fontSize: '0.75rem', marginTop: '0.15rem' }}>
+                  <div style={{ fontWeight: 600, color: '#000000' }}>{tool.name}</div>
+                  <div style={{ color: '#000000', fontSize: '0.75rem', marginTop: '0.15rem' }}>
                     {tool.description?.slice(0, 80)}{tool.description?.length > 80 ? '...' : ''}
                   </div>
                 </div>
               ))}
               {init.tools.length === 0 && (
-                <div style={{ color: '#64748b', fontSize: '0.8rem', padding: '0.5rem' }}>
+                <div style={{ color: '#000000', fontSize: '0.8rem', padding: '0.5rem' }}>
                   No tools indexed. Install locally to explore: <code style={{ color: '#818cf8' }}>npx mymcpshelf add {serverId}</code>
                 </div>
               )}
@@ -321,13 +321,13 @@ export default function PlaygroundPanel({ serverId, serverName, compact = false 
             {/* Tool arguments form */}
             {selectedTool && (
               <div style={{ marginTop: '1rem' }}>
-                <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '0.85rem', color: '#e2e8f0' }}>
+                <h4 style={{ margin: '0 0 0.5rem 0', fontSize: '0.85rem', color: '#000000' }}>
                   Arguments for <code style={{ color: '#818cf8' }}>{selectedTool.name}</code>
                 </h4>
                 {selectedTool.inputSchema?.properties ? (
                   Object.entries(selectedTool.inputSchema.properties).map(([key, schema]: [string, any]) => (
                     <div key={key} style={{ marginBottom: '0.5rem' }}>
-                      <label style={{ display: 'block', fontSize: '0.75rem', color: '#94a3b8', marginBottom: '0.2rem' }}>
+                      <label style={{ display: 'block', fontSize: '0.75rem', color: '#000000', marginBottom: '0.2rem' }}>
                         {key} {selectedTool.inputSchema.required?.includes(key) && <span style={{ color: '#ef4444' }}>*</span>}
                       </label>
                       <input
@@ -349,7 +349,7 @@ export default function PlaygroundPanel({ serverId, serverName, compact = false 
                     </div>
                   ))
                 ) : (
-                  <div style={{ color: '#64748b', fontSize: '0.75rem' }}>No input schema defined.</div>
+                  <div style={{ color: '#000000', fontSize: '0.75rem' }}>No input schema defined.</div>
                 )}
                 <button
                   onClick={executeTool}
@@ -374,7 +374,7 @@ export default function PlaygroundPanel({ serverId, serverName, compact = false 
 
           {/* Right: Output & Logs */}
           <div>
-            <h4 style={{ margin: '0 0 0.75rem 0', fontSize: '0.9rem', color: '#e2e8f0' }}>Output</h4>
+            <h4 style={{ margin: '0 0 0.75rem 0', fontSize: '0.9rem', color: '#000000' }}>Output</h4>
             {toolResult ? (
               <pre style={{
                 background: 'rgba(0,0,0,0.4)',
@@ -382,7 +382,7 @@ export default function PlaygroundPanel({ serverId, serverName, compact = false 
                 borderRadius: '8px',
                 fontSize: '0.78rem',
                 lineHeight: 1.5,
-                color: '#e2e8f0',
+                color: '#000000',
                 maxHeight: '300px',
                 overflowY: 'auto',
                 whiteSpace: 'pre-wrap',
@@ -397,7 +397,7 @@ export default function PlaygroundPanel({ serverId, serverName, compact = false 
                 padding: '1.5rem',
                 borderRadius: '8px',
                 textAlign: 'center',
-                color: '#64748b',
+                color: '#000000',
                 fontSize: '0.8rem',
                 border: '1px solid rgba(255,255,255,0.05)',
               }}>
@@ -408,8 +408,8 @@ export default function PlaygroundPanel({ serverId, serverName, compact = false 
             {/* Logs */}
             {logs.length > 0 && (
               <div style={{ marginTop: '0.75rem' }}>
-                <h4 style={{ margin: '0 0 0.4rem 0', fontSize: '0.8rem', color: '#94a3b8' }}>Session Log</h4>
-                <div style={{ maxHeight: '120px', overflowY: 'auto', fontSize: '0.72rem', color: '#64748b', fontFamily: 'monospace' }}>
+                <h4 style={{ margin: '0 0 0.4rem 0', fontSize: '0.8rem', color: '#000000' }}>Session Log</h4>
+                <div style={{ maxHeight: '120px', overflowY: 'auto', fontSize: '0.72rem', color: '#000000', fontFamily: 'monospace' }}>
                   {logs.map((log, i) => <div key={i}>{log}</div>)}
                 </div>
               </div>

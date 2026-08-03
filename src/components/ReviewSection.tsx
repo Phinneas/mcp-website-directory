@@ -92,7 +92,7 @@ function repBadge(score?: number): { label: string; color: string; bg: string } 
   if (score == null) return null;
   if (score >= 50) return { label: 'Trusted Reviewer', color: '#22c55e', bg: '#22c55e22' };
   if (score >= 20) return { label: 'Established', color: '#3b82f6', bg: '#3b82f622' };
-  if (score >= 5) return { label: 'Active', color: '#f59e0b', bg: '#f59e0b22' };
+  if (score >= 5) return { label: 'Active', color: '#b45309', bg: '#f59e0b22' };
   if (score < 5 && score >= 0) return { label: 'New', color: '#64748b', bg: '#64748b22' };
   return null;
 }
@@ -265,7 +265,7 @@ export default function ReviewSection({ serverId, initialStats }: Props) {
       {/* Community Summary */}
       <div className="community-summary" style={{ display: 'flex', gap: '1.5rem', marginBottom: '1.5rem', alignItems: 'flex-start' }}>
         <div className="rating-overview" style={{ textAlign: 'center', minWidth: '100px' }}>
-          <div style={{ fontSize: '2.5rem', fontWeight: 700, color: '#f59e0b', lineHeight: 1 }}>{avgDisplay}</div>
+          <div style={{ fontSize: '2.5rem', fontWeight: 700, color: '#b45309', lineHeight: 1 }}>{avgDisplay}</div>
           <StarRating rating={stats?.avgRating ? Math.round(stats.avgRating) : 0} />
           <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.25rem' }}>{totalReviews} review{totalReviews !== 1 ? 's' : ''}</div>
         </div>
@@ -276,7 +276,7 @@ export default function ReviewSection({ serverId, initialStats }: Props) {
             return (
               <div key={star} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
                 <span style={{ fontSize: '0.75rem', color: '#94a3b8', width: '12px' }}>{star}</span>
-                <span style={{ color: '#f59e0b', fontSize: '0.75rem' }}>★</span>
+                <span style={{ color: '#b45309', fontSize: '0.75rem' }}>★</span>
                 <div style={{ flex: 1, height: '8px', background: '#1e293b', borderRadius: '4px', overflow: 'hidden' }}>
                   <div style={{ height: '100%', width: `${pct}%`, background: '#f59e0b', borderRadius: '4px', transition: 'width 0.3s' }} />
                 </div>
@@ -306,7 +306,7 @@ export default function ReviewSection({ serverId, initialStats }: Props) {
               style={{
                 background: 'linear-gradient(135deg, #f59e0b22, #f59e0b11)',
                 border: '1px solid #f59e0b44',
-                color: '#f59e0b',
+                color: '#b45309',
                 padding: '0.6rem 1.2rem',
                 borderRadius: '8px',
                 cursor: 'pointer',
@@ -529,7 +529,7 @@ export default function ReviewSection({ serverId, initialStats }: Props) {
                   padding: '0.4rem 0.6rem',
                   marginBottom: '0.5rem',
                   fontSize: '0.75rem',
-                  color: '#f59e0b',
+                  color: '#b45309',
                 }}>
                   ⏳ Pending moderation — your review is awaiting approval from a moderator before it becomes publicly visible.
                 </div>

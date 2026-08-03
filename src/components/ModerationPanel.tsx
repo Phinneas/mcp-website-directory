@@ -54,7 +54,7 @@ function repBadge(score?: number) {
   if (score == null) return null;
   if (score >= 50) return { label: 'Trusted', color: '#22c55e', bg: '#22c55e22' };
   if (score >= 20) return { label: 'Established', color: '#3b82f6', bg: '#3b82f622' };
-  if (score >= 5) return { label: 'Active', color: '#f59e0b', bg: '#f59e0b22' };
+  if (score >= 5) return { label: 'Active', color: '#b45309', bg: '#f59e0b22' };
   return { label: 'New', color: '#64748b', bg: '#64748b22' };
 }
 
@@ -211,7 +211,7 @@ export default function ModerationPanel() {
         <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
           {[
             { label: 'Flagged', value: stats.flagged, color: '#ef4444' },
-            { label: 'Pending Review', value: stats.pendingReview, color: '#f59e0b' },
+            { label: 'Pending Review', value: stats.pendingReview, color: '#b45309' },
             { label: 'Pending Reports', value: stats.pendingReports, color: '#f97316' },
             { label: 'Resolved Today', value: stats.resolvedToday, color: '#22c55e' },
             { label: 'Banned Users', value: stats.bannedUsers, color: '#64748b' },
@@ -325,7 +325,7 @@ export default function ModerationPanel() {
                     </div>
                   </div>
                   <div style={{ textAlign: 'right' }}>
-                    <span style={{ color: '#f59e0b', fontSize: '0.85rem' }}>
+                    <span style={{ color: '#b45309', fontSize: '0.85rem' }}>
                       {'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}
                     </span>
                     {review.report_count_pending != null && review.report_count_pending > 0 && (
@@ -346,7 +346,7 @@ export default function ModerationPanel() {
                   </p>
                 )}
                 {review.moderation_note && (
-                  <div style={{ fontSize: '0.75rem', color: '#f59e0b', marginTop: '0.5rem', fontStyle: 'italic' }}>
+                  <div style={{ fontSize: '0.75rem', color: '#b45309', marginTop: '0.5rem', fontStyle: 'italic' }}>
                     Mod note: {review.moderation_note}
                   </div>
                 )}

@@ -47,7 +47,7 @@ const TIER_CONFIG: Record<BadgeTier, {
 }> = {
   unverified: {
     label: 'Unverified',
-    color: '#94a3b8',
+    color: '#000000',
     bgColor: 'rgba(148,163,184,0.1)',
     borderColor: 'rgba(148,163,184,0.3)',
     icon: '⚪',
@@ -73,7 +73,7 @@ const STATUS_DISPLAY: Record<string, { label: string; color: string }> = {
   failed: { label: 'Failed', color: '#ef4444' },
   warning: { label: 'Warning', color: '#eab308' },
   error: { label: 'Error', color: '#f97316' },
-  skipped: { label: 'Skipped', color: '#64748b' },
+  skipped: { label: 'Skipped', color: '#000000' },
 };
 
 function ScoreBar({ score, label }: { score: number | null; label: string }) {
@@ -81,7 +81,7 @@ function ScoreBar({ score, label }: { score: number | null; label: string }) {
   const barColor = score >= 80 ? '#22c55e' : score >= 60 ? '#eab308' : score >= 40 ? '#f97316' : '#ef4444';
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-      <span style={{ fontSize: '0.75rem', color: '#94a3b8', width: '120px' }}>{label}</span>
+      <span style={{ fontSize: '0.75rem', color: '#000000', width: '120px' }}>{label}</span>
       <div style={{ flex: 1, height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '3px', overflow: 'hidden' }}>
         <div style={{ width: `${score}%`, height: '100%', background: barColor, borderRadius: '3px', transition: 'width 0.3s' }} />
       </div>
@@ -96,7 +96,7 @@ function LayerStatus({ status, label }: { status: string | null; label: string }
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem' }}>
       <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: display.color }} />
-      <span style={{ color: '#cbd5e1' }}>{label}</span>
+      <span style={{ color: '#000000' }}>{label}</span>
       <span style={{ color: display.color, marginLeft: 'auto', fontWeight: 500 }}>{display.label}</span>
     </div>
   );
@@ -159,19 +159,19 @@ export default function SecurityBadge({ serverId, scan, compact = false }: Secur
         <div style={{ flex: 1 }}>
           <div style={{ fontWeight: 600, color: config.color, fontSize: '0.9rem' }}>{config.label}</div>
           {tier === 'unverified' && (
-            <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '0.15rem' }}>
+            <div style={{ fontSize: '0.75rem', color: '#000000', marginTop: '0.15rem' }}>
               No automated security scan has been run on this server yet.
             </div>
           )}
           {tier !== 'unverified' && scan?.overall_score !== null && scan?.overall_score !== undefined && (
-            <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.15rem' }}>
+            <div style={{ fontSize: '0.75rem', color: '#000000', marginTop: '0.15rem' }}>
               Security score: {scan.overall_score}/100
               {scan.last_scan_at && ` — scanned ${new Date(scan.last_scan_at).toLocaleDateString()}`}
             </div>
           )}
         </div>
         {tier !== 'unverified' && (
-          <span style={{ color: '#64748b', fontSize: '0.75rem' }}>
+          <span style={{ color: '#000000', fontSize: '0.75rem' }}>
             {expanded ? '▲' : '▼'}
           </span>
         )}
@@ -204,7 +204,7 @@ export default function SecurityBadge({ serverId, scan, compact = false }: Secur
           {/* Per-layer scores */}
           {(scan.static_analysis?.score !== null || scan.socket_dev?.score !== null || scan.mcp_scan?.score !== null) && (
             <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-              <div style={{ fontSize: '0.75rem', color: '#64748b', marginBottom: '0.5rem', fontWeight: 600 }}>Layer Scores</div>
+              <div style={{ fontSize: '0.75rem', color: '#000000', marginBottom: '0.5rem', fontWeight: 600 }}>Layer Scores</div>
               {scan.static_analysis && <ScoreBar score={scan.static_analysis.score} label="Static" />}
               {scan.socket_dev && <ScoreBar score={scan.socket_dev.score} label="Socket.dev" />}
               {scan.mcp_scan && <ScoreBar score={scan.mcp_scan.score} label="mcp-scan" />}
@@ -215,7 +215,7 @@ export default function SecurityBadge({ serverId, scan, compact = false }: Secur
           {scan.socket_dev && (scan.socket_dev.dependency_health || scan.socket_dev.typosquat_risk) && (
             <div style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
               {scan.socket_dev.dependency_health && (
-                <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginBottom: '0.25rem' }}>
+                <div style={{ fontSize: '0.75rem', color: '#000000', marginBottom: '0.25rem' }}>
                   Dependency health: <span style={{
                     color: scan.socket_dev.dependency_health === 'clean' ? '#22c55e'
                       : scan.socket_dev.dependency_health === 'critical' ? '#ef4444'
@@ -240,7 +240,7 @@ export default function SecurityBadge({ serverId, scan, compact = false }: Secur
               <div style={{ fontSize: '0.75rem', color: '#ef4444', fontWeight: 600 }}>
                 ⚠ {scan.cve_watchlist.match_count} CVE/watchlist match(es) found
               </div>
-              <div style={{ fontSize: '0.7rem', color: '#94a3b8', marginTop: '0.25rem' }}>
+              <div style={{ fontSize: '0.7rem', color: '#000000', marginTop: '0.25rem' }}>
                 This server's package matches known vulnerabilities. Review the security details before installing.
               </div>
             </div>
@@ -248,7 +248,7 @@ export default function SecurityBadge({ serverId, scan, compact = false }: Secur
 
           {/* Tier explanation */}
           <div style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-            <div style={{ fontSize: '0.7rem', color: '#64748b', lineHeight: 1.5 }}>
+            <div style={{ fontSize: '0.7rem', color: '#000000', lineHeight: 1.5 }}>
               {tier === 'scanned' && 'Scanned: Automated security scanning passed (static analysis, dependency health, tool poisoning detection, CVE watchlist). This does not guarantee safety — always review server code before trusting with sensitive data.'}
               {tier === 'manually_reviewed' && 'Manually Reviewed: This server has been audited by the MyMCPShelf security team AND passed automated scanning. The highest confidence tier, but always verify before granting access to sensitive resources.'}
             </div>
