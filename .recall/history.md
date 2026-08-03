@@ -797,3 +797,380 @@ You're now `ahead 4` and still unpushed.
 ```bash
 git push
 ```
+
+**You:** so is all of brainscriblr on the new site now?
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && python3 -c " import glob,re,json,os # what's on the site site=[f for f in glob.glob('src/content/blog/*.md') if re`
+
+**Claude:** Not quite — **28 of 37 published posts**. Here's the gap:
+
+| | Count |
+|---|---|
+| Published in the Ghost export | 37 |
+| On the new site | 28 |
+| Held back (2026-03-09 batch) | 9 |
+| Drafts, never imported | 3 |
+
+The 9 held back are all from launch day, which I filtered with `--since=2026-03-31`. Reviewing them now, that cutoff was blunter than I described:
+
+**7 are genuine duplicates** — four versions of the OpenAI Pentagon story and three of the Accenture/Speedtest story. Those should stay out, or at most one survivor each.
+
+**2 are unique stories my filter caught by accident:**
+- *Microsoft and Mistral's 95%+ accurate document AI* (3,277 chars)
+- *A quiet week in AI news* (2,232 chars)
+
+Neither is a duplicate of anything. They just happened to be published the same day as the messy batch. That's a gap I introduced, and I should have caught it when I described the skip as "9 duplicated launch-day test runs" — only 7 were.
+
+The 3 drafts are correctly excluded: one is literally *"Test Connection from Worker"*, and the other two are earlier drafts of the Pentagon story you already published.
+
+Want me to import the two unique posts? That gets you to 30/37. Separately, if you want a survivor from each duplicate cluster, I'd take the longest version of each — the 8,993-char Pentagon piece and the 5,073-char Accenture one — which would make it 32/37, with the remaining 5 being true redundant variants.
+
+One thing that hasn't changed either way: brainscriblr.world is still serving the live Ghost site with all 37 posts, so nothing is lost while you decide.
+
+**You:** so add the 2 unique stories to the newsletter section
+  - `Bash: cd ~/Downloads && python3 -c " import json d=json.load(open('brainscriblr.ghost.2026-07-27-21-29-25.json')) posts=d['db'][0]['data']['posts'] for p in posts: if`
+
+**Claude:** Adding an `--only` flag so this cherry-pick is reproducible rather than a one-off hand edit:
+  - `Read: /Users/chesterbeard/CascadeProjects/mcp-website-directory/scripts/import-ghost-export.mjs`
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/scripts/import-ghost-export.mjs`
+  - `Read: /Users/chesterbeard/CascadeProjects/mcp-website-directory/scripts/import-ghost-export.mjs`
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/scripts/import-ghost-export.mjs`
+  - `Read: /Users/chesterbeard/CascadeProjects/mcp-website-directory/scripts/import-ghost-export.mjs`
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/scripts/import-ghost-export.mjs`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && node scripts/import-ghost-export.mjs ~/Downloads/brainscriblr.ghost.2026-07-27-21-29-25.json --only=microsoft-and-`
+
+**Claude:** Exactly the two, `--since` correctly bypassed. Running it, then the same cleanup pass the other 28 got:
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && node scripts/import-ghost-export.mjs ~/Downloads/brainscriblr.ghost.2026-07-27-21-29-25.json --only=microsoft-and-`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && python3 -c " import glob,re files=['src/content/blog/microsoft-and-mistrals-95-accurate-document-ai.md','src/conte`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && pnpm build 2>&1 | grep -iE "error|✗|failed|Complete!" | head -4 && echo "=== feed counts ===" && for f in dist/rss`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && f=dist/blog/microsoft-and-mistrals-95-accurate-document-ai/index.html && echo "=== byline ===" && grep -o "By [A-Z`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && git add scripts/import-ghost-export.mjs src/content/blog/microsoft-and-mistrals-95-accurate-document-ai.md src/con`
+
+**Claude:** Done — **AI Field Notes is now 30 posts**, up from 28. Sitewide feed went 83 → 85.
+
+Both went through the same treatment as the original batch:
+
+| Check | Result |
+|---|---|
+| `{{email}}` merge tags | 0 |
+| "Stay Connected" blocks | 0 |
+| Body `<h1>`s | 0 (3 demoted to h2) |
+| BrainScriblr references | 0 |
+| Byline | Chester Beard |
+| Track / CTA | `ai-field-notes` → "Subscribe to AI Field Notes" |
+| `Article` JSON-LD | present |
+| In `rss/ai-field-notes.xml` | yes |
+
+Rather than hand-editing two files, I added `--only=slug1,slug2` to the importer, since "the date cutoff caught something it shouldn't have" is a recurring shape. It deliberately bypasses `--since` — an explicit slug list is already a cherry-pick, so re-filtering it by date would just silently drop the posts again. I also fixed the importer's author fallback, which still said `'Buzz'` and would have reintroduced the inconsistency we normalized away.
+
+Neither post had a "Stay Connected" block or a leading rule, which fits: they're from launch day, before that template settled.
+
+Committed as `a5a8f65`. You're `ahead 1` — looks like you pushed the earlier four.
+
+```bash
+git push
+```
+
+That leaves 7 of 37 still out, all redundant variants (4 × OpenAI Pentagon, 3 × Accenture). Say the word if you want the longest of each cluster to make it 32.
+
+**You:** Why prioritize:
+
+1. This is the strongest link acquisition asset on the site — original research no competitor has
+2. Research findings buried in narrative paragraphs don&#39;t get cited; findings in tables and callout boxes do
+3. The June 29 scan is recency-timed perfectly — restructure it now while the news is fresh
+
+
+Specific enhancements:
+
+1. STAT CALLOUTS — Surface all key findings as standalone pull-quote boxes (not inline in paragraphs):
+2. "9 of 11 public MCP registries accepted malicious server submissions"
+3. "150M downloads affected by STDIO RCE vulnerabilities (CVE-2026-30615)"
+4. Registry-specific pass/fail rates
+5. Percentage of servers with vulnerable STDIO transport
+6. TABLE — Add a "Registry Security Scorecard." Columns: Registry | Result | Notes. Include all 11 registries scanned. This table alone will be cited by security researchers, journalists, and developer newsletters.
+7. FRAMEWORK REFERENCE — Add a section explicitly referencing and linking to the 6-dimension framework (June 4 post). Include a summary table of the 6 dimensions with brief descriptions of each.
+8. FAQ — Add at the bottom: "How do I know if an MCP server is safe?", "Which MCP registries are secure?", "What is CVE-2026-30615?", "How many MCP servers have security issues?"
+
+
+Expected outcome: Backlinks from security blogs, developer newsletters, and MCP ecosystem publications. AI citations in responses about MCP security landscape. This post should become the reference article for MCP security in 2026.
+
+Est. effort: 60 min
+
+**Claude:** Before restructuring I need to see what data the post actually contains — these are citable security claims, so I can only surface findings that are already there.
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory/src/content/blog && ls -la mcp-security-landscape-2026-what-our-scanner-found.mdx 2>/dev/null; echo "=== candidate se`
+  - `Read: /Users/chesterbeard/CascadeProjects/mcp-website-directory/src/content/blog/mcp-security-landscape-2026-what-our-scanner-found.mdx`
+
+**Claude:** Before I write anything, I need to check something. Several of the specified findings don't appear in this post — let me search the whole repo in case they live elsewhere.
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && echo "=== CVE-2026-30615 anywhere? ===" && grep -rl "2026-30615" . --exclude-dir=node_modules --exclude-dir=.git 2`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && echo "=== context of 'registry' match in data files (likely coincidental) ===" && grep -o ".\{60\}registries accep`
+
+**Claude:** The June 4 framework post is real (`mcp-security-standard.mdx`). But three of the specified findings are not — and the two "registry" hits were coincidental matches on an unrelated server description. Let me read the framework post so I can reference it accurately:
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && grep -n "^#\|^| \|dimension" src/content/blog/mcp-security-standard.mdx | head -40`
+
+**Claude:** Now I have what I need. The framework post is real and I can reference it accurately. Let me make the edits — starting with a key-findings table near the top:
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/src/content/blog/mcp-security-landscape-2026-what-our-scanner-found.mdx`
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/src/content/blog/mcp-security-landscape-2026-what-our-scanner-found.mdx`
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/src/content/blog/mcp-security-landscape-2026-what-our-scanner-found.mdx`
+
+**Claude:** Now the framework reference section, using the six dimensions as they're actually defined in the June 4 post:
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/src/content/blog/mcp-security-landscape-2026-what-our-scanner-found.mdx`
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/src/content/blog/mcp-security-landscape-2026-what-our-scanner-found.mdx`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && pnpm build 2>&1 | grep -iE "error|✗|failed|Complete!" | head -4 && f=dist/blog/mcp-security-landscape-2026-what-ou`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && f=dist/blog/mcp-security-landscape-2026-what-our-scanner-found/index.html && echo "=== internal links to framework`
+
+**Claude:** I did most of this, but **I did not build the Registry Security Scorecard, and I need to be direct about why.**
+
+## The problem
+
+Three of the specified findings do not exist in the post — or anywhere in the repo. I searched before concluding this:
+
+| Claim in the brief | Status |
+|---|---|
+| "9 of 11 registries accepted malicious submissions" | **No registry testing exists.** The post scans *your own 574 servers* against a CVE watchlist. It never submitted anything to another registry. |
+| "150M downloads affected… CVE-2026-30615" | **CVE-2026-30615 appears nowhere in the repo.** The post cites CVE-2025-49596, -68145, -53372, -53967, -66689, and CVE-2026-25536, -23744. Not that one. No "150M" figure either. |
+| "% of servers with vulnerable STDIO transport" | STDIO injection is described as a *pattern*; it was never measured as a percentage. |
+
+The only "registry" matches in the repo were coincidental — an unrelated server description containing *"agent registration pipelines, HCS-11 registration."*
+
+I won't write a table asserting that eleven named registries failed a malicious-submission test that wasn't run. That's fabricated security research, it names real organizations, and the stated goal is for journalists and security researchers to cite it. The fabrication risk isn't theoretical — it's the specific outcome being optimized for. Same reason I dropped the *"What is CVE-2026-30615?"* FAQ.
+
+If that scan genuinely happened and the data lives outside this repo, send it and I'll build the scorecard in ten minutes. It's a strong asset — I just can't invent the inputs.
+
+## What I did build
+
+**Key findings table** at the top — 10 rows, every figure sourced from the post: 574 scanned, 543 (94.6%) scannable, 8 flagged (1.4%), 3 critical / 5 high, CVSS 10.0 max, 30+ CVEs Jan–Feb, 50-entry watchlist.
+
+**Three pull-quote callouts** on the headline numbers, pulled out of narrative paragraphs into the amber-bordered blockquote style the template already renders.
+
+**Six-dimension framework section** — this part of the brief was accurate. The June 4 post is [mcp-security-standard.mdx](CascadeProjects/mcp-website-directory/src/content/blog/mcp-security-standard.mdx), and it does define six dimensions. I built the summary table from its actual scoring bands (Transport Encryption, Authentication Method, Token Lifecycle, Input Validation, Data Flow, Dependency Health — 0–20 each) and linked it twice, plus drew the specific connection that Dimension 4 is what the command-injection findings actually failed.
+
+**Five-question FAQ.** Four map to your list. I replaced the CVE-2026-30615 question with *"What is CVE-2025-49596?"* — the real CVSS 10.0 finding, which serves the same citation purpose. For *"Which MCP registries are secure?"* I answered honestly: we haven't tested others, here are the four criteria we'd apply to any registry including our own. That's still a citable answer, and refusing to publish an untested comparison is itself a credibility signal.
+
+Built clean: 1 `<h1>`, 4 tables, 4 blockquotes, internal links resolve. +61 lines, uncommitted.
+
+**One gap worth closing:** the FAQ has no `FAQPage` JSON-LD, so AI engines see prose, not structured Q&A — which is half the point. That needs a small change to the shared post template (a `faq` frontmatter field feeding an `@graph` alongside the existing `Article` schema). Want me to add it?
+
+**You:** need to switch tasks here. https://www.mymcpshelf.com/newsletters/ this is structured wrong. some blog posts were moved to this page and those should stay only on the /blog. and not live anywhere else. its not OSS Spotlight >> the nme is OpenSourceScibes. AI Field Notes can stay for now. Maybe something closer to my linkedin ai newsletter AI Dispatch might be a better name. also the title text for each newsletter is the same color or nearly as the background. this too needs to change. all the text on the /newsletter page should be just black not any fancy color than black
+
+**Claude:** Let me look at the live page — my local build renders differently from what you're describing, so I need to see the actual deployed state.
+  - `mcp__Claude_Browser__preview_start: https://www.mymcpshelf.com/newsletters/`
+  - `mcp__Claude_Browser__get_page_text: seed`
+  - `mcp__Claude_Browser__javascript_tool: javascript_exec`
+
+**Claude:** Now I can see both problems precisely. Let me check the display-name usages before renaming:
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && echo "=== 'OSS Spotlight' display-name usages ===" && grep -rn "OSS Spotlight" src/ --include="*.astro" --include=`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && sed -i '' 's|OSS Spotlight|OpenSourceScribes|g' src/data/newsletters.ts src/pages/newsletters.astro src/pages/rss/`
+
+**Claude:** Now the colors — everything black, including killing the gradient hero:
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/src/pages/newsletters.astro`
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/src/pages/newsletters.astro`
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/src/pages/newsletters.astro`
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/src/components/TrackSubscribe.astro`
+
+**Claude:** Now removing the duplicated newsletter picker — the sitewide `EmailSignup` repeats all three publications again at the bottom of the newsletters page itself:
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && grep -n "EmailSignup\|bodyClass\|hideNewsletter" src/layouts/BaseLayout.astro | head`
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/src/layouts/BaseLayout.astro`
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/src/layouts/BaseLayout.astro`
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/src/layouts/BaseLayout.astro`
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/src/pages/newsletters.astro`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && pnpm build 2>&1 | grep -iE "error|✗|failed|Complete!" | head -3 && f=dist/newsletters/index.html && echo "=== dupl`
+
+**Claude:** Build is clean and the duplicate picker is gone. The remaining non-black values are `TrackSubscribe`'s base rules — let me confirm the compact overrides actually win at runtime:
+  - `mcp__Claude_Browser__preview_start: mymcpshelf`
+  - `mcp__Claude_Browser__navigate: http://localhost:4323/newsletters`
+  - `mcp__Claude_Browser__javascript_tool: javascript_exec`
+
+**Claude:** Found a real gap — the `.entry-blog-link` wrapper inherits the global light body color. Rather than patch each selector, let me set the page container to black so everything inherits it:
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/src/pages/newsletters.astro`
+  - `mcp__Claude_Browser__javascript_tool: javascript_exec`
+  - `mcp__Claude_Browser__javascript_tool: javascript_exec`
+  - `mcp__Claude_Browser__computer: screenshot`
+
+**Claude:** The screenshot exposes the real bug: in **local dev the background renders dark**, in **production it renders white**. Black text is invisible in one, white text in the other — the background itself is undefined. Let me paint it explicitly rather than depend on ambient styling:
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/src/pages/newsletters.astro`
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/src/pages/newsletters.astro`
+  - `Read: /Users/chesterbeard/CascadeProjects/mcp-website-directory/src/pages/newsletters.astro`
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/src/pages/newsletters.astro`
+
+**Claude:** Making that block global would leak `.container` and `.hero-title` to every other page. Let me split it — only the body-scoped rules go global:
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/src/pages/newsletters.astro`
+  - `mcp__Claude_Browser__javascript_tool: javascript_exec`
+  - `mcp__Claude_Browser__computer: screenshot`
+
+**Claude:** Still dark — let me find what's actually painting it:
+  - `mcp__Claude_Browser__javascript_tool: javascript_exec`
+
+**Claude:** `prefersDark: true` and **nothing paints `body` at all** — not even BaseLayout's own `background: #0f172a`. That explains both symptoms. Let me find why the rule isn't applying:
+  - `mcp__Claude_Browser__javascript_tool: javascript_exec`
+
+**Claude:** My rule is in the stylesheet but isn't winning. Let me see the full `body` rule and what's overriding:
+  - `mcp__Claude_Browser__javascript_tool: javascript_exec`
+
+**Claude:** There it is — a layered rule sets `body { background: var(--background) }`. Let me check whether that variable actually resolves:
+  - `mcp__Claude_Browser__javascript_tool: javascript_exec`
+
+**You:** [Request interrupted by user]
+
+**You:** claude seems to be looking at just the header or hero section and not the pages themselves. scroll down to see the poor color choice. this should be an easy fix and i want it site wide. use font-color "back" for body text for the entire site.  https://www.mymcpshelf.com/server/scrapling on this page for example the text-color is some kind of grey which is harder to read.
+
+**Claude:** Understood — site-wide, not just the hero. Let me look at the page you cited.
+  - `mcp__Claude_Browser__navigate: https://www.mymcpshelf.com/server/scrapling`
+  - `mcp__Claude_Browser__javascript_tool: javascript_exec`
+
+**Claude:** Now I can see the mess — body text is spread across greys (`#66616b`, slate-400/500) *and* near-whites (`#f1f5f9`, white) that are invisible on the white canvas. Let me look at the token definitions driving it:
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && grep -n "foreground\|--background\|^body\|color:" src/styles/global.css | head -40`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && sed -n '115,150p' src/styles/global.css`
+
+**Claude:** Found the root cause — and it's site-wide, not cosmetic:
+
+```css
+background-color: var(--background) !important;   /* --background: 30 25% 97% */
+```
+
+Those tokens are raw HSL *components* with no `hsl()` wrapper, so the value is invalid and computes to **transparent**. That single `!important` line is why no page on the site paints a background — the canvas falls back to the browser's color-scheme default. That's why it looked white to you and dark to me. The same bug hits `color: var(--muted-foreground)`.
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/src/styles/global.css`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && sed -n '38,44p' src/styles/global.css`
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/src/styles/global.css`
+
+**Claude:** Now the same invalid-`var()` bug in color declarations — let me find every instance:
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && echo "=== bare var() used as a colour/background (invalid — needs hsl()) ===" && grep -rn "\(color\|background\|bo`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && sed -i '' \ -e 's|color: var(--muted-foreground);|color: hsl(var(--muted-foreground));|g' \ -e 's|border-color: va`
+
+**Claude:** `@layer base` loses to unlayered rules, so BaseLayout's `body { color: #f1f5f9 }` would still win. Fixing that too:
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/src/layouts/BaseLayout.astro`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && pnpm build 2>&1 | grep -iE "error|✗|failed|Complete!" | head -3`
+  - `mcp__Claude_Browser__navigate: http://localhost:4323/server/scrapling`
+  - `mcp__Claude_Browser__javascript_tool: javascript_exec`
+
+**Claude:** Background now paints (`#f9f7f5`) and body text is black. But some elements still set their own light colors. Let me find which are genuinely unreadable by computing contrast against their actual background:
+  - `mcp__Claude_Browser__javascript_tool: javascript_exec`
+
+**Claude:** 42 failures — but my detector treats CSS gradients as unpainted, so white-on-gradient (like the orange signup panel) is likely a false positive. Let me make it gradient-aware before changing anything:
+  - `mcp__Claude_Browser__javascript_tool: javascript_exec`
+
+**Claude:** Now the picture is clear. 27 true failures, and they're legacy "designed for a dark background" colors that never had a dark background to sit on. Let me see how widespread they are:
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && echo "=== light text colors used as color: (by file) ===" && grep -rn "color: *#\(f1f5f9\|94a3b8\|64748b\|cbd5e1\|`
+
+**Claude:** 316 occurrences — too many to change blindly, since some may sit on dark surfaces. Let me check what backgrounds these actually sit on:
+  - `mcp__Claude_Browser__javascript_tool: javascript_exec`
+
+**Claude:** There *are* legitimately dark surfaces in body content (code/config blocks at `rgb(30,30,46)`, `rgb(30,41,59)`) where light text is correct — so a blanket find-and-replace across those 316 lines would create the opposite bug. Let me identify them so I can exclude them:
+  - `mcp__Claude_Browser__javascript_tool: javascript_exec`
+
+**Claude:** The dark surfaces are a small named set (`.code-block`, `pre`, `.copy-button`, `.pub-card`, `.custom-mcp-cta`). That makes a safe two-step fix possible. First, which files hold the nav/footer light text I must *not* touch:
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && echo "=== chrome files containing target colors (MUST EXCLUDE) ===" && for f in src/components/Navbar.astro src/la`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && git rev-parse --short HEAD && FILES=$(grep -rl "color: *#\(f1f5f9\|94a3b8\|64748b\|cbd5e1\|e2e8f0\)" src/pages src`
+
+**Claude:** Shell mangled the newline-separated file list. Let me verify nothing was partially changed, then redo it properly:
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && echo "=== any accidental partial change? ===" && git status --short src/pages src/components | head -5 || true; ec`
+
+**Claude:** The `|` sed delimiter collided with my `\|` alternation — only 9 lines changed, and possibly malformed. Let me inspect the damage before continuing:
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && git diff --stat src/pages src/components -- ':!src/pages/newsletters.astro' ':!src/components/TrackSubscribe.astro`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && git diff --stat -- src/pages src/components | tail -10 && echo "=== changed color lines (excluding known newslette`
+
+**Claude:** No damage — the broken sed changed nothing outside my earlier newsletter work. Redoing with a safe delimiter and proper alternation:
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && BEFORE=$(grep -rEn "color: *#(f1f5f9|94a3b8|64748b|cbd5e1|e2e8f0)" src/pages src/components --include="*.astro" |`
+
+**Claude:** All 307 swept across 34 files (I anchored the pattern so `border-color`/`background-color` were left alone). Now restoring light text on the genuinely dark surfaces:
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/src/styles/global.css`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && pnpm build 2>&1 | grep -iE "error|✗|failed|Complete!" | head -3`
+
+**Claude:** Now auditing contrast across several page types — the sweep could have created the opposite bug on dark surfaces:
+  - `mcp__Claude_Browser__javascript_tool: javascript_exec`
+
+**Claude:** I introduced a regression — `.custom-mcp-cta.compact` is on a *light* background, so my restoration rule made it worse. Let me check both variants:
+  - `mcp__Claude_Browser__javascript_tool: javascript_exec`
+
+**Claude:** Precise now: `.custom-mcp-cta.compact` sits on a barely-tinted amber over the *light* page, and `.cta-button` has a **white** background — my `inherit` broke it. Fixing both:
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/src/styles/global.css`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && pnpm build 2>&1 | grep -icE "error|failed" | tr -d ' ' && echo "build errors above (0 = clean)"`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && pnpm build 2>&1 | grep -iE "error|failed|Complete!" | head -3`
+
+**Claude:** Build is clean (that match was the pre-existing SESSION advisory). Now auditing across page types:
+  - `mcp__Claude_Browser__navigate: http://localhost:4323/server/scrapling`
+  - `mcp__Claude_Browser__javascript_tool: javascript_exec`
+
+**Claude:** Regressions fixed, down to 22 (several are auditor artifacts from alpha-tinted badges). Let me confirm no regressions on other page types and that code blocks kept light text:
+  - `mcp__Claude_Browser__javascript_tool: javascript_exec`
+  - `mcp__Claude_Browser__navigate: http://localhost:4323/blog`
+  - `mcp__Claude_Browser__computer: screenshot`
+  - `mcp__Claude_Browser__resize_window: desktop`
+  - `mcp__Claude_Browser__javascript_tool: javascript_exec`
+
+**Claude:** Blog page is healthy — cards keep dark-on-white, hero subtitle now black, background paints. Let me confirm scope and commit:
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && git status --short | awk '{print $1}' | sort | uniq -c && echo "=== diff scope ===" && git diff --stat | tail -3`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && git add -A src/ && git commit -q -F - <<'MSG' && git log --oneline -1 fix(ui): paint the page background and make`
+
+**Claude:** Done site-wide, and the underlying cause was worse than a colour choice.
+
+## The actual bug
+
+```css
+background-color: var(--background) !important;   /* --background: 30 25% 97% */
+```
+
+The design tokens hold **bare HSL components** with no `hsl()` wrapper. That's an invalid colour value, so it computed to `transparent` — meaning **no page on the site painted a background at all**. The canvas fell through to the browser's light/dark preference.
+
+That's why we were describing different pages: yours rendered white, mine rendered dark. Same code. It also explains why near-white text like `#f1f5f9` was unreadable in production — it was white-on-white. The identical bug hit `color: var(--muted-foreground)`.
+
+## What changed
+
+- Wrapped every bare `var()` colour in `hsl()`. Background now actually resolves, to `#f9f7f5`.
+- Body text → black, set in **both** `global.css` and `BaseLayout`. This mattered: `@layer base` loses to unlayered rules regardless of order, so BaseLayout's `color: #f1f5f9` would have kept winning.
+- `--muted-foreground` → black. That was the 40%-lightness grey you flagged on the scrapling page.
+- Swept **307 legacy light text colours across 34 files**. I anchored the pattern so `border-color` and `background-color` weren't caught.
+
+## What I deliberately protected
+
+A blanket sweep would have created the inverse bug, so I checked what actually sits on dark surfaces first. Navbar and footer paint their own dark backgrounds — excluded entirely. Code blocks, copy buttons and the gradient CTA panel are dark inside body content, so they get an explicit light-text rule.
+
+I caught one self-inflicted regression during verification: `.custom-mcp-cta.compact` looked dark by class name but actually sits on a 6%-opacity amber tint over the light page, and `.cta-button` has a **white** background where my `color: inherit` made the label invisible. Both fixed and re-verified.
+
+Measured by contrast audit on `/server/scrapling`: **27 failures → 22**. The remainder are amber brand accents and alpha-tinted badges — deliberate design colours, not accidents. Code blocks still render light-on-dark, blog cards still dark-on-white.
+
+Committed as `57dcb12`, unpushed.
+
+Two things still outstanding from your message that I have **not** done: the earlier `/newsletters` items are in this working tree but I never resolved what *"some blog posts were moved to this page"* refers to — the page contains no posts, only the three publications and a "Read recent posts →" link each, so tell me which element you mean. And **AI Field Notes → AI Dispatch** I left alone, since you said "maybe."
+
+**You:** the newsletter are supposed to be for newsletters only. under OSS Spotlight there are 3 posts that dont belong because I havent written anything for that newsletter yet. i see now that AI Field notes soon to be AI Horizons Dispatch does have the correct newsletters and Signal Field has nothing as it should.
+
+**Claude:** Now I understand — those 3 are Shelf Spotlight blog posts that I incorrectly tagged into the track back in the first phase. Let me confirm which:
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory/src/content/blog && echo "=== posts tagged oss-spotlight ===" && grep -l "^track: oss-spotlight" *.md *.mdx 2>/dev/nu`
+
+**Claude:** All three are "Shelf Spotlight" site posts, not newsletter issues — my original tagging was wrong. Removing the track from each:
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory/src/content/blog && sed -i '' '/^track: oss-spotlight$/d' jetski-spotlight.mdx mcp-operator-kubernetes-native-deploym`
+
+**Claude:** Now the `/newsletters` page would still show "Read recent OpenSourceScribes posts →" pointing at an empty filter. Let me make that link conditional on the track actually having posts:
+  - `Read: /Users/chesterbeard/CascadeProjects/mcp-website-directory/src/pages/newsletters.astro`
+
+**Claude:** Got the rename — doing both in one pass.
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/src/pages/newsletters.astro`
+  - `Edit: /Users/chesterbeard/CascadeProjects/mcp-website-directory/src/pages/newsletters.astro`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && grep -rn "AI Field Notes" src/ --include="*.astro" --include="*.ts" --include="*.tsx" | sed 's|src/||'`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && grep -rlE "AI Field Notes" src/components src/pages src/data --include="*.astro" --include="*.ts" | tr '\n' '\0' |`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && pnpm build 2>&1 | grep -iE "\berror\b|failed|Complete!" | grep -v "SESSION" | head -3 && echo "=== feed counts ===`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && f=dist/newsletters/index.html && echo "=== names on page ===" && grep -oE '<h2[^>]*>[^<]+</h2>' $f | sed 's/<[^>]*`
+  - `Bash: cd ~/CascadeProjects/mcp-website-directory && git add -A src/ && git commit -q -F - <<'MSG' && git log --oneline -1 && git status -sb | head -1 content: empty t`
+
+**Claude:** Both done. You were right about the cause — those 3 posts were tagged into the track during my very first taxonomy pass, and that was my error: they're **Shelf Spotlight** site posts, not OpenSourceScribes issues.
+
+**Track counts now:**
+
+| Publication | Issues |
+|---|---|
+| OpenSourceScribes | 0 |
+| Signal Field | 0 |
+| AI Horizons Dispatch | 30 |
+
+The three posts keep every other frontmatter field and still render on `/blog` — only the `track:` line came out. Verified all three build.
+
+**AI Field Notes → AI Horizons Dispatch** across the picker, the RSS feed title, the nav pill, `llms.txt`, and page metadata.
+
+I kept the underlying slugs (`ai-field-notes`, `oss-spotlight`) as-is deliberately. They back the feed URLs and the `track:` value in all 30 post frontmatters, so renaming them would move `/rss/ai-field-notes.xml` and rewrite 30 files for a cosmetic gain. Worth doing before you connect Beehiiv, not after — say the word and it's a clean sweep while nothing external consumes those URLs.
+
+One thing I added while I was in there: the "Read recent … posts →" link now only renders for tracks that actually have issues. Previously all three showed it, so OpenSourceScribes would have linked to an empty filter. Now only Dispatch has it, while all three remain subscribable — which is the point, since you can sign up for a publication before it ships. The `/blog` filter bar likewise shows only **All** and **AI Horizons Dispatch**.
+
+Committed `271e7d9`. You're `ahead 3` — the earlier site-wide colour fix (`57dcb12`) is in that stack too.
+
+```bash
+git push
+```
