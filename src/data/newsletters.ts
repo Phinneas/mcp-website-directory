@@ -9,8 +9,18 @@ export interface NewsletterInfo {
   name: string;
   tagline: string;
   description: string;
-  /** Beehiiv embed form URL (https://embeds.beehiiv.com/...). null until the publication exists — components fall back to the RSS link. */
+  /**
+   * Beehiiv embed form URL — the `src` from the iframe Beehiiv generates under
+   * Grow → Subscribe Forms → Embed (looks like https://embeds.beehiiv.com/<uuid>).
+   * null until the publication exists; components fall back to the RSS link.
+   */
   beehiivEmbedUrl: string | null;
+  /**
+   * Height in px of the Beehiiv iframe. Beehiiv shows this in the snippet it
+   * generates — copy it across, because the iframe cannot size itself and a
+   * too-small value silently clips the form. Defaults to 220.
+   */
+  embedHeight?: number;
   feedPath: string;
 }
 
