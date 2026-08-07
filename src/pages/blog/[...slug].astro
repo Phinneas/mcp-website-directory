@@ -1,49 +1,77 @@
 ---
-import { getCollection, type CollectionEntry } from 'astro:content';
+import { getCollection, getEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import TrackSubscribe from '../../components/TrackSubscribe.astro';
 import { newsletterForTrack } from '../../data/newsletters';
+import { getExternalPostBySlug, externalPostToHtml } from '../../utils/externalPosts';
 
-export const prerender = true;
+// SSR: a slug may resolve to a D1-backed external_posts row (Signal Field
+// etc.) instead of a collection entry, so paths can no longer be generated
+// statically. Collection posts still render via Content the same as before.
+export const prerender = false;
 
-// Generate static paths for all blog posts
-export async function getStaticPaths() {
-  const posts = await getCollection('blog', ({ data }) => !data.draft);
-  return posts.map((post) => ({
-    params: { slug: post.slug },
-    props: post,
-  }));
+const { slug } = Astro.params;
+if (!slug) return new Response('Not found', { status: 404 });
+
+const db = (Astro.locals as any).runtime?.env?.DB as D1Database | undefined;
+
+const collectionEntry = await getEntry('blog', slug);
+const post =
+  collectionEntry && !collectionEntry.data.draft
+    ? {
+        source: 'collection' as const,
+        title: collectionEntry.data.title,
+        description: collectionEntry.data.description,
+        author: collectionEntry.data.author,
+        date: collectionEntry.data.date,
+        track: collectionEntry.data.track,
+        tags: collectionEntry.data.tags,
+        image: collectionEntry.data.image,
+        entry: collectionEntry,
+      }
+    : null;
+
+const externalPost = !post ? await getExternalPostBySlug(db, slug) : null;
+
+if (!post && !externalPost) {
+  return new Response('Not found', { status: 404 });
 }
 
-type Props = CollectionEntry<'blog'>;
+const Content = post ? (await post.entry.render()).Content : null;
+const html = externalPost ? externalPostToHtml(externalPost.body_markdown) : '';
 
-const post = Astro.props;
-const { Content } = await post.render();
+const title = post ? post.title : externalPost!.title;
+const description = post ? post.description : externalPost!.description;
+const author = post ? post.author : externalPost!.author;
+const date = post ? post.date : externalPost!.published_at;
+const track = post ? post.track : externalPost!.track;
+const tags = post ? post.tags : undefined;
+const image = post ? post.image : externalPost!.image;
 
-const newsletter = newsletterForTrack(post.data.track);
-const canonical = `https://www.mymcpshelf.com/blog/${post.slug}`;
+const newsletter = newsletterForTrack(track);
+const canonical = `https://www.mymcpshelf.com/blog/${slug}`;
 
 const structuredData = {
   '@context': 'https://schema.org',
   '@type': 'Article',
-  headline: post.data.title,
-  description: post.data.description,
-  datePublished: new Date(post.data.date).toISOString(),
-  author: { '@type': 'Person', name: post.data.author },
+  headline: title,
+  description,
+  datePublished: new Date(date).toISOString(),
+  author: { '@type': 'Person', name: author },
   publisher: {
     '@type': 'Organization',
     name: 'My MCP Shelf',
     url: 'https://www.mymcpshelf.com',
   },
   mainEntityOfPage: canonical,
-  ...(post.data.image ? { image: `https://www.mymcpshelf.com${post.data.image}` } : {}),
-  ...(post.data.tags ? { keywords: post.data.tags.join(', ') } : {}),
+  ...(image ? { image: image.startsWith('http') ? image : `https://www.mymcpshelf.com${image}` } : {}),
+  ...(tags ? { keywords: tags.join(', ') } : {}),
 };
 ---
 
 <BaseLayout
-    title={`${post.data.title} | My MCP Shelf Blog`}
-    description={post.data.description}
+    title={`${title} | My MCP Shelf Blog`}
+    description={description}
     canonical={canonical}
     ogType="article"
     structuredData={structuredData}
@@ -51,18 +79,18 @@ const structuredData = {
     <div class="container">
         <main>
             <article class="article">
-                <h1>{post.data.title}</h1>
+                <h1>{title}</h1>
 
                 <div class="article-meta">
-                    <p>By {post.data.author} • {new Date(post.data.date).toLocaleDateString('en-US', {
+                    <p>By {author} • {new Date(date).toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric'
                     })}</p>
 
-                    {post.data.tags && (
+                    {tags && (
                         <div class="article-tags">
-                            {post.data.tags.map((tag) => (
+                            {tags.map((tag) => (
                                 <span class="tag">#{tag}</span>
                             ))}
                         </div>
@@ -70,7 +98,7 @@ const structuredData = {
                 </div>
 
                 <div class="content">
-                    <Content />
+                    {Content ? <Content /> : <Fragment set:html={html} />}
                 </div>
 
                 {newsletter && <TrackSubscribe newsletter={newsletter} />}

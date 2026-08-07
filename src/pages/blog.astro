@@ -1,20 +1,58 @@
 ---
-export const prerender = true;
+// SSR: external_posts (Signal Field, Brainscriblr, etc.) are written to D1 at
+// request time by Worker pipelines, never committed here — so this page can no
+// longer be fully static. See src/utils/externalPosts.ts.
+export const prerender = false;
 import { getCollection } from 'astro:content';
 import HeaderNewsletter from '../components/HeaderNewsletter.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { NEWSLETTERS } from '../data/newsletters';
+import { getExternalPosts } from '../utils/externalPosts';
 
-const blogPosts = (await getCollection('blog')).filter((post) => !post.data.draft);
+const db = (Astro.locals as any).runtime?.env?.DB as D1Database | undefined;
+
+const collectionPosts = (await getCollection('blog')).filter((post) => !post.data.draft);
+const externalPosts = await getExternalPosts(db);
+
+// Unify both sources into the shape the template already renders.
+type BlogListItem = {
+  slug: string;
+  title: string;
+  description: string;
+  author: string;
+  date: string | Date;
+  track?: string;
+  tags?: string[];
+};
+
+const posts: BlogListItem[] = [
+  ...collectionPosts.map((post) => ({
+    slug: post.slug,
+    title: post.data.title,
+    description: post.data.description,
+    author: post.data.author,
+    date: post.data.date,
+    track: post.data.track,
+    tags: post.data.tags,
+  })),
+  ...externalPosts.map((post) => ({
+    slug: post.slug,
+    title: post.title,
+    description: post.description,
+    author: post.author,
+    date: post.published_at,
+    track: post.track,
+  })),
+];
 
 // Sort by date (newest first)
-const sortedPosts = blogPosts.sort((a, b) =>
-  new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
+const sortedPosts = posts.sort((a, b) =>
+  new Date(b.date).getTime() - new Date(a.date).getTime()
 );
 
 // Only offer filter chips for tracks that actually have posts
 const activeTracks = NEWSLETTERS.filter((n) =>
-  sortedPosts.some((post) => post.data.track === n.track)
+  sortedPosts.some((post) => post.track === n.track)
 );
 
 const pageTitle = "My MCP Shelf Blog";
@@ -27,9 +65,9 @@ const structuredData = {
   description: 'Insights, updates, and guides for the MCP ecosystem',
   blogPost: sortedPosts.map((post) => ({
     '@type': 'BlogPosting',
-    headline: post.data.title,
-    datePublished: new Date(post.data.date).toISOString(),
-    author: { '@type': 'Person', name: post.data.author },
+    headline: post.title,
+    datePublished: new Date(post.date).toISOString(),
+    author: { '@type': 'Person', name: post.author },
     url: `https://www.mymcpshelf.com/blog/${post.slug}`,
   })),
 };
@@ -79,25 +117,25 @@ const structuredData = {
       {sortedPosts.length > 0 ? (
         <div class="blog-grid">
           {sortedPosts.map((post) => (
-            <article class="blog-card" data-track={post.data.track ?? ''}>
+            <article class="blog-card" data-track={post.track ?? ''}>
               <h3>
                 <a href={`/blog/${post.slug}`}>
-                  {post.data.title}
+                  {post.title}
                 </a>
               </h3>
               <div class="blog-meta">
-                By {post.data.author} • {new Date(post.data.date).toLocaleDateString('en-US', {
+                By {post.author} • {new Date(post.date).toLocaleDateString('en-US', {
                   year: 'numeric',
                   month: 'long',
                   day: 'numeric'
                 })}
               </div>
               <p class="blog-description">
-                {post.data.description}
+                {post.description}
               </p>
-              {post.data.tags && (
+              {post.tags && (
                 <div class="blog-tags">
-                  {post.data.tags.map((tag: string) => (
+                  {post.tags.map((tag: string) => (
                     <span class="tag">#{tag}</span>
                   ))}
                 </div>

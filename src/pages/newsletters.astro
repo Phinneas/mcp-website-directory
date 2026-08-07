@@ -1,14 +1,22 @@
 ---
-export const prerender = true;
+// SSR: postCount() needs to see D1-backed external_posts (Signal Field etc.),
+// not just the git-backed collection.
+export const prerender = false;
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import TrackSubscribe from '../components/TrackSubscribe.astro';
 import { NEWSLETTERS } from '../data/newsletters';
+import { getExternalPosts } from '../utils/externalPosts';
+
+const db = (Astro.locals as any).runtime?.env?.DB as D1Database | undefined;
 
 // A track with no issues yet shouldn't advertise a "read recent posts" link
 // that lands on an empty filter.
 const published = await getCollection('blog', ({ data }) => !data.draft);
-const postCount = (track: string) => published.filter((p) => p.data.track === track).length;
+const externalPosts = await getExternalPosts(db);
+const postCount = (track: string) =>
+  published.filter((p) => p.data.track === track).length +
+  externalPosts.filter((p) => p.track === track).length;
 
 const structuredData = {
   '@context': 'https://schema.org',

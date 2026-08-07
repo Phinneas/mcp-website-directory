@@ -10,7 +10,9 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   site: 'https://www.mymcpshelf.com',
   output: 'server',
-  adapter: cloudflare(),
+  // configPath pinned: an unrelated wrangler.jsonc at ~ was shadowing this
+  // project's wrangler.toml during local config resolution.
+  adapter: cloudflare({ platformProxy: { configPath: './wrangler.toml' } }),
   trailingSlash: 'never',
   prefetch: { prefetchAll: true, defaultStrategy: 'hover' },
   integrations: [react(), mdx(), sitemap({
