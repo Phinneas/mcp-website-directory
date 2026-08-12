@@ -180,6 +180,8 @@ export interface AgentHygieneScore {
   assessedAt: string;
   /** Human-readable note per dimension, if needed */
   notes?: Record<string, string>;
+  /** URL to the source repo README used for scoring */
+  sourceUrl: string;
 }
 
 function makeScore(
@@ -189,6 +191,7 @@ function makeScore(
   boundaries: number,
   auditability: number,
   maintenance: number,
+  sourceUrl: string,
   notes?: Record<string, string>
 ): AgentHygieneScore {
   return {
@@ -196,6 +199,7 @@ function makeScore(
     scores: { schema, scoping, boundaries, auditability, maintenance },
     total: schema + scoping + boundaries + auditability + maintenance,
     assessedAt: '2026-08-12',
+    sourceUrl,
     notes,
   };
 }
@@ -231,6 +235,7 @@ export const agentHygieneScores: Record<string, AgentHygieneScore> = {
     2, // Boundaries: structured queries, restricted access modes, security docs
     2, // Auditability: OpenTelemetry built-in, connection pooling
     2, // Maintenance: Google official, active
+    'https://github.com/googleapis/genai-toolbox',
     { boundaries: 'Structured queries and restricted access modes documented. IAM integration.' }
   ),
 
@@ -241,6 +246,7 @@ export const agentHygieneScores: Record<string, AgentHygieneScore> = {
     2, // Boundaries: policies-and-governance.md, toolset scoping docs
     1, // Auditability: GitHub Actions logs exist, but no per-tool idempotency keys
     2, // Maintenance: GitHub official, 20.6k★
+    'https://github.com/github/github-mcp-server',
     { auditability: 'GitHub Actions / Copilot audit logs exist externally. No built-in idempotency keys in MCP layer.' }
   ),
 
@@ -251,6 +257,7 @@ export const agentHygieneScores: Record<string, AgentHygieneScore> = {
     2, // Boundaries: explicit allow/deny flags, local-only guarantee
     1, // Auditability: verbose mode available, no structured audit trail
     2, // Maintenance: Microsoft official, 16.7k★
+    'https://github.com/microsoft/playwright-mcp',
     { auditability: 'Verbose mode logs actions to stdout. No structured audit or idempotency.', scoping: 'Local-only stdio means no network auth needed. URL allow/deny for web scope.' }
   ),
 
@@ -261,6 +268,7 @@ export const agentHygieneScores: Record<string, AgentHygieneScore> = {
     2, // Boundaries: Security section in README, scope documentation per server
     1, // Auditability: CloudTrail logging exists at AWS level, no per-tool MCP audit
     2, // Maintenance: AWS Labs official, 5.3k★
+    'https://github.com/awslabs/mcp',
     { auditability: 'AWS CloudTrail provides audit at the API level. No idempotency keys at MCP layer.' }
   ),
 
@@ -273,6 +281,7 @@ export const agentHygieneScores: Record<string, AgentHygieneScore> = {
     1, // Boundaries: well-documented but no explicit security policy doc
     1, // Auditability: no built-in logging/audit framework
     2, // Maintenance: 16k★, 1M+ daily downloads, Prefect-backed
+    'https://github.com/jlowin/fastmcp',
     { scoping: 'As a framework, auth/scoping is delegated to server implementers. Horizon adds SSO/RBAC separately.', boundaries: 'Excellent documentation but no standalone security policy page.' }
   ),
 
@@ -283,6 +292,7 @@ export const agentHygieneScores: Record<string, AgentHygieneScore> = {
     1, // Boundaries: well-documented, but no explicit "won't do" security policy
     0, // Auditability: no built-in logging or idempotency
     2, // Maintenance: 8.3k★, active development
+    'https://github.com/oramasearch/serena',
     { auditability: 'Operations are local file edits. No structured audit trail. LSP provides some safety net.', boundaries: 'File/workspace scoping is implicit via local-only architecture. No explicit security policy.' }
   ),
 
@@ -292,10 +302,11 @@ export const agentHygieneScores: Record<string, AgentHygieneScore> = {
     'upstash-context7',
     1, // Schema: basic params for library/version lookups
     1, // Scoping: single API key, read-only but no per-tool scope
-    1, // Boundaries: documented but no explicit security policy
+    2, // Boundaries: SECURITY.md present, disclaimer in README, docs site
     0, // Auditability: no logging or idempotency
-    2, // Maintenance: 25.1k★, active
-    { schema: 'Simple typed params (library name, version tokens). No enums for library names.' }
+    2, // Maintenance: 60.7k★, Upstash-backed, active
+    'https://github.com/upstash/context7',
+    { schema: 'Simple typed params (library name, version tokens). No enums for library names.', boundaries: 'SECURITY.md file in repo plus disclaimer and docs site. Upgraded from 1→2 after re-fetch.' }
   ),
 
   'activepieces-mcp': makeScore(
@@ -304,7 +315,8 @@ export const agentHygieneScores: Record<string, AgentHygieneScore> = {
     1, // Scoping: single API key for all 280+ integrations
     1, // Boundaries: some docs, no explicit security policy
     0, // Auditability: no logging or idempotency
-    2, // Maintenance: 16.3k★, active
+    2, // Maintenance: 21.7k★, active, company-backed
+    'https://github.com/activepieces/activepieces',
     { scoping: 'One API key unlocks all 280+ integrations. No per-tool scoping.' }
   ),
 
@@ -315,7 +327,8 @@ export const agentHygieneScores: Record<string, AgentHygieneScore> = {
     1, // Boundaries: documented, but no security policy
     0, // Auditability: no logging
     1, // Maintenance: framework docs, maintained as part of Mastra ecosystem
-    { maintenance: 'Maintained as part of the broader Mastra ecosystem. Not a standalone server.' }
+    'https://github.com/mastra-ai/mastra',
+    { maintenance: 'Maintained as part of the broader Mastra ecosystem (27.1k★). Not a standalone server.' }
   ),
 
   'figma-context-mcp': makeScore(
@@ -324,7 +337,8 @@ export const agentHygieneScores: Record<string, AgentHygieneScore> = {
     1, // Scoping: PAT grants full Figma access, no per-tool scope
     1, // Boundaries: some docs, no explicit security policy
     0, // Auditability: no logging or idempotency
-    2, // Maintenance: 9.8k★, active
+    2, // Maintenance: active dev, 272 test cases, comprehensive docs
+    'https://github.com/1yhy/figma-context-mcp',
     { scoping: 'Figma PAT grants full read access to all files. No per-file or per-tool scoping.' }
   ),
 
@@ -334,8 +348,9 @@ export const agentHygieneScores: Record<string, AgentHygieneScore> = {
     2, // Scoping: local-only stdio, no network auth
     0, // Boundaries: minimal docs, no security policy
     0, // Auditability: no logging
-    2, // Maintenance: 28.4k★, community project
-    { boundaries: 'Community wrapper. No explicit security policy or scope documentation.', schema: 'Simpler schema than the Microsoft official version.' }
+    1, // Maintenance: community project, Python, PyPI published
+    'https://github.com/dennisgl/mcp-playwright-scraper',
+    { boundaries: 'Community wrapper. No explicit security policy or scope documentation.', schema: 'Single-tool server (scrape_to_markdown). Simpler schema than the Microsoft official version.', maintenance: 'Small community project. Downgraded from 2→1 after re-fetch; repo is not the large Playwright project.' }
   ),
 
   'panel-1panel': makeScore(
@@ -344,7 +359,8 @@ export const agentHygieneScores: Record<string, AgentHygieneScore> = {
     1, // Scoping: API key = full panel access
     1, // Boundaries: documented tools, server management scope
     0, // Auditability: no logging or idempotency
-    2, // Maintenance: 30.6k★, 1Panel official
+    2, // Maintenance: 36.5k★ (1Panel main repo), official MCP sub-project
+    'https://github.com/1panel-dev/mcp-1panel',
     { scoping: 'One API key grants full 1Panel access (websites, databases, apps).', schema: 'Shell-string inputs flagged in existing security audit.' }
   ),
 
@@ -353,11 +369,12 @@ export const agentHygieneScores: Record<string, AgentHygieneScore> = {
   'zen-mcp-server': makeScore(
     'zen-mcp-server',
     1, // Schema: basic params for multi-tool server
-    1, // Scoping: local-only, no auth
-    0, // Boundaries: minimal docs, no security policy
-    0, // Auditability: no logging
-    1, // Maintenance: 6k★, community
-    { boundaries: 'Minimal documentation. No explicit security policy or scope constraints.', scoping: 'Local-only helps, but mixed shell-string inputs are a risk factor.' }
+    1, // Scoping: local-only, requires API keys for external model providers
+    0, // Boundaries: DISABLED_TOOLS config exists but no security policy
+    0, // Auditability: LOG_LEVEL env var exists but no structured audit trail
+    1, // Maintenance: 11.4k★, community (BeehiveInnovations)
+    'https://github.com/beehiveinnovations/pal-mcp-server',
+    { boundaries: 'No SECURITY.md. DISABLED_TOOLS is for context optimization, not security boundaries.', scoping: 'Local-only helps, but requires API keys for external AI model providers.' }
   ),
 
   'ghidra-mcp': makeScore(
@@ -366,8 +383,9 @@ export const agentHygieneScores: Record<string, AgentHygieneScore> = {
     2, // Scoping: local-only, bound to Ghidra instance
     0, // Boundaries: no security policy, HTTP on localhost
     0, // Auditability: no logging
-    1, // Maintenance: 5.6k★, community
-    { boundaries: 'HTTP server on localhost with no auth. No documented security policy.', scoping: 'Local-only and bound to Ghidra, which limits scope naturally.' }
+    1, // Maintenance: small community project
+    'https://github.com/athukarad109/ghidra-mcp',
+    { boundaries: 'HTTP server on localhost:17664 with no auth. No documented security policy.', scoping: 'Local-only and bound to Ghidra, which limits scope naturally.' }
   ),
 };
 

@@ -15,6 +15,7 @@ const leaderboard = Object.entries(agentHygieneScores)
     total: score.total,
     tier: getHygieneTier(score.total),
     assessedAt: score.assessedAt,
+    sourceUrl: score.sourceUrl,
   }));
 
 const structuredData = {
@@ -189,6 +190,9 @@ const structuredData = {
               <span class="leaderboard-score" style={`color: ${entry.tier.color}`}>
                 {entry.total}/10
               </span>
+              <a href={entry.sourceUrl} target="_blank" rel="noopener noreferrer" class="leaderboard-source" title="Source repo">
+                Source ↗
+              </a>
             </a>
           ))}
         </div>
@@ -465,6 +469,21 @@ const structuredData = {
       font-weight: 800;
       min-width: 3rem;
       text-align: right;
+    }
+
+    .leaderboard-source {
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: #b45309;
+      text-decoration: none;
+      white-space: nowrap;
+      opacity: 0.8;
+      transition: opacity 0.15s;
+    }
+
+    .leaderboard-source:hover {
+      opacity: 1;
+      text-decoration: underline;
     }
 
     /* Comparison table */

@@ -213,6 +213,15 @@ export default function AgentHygieneBadge({ score, compact = false }: AgentHygie
             >
               View rubric →
             </a>
+            {' · '}
+            <a
+              href={score.sourceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: '#b45309', textDecoration: 'none' }}
+            >
+              Source ↗
+            </a>
           </div>
         </div>
       )}
