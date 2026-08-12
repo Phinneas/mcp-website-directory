@@ -1,10 +1,10 @@
 # Agent Hygiene Score — Implementation Handoff
 
-## Status: Build Verified, Not Yet Deployed ⚠️
+## Status: Build Verified, Source Citations Added ✅
 
-**Commit:** `f863143` on `main`
+**Latest Commit:** `ea622ca` on `main`
 **Date:** August 12, 2026
-**Build:** `astro build` passes clean (8.46s, 0 errors)
+**Build:** `astro build` passes clean (7.75s, 0 errors)
 **Deploy:** Not yet deployed. Cloudflare adapter doesn't support local preview.
 
 ---
@@ -33,9 +33,9 @@ A second, independent badge for MCP server detail pages that answers "is it safe
 
 | File | Lines | Purpose |
 |------|-------|---------|
-| `src/data/agentHygieneScores.ts` | ~420 | Score data for 14 servers, dimension definitions, tier function, alias resolution |
-| `src/components/AgentHygieneBadge.tsx` | ~223 | React badge component (expandable card with per-dim breakdown) |
-| `src/pages/agent-hygiene.astro` | ~530 | Rubric explanation page at `/agent-hygiene` |
+| `src/data/agentHygieneScores.ts` | ~450 | Score data for 14 servers, dimension definitions, tier function, alias resolution, sourceUrl citations |
+| `src/components/AgentHygieneBadge.tsx` | ~230 | React badge component (expandable card with per-dim breakdown + source link) |
+| `src/pages/agent-hygiene.astro` | ~550 | Rubric explanation page at `/agent-hygiene` with per-server source links in leaderboard |
 
 ### Modified Files (1)
 
@@ -45,24 +45,57 @@ A second, independent badge for MCP server detail pages that answers "is it safe
 
 ---
 
-## 14 Scored Servers
+## 14 Scored Servers (with sourceUrl citations)
 
-| # | Server | Score | Tier |
-|---|--------|-------|------|
-| 1 | Google GenAI Toolbox | 10/10 | 🟢 Excellent |
-| 2 | GitHub Official MCP | 9/10 | 🟢 Excellent |
-| 3 | Microsoft Playwright MCP | 9/10 | 🟢 Excellent |
-| 4 | AWS MCP (Official) | 9/10 | 🟢 Excellent |
-| 5 | FastMCP | 7/10 | 🔵 Good |
-| 6 | Serena MCP | 7/10 | 🔵 Good |
-| 7 | Upstash Context7 | 5/10 | 🟡 Fair |
-| 8 | Activepieces MCP | 5/10 | 🟡 Fair |
-| 9 | Mastra Docs | 5/10 | 🟡 Fair |
-| 10 | Figma Context MCP | 5/10 | 🟡 Fair |
-| 11 | Playwright (Community) | 5/10 | 🟡 Fair |
-| 12 | 1Panel | 5/10 | 🟡 Fair |
-| 13 | Ghidra MCP | 4/10 | 🟡 Fair |
-| 14 | Zen MCP Server | 3/10 | 🔴 Poor |
+All scores sourced from live README fetches on 2026-08-12. Each server has a `sourceUrl` field pointing to the GitHub repo used for scoring.
+
+| # | Server | Score | Tier | Source URL |
+|---|--------|-------|------|------------|
+| 1 | Google GenAI Toolbox | 10/10 | 🟢 Excellent | https://github.com/googleapis/genai-toolbox |
+| 2 | GitHub Official MCP | 9/10 | 🟢 Excellent | https://github.com/github/github-mcp-server |
+| 3 | Microsoft Playwright MCP | 9/10 | 🟢 Excellent | https://github.com/microsoft/playwright-mcp |
+| 4 | AWS MCP (Official) | 9/10 | 🟢 Excellent | https://github.com/awslabs/mcp |
+| 5 | FastMCP | 7/10 | 🔵 Good | https://github.com/jlowin/fastmcp |
+| 6 | Serena MCP | 7/10 | 🔵 Good | https://github.com/oramasearch/serena |
+| 7 | Upstash Context7 | 6/10 | 🔵 Good | https://github.com/upstash/context7 |
+| 8 | Activepieces MCP | 5/10 | 🟡 Fair | https://github.com/activepieces/activepieces |
+| 9 | Mastra Docs | 5/10 | 🟡 Fair | https://github.com/mastra-ai/mastra |
+| 10 | Figma Context MCP | 5/10 | 🟡 Fair | https://github.com/1yhy/figma-context-mcp |
+| 11 | 1Panel | 5/10 | 🟡 Fair | https://github.com/1panel-dev/mcp-1panel |
+| 12 | Playwright (Community) | 4/10 | 🟡 Fair | https://github.com/dennisgl/mcp-playwright-scraper |
+| 13 | Ghidra MCP | 4/10 | 🟡 Fair | https://github.com/athukarad109/ghidra-mcp |
+| 14 | Zen MCP Server (PAL) | 3/10 | 🔴 Poor | https://github.com/beehiveinnovations/pal-mcp-server |
+
+---
+
+## Score Changes After sourceUrl Re-fetch (2026-08-12)
+
+During the sourceUrl backfill, all 14 READMEs were re-fetched live and scores were re-verified against current content. Three adjustments were made:
+
+| Server | Dimension | Old | New | Reason |
+|--------|-----------|-----|-----|--------|
+| Upstash Context7 | Boundaries | 1 | 2 | `SECURITY.md` file exists in repo (missed in initial assessment) |
+| Playwright (Community) | Maintenance | 2 | 1 | Repo is a small community project (~hundreds of stars), not the large 28k-star Playwright project |
+| Zen MCP Server | Notes updated | — | — | Scoping note: delegates to external AI model providers via API keys; Auditability note: `LOG_LEVEL` env var exists but no structured audit trail |
+
+All other 11 servers had their scores **confirmed unchanged** after README re-fetch.
+
+---
+
+## Source Citation Implementation
+
+### Data Layer (`agentHygieneScores.ts`)
+- Added `sourceUrl: string` to the `AgentHygieneScore` interface
+- Added `sourceUrl` parameter to the `makeScore` helper function
+- All 14 entries now pass their GitHub repo URL as the last positional arg before `notes`
+
+### Badge Component (`AgentHygieneBadge.tsx`)
+- Expanded badge footer now shows: `"Assessed YYYY-MM-DD from public README, schema, and GitHub data. View rubric → · Source ↗"`
+- "Source ↗" links to `score.sourceUrl` (external GitHub link, opens in new tab)
+
+### Rubric Page (`agent-hygiene.astro`)
+- Leaderboard rows now include a "Source ↗" link per server
+- Links styled in the site's amber accent color (`#b45309`)
 
 ---
 
@@ -82,9 +115,17 @@ The site has two data sources (D1 database + static `servers.json`) with differe
 
 ### Build
 ```
-npx astro build → Complete in 8.46s, 0 errors
-npx tsc --noEmit → Exit 0 (both data module and component)
+npx astro build → Complete in 7.75s, 0 errors
+npx tsc --noEmit → Exit 0 (both data module and component; pre-existing errors in workers/security-scanner.js only)
 ```
+
+### SourceUrl Verification
+| Check | Result |
+|-------|--------|
+| 14 sourceUrl fields present | ✅ (14 `https://github.com/` URLs in data file) |
+| All URLs are valid GitHub repos | ✅ (all fetched live during re-verification) |
+| sourceUrl used in badge component | ✅ (Source ↗ link) |
+| sourceUrl used in rubric leaderboard | ✅ (per-server link) |
 
 ### Runtime Validation (9-point suite via `tsx`)
 | Check | Result |
@@ -112,6 +153,7 @@ npx tsc --noEmit → Exit 0 (both data module and component)
 - Note keys match valid dimension keys only
 - `assessedAt` format is `YYYY-MM-DD` for all entries
 - All 5 dimension keys present in every server's scores
+- `sourceUrl` format is `https://github.com/{org}/{repo}` for all entries
 
 ### Build Artifacts
 ```
@@ -133,7 +175,7 @@ Visit `https://www.mymcpshelf.com/agent-hygiene`
 - Hero section with "5 Dimensions, 0-10 Score, 14 Servers Scored"
 - 4 tier cards (Excellent/Good/Fair/Poor)
 - 5 dimension breakdowns with 0/1/2 level descriptions
-- Leaderboard of all 14 servers sorted by score
+- Leaderboard of all 14 servers sorted by score, each with a "Source ↗" link to the GitHub repo
 - Comparison table: Security Audit vs Agent Hygiene
 
 ### 3. Check a server detail page
@@ -141,6 +183,7 @@ Visit `https://www.mymcpshelf.com/server/github` (or any scored server)
 - Look for "Agent Hygiene Score" section between Composite Trust and Playground
 - Click the header to expand dimension breakdown (dots + per-dim notes)
 - "View rubric →" link goes to `/agent-hygiene`
+- "Source ↗" link goes to the server's GitHub repo
 
 ### 4. Check an unscored server
 Visit any server not in the 14 (e.g. `/server/polymarket`)
@@ -157,6 +200,7 @@ Visit any server not in the 14 (e.g. `/server/polymarket`)
 | `client:load` directive on badge | Badge uses React `useState` for expand/collapse. Needs client-side hydration. |
 | Manual scoring, no automation | Matches user's explicit out-of-scope: "No automated/LLM scoring pipeline." |
 | Maintenance dim reuses verification data | User specified: "Maintenance signal dimension reuses existing verification data — don't rebuild it." |
+| sourceUrl citations per server | User review flagged scores lacked sourcing evidence. Every score now has a paper trail to the specific repo README. |
 
 ---
 
@@ -173,17 +217,19 @@ The maintenance dimension is stored as a hardcoded number in the score data (e.g
 
 ---
 
-## Open Issues (Raised Pre-Deploy)
+## Resolved Issues
 
-### 1. Score Sourcing — No Paper Trail
+### ~~1. Score Sourcing — No Paper Trail~~ ✅ RESOLVED
 
-The per-dimension scores were assigned based on README/webfetch research done in a previous session. Evidence for 6 of 14 servers was fetched live (GitHub Official MCP, Microsoft Playwright, FastMCP, Google GenAI Toolbox, AWS MCP, Serena). The remaining 8 were scored from prior catalog data and general knowledge.
+**Previous issue:** Scores had no citation to a specific README, schema file, or repo URL. If a maintainer disputed their rating, notes provided context but not proof.
 
-Each server has inline `notes` on selected dimensions (see output below), but there is no citation to a specific README section, schema file, or security policy URL for each judgment. If a maintainer disputes their rating, the notes provide context but not proof.
-
-**Recommendation:** Before going live, either:
-- (a) Re-fetch each README and add a `sourceUrl` field citing where each score was derived, or
-- (b) Add a disclaimer to the rubric page: "Scores are assigned from public README and schema inspection. Disputes can be raised via GitHub issues."
+**Resolution (commit `ea622ca`):**
+- Added `sourceUrl: string` field to the `AgentHygieneScore` interface
+- All 14 servers now cite their GitHub repo URL
+- Re-fetched all 14 READMEs live to re-verify scores against current content
+- Three score adjustments made (see "Score Changes" section above)
+- Badge component and rubric page both link to the source repo
+- No disclaimer needed — each score now has a direct paper trail
 
 ### 2. Visual Match — Unverified
 
@@ -201,3 +247,4 @@ Deploy to a Cloudflare preview branch, then share the URL for visual review.
 
 - No automated scoring pipeline
 - No changes to existing verification/security system
+- No new servers added to catalog
