@@ -32,6 +32,8 @@ import BookmarkToggle from '../../components/BookmarkToggle';
 import { CommunityBadge, AuthStatus } from '../../components/CommunityBadge';
 import PlaygroundPanel from '../../components/PlaygroundPanel';
 import SecurityBadge from '../../components/SecurityBadge';
+import AgentHygieneBadge from '../../components/AgentHygieneBadge';
+import { getAgentHygieneScore } from '../../data/agentHygieneScores';
 
 // servers.json is bundled by Vite at build time — safe to import statically
 import serversData from '../../data/servers.json';
@@ -111,6 +113,7 @@ const auditTier = auditData ? getScoreTier(auditData.auditScore) : null;
 const greenScore = (server as any).greenScore || null;
 const reliability = (server as any).reliability || null;
 const compositeTrust = (server as any).compositeTrust || null;
+const agentHygiene = getAgentHygieneScore(server.id) || null;
 
 // Security scan data from D1 (Task 13 — automated scanning)
 let scanData: any = null;
@@ -298,6 +301,24 @@ const structuredData = {
         {compositeTrust && (
           <section class="composite-trust-section">
             <CompositeTrustBadge compositeTrust={compositeTrust} />
+          </section>
+        )}
+
+        <!-- Agent Hygiene Score — is this server safe to hand an AI agent? -->
+        {agentHygiene && (
+          <section class="agent-hygiene-section">
+            <h2>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2a4 4 0 0 1 4 4v2a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z"></path>
+                <path d="M16 14H8a4 4 0 0 0-4 4v2h16v-2a4 4 0 0 0-4-4z"></path>
+                <circle cx="12" cy="6" r="1"></circle>
+              </svg>
+              Agent Hygiene Score
+            </h2>
+            <p class="agent-hygiene-intro">
+              Is this server safe to hand an autonomous AI agent? This score evaluates schema strictness, least-privilege scoping, declared boundaries, auditability, and maintenance — separate from our security audit.
+            </p>
+            <AgentHygieneBadge client:load score={agentHygiene} />
           </section>
         )}
 
@@ -838,6 +859,36 @@ const structuredData = {
 
   .playground-section {
     margin-bottom: 1.5rem;
+  }
+
+  /* Agent Hygiene Section */
+  .agent-hygiene-section {
+    background: rgba(255,255,255,0.04);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .agent-hygiene-section h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #000000;
+    margin: 0 0 0.75rem 0;
+  }
+
+  .agent-hygiene-section h2 svg {
+    color: #000000;
+  }
+
+  .agent-hygiene-intro {
+    font-size: 0.85rem;
+    color: #000000;
+    margin: 0 0 1rem 0;
+    line-height: 1.5;
   }
 
   .security-scan-section {

@@ -1,0 +1,532 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/deployment-page.css';
+import { HYGIENE_DIMENSIONS, agentHygieneScores, getHygieneTier } from '../data/agentHygieneScores';
+
+const pageTitle = 'Agent Hygiene Score | MyMCPShelf';
+const pageDescription = 'A 5-dimension rubric scoring MCP servers on agent safety: schema strictness, least-privilege scoping, declared boundaries, auditability, and maintenance signal. Separate from our security audit — this answers "is it safe to hand an AI agent?"';
+const canonicalUrl = 'https://www.mymcpshelf.com/agent-hygiene';
+
+// Sort scored servers by total descending for the leaderboard
+const leaderboard = Object.entries(agentHygieneScores)
+  .sort(([, a], [, b]) => b.total - a.total)
+  .map(([id, score]) => ({
+    id,
+    total: score.total,
+    tier: getHygieneTier(score.total),
+    assessedAt: score.assessedAt,
+  }));
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "Agent Hygiene Score — MCP Server Agent Safety Rubric",
+  "description": pageDescription,
+  "url": canonicalUrl,
+  "totalTime": "PT15M",
+  "step": HYGIENE_DIMENSIONS.map((d, i) => ({
+    "@type": "HowToStep",
+    "position": i + 1,
+    "name": `Evaluate ${d.name}`,
+    "text": d.description,
+  })),
+};
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  canonical={canonicalUrl}
+  structuredData={structuredData}
+>
+  <div class="page-wrapper">
+    <!-- Hero -->
+    <section class="hero-section">
+      <div class="hero-content">
+        <h1 class="page-title">Agent Hygiene Score</h1>
+        <p class="page-subtitle">
+          A separate dimension from our security audit — this answers a different question: <strong>is this MCP server safe to hand an autonomous AI agent?</strong> Five scored dimensions, each 0–2, summed to a total out of 10.
+        </p>
+        <div class="hero-badges">
+          <span class="hero-badge">5 Dimensions</span>
+          <span class="hero-badge">0-10 Score</span>
+          <span class="hero-badge">14 Servers Scored</span>
+          <span class="hero-badge">🤖 Agent-First</span>
+        </div>
+      </div>
+    </section>
+
+    <main class="page-container">
+      <!-- Why This Exists -->
+      <section class="section">
+        <h2 class="section-title">Why a Separate Score?</h2>
+        <p class="section-description">
+          Our <a href="/audit-manifesto" style="color: #b45309; text-decoration: underline;">Security Audit</a> measures whether a server is safe to <em>deploy</em>. The Agent Hygiene Score measures whether it's safe to hand to an <em>autonomous AI agent</em> — a higher bar. An agent doesn't read warning labels. It doesn't ask for confirmation. It follows instructions, and if the server gives it too much power or too little structure, things break in ways the agent can't detect.
+        </p>
+        <div class="info-grid">
+          <div class="info-card">
+            <h3>🛡️ Security Audit</h3>
+            <p><strong>Question:</strong> "Is this server secure?"<br>
+            <strong>Scope:</strong> Transport encryption, auth, token lifecycle, input validation, data flow, dependencies.<br>
+            <strong>Audience:</strong> DevOps, security teams, procurement.<br>
+            <strong>Score:</strong> 0–100</p>
+          </div>
+          <div class="info-card info-card--highlight">
+            <h3>🤖 Agent Hygiene Score</h3>
+            <p><strong>Question:</strong> "Is it safe to let an AI agent use this?"<br>
+            <strong>Scope:</strong> Schema strictness, least-privilege, boundaries, auditability, maintenance.<br>
+            <strong>Audience:</strong> AI engineers, agent builders, Claude/Cursor users.<br>
+            <strong>Score:</strong> 0–10</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Score Tiers -->
+      <section class="section">
+        <h2 class="section-title">Score Tiers</h2>
+        <p class="section-description">
+          The total score (sum of all five dimensions) maps to one of four tiers. Each tier comes with a concrete recommendation for agent deployment.
+        </p>
+        <div class="tier-grid">
+          <div class="tier-card tier-card--excellent">
+            <div class="tier-score">8-10</div>
+            <div class="tier-label">Excellent</div>
+            <div class="tier-emoji">🟢</div>
+            <p class="tier-description">Safe for autonomous agent use with broad permissions. The server has strict schemas, scoped access, documented boundaries, and auditability. You can trust an agent to use this server without constant oversight.</p>
+          </div>
+          <div class="tier-card tier-card--good">
+            <div class="tier-score">6-7</div>
+            <div class="tier-label">Good</div>
+            <div class="tier-emoji">🔵</div>
+            <p class="tier-description">Reasonable with scoped permissions. The server is well-built but may lack auditability or have broad credentials. Give the agent only the tools it needs and monitor initial behavior.</p>
+          </div>
+          <div class="tier-card tier-card--fair">
+            <div class="tier-score">4-5</div>
+            <div class="tier-label">Fair</div>
+            <div class="tier-emoji">🟡</div>
+            <p class="tier-description">Use with caution. Limit tool access and monitor agent behavior carefully. The server may lack documentation, auditability, or fine-grained scoping. Not ideal for fully autonomous workflows.</p>
+          </div>
+          <div class="tier-card tier-card--poor">
+            <div class="tier-score">0-3</div>
+            <div class="tier-label">Poor</div>
+            <div class="tier-emoji">🔴</div>
+            <p class="tier-description">Not recommended for autonomous agent use. The server has minimal schema validation, no scoping, no boundaries, and no auditability. Manually review every action the agent takes through this server.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5 Dimensions -->
+      <section class="section">
+        <h2 class="section-title">The Five Dimensions</h2>
+        <p class="section-description">
+          Each dimension is scored 0–2 and summed for the total. Low scores in one dimension aren't necessarily disqualifying — context matters. A local-only server scoring 0 on scoping may still be safe if it runs on the user's machine.
+        </p>
+
+        {HYGIENE_DIMENSIONS.map((dim) => (
+          <div class="dimension-card" id={`dim-${dim.key}`}>
+            <h3 class="dimension-header">
+              <span class="dimension-icon">{dim.icon}</span>
+              {dim.name}
+            </h3>
+            <p class="dimension-description">{dim.description}</p>
+            <div class="dimension-levels">
+              {dim.levels.map((level) => (
+                <div class={`level-row level-row--${level.score === 2 ? 'green' : level.score === 1 ? 'yellow' : 'red'}`}>
+                  <div class="level-score">{level.score}/2</div>
+                  <div class="level-content">
+                    <div class="level-label">{level.label}</div>
+                    <div class="level-desc">{level.description}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </section>
+
+      <!-- Methodology -->
+      <section class="section">
+        <h2 class="section-title">Methodology</h2>
+        <p class="section-description">
+          Scores are assigned from public information only — README files, schema definitions, GitHub metadata, and official documentation. No automated scanning, no LLM inference, no access to proprietary code.
+        </p>
+        <div class="methodology-grid">
+          <div class="info-card">
+            <h3>📋 What We Read</h3>
+            <p>GitHub README (primary source), tool schema definitions (JSON Schema, type annotations), GitHub API (stars, forks, commit frequency, issue response time), official documentation sites.</p>
+          </div>
+          <div class="info-card">
+            <h3>🔄 Maintenance Signal</h3>
+            <p>The Maintenance dimension reuses existing verification data from our catalog — GitHub activity metrics, issue responsiveness, and organization backing. We don't re-score this from scratch.</p>
+          </div>
+          <div class="info-card">
+            <h3>⚠️ Limitations</h3>
+            <p>Static analysis only. We can't verify runtime behavior, undocumented APIs, or internal security measures. A server scoring 10/10 may still have unknown vulnerabilities. This is a starting point, not a guarantee.</p>
+          </div>
+          <div class="info-card">
+            <h3>🗓️ Assessment Date</h3>
+            <p>All current scores were assessed on August 12, 2026. Servers are re-evaluated periodically. If a server adds OAuth scoping or audit logging after our assessment, the score will be updated in the next review cycle.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Leaderboard -->
+      <section class="section">
+        <h2 class="section-title">Scored Servers</h2>
+        <p class="section-description">
+          Initial set of 14 flagship servers scored at launch. This list will grow as we evaluate more servers. Click any server to see the full breakdown on its detail page.
+        </p>
+        <div class="leaderboard">
+          {leaderboard.map((entry, index) => (
+            <a href={`/server/${entry.id}`} class="leaderboard-row" style={`border-left-color: ${entry.tier.color}`}>
+              <span class="leaderboard-rank">#{index + 1}</span>
+              <span class="leaderboard-name">
+                {entry.id.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
+              </span>
+              <span class="leaderboard-tier" style={`color: ${entry.tier.color}; border-color: ${entry.tier.color}40; background: ${entry.tier.color}0d`}>
+                {entry.tier.emoji} {entry.tier.label}
+              </span>
+              <span class="leaderboard-score" style={`color: ${entry.tier.color}`}>
+                {entry.total}/10
+              </span>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <!-- Relationship to Security Audit -->
+      <section class="section">
+        <h2 class="section-title">How This Relates to the Security Audit</h2>
+        <p class="section-description">
+          These are complementary, not competing signals. A server can score well on security (proper transport, auth, input validation) but poorly on agent hygiene (no schema strictness, no audit trail). Both scores appear on each server's detail page.
+        </p>
+        <div class="comparison-table-wrapper">
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Aspect</th>
+                <th>Security Audit (0-100)</th>
+                <th>Agent Hygiene (0-10)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Primary question</td>
+                <td>Is this server secure to deploy?</td>
+                <td>Is this server safe for an autonomous agent?</td>
+              </tr>
+              <tr>
+                <td>Audience</td>
+                <td>Security teams, DevOps, procurement</td>
+                <td>AI engineers, agent builders, end users</td>
+              </tr>
+              <tr>
+                <td>Dims covered</td>
+                <td>Transport, auth, tokens, input, data flow, deps</td>
+                <td>Schema, scoping, boundaries, audit, maintenance</td>
+              </tr>
+              <tr>
+                <td>Overlap</td>
+                <td>Input validation ↔ Schema strictness</td>
+                <td>Auth method ↔ Least-privilege scoping</td>
+              </tr>
+              <tr>
+                <td>Unique signal</td>
+                <td>Dependency health, token lifecycle, data flow</td>
+                <td>Auditability, declared boundaries, agent-ready schemas</td>
+              </tr>
+              <tr>
+                <td>Scoring method</td>
+                <td>Manual audit + self-attestation</td>
+                <td>Public README/schema inspection</td>
+              </tr>
+              <tr>
+                <td>Assessed servers</td>
+                <td>20 servers</td>
+                <td>14 servers (flagship subset)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section class="section section--cta">
+        <h2 class="section-title">Want Your Server Scored?</h2>
+        <p class="section-description">
+          We're expanding coverage. If you maintain an MCP server and want it evaluated, make sure your README includes: tool schema definitions, authentication documentation, security policy, and observability/logging options. Servers with clear documentation score higher.
+        </p>
+        <div class="cta-links">
+          <a href="/audit-manifesto" class="cta-link">Security Audit →</a>
+          <a href="/" class="cta-link">Browse All Servers →</a>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <style>
+    /* Hero badge styling override for agent-hygiene page */
+    .hero-badge--phase2 {
+      background: rgba(180, 83, 9, 0.15);
+      color: #b45309;
+      border: 1px solid rgba(180, 83, 9, 0.3);
+    }
+
+    /* Tier cards */
+    .tier-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .tier-card {
+      padding: 1.25rem;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.1);
+      text-align: center;
+    }
+
+    .tier-card--excellent { background: rgba(34, 197, 94, 0.08); border-color: rgba(34, 197, 94, 0.25); }
+    .tier-card--good { background: rgba(59, 130, 246, 0.08); border-color: rgba(59, 130, 246, 0.25); }
+    .tier-card--fair { background: rgba(234, 179, 8, 0.08); border-color: rgba(234, 179, 8, 0.25); }
+    .tier-card--poor { background: rgba(239, 68, 68, 0.08); border-color: rgba(239, 68, 68, 0.25); }
+
+    .tier-score {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: inherit;
+    }
+
+    .tier-card--excellent .tier-score { color: #22c55e; }
+    .tier-card--good .tier-score { color: #3b82f6; }
+    .tier-card--fair .tier-score { color: #eab308; }
+    .tier-card--poor .tier-score { color: #ef4444; }
+
+    .tier-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #000000;
+      margin: 0.25rem 0;
+    }
+
+    .tier-emoji {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .tier-description {
+      font-size: 0.78rem;
+      color: rgba(0,0,0,0.7);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    /* Highlighted info card */
+    .info-card--highlight {
+      border-color: rgba(180, 83, 9, 0.4) !important;
+      background: rgba(180, 83, 9, 0.05) !important;
+    }
+
+    /* Dimension cards */
+    .dimension-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .dimension-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #000000;
+      margin: 0 0 0.5rem 0;
+    }
+
+    .dimension-icon {
+      font-size: 1.25rem;
+    }
+
+    .dimension-description {
+      font-size: 0.85rem;
+      color: rgba(0,0,0,0.7);
+      line-height: 1.6;
+      margin: 0 0 1rem 0;
+    }
+
+    .dimension-levels {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .level-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 0.75rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .level-row--green { background: rgba(34, 197, 94, 0.05); }
+    .level-row--yellow { background: rgba(234, 179, 8, 0.05); }
+    .level-row--red { background: rgba(239, 68, 68, 0.05); }
+
+    .level-score {
+      font-weight: 800;
+      font-size: 1rem;
+      min-width: 2.5rem;
+      text-align: center;
+      padding-top: 0.1rem;
+    }
+
+    .level-row--green .level-score { color: #22c55e; }
+    .level-row--yellow .level-score { color: #eab308; }
+    .level-row--red .level-score { color: #ef4444; }
+
+    .level-label {
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #000000;
+      margin-bottom: 0.2rem;
+    }
+
+    .level-desc {
+      font-size: 0.78rem;
+      color: rgba(0,0,0,0.65);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    /* Methodology grid */
+    .methodology-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    /* Leaderboard */
+    .leaderboard {
+      margin-top: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .leaderboard-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.85rem 1rem;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-left: 4px solid;
+      text-decoration: none;
+      color: inherit;
+      transition: background 0.15s;
+    }
+
+    .leaderboard-row:hover {
+      background: rgba(255,255,255,0.07);
+    }
+
+    .leaderboard-rank {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: rgba(0,0,0,0.4);
+      min-width: 2rem;
+    }
+
+    .leaderboard-name {
+      flex: 1;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #000000;
+    }
+
+    .leaderboard-tier {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.2rem 0.5rem;
+      border-radius: 10px;
+      border: 1px solid;
+      white-space: nowrap;
+    }
+
+    .leaderboard-score {
+      font-size: 1rem;
+      font-weight: 800;
+      min-width: 3rem;
+      text-align: right;
+    }
+
+    /* Comparison table */
+    .comparison-table-wrapper {
+      overflow-x: auto;
+      margin-top: 1.5rem;
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    .comparison-table th {
+      text-align: left;
+      padding: 0.75rem 1rem;
+      border-bottom: 2px solid rgba(255,255,255,0.15);
+      font-weight: 600;
+      color: #000000;
+    }
+
+    .comparison-table td {
+      padding: 0.65rem 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      color: rgba(0,0,0,0.75);
+      line-height: 1.5;
+    }
+
+    .comparison-table tbody tr:hover {
+      background: rgba(255,255,255,0.03);
+    }
+
+    /* CTA section */
+    .section--cta {
+      text-align: center;
+      padding: 2rem 0;
+    }
+
+    .cta-links {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 1.5rem;
+    }
+
+    .cta-link {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.6rem 1.25rem;
+      border-radius: 20px;
+      background: rgba(180, 83, 9, 0.1);
+      border: 1px solid rgba(180, 83, 9, 0.3);
+      color: #b45309;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: background 0.15s;
+    }
+
+    .cta-link:hover {
+      background: rgba(180, 83, 9, 0.18);
+    }
+  </style>
+</BaseLayout>
