@@ -387,6 +387,173 @@ export const agentHygieneScores: Record<string, AgentHygieneScore> = {
     'https://github.com/athukarad109/ghidra-mcp',
     { boundaries: 'HTTP server on localhost:17664 with no auth. No documented security policy.', scoping: 'Local-only and bound to Ghidra, which limits scope naturally.' }
   ),
+
+  // ── Batch 2 (high-star unscored servers) ──────────────────────────────
+
+  'browser-use': makeScore(
+    'browser-use',
+    1, // Schema: typed config object for browser params
+    2, // Scoping: local-only browser automation, user-owned browser
+    1, // Boundaries: explicit save/download paths, but runs arbitrary DOM scripts
+    0, // Auditability: no structured audit log
+    2, // Maintenance: 87k★, very active, large contributor base
+    'https://github.com/browser-use/browser-use',
+    { boundaries: 'Runs JS in browser context — same-origin. save/download paths configured but DOM script execution is broad.', scoping: 'Local-only, controls user-owned browser. No network scope expansion.' }
+  ),
+
+  'scrapling': makeScore(
+    'scrapling',
+    1, // Schema: typed params for URL, features, type
+    1, // Scoping: fetches arbitrary URLs — broad outbound network
+    1, // Boundaries: HTTP-only, no cookie injection, stealth mode documented
+    0, // Auditability: no structured logging
+    2, // Maintenance: 37k★, active project
+    'https://github.com/D4Vinci/Scrapling',
+    { boundaries: 'Fetches arbitrary URLs. HTTP-only by default. Stealth mode documented but no per-request policy enforcement.', scoping: 'Fetches arbitrary web URLs — inherently broad network scope.' }
+  ),
+
+  'chrome-devtools': makeScore(
+    'chrome-devtools',
+    2, // Schema: strict typed inputs for all tools, JSON schema defined
+    2, // Scoping: local-only, CDP-bound to single browser tab/session
+    1, // Boundaries: read-only for most tools, CDP-level access is powerful
+    1, // Auditability: structured JSON responses, no persistent audit log
+    2, // Maintenance: 34k★, official Google repo, CI badge
+    'https://github.com/chromedevtools/chrome-devtools-mcp',
+    { boundaries: 'Most tools are read-only (screenshot, console, network). CDP access is inherently powerful but scoped to debugged tab.', scoping: 'Local-only, bound to a single Chrome DevTools session.' }
+  ),
+
+  'task-master': makeScore(
+    'task-master',
+    1, // Schema: typed params for tasks, PRD parsing
+    1, // Scoping: reads/writes project filesystem, calls external AI APIs
+    1, // Boundaries: operates within project directory, but calls external LLM APIs
+    0, // Auditability: no structured audit log
+    2, // Maintenance: 27k★, active CI, regular releases
+    'https://github.com/eyaltoledano/claude-task-master',
+    { boundaries: 'Operates within project directory. Calls external AI provider APIs (Anthropic, OpenAI, etc.) — API keys in env config.', scoping: 'Project-scoped filesystem ops + outbound AI API calls. selective tool loading available.' }
+  ),
+
+  'blender': makeScore(
+    'blender',
+    1, // Schema: basic typed params for scene manipulation
+    1, // Scoping: local-only, bound to single Blender instance via TCP socket
+    0, // Boundaries: execute_blender_code runs arbitrary Python in Blender
+    0, // Auditability: anonymous telemetry only, no structured audit log
+    2, // Maintenance: 19k★, active releases, Discord community
+    'https://github.com/ahujasid/blender-mcp',
+    { boundaries: 'CRITICAL: execute_blender_code runs arbitrary Python in Blender with no sandboxing. README warns to save work before use.', scoping: 'Local-only, TCP socket to single Blender instance. No network scope expansion beyond API key services.' }
+  ),
+
+  'n8n': makeScore(
+    'n8n',
+    2, // Schema: strict typed schemas, multi-mode validation (minimal/full/runtime)
+    1, // Scoping: manages n8n instance via API — broad if production n8n has full permissions
+    2, // Boundaries: read-only deployment recipe, DISABLED_TOOLS/operations, CF Access auth
+    1, // Auditability: n8n_audit_instance tool, structured validation
+    2, // Maintenance: 18k★, 5418 tests, codecov, active CI
+    'https://github.com/czlonkowski/n8n-mcp',
+    { boundaries: 'Excellent: DISABLED_TOOLS for wholesale removal, DISABLED_TOOL_OPERATIONS for granular blocklist, read-only recipe, CF Access auth, IP scoping.', scoping: 'Manages n8n workflows via API. Scope depends on n8n API key permissions. Read-only mode available.' }
+  ),
+
+  'firecrawl': makeScore(
+    'firecrawl',
+    2, // Schema: strict typed inputs with JSON schema extraction, format selection
+    1, // Scoping: fetches arbitrary URLs, search-only endpoint available
+    1, // Boundaries: API-key auth, OAuth, per-tool enable/disable via URL params
+    1, // Auditability: structured logging, search feedback loop
+    2, // Maintenance: 6k★, hosted infrastructure, multiple sub-servers
+    'https://github.com/firecrawl/firecrawl-mcp-server',
+    { boundaries: 'API-key auth or OAuth. Search-only endpoint restricts to read tools. Tools can be disabled via URL params. Hosted infrastructure.', scoping: 'Fetches arbitrary URLs via cloud API. Search-only endpoint available for reduced scope.' }
+  ),
+
+  'desktop-commander': makeScore(
+    'desktop-commander',
+    1, // Schema: typed params, edit_block with search/replace format
+    1, // Scoping: full filesystem + shell access, allowedDirectories configurable
+    1, // Boundaries: command blocklist, symlink traversal prevention, Docker isolation
+    1, // Auditability: comprehensive audit logging with 10MB rotation
+    2, // Maintenance: 6k★, active releases, multiple install methods
+    'https://github.com/wonderwhy-er/DesktopCommanderMCP',
+    { boundaries: 'Command blocklist, symlink prevention, Docker isolation available. allowedDirectories only covers filesystem, not terminal commands (documented gap).', scoping: 'Full local filesystem + shell access. allowedDirectories restricts file ops only. Docker mode provides full isolation.' }
+  ),
+
+  'browser-tools': makeScore(
+    'browser-tools',
+    2, // Schema: strict typed inputs, MCP output schemas declared, read-only annotated
+    2, // Scoping: local-only, reads from user browser session via loopback
+    2, // Boundaries: loopback-only binding, auth token, credential scrubbing, cookie opt-in
+    1, // Auditability: structured JSON responses, resources for large payloads, no persistent log
+    2, // Maintenance: 7k★, Sentry-backed, active CI, real test suite
+    'https://github.com/agentdeskai/browser-tools-mcp',
+    { boundaries: 'Excellent: loopback-only, per-run auth token, WebSocket origin validation, automatic credential scrubbing, cookie access opt-in. Documents past 1.x vulnerabilities.', scoping: 'Local-only, reads from already-open browser tabs. No outbound network from server itself.' }
+  ),
+
+  'exa-web-search': makeScore(
+    'exa-web-search',
+    2, // Schema: strict typed inputs, structured search params
+    1, // Scoping: external API calls to Exa service, rate-limited anonymous
+    2, // Boundaries: OAuth/API-key auth, tools gated behind auth, hosted infrastructure
+    0, // Auditability: no audit logging documented
+    2, // Maintenance: 4k★, official Exa product, agent plugin ecosystem
+    'https://github.com/exa-labs/exa-mcp-server',
+    { boundaries: 'OAuth or API-key auth. Agent tools gated behind authentication. Hosted by Exa — no local attack surface.', scoping: 'External API calls to Exa service only. No local filesystem access. Anonymous mode rate-limited.' }
+  ),
+
+  'excalidraw': makeScore(
+    'excalidraw',
+    1, // Schema: basic typed inputs for drawing prompts
+    2, // Scoping: local-only, renders to MCP app UI, no filesystem access
+    2, // Boundaries: output-only, renders interactive HTML in chat, no side effects
+    0, // Auditability: no logging
+    1, // Maintenance: 4k★, small repo, Vercel deploy
+    'https://github.com/excalidraw/excalidraw-mcp',
+    { boundaries: 'Output-only server — renders Excalidraw diagrams in chat UI. No filesystem write, no network access, no side effects.', scoping: 'Local-only rendering. No filesystem or network access beyond fetching Excalidraw assets.' }
+  ),
+
+  'windows-desktop-control': makeScore(
+    'windows-desktop-control',
+    1, // Schema: typed params for UI automation (click, type, screenshot)
+    1, // Scoping: full Windows OS control — keyboard, mouse, registry, PowerShell
+    1, // Boundaries: auth key, IP allowlist, TLS, OAuth, tool exclusion, SSRF protection
+    1, // Auditability: anonymous telemetry, no structured operation audit log
+    2, // Maintenance: 5k★, active, PyPI published, multiple install methods
+    'https://github.com/CursorTouch/Windows-MCP',
+    { boundaries: 'Auth key, IP allowlist, TLS, OAuth+PKCE, tool exclusion via --exclude-tools, SSRF protection on Scrape. Full security policy in SECURITY.md.', scoping: 'Full Windows OS control (keyboard, mouse, registry, PowerShell, file system). Maximum local scope. Remote access with network hardening.' }
+  ),
+
+  'xcodebuild': makeScore(
+    'xcodebuild',
+    2, // Schema: strict typed inputs, per-workspace daemon, structured tool responses
+    2, // Scoping: local-only, bound to Xcode project/scheme
+    1, // Boundaries: code signing required for device tools, macOS-only sandbox
+    1, // Auditability: Sentry telemetry for errors, per-workspace daemon for state
+    2, // Maintenance: 5k★, official Sentry repo, CI, Homebrew+npm distribution
+    'https://github.com/getsentry/xcodebuildmcp',
+    { boundaries: 'Code signing required for device tools. macOS-only limits platform scope. Local xcodebuild commands — no network expansion.', scoping: 'Local-only, bound to Xcode project. Builds run locally via xcodebuild CLI.' }
+  ),
+
+  'cloudflare': makeScore(
+    'cloudflare',
+    2, // Schema: strict typed inputs per product, SDK v2 server factory
+    1, // Scoping: remote API calls to Cloudflare account — reads config, can modify resources
+    2, // Boundaries: OAuth auth, API token scoping, multi-tenant isolation, hosted infrastructure
+    1, // Auditability: dedicated Audit Logs server, structured responses
+    2, // Maintenance: 4k★, official Cloudflare repo, 15+ sub-servers, actively maintained
+    'https://github.com/cloudflare/mcp-server-cloudflare',
+    { boundaries: 'OAuth auth, Cloudflare API token with scoping, dedicated Audit Logs sub-server. Hosted by Cloudflare with multi-tenant isolation.', scoping: 'Remote API calls to Cloudflare account. Scope depends on API token permissions. Read-only servers available.' }
+  ),
+
+  'assistant-ui': makeScore(
+    'assistant-ui',
+    2, // Schema: strong TypeScript types, runtime APIs, tool schemas
+    2, // Scoping: client-side React library — no server, no filesystem, no network beyond user's app
+    2, // Boundaries: UI rendering only, delegates all LLM calls to user's backend
+    0, // Auditability: no built-in audit logging (delegates to user's backend)
+    2, // Maintenance: 9k★, YC-backed, active releases, multiple platforms
+    'https://github.com/assistant-ui/assistant-ui',
+    { boundaries: 'Client-side React library only — no server-side execution, no filesystem access, no network beyond what user\'s app already does. Output-only UI primitives.', scoping: 'Maximum scoping safety: renders UI components. All LLM/backend interaction delegated to user\'s configured runtime.' }
+  ),
 };
 
 /**
