@@ -1,0 +1,79 @@
+---
+title: "Best MCP Servers for Claude and Claude Code"
+description: "A curated list of the best MCP servers to connect to Claude and Claude Code, organized by category, with a quick-start path for new setups."
+date: 2026-08-13
+author: "Chester Beard"
+tags: ["claude", "claude-code", "mcp", "mcp-servers", "setup-guide"]
+---
+
+Claude and Claude Code both support MCP natively, which means the question isn't whether you can connect external tools — it's which ones are actually worth connecting. A good MCP server for Claude has three things going for it: native transport support (stdio for Claude Code, stdio or remote for Claude Desktop and claude.ai), a tool count that doesn't bloat your context window, and auth that doesn't require a maintenance habit.
+
+This list is organized by what you're actually trying to do, not by category for its own sake.
+
+## What Makes a Server Worth Connecting
+
+Before the list, three things to check on any MCP server you're considering:
+
+- **Transport fit.** stdio servers run locally and work with Claude Code and Claude Desktop. Remote servers (SSE/HTTP) are required for claude.ai on the web.
+- **Tool count.** A server with 5-15 focused tools beats one with 50 tools you'll never call — every tool definition costs context.
+- **Maintenance activity.** Check the last commit date. An MCP server with no updates in six months accumulates security debt the same way any other dependency does.
+
+## Coding
+
+**Filesystem** — Read, write, and edit files beyond what Claude's built-in tools reach. The foundation for any coding workflow that touches a real project directory.
+
+**GitHub** — Issues, PRs, commits, and repo search. If your work lives in GitHub, this is close to a default connection.
+
+**Shell / code execution** — Run commands, tests, and scripts directly. Pairs naturally with Filesystem for anything beyond read-and-suggest workflows.
+
+## Productivity
+
+**Google Calendar** — Schedule lookups and event creation without switching context out of a Claude session.
+
+**Gmail** — Read and draft email. Useful for triage and summarization workflows specifically — treat send actions with the same caution you'd give any automated email tool.
+
+**Notion** — Read, search, and update Notion pages and databases. A strong fit if your team's documentation and planning already live there.
+
+## Data
+
+**Postgres / SQLite** — Query and inspect databases directly. Start read-only; add write access only once the workflow is validated.
+
+**Google Sheets** — Read and analyze spreadsheet data without exporting to CSV first.
+
+**Google Analytics 4** — Natural-language access to GA4 dimensions and metrics for anyone doing regular reporting.
+
+## Search
+
+**Brave Search** — Live web search for anything outside Claude's training data or that's changed recently.
+
+**Exa** — Search built for AI consumption — cleaner extracted content than a raw search API.
+
+**Context7** — Up-to-date library and framework documentation, which avoids the common failure mode of an agent confidently citing an outdated API.
+
+## Quick Start: The First 3 Servers to Connect
+
+If you're new to Claude Code or MCP generally, don't connect everything at once. Start here:
+
+1. **Filesystem** — the workflows.
+2. **GitHub** — if any part of your work touches version control, this is next.
+3. **Brave Search** (or Exa) — gives Claude current information without you having to paste it in manually.
+
+Validate that these three work as expected before adding more. Every additional server is additional context overhead and one more thing to maintain.
+
+## FAQ
+
+**Do MCP servers work with Claude Code?**
+
+Yes. Claude Code supports MCP natively over stdio, the same as Claude Desktop.
+
+**What's the best MCP server to start with?**
+
+Filesystem, for most coding workflows — it's the one thing almost every other server assumes you already have. See the quick-start section above for a fuller starting set.
+
+**How many MCP servers can I connect to Claude?**
+
+There's no hard limit, but practical constraints apply well before you'd hit one. Each connected server's tools load into context before you type anything, so four to six well-scoped servers generally outperforms a dozen loosely-used ones.
+
+---
+
+Browse the full directory, filtered to Claude-compatible servers, at [MyMCP Shelf](/).
