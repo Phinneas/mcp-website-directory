@@ -1,0 +1,95 @@
+---
+title: "Best MCP Servers for Cursor: The Complete 2026 Setup Guide"
+description: "Cursor is an AI-first code editor with native MCP support. This guide covers how Cursor connects to MCP servers, which ones are worth installing, and how to set them up — with working configs."
+date: 2026-08-13
+author: "Chester Beard"
+tags: ["cursor", "mcp servers", "cursor mcp", "mcp setup", "ai coding tools", "model context protocol"]
+---
+
+Cursor is an AI-first code editor with native MCP support, which means it can connect to any MCP server the same way Claude Desktop or Claude Code does. The difference is what you'd actually want connected while you're heads-down in an editor: file operations, git, a database, maybe a browser for testing.
+
+This guide covers how Cursor connects to MCP servers, which ones are worth installing, and how to set them up.
+
+## How Cursor Connects to MCP Servers
+
+Cursor reads MCP server configuration from two places:
+
+**Project-level:** `.cursor/mcp.json` in your repo root — scoped to that project, shareable with your team via version control.
+
+**Global:** Cursor's settings panel under MCP — available across every project you open.
+
+Most servers connect over stdio, since Cursor runs locally and the server runs as a child process on the same machine. This is the simplest setup: no network config, no auth server to stand up. Remote or team-shared servers use SSE and need a URL plus whatever auth the server requires.
+
+A minimal config looks like this:
+
+```json
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/path/to/project"]
+    }
+  }
+}
+```
+
+## Top MCP Servers for Cursor
+
+| Server | What it does | Transport | Auth | Best for |
+| --- | --- | --- | --- | --- |
+| Filesystem | Read/write/edit files beyond Cursor's built-in reach | stdio | None | Multi-repo or cross-directory work |
+| GitHub | Issues, PRs, commits, repo search | stdio/SSE | Personal access token | Teams that live in GitHub workflows |
+| Postgres / SQLite | Query and inspect databases directly | stdio | Connection string | Backend and data work without leaving the editor |
+| Playwright | Browser automation and testing | stdio | None | End-to-end test generation and debugging |
+| Brave Search | Live web search | stdio | API key | Looking up current docs or library versions mid-session |
+| Context7 | Up-to-date library and framework documentation | stdio | None | Avoiding outdated training-data API calls |
+| Linear | Issue tracking | SSE | OAuth2 | Teams that plan and code in the same loop |
+| Sentry | Error monitoring and stack traces | SSE | API key | Debugging production issues without tab-switching |
+
+For a deeper framework on evaluating servers before connecting them — including why more servers isn't always better — see our [post on Cursor MCP servers worth the overhead](/blog/cursor-mcp-servers).
+
+## Setting One Up: GitHub as an Example
+
+**1. Get a token.** Generate a GitHub personal access token with `repo` scope.
+
+**2. Add it to your config.** Drop this into `.cursor/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "your-token-here"
+      }
+    }
+  }
+}
+```
+
+**3. Restart Cursor** (or reload the MCP panel) so it picks up the new server.
+
+**4. Verify the connection.** Cursor's MCP settings panel shows a green status indicator once the server responds.
+
+**5. Never commit the token.** Use environment variables or a `.env` file excluded from git — project-level configs get shared, and a hardcoded token in `.cursor/mcp.json` ends up in your repo history.
+
+## FAQ
+
+**Does Cursor support all MCP transports?**
+
+Yes. stdio for local servers, SSE for remote ones. Cursor doesn't restrict which transport a server uses.
+
+**Can I use the same MCP servers in Cursor and Claude Desktop?**
+
+Yes. MCP servers aren't client-specific. The same server config works across any MCP-compatible host, though each client has its own config file location and format.
+
+**Do project-level and global configs conflict if I have the same server in both?**
+
+Project-level takes precedence for that project. Use global config for servers you want everywhere (filesystem, search) and project-level for anything repo-specific (a database connection string tied to one codebase).
+
+**How many MCP servers should I connect at once in Cursor?**
+
+Keep it lean. Each connected server's tools load into context before you type anything. Four to six purpose-built servers beats one server bundling everything — same principle as any other MCP client.
+
+Browse the full catalog at [MyMCP Shelf](/).
