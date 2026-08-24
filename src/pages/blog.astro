@@ -50,7 +50,18 @@ const sortedPosts = posts.sort((a, b) =>
   new Date(b.date).getTime() - new Date(a.date).getTime()
 );
 
-// Only offer filter chips for tracks that actually have posts
+// The main blog (/blog) is the untracked content. Newsletter publications
+// (ai-field-notes = Brainscriblr, signal-field, oss-spotlight) are separate
+// tracks surfaced via /blog?track=<track> and the /newsletters page — they are
+// not part of the main blog listing. Cards for all sources stay in the DOM so
+// the track chips can toggle them client-side; the server just pre-hides the
+// ones that don't match the current view (default: untracked blog only).
+const blogPosts = sortedPosts.filter((post) => !post.track);
+const currentTrack = new URL(Astro.url).searchParams.get('track') ?? '';
+const isPostVisible = (track?: string) =>
+  currentTrack ? track === currentTrack : !track;
+
+// Only offer filter chips for newsletter tracks that actually have posts
 const activeTracks = NEWSLETTERS.filter((n) =>
   sortedPosts.some((post) => post.track === n.track)
 );
@@ -63,7 +74,7 @@ const structuredData = {
   name: pageTitle,
   url: 'https://www.mymcpshelf.com/blog',
   description: 'Insights, updates, and guides for the MCP ecosystem',
-  blogPost: sortedPosts.map((post) => ({
+  blogPost: blogPosts.map((post) => ({
     '@type': 'BlogPosting',
     headline: post.title,
     datePublished: new Date(post.date).toISOString(),
@@ -86,7 +97,7 @@ const structuredData = {
 
       <div class="stats-bar">
         <div class="stat-item">
-          <div class="stat-value">{sortedPosts.length}</div>
+          <div class="stat-value">{blogPosts.length}</div>
           <div class="stat-label">Articles</div>
         </div>
         <div class="stat-item">
@@ -108,7 +119,7 @@ const structuredData = {
     <main>
       {activeTracks.length > 0 && (
         <div class="track-filter" role="group" aria-label="Filter posts by track">
-          <button class="track-chip active" data-track="">All</button>
+          <button class="track-chip active" data-track="">Blog</button>
           {activeTracks.map((n) => (
             <button class="track-chip" data-track={n.track}>{n.name}</button>
           ))}
@@ -117,7 +128,7 @@ const structuredData = {
       {sortedPosts.length > 0 ? (
         <div class="blog-grid">
           {sortedPosts.map((post) => (
-            <article class="blog-card" data-track={post.track ?? ''}>
+            <article class="blog-card" data-track={post.track ?? ''} hidden={!isPostVisible(post.track)}>
               <h3>
                 <a href={`/blog/${post.slug}`}>
                   {post.title}
@@ -322,7 +333,10 @@ const structuredData = {
     function apply(track: string) {
       chips.forEach((chip) => chip.classList.toggle('active', chip.dataset.track === track));
       cards.forEach((card) => {
-        card.hidden = track !== '' && card.dataset.track !== track;
+        // '' = the Blog chip: untracked posts only. Any other value = that
+        // newsletter track only. Newsletter content is never mixed into the
+        // main blog listing.
+        card.hidden = track === '' ? card.dataset.track !== '' : card.dataset.track !== track;
       });
     }
 

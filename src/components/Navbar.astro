@@ -167,12 +167,6 @@ const utilityNavItems = [
         <span class="newsletter-icon">📬</span>
         <span>Newsletter</span>
       </a>
-
-      <!-- Enterprise CTA -->
-      <a href="/enterprise-readiness" class="enterprise-cta">
-        <span class="enterprise-icon">🏢</span>
-        <span>Enterprise</span>
-      </a>
     </div>
   </div>
 </nav>
@@ -303,30 +297,11 @@ const utilityNavItems = [
   }
 
   .nav-enterprise {
-    background: rgba(16, 185, 129, 0.1);
-    color: #34d399;
-    position: relative;
+    color: #94a3b8;
   }
 
   .nav-enterprise:hover {
-    background: rgba(16, 185, 129, 0.2);
-    color: #6ee7b7;
-  }
-
-  .nav-enterprise::after {
-    content: '✓';
-    position: absolute;
-    top: -4px;
-    right: -4px;
-    background: #10b981;
-    color: white;
-    border-radius: 50%;
-    width: 14px;
-    height: 14px;
-    font-size: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    color: #ffffff;
   }
 
   .nav-icon {
@@ -455,32 +430,6 @@ const utilityNavItems = [
     background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
   }
 
-  .enterprise-cta {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.6rem 1rem;
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    color: white;
-    text-decoration: none;
-    border-radius: 8px;
-    font-size: 0.825rem;
-    font-weight: 600;
-    transition: all 0.15s ease;
-    border: 1px solid rgba(16, 185, 129, 0.3);
-    white-space: nowrap;
-  }
-
-  .enterprise-cta:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
-    background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
-  }
-
-  .enterprise-icon {
-    font-size: 1rem;
-  }
-
   @media (max-width: 1200px) {
     .navbar-links {
       gap: 1rem;
@@ -537,7 +486,6 @@ const utilityNavItems = [
       justify-content: center;
     }
 
-    .enterprise-cta,
     .newsletter-cta {
       width: 100%;
       justify-content: center;

@@ -3,8 +3,11 @@
 import { getCollection } from 'astro:content';
 import { VintageIcon } from './VintageIcon';
 
-// Get all published blog posts and sort by date
-const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+// Get all published blog posts and sort by date. Only the main blog
+// (untracked posts) belongs here — newsletter issues (ai-field-notes =
+// Brainscriblr, signal-field, oss-spotlight) are separate publications and
+// live under their own track views, not the homepage blog section.
+const allPosts = (await getCollection('blog', ({ data }) => !data.draft)).filter((post) => !post.data.track);
 const sortedPosts = allPosts.sort((a, b) =>
     new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
 );
