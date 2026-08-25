@@ -171,6 +171,15 @@ const structuredData = {
         margin-bottom: 1.5rem;
     }
 
+    /* Section separators (the newsletter generator emits --- between
+       sections) need explicit spacing — default <hr> margins are too tight
+       and sections end up sitting on top of each other. */
+    .content hr {
+        border: none;
+        border-top: 1px solid #e2e8f0;
+        margin: 2.5rem 0;
+    }
+
     .content ul, .content ol {
         margin: 1rem 0 1.5rem 2rem;
     }

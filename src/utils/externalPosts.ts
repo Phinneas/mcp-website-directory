@@ -91,7 +91,10 @@ export function externalPostToHtml(md: string): string {
   };
 
   for (const line of lines) {
-    const isBlock = /^<(h[1-3]|ul|hr)/.test(line) || /<\/(h[1-3]|ul)>$/.test(line);
+    // Treat list items as block content too — they were produced by the
+    // bullet conversion above, and wrapping them in <p> inside <ul> yields
+    // invalid HTML that collapses the list and all section spacing.
+    const isBlock = /^<(h[1-3]|ul|li|hr)/.test(line) || /<\/(h[1-3]|ul|li)>$/.test(line);
     if (isBlock) {
       flush();
       result.push(line);
