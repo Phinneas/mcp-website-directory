@@ -10,6 +10,7 @@
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getLeaderboard, getTotalServerCount } from '../utils/d1';
+import { getAgentHygieneScore, getHygieneTier } from '../data/agentHygieneScores';
 
 export const prerender = false;
 
@@ -109,6 +110,7 @@ function formatCount(n: number): string {
               <th class="installs-col">Installs</th>
               <th class="week-col">7d</th>
               <th class="badge-col">Security</th>
+              <th class="hygiene-col">Hygiene</th>
               <th class="trend-col">Trend</th>
             </tr>
           </thead>
@@ -116,6 +118,8 @@ function formatCount(n: number): string {
             {allTimeEntries.map((e: any) => {
               const badge = BADGE_STYLES[e.badge_tier] || BADGE_STYLES.unverified;
               const trend = TREND_STYLES[e.trend] || TREND_STYLES.stable;
+              const hygiene = getAgentHygieneScore(e.server.id);
+              const hygieneTier = hygiene ? getHygieneTier(hygiene.total) : null;
               return (
                 <tr>
                   <td class="rank-cell">
@@ -131,6 +135,15 @@ function formatCount(n: number): string {
                   <td class="week-cell">{formatCount(e.installs_7d)}</td>
                   <td class="badge-cell">
                     <span class="security-pill" style={`color:${badge.color};background:${badge.bg}`}>{badge.label}</span>
+                  </td>
+                  <td class="hygiene-cell">
+                    {hygieneTier && hygiene ? (
+                      <a href="/agent-hygiene" class="hygiene-pill" style={`color:${hygieneTier.color};background:${hygieneTier.color}1a`} title={`Agent Hygiene Score — ${hygieneTier.label}`}>
+                        {hygieneTier.emoji} {hygiene.total}/10
+                      </a>
+                    ) : (
+                      <span class="hygiene-none">—</span>
+                    )}
                   </td>
                   <td class="trend-cell">
                     <span style={`color:${trend.color}`}>{trend.icon} {trend.label}</span>
@@ -157,6 +170,7 @@ function formatCount(n: number): string {
               <th class="installs-col">24h</th>
               <th class="total-col">Total</th>
               <th class="badge-col">Security</th>
+              <th class="hygiene-col">Hygiene</th>
               <th class="trend-col">Trend</th>
             </tr>
           </thead>
@@ -164,6 +178,8 @@ function formatCount(n: number): string {
             {trendingEntries.map((e: any) => {
               const badge = BADGE_STYLES[e.badge_tier] || BADGE_STYLES.unverified;
               const trend = TREND_STYLES[e.trend] || TREND_STYLES.stable;
+              const hygiene = getAgentHygieneScore(e.server.id);
+              const hygieneTier = hygiene ? getHygieneTier(hygiene.total) : null;
               return (
                 <tr>
                   <td class="rank-cell">{e.rank <= 3 ? <span class={`rank-badge rank-${e.rank}`}>{e.rank}</span> : e.rank}</td>
@@ -177,6 +193,15 @@ function formatCount(n: number): string {
                   <td class="total-cell">{formatCount(e.total_installs)}</td>
                   <td class="badge-cell">
                     <span class="security-pill" style={`color:${badge.color};background:${badge.bg}`}>{badge.label}</span>
+                  </td>
+                  <td class="hygiene-cell">
+                    {hygieneTier && hygiene ? (
+                      <a href="/agent-hygiene" class="hygiene-pill" style={`color:${hygieneTier.color};background:${hygieneTier.color}1a`} title={`Agent Hygiene Score — ${hygieneTier.label}`}>
+                        {hygieneTier.emoji} {hygiene.total}/10
+                      </a>
+                    ) : (
+                      <span class="hygiene-none">—</span>
+                    )}
                   </td>
                   <td class="trend-cell">
                     <span style={`color:${trend.color}`}>{trend.icon} {trend.label}</span>
@@ -203,11 +228,14 @@ function formatCount(n: number): string {
               <th class="installs-col">24h</th>
               <th class="growth-col">Growth</th>
               <th class="badge-col">Security</th>
+              <th class="hygiene-col">Hygiene</th>
             </tr>
           </thead>
           <tbody>
             {hotEntries.filter((e: any) => e.trend === 'hot' || e.trend === 'rising').map((e: any, i: number) => {
               const badge = BADGE_STYLES[e.badge_tier] || BADGE_STYLES.unverified;
+              const hygiene = getAgentHygieneScore(e.server.id);
+              const hygieneTier = hygiene ? getHygieneTier(hygiene.total) : null;
               return (
                 <tr>
                   <td class="rank-cell">🔥 {i + 1}</td>
@@ -220,6 +248,15 @@ function formatCount(n: number): string {
                   <td class="growth-cell">2x+</td>
                   <td class="badge-cell">
                     <span class="security-pill" style={`color:${badge.color};background:${badge.bg}`}>{badge.label}</span>
+                  </td>
+                  <td class="hygiene-cell">
+                    {hygieneTier && hygiene ? (
+                      <a href="/agent-hygiene" class="hygiene-pill" style={`color:${hygieneTier.color};background:${hygieneTier.color}1a`} title={`Agent Hygiene Score — ${hygieneTier.label}`}>
+                        {hygieneTier.emoji} {hygiene.total}/10
+                      </a>
+                    ) : (
+                      <span class="hygiene-none">—</span>
+                    )}
                   </td>
                 </tr>
               );
@@ -484,6 +521,26 @@ function formatCount(n: number): string {
     font-weight: 600;
   }
 
+  .hygiene-col { width: 100px; }
+
+  .hygiene-pill {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .hygiene-pill:hover {
+    text-decoration: underline;
+  }
+
+  .hygiene-none {
+    color: #94a3b8;
+    font-size: 0.8rem;
+  }
+
   .trend-cell {
     font-size: 0.8rem;
   }
@@ -546,7 +603,7 @@ function formatCount(n: number): string {
     .vs-divider { display: none; }
     .leaderboard-stats { gap: 1rem; }
     .leaderboard-table { font-size: 0.8rem; }
-    .week-col, .trend-col { display: none; }
+    .week-col, .trend-col, .hygiene-col, .hygiene-cell { display: none; }
   }
 </style>
 

@@ -319,6 +319,7 @@ const structuredData = {
               Is this server safe to hand an autonomous AI agent? This score evaluates schema strictness, least-privilege scoping, declared boundaries, auditability, and maintenance — separate from our security audit.
             </p>
             <AgentHygieneBadge client:load score={agentHygiene} />
+            <a href="/agent-hygiene" class="agent-hygiene-link">How we score this →</a>
           </section>
         )}
 
@@ -889,6 +890,19 @@ const structuredData = {
     color: #000000;
     margin: 0 0 1rem 0;
     line-height: 1.5;
+  }
+
+  .agent-hygiene-link {
+    display: inline-block;
+    margin-top: 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #b45309;
+    text-decoration: underline;
+  }
+
+  .agent-hygiene-link:hover {
+    color: #92400e;
   }
 
   .security-scan-section {

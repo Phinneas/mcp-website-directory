@@ -221,6 +221,9 @@ const structuredData = {
         <p class="section-description">
           Each server is scored across 6 security dimensions. The first 5 dimensions are manually audited (20 pts each, max 100). Dependency Health is a separate 0–20 score automated via Socket.dev in Phase 2.
         </p>
+        <p class="section-description">
+          This audit measures whether a server is safe to deploy. For a separate dimension — whether it's safe to hand an autonomous AI agent — see our <a href="/agent-hygiene" style="color: #b45309; text-decoration: underline;">Agent Hygiene Score</a>, a 0–10 rubric covering schema strictness, least-privilege scoping, declared boundaries, auditability, and maintenance.
+        </p>
 
         <div class="dimensions-grid">
           {scoringCriteria.map((dim: any) => (
