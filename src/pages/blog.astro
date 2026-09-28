@@ -57,7 +57,8 @@ const sortedPosts = posts.sort((a, b) =>
 // the track chips can toggle them client-side; the server just pre-hides the
 // ones that don't match the current view (default: untracked blog only).
 const blogPosts = sortedPosts.filter((post) => !post.track);
-const currentTrack = new URL(Astro.url).searchParams.get('track') ?? '';
+// /newsletters/<slug> rewrites here and passes its track via locals.
+const currentTrack = new URL(Astro.url).searchParams.get('track') ?? (Astro.locals as any).track ?? '';
 const isPostVisible = (track?: string) =>
   currentTrack ? track === currentTrack : !track;
 
@@ -118,7 +119,7 @@ const structuredData = {
 
     <main>
       {activeTracks.length > 0 && (
-        <div class="track-filter" role="group" aria-label="Filter posts by track">
+        <div class="track-filter" role="group" aria-label="Filter posts by track" data-initial-track={currentTrack}>
           <button class="track-chip active" data-track="">Blog</button>
           {activeTracks.map((n) => (
             <button class="track-chip" data-track={n.track}>{n.name}</button>
@@ -351,7 +352,7 @@ const structuredData = {
       });
     });
 
-    const initial = new URLSearchParams(window.location.search).get('track') ?? '';
+    const initial = document.querySelector<HTMLElement>('.track-filter')?.dataset.initialTrack ?? '';
     apply(initial);
   }
 

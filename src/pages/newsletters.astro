@@ -54,7 +54,7 @@ const structuredData = {
           <p class="entry-description">{n.description}</p>
           {postCount(n.track) > 0 && (
             <p class="entry-blog-link">
-              <a href={`/blog?track=${n.track}`}>Read recent {n.name} posts →</a>
+              <a href={`/newsletters/${n.slug}`}>Read recent {n.name} posts →</a>
             </p>
           )}
           <TrackSubscribe newsletter={n} compact />

@@ -6,6 +6,8 @@ export type BlogTrack = (typeof BLOG_TRACKS)[number];
 
 export interface NewsletterInfo {
   track: BlogTrack;
+  /** URL segment: /newsletters/<slug> lists issues, /newsletters/<slug>/<post> serves one. */
+  slug: string;
   name: string;
   tagline: string;
   description: string;
@@ -27,6 +29,7 @@ export interface NewsletterInfo {
 export const NEWSLETTERS: NewsletterInfo[] = [
   {
     track: 'oss-spotlight',
+    slug: 'opensourcescribes',
     name: 'OpenSourceScribes',
     tagline: 'Open-source tool evaluations',
     description:
@@ -36,6 +39,7 @@ export const NEWSLETTERS: NewsletterInfo[] = [
   },
   {
     track: 'signal-field',
+    slug: 'signal-field',
     name: 'Signal Field',
     tagline: 'Data & infrastructure news',
     description:
@@ -45,6 +49,7 @@ export const NEWSLETTERS: NewsletterInfo[] = [
   },
   {
     track: 'ai-field-notes',
+    slug: 'brainscriblr',
     name: 'Brainscriblr',
     tagline: 'Broader AI commentary',
     description:

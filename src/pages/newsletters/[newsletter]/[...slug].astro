@@ -1,0 +1,16 @@
+---
+// /newsletters/<newsletter>          -> that track's issue list
+// /newsletters/<newsletter>/<post>   -> one issue
+// ponytail: rewrites onto the existing /blog pages instead of duplicating them;
+// canonical stays /blog/<post>, so there's no duplicate-content split.
+import { NEWSLETTERS } from '../../../data/newsletters';
+
+export const prerender = false;
+
+const { newsletter, slug } = Astro.params;
+const n = NEWSLETTERS.find((x) => x.slug === newsletter);
+if (!n) return new Response('Not found', { status: 404 });
+
+(Astro.locals as any).track = n.track; // read by blog.astro's listing
+return Astro.rewrite(slug ? `/blog/${slug}` : '/blog');
+---
