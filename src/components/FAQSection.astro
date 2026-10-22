@@ -9,6 +9,7 @@ interface Props {
 }
 
 const { verifiedCount = 0, totalCount = 0, skillsCount = 0, clientsCount = 0, faqCount = 0 } = Astro.props;
+const hasVerified = verifiedCount > 0;
 
 const faqs = [
     {
@@ -16,12 +17,12 @@ const faqs = [
         answer: `We evaluate GitHub activity, star count (real adoption), and maintenance status. If it has active development and community usage, it qualifies. We also check for proper documentation, security practices, and working examples. See our full verification process in the <a href='/blog/understanding-mcp-quality-standards' class='faq-link'>Quality Standards guide</a>.`
     },
     {
-        question: `Why ${verifiedCount.toLocaleString()}+ servers instead of 17,000?`,
-        answer: `Quality over quantity. We list ${totalCount.toLocaleString()}+ servers in our index, but only ${verifiedCount.toLocaleString()}+ earn verified status after passing automated security, activity, and documentation checks. We skip abandoned projects and low-effort forks so you can find what actually works. Other directories include everything ever created—we curate only what's worth using and maintainable.`
+        question: hasVerified ? `Why ${verifiedCount.toLocaleString()}+ servers instead of 17,000?` : `Why curate instead of listing 17,000 servers?`,
+        answer: `Quality over quantity. We list ${totalCount.toLocaleString()}+ servers in our index, but only ${hasVerified ? `${verifiedCount.toLocaleString()}+` : 'servers that pass our checks'} earn verified status after passing automated security, activity, and documentation checks. We skip abandoned projects and low-effort forks so you can find what actually works. Other directories include everything ever created—we curate only what's worth using and maintainable.`
     },
     {
         question: "What's the difference between Servers, Clients, and Skills?",
-        answer: `MCP Servers (${verifiedCount.toLocaleString()}+ verified, ${totalCount.toLocaleString()}+ listed): Tools/data sources that expose functionality through MCP. MCP Clients (${clientsCount.toLocaleString()}+): Applications that connect TO servers. Agent Skills (${skillsCount.toLocaleString()}): Pre-built capabilities that enhance AI agents. Servers provide tools, clients access them, and skills enhance the AI's ability to use them effectively.`
+        answer: `MCP Servers (${hasVerified ? `${verifiedCount.toLocaleString()}+ verified, ` : ''}${totalCount.toLocaleString()}+ listed): Tools/data sources that expose functionality through MCP. MCP Clients (${clientsCount.toLocaleString()}+): Applications that connect TO servers. Agent Skills (${skillsCount.toLocaleString()}): Pre-built capabilities that enhance AI agents. Servers provide tools, clients access them, and skills enhance the AI's ability to use them effectively.`
     },
     {
         question: "How do I choose an MCP client?",

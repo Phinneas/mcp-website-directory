@@ -140,8 +140,17 @@ const totalServers = servers.length;
     <!-- Key differentiator banner -->
     <div class="diff-banner">
       <div class="diff-stat">
-        <span class="diff-value">{verifiedCount}/{totalServers}</span>
-        <span class="diff-label">Servers Verified</span>
+        {verifiedCount > 0 ? (
+          <>
+            <span class="diff-value">{verifiedCount}/{totalServers}</span>
+            <span class="diff-label">Servers Verified</span>
+          </>
+        ) : (
+          <>
+            <span class="diff-value">{totalServers}</span>
+            <span class="diff-label">Servers in Stack</span>
+          </>
+        )}
       </div>
       <div class="diff-stat">
         <span class="diff-value" style={`color:${diff.color}`}>{diff.label}</span>
