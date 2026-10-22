@@ -65,11 +65,11 @@ const faqSections = [
             },
             {
                 question: "How is MyMCPShelf different from mcp.so?",
-                answer: `mcp.so lists 17,000+ servers with minimal curation, including abandoned projects and low-effort forks. We curate ${verifiedServers.toLocaleString()}+ verified servers from ${totalServers.toLocaleString()}+ listed and scanned. Our approach prioritizes quality over quantity—we skip unmaintained projects and focus on servers that are actively used and well-documented, saving you research time.`
+                answer: `mcp.so lists 17,000+ servers with minimal curation, including abandoned projects and low-effort forks. ${verifiedServers > 0 ? `We curate ${verifiedServers.toLocaleString()}+ verified servers from ${totalServers.toLocaleString()}+ listed and scanned.` : `We list and scan ${totalServers.toLocaleString()}+ servers, and only mark the ones that pass our checks as verified.`} Our approach prioritizes quality over quantity—we skip unmaintained projects and focus on servers that are actively used and well-documented, saving you research time.`
             },
             {
-                question: `Why only ${verifiedServers.toLocaleString()}+ servers?`,
-                answer: `We intentionally skip abandoned projects, low-effort forks, and inactive codebases. Our ${verifiedServers.toLocaleString()}+ verified servers are actively maintained, have real adoption evidenced by GitHub stars and usage, and solve real problems. We list ${totalServers.toLocaleString()}+ total servers in our index, but only those passing automated security, activity, and documentation checks earn verified status. This curatorial approach saves you from wasting time on projects that don't work, lack documentation, or are no longer supported. Quality directories help you find what you need faster.`
+                question: verifiedServers > 0 ? `Why only ${verifiedServers.toLocaleString()}+ servers?` : `Why don't you verify every server?`,
+                answer: `We intentionally skip abandoned projects, low-effort forks, and inactive codebases. Our ${verifiedServers > 0 ? `${verifiedServers.toLocaleString()}+ ` : ''}verified servers are actively maintained, have real adoption evidenced by GitHub stars and usage, and solve real problems. We list ${totalServers.toLocaleString()}+ total servers in our index, but only those passing automated security, activity, and documentation checks earn verified status. This curatorial approach saves you from wasting time on projects that don't work, lack documentation, or are no longer supported. Quality directories help you find what you need faster.`
             },
             {
                 question: "How do you verify servers?",
@@ -102,7 +102,7 @@ const faqSections = [
             },
             {
                 question: "What's the difference between MCP Servers, Clients, and Skills?",
-                answer: `MCP Servers (${verifiedServers.toLocaleString()}+ verified, ${totalServers.toLocaleString()}+ listed): Tools and data sources that expose specific functionality through the MCP protocol—these are what you connect TO. MCP Clients (${clientsCount.toLocaleString()}+): Applications that connect TO servers (like Claude Desktop, Cursor, Cline)—these are how you access servers. Agent Skills (${skillsCount.toLocaleString()}): Pre-built capabilities that enhance AI agents' native abilities, sometimes leveraging MCP servers to perform complex tasks. Servers provide tools, clients access them, and skills enhance the AI's ability to use them effectively.`
+                answer: `MCP Servers (${verifiedServers > 0 ? `${verifiedServers.toLocaleString()}+ verified, ` : ''}${totalServers.toLocaleString()}+ listed): Tools and data sources that expose specific functionality through the MCP protocol—these are what you connect TO. MCP Clients (${clientsCount.toLocaleString()}+): Applications that connect TO servers (like Claude Desktop, Cursor, Cline)—these are how you access servers. Agent Skills (${skillsCount.toLocaleString()}): Pre-built capabilities that enhance AI agents' native abilities, sometimes leveraging MCP servers to perform complex tasks. Servers provide tools, clients access them, and skills enhance the AI's ability to use them effectively.`
             },
             {
                 question: "Can I use multiple MCP servers at once?",

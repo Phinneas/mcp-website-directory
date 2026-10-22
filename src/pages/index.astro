@@ -670,8 +670,11 @@ const structuredData = {
     <!-- Listed vs Verified tiering explanation -->
     <section class="tiering-notice">
       <p>
-        <strong>{totalServers.toLocaleString()}+ servers</strong> scanned and listed in our index;
-        <strong>{verifiedServers.toLocaleString()}+ verified</strong> through automated security, activity, and documentation checks.
+        <strong>{totalServers.toLocaleString()}+ servers</strong> scanned and listed in our index{verifiedServers > 0 ? (
+          <>; <strong>{verifiedServers.toLocaleString()}+ verified</strong> through automated security, activity, and documentation checks.</>
+        ) : (
+          <>. Each one is checked for security, activity, and documentation before it earns a verified badge.</>
+        )}
       </p>
     </section>
 

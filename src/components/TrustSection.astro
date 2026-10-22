@@ -16,7 +16,9 @@ const { verifiedCount = 0, totalCount = 0 } = Astro.props;
             <div class="trust-icon"><VintageIcon client:load name="VisualStudioCheckmark" size={40} /></div>
             <h3 class="trust-title">Curated Servers</h3>
             <p class="trust-description">
-                We list {totalCount.toLocaleString()}+ scanned servers, but only mark {verifiedCount.toLocaleString()}+ as verified after passing automated security, activity, and documentation checks. Quality over quantity.
+                {verifiedCount > 0
+                    ? `We list ${totalCount.toLocaleString()}+ scanned servers, but only mark ${verifiedCount.toLocaleString()}+ as verified after passing automated security, activity, and documentation checks. Quality over quantity.`
+                    : `We list ${totalCount.toLocaleString()}+ scanned servers. A server is only marked verified after it passes automated security, activity, and documentation checks. Quality over quantity.`}
             </p>
             <a href="/blog/understanding-mcp-quality-standards" class="trust-cta">Our verification process →</a>
         </div>
