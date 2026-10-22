@@ -372,14 +372,24 @@ async function assessOne(server, prevComposite, env, token) {
 
 // ── Orchestration ───────────────────────────────────────────────────────────
 
-async function runAll(env) {
+// Servers per invocation. The index is ~7,240 servers, far more than one
+// invocation can handle within Worker subrequest/CPU limits, so each run takes
+// the servers that were scanned least recently (never-scanned first, then by
+// stars). With an hourly cron and the default chunk of 100, the full index is
+// covered in ~3 days and then keeps cycling.
+const DEFAULT_CHUNK = 100;
+
+async function runAll(env, chunkOverride) {
   console.log('composite-trust-monitor: starting consolidated recheck...');
   const token = env.GITHUB_TOKEN;
+  const chunk = Math.max(1, Math.min(500, Number(chunkOverride || env.CHUNK_SIZE) || DEFAULT_CHUNK));
 
   const servers = await env.DB.prepare(
     `SELECT id, name, deployment_type, github_url, npm_package, composite_trust_json
-     FROM servers ORDER BY stars DESC LIMIT 500`
-  ).all();
+     FROM servers
+     ORDER BY (last_scan_at IS NOT NULL), last_scan_at ASC, stars DESC
+     LIMIT ?`
+  ).bind(chunk).all();
 
   if (!servers.results?.length) {
     console.log('composite-trust-monitor: no servers found');
@@ -404,29 +414,37 @@ async function runAll(env) {
         const { record, composite, green, security, remoteHealth, execution } = await assessOne(server, prev, env, token);
         if (composite.flags.length) flagged++;
 
-        // ONE combined record (the consolidated source of truth) …
-        await env.DB.prepare('UPDATE servers SET composite_trust_json = ? WHERE id = ?')
-          .bind(JSON.stringify(record), server.id).run();
-
-        // … plus back-fill the individual columns so existing badges keep working.
-        await env.DB.prepare('UPDATE servers SET green_score_json = ? WHERE id = ?')
-          .bind(JSON.stringify({ tier: green.tier, label: green.label, description: green.description, hostingProvider: green.hostingProvider }), server.id).run();
-
         const badgeTier = prev && composite.tier === 'trusted' ? 'manually_reviewed' : 'scanned';
-        await env.DB.prepare('UPDATE servers SET badge_tier = ?, last_scan_at = ?, scan_summary_json = ? WHERE id = ?')
-          .bind(badgeTier, record.assessedAt, JSON.stringify({ overall_score: security.score, ...security }), server.id).run();
 
-        // 5th layer: remote health (TLS + uptime)
-        await env.DB.prepare('UPDATE servers SET remote_health_json = ? WHERE id = ?')
-          .bind(JSON.stringify(remoteHealth), server.id).run();
-
-        // 6th layer: execution test (endpoint test or npm handshake)
-        await env.DB.prepare('UPDATE servers SET execution_json = ? WHERE id = ?')
-          .bind(JSON.stringify(execution), server.id).run();
+        // One write per server: the combined record (source of truth) plus the
+        // back-filled individual columns that existing badges and pages read.
+        await env.DB.prepare(
+          `UPDATE servers SET
+             composite_trust_json = ?,
+             green_score_json = ?,
+             badge_tier = ?, last_scan_at = ?, scan_summary_json = ?,
+             remote_health_json = ?,
+             execution_json = ?
+           WHERE id = ?`
+        ).bind(
+          JSON.stringify(record),
+          JSON.stringify({ tier: green.tier, label: green.label, description: green.description, hostingProvider: green.hostingProvider }),
+          badgeTier, record.assessedAt, JSON.stringify({ overall_score: security.score, ...security }),
+          JSON.stringify(remoteHealth),
+          JSON.stringify(execution),
+          server.id,
+        ).run();
 
         processed++;
       } catch (err) {
         console.error(`composite-trust: failed for ${server.id}:`, err.message);
+        // Stamp the attempt so a failing server rotates to the back of the
+        // queue instead of being retried first on every run. badge_tier is
+        // left unchanged.
+        try {
+          await env.DB.prepare('UPDATE servers SET last_scan_at = ? WHERE id = ?')
+            .bind(new Date().toISOString(), server.id).run();
+        } catch { /* ignore */ }
       }
     }));
     // Rate-limit pause between batches.
@@ -447,8 +465,16 @@ export default {
     }
   },
   async fetch(request, env) {
+    const url = new URL(request.url);
+    // If TRIGGER_KEY is set, manual runs require ?key=<TRIGGER_KEY>.
+    if (env.TRIGGER_KEY && url.searchParams.get('key') !== env.TRIGGER_KEY) {
+      return new Response(JSON.stringify({ ok: false, error: 'unauthorized' }), {
+        status: 401, headers: { 'Content-Type': 'application/json' },
+      });
+    }
     try {
-      await runAll(env);
+      // ?limit=N runs a smaller chunk, useful for a first test run.
+      await runAll(env, url.searchParams.get('limit'));
       return new Response(JSON.stringify({ ok: true, message: 'composite-trust recheck complete' }), {
         headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
       });

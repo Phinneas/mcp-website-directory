@@ -22,9 +22,16 @@ database_name = "mcp-directory"
 database_id = "527bf637-7aba-4719-8d39-b9e6e614a3b9"
 
 [triggers]
-crons = ["0 2 * * Tue"]   # Single weekly slot: Tuesday 02:00 UTC
+# Hourly. Each run scans the CHUNK_SIZE least-recently-scanned servers, so the
+# full ~7,240-server index is covered in ~3 days and then keeps cycling.
+crons = ["17 * * * *"]
 
-# Optional: higher GitHub API rate limits
-# [vars]
-# GITHUB_TOKEN = ""       # Set via: wrangler secret put GITHUB_TOKEN
-# SOCKET_DEV_API_KEY = "" # Set via: wrangler secret put SOCKET_DEV_API_KEY
+[vars]
+CHUNK_SIZE = "100"
+
+# Secrets (set with wrangler, never commit values):
+#   wrangler secret put GITHUB_TOKEN --config workers/composite-trust-wrangler.toml
+#     Required at this volume. Unauthenticated GitHub allows 60 req/hour.
+#   wrangler secret put TRIGGER_KEY --config workers/composite-trust-wrangler.toml
+#     Optional. Locks the manual HTTP trigger to ?key=<value>.
+#   SOCKET_DEV_API_KEY (optional)
