@@ -28,6 +28,8 @@ export interface MCPServerRow {
   composite_trust_json: string | null;
   remote_health_json: string | null;
   execution_json: string | null;
+  review_count: number | null;
+  avg_rating: number | null;
 }
 
 /** Consolidated per-server recheck record (written by composite-trust-monitor). */
@@ -144,6 +146,8 @@ export interface MCPServer {
   installCount?: number;
   installs24h?: number;
   installs7d?: number;
+  reviewCount?: number;
+  avgRating?: number | null;
   fields: {
     name: string;
     description: string;
@@ -278,6 +282,8 @@ function rowToServer(row: MCPServerRow): MCPServer {
     installCount: row.install_count || 0,
     installs24h: row.installs_24h || 0,
     installs7d: row.installs_7d || 0,
+    reviewCount: row.review_count || 0,
+    avgRating: row.avg_rating ?? null,
     fields: {
       name: row.name,
       description: row.description || '',
@@ -369,10 +375,13 @@ export async function getServersPage(
       orderBy = 'stars DESC, downloads DESC';
   }
 
-  // Fetch page
+  // Fetch page — include community stats (review count/rating) via LEFT JOIN
   const rows = await db
     .prepare(
-      `SELECT * FROM servers ${where}
+      `SELECT servers.*, cs.review_count, cs.avg_rating
+       FROM servers
+       LEFT JOIN community_stats cs ON cs.server_id = servers.id
+       ${where}
        ORDER BY ${orderBy}
        LIMIT ? OFFSET ?`
     )
@@ -397,7 +406,7 @@ export async function getFeaturedServers(
 
   const placeholders = featuredIds.map(() => '?').join(', ');
   const rows = await db
-    .prepare(`SELECT * FROM servers WHERE id IN (${placeholders})`)
+    .prepare(`SELECT servers.*, cs.review_count, cs.avg_rating FROM servers LEFT JOIN community_stats cs ON cs.server_id = servers.id WHERE servers.id IN (${placeholders})`)
     .bind(...featuredIds)
     .all<MCPServerRow>();
 
@@ -413,14 +422,30 @@ export async function getServerBySlug(
   // Slug matches: exact id OR name-derived slug
   const row = await db
     .prepare(
-      `SELECT * FROM servers WHERE id = ? OR
-       lower(replace(replace(name, ' ', '-'), '_', '-')) = ?
+      `SELECT servers.*, cs.review_count, cs.avg_rating
+       FROM servers
+       LEFT JOIN community_stats cs ON cs.server_id = servers.id
+       WHERE servers.id = ?`
+    )
+    .bind(slug)
+    .first<MCPServerRow>();
+
+  if (row) return rowToServer(row);
+
+  // Fallback: try matching by name-derived slug (letters, numbers, hyphens)
+  const fallbackRow = await db
+    .prepare(
+      `SELECT servers.*, cs.review_count, cs.avg_rating
+       FROM servers
+       LEFT JOIN community_stats cs ON cs.server_id = servers.id
+       WHERE servers.id = ? OR
+       lower(replace(replace(servers.name, ' ', '-'), '_', '-')) = ?
        LIMIT 1`
     )
     .bind(slug, slug)
     .first<MCPServerRow>();
 
-  return row ? rowToServer(row) : null;
+  return fallbackRow ? rowToServer(fallbackRow) : null;
 }
 
 export async function getTotalServerCount(db: D1Database): Promise<number> {

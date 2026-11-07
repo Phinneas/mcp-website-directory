@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import type { MCPServer } from '../utils/d1';
 import { getCategoryDisplayName } from '../utils/serverData.js';
 import { CompositeTrustBadge } from './CompositeTrustBadge';
+import { CommunityBadge } from './CommunityBadge';
 
 interface Props {
   initialServers: MCPServer[];
@@ -117,6 +118,17 @@ function ServerCard({ server }: { server: MCPServer }) {
         {server.compositeTrust && (
           <div style={{ marginBottom: '0.5rem' }}>
             <CompositeTrustBadge compositeTrust={server.compositeTrust} />
+          </div>
+        )}
+
+        {/* Community stats — review count + rating */}
+        {(server.reviewCount ?? 0) > 0 && (
+          <div style={{ marginBottom: '0.5rem' }}>
+            <CommunityBadge
+              serverId={server.id}
+              avgRating={server.avgRating}
+              reviewCount={server.reviewCount}
+            />
           </div>
         )}
 
