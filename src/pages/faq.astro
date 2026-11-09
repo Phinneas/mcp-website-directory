@@ -94,7 +94,7 @@ const faqSections = [
         items: [
             {
                 question: "How do I find the right MCP server for my use case?",
-                answer: "Use our category filters (Databases, Web Services, File Systems, Cloud Platforms, etc.) to narrow down by functionality, or search by keyword to find specific tools. Each server listing includes detailed descriptions, GitHub statistics, and usage information. For detailed recommendations by use case, read our blog post 'MCP Tools: The Complete Guide to Finding & Using Tools in 2025' which provides specific suggestions for common scenarios."
+                answer: 'Use our category filters (Databases, Web Services, File Systems, Cloud Platforms, etc.) to narrow down by functionality, or search by keyword to find specific tools. Each server listing includes detailed descriptions, GitHub statistics, and usage information. For a step-by-step evaluation framework, see our <a href="/mcp-server-checklist">MCP Server Selection Checklist</a>. For detailed recommendations by use case, read our blog post ‘MCP Tools: The Complete Guide to Finding & Using Tools in 2025’ which provides specific suggestions for common scenarios.'
             },
             {
                 question: `How do I choose between ${clientsCount.toLocaleString()}+ MCP clients?`,
@@ -223,7 +223,7 @@ const structuredData = {
                                 </span>
                                 <span class="toggle-icon">▼</span>
                             </h3>
-                            <p class="faq-answer">{faq.answer}</p>
+                            <p class="faq-answer" set:html={faq.answer} />
                         </div>
                     ))}
                 </div>

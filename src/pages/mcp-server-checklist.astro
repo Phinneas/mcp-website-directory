@@ -1,0 +1,385 @@
+---
+// GET /mcp-server-checklist — Server Selection Checklist
+export const prerender = true;
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HeaderNewsletter from '../components/HeaderNewsletter.astro';
+import CustomMcpCta from '../components/CustomMcpCta.astro';
+import { FolderIcon, ToolboxIcon, ComputerIcon, VintageIcon } from '../components/VintageIcon';
+import { staticServers } from '../data/staticServers.js';
+import agentSkills from '../data/agent-skills.json';
+import cursorSkills from '../data/cursor-skills.json';
+import clients from '../../clients.json';
+
+const skillsCount = (agentSkills as any[]).length + (cursorSkills as any[]).length;
+const clientsCount = (clients as any[]).length;
+const serverCount = (staticServers as any[]).length;
+
+const pageTitle = 'MCP Server Selection Checklist | My MCP Shelf';
+const pageDescription = 'A practical checklist for choosing an MCP server: evaluate security trust tier, maintenance activity, license, auth model, transport, client compatibility, and community ratings.';
+const canonicalUrl = 'https://www.mymcpshelf.com/mcp-server-checklist';
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'MCP Server Selection Checklist',
+  description: pageDescription,
+  url: canonicalUrl,
+  author: { '@type': 'Person', name: 'My MCP Shelf' },
+  publisher: {
+    '@type': 'Organization',
+    name: 'My MCP Shelf',
+    url: 'https://www.mymcpshelf.com',
+  },
+};
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  canonical={canonicalUrl}
+  structuredData={structuredData}
+>
+  <div class="page-container">
+    <!-- Hero -->
+    <section class="hero-section">
+      <div class="hero-content">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <a href="/">Home</a>
+          <span class="breadcrumb-separator">/</span>
+          <span>MCP Server Selection Checklist</span>
+        </nav>
+        <h1 class="page-title">MCP Server Selection Checklist</h1>
+        <p class="page-subtitle">
+          Use these criteria to quickly evaluate any MCP server and pick the right one for your AI workflow.
+          Every claim here is backed by data you can see on this directory.
+        </p>
+      </div>
+    </section>
+
+    <!-- Newsletter signup -->
+    <div class="newsletter-banner">
+      <HeaderNewsletter />
+    </div>
+
+    <!-- Checklist Intro -->
+    <section class="section">
+      <p>
+        The MCP ecosystem has <strong>{serverCount.toLocaleString()}+ servers</strong> and growing. 
+        Choosing the right one for your project doesn't have to be guesswork. 
+        This checklist walks through the signals that separate a well-maintained, secure MCP server 
+        from one that will waste your time.
+      </p>
+      <p>
+        Each criterion links to the relevant data on this site so you can verify before you install.
+      </p>
+    </section>
+
+    <!-- Criteria list -->
+    <section class="section">
+      <h2 class="section-title">1. Security &amp; Trust — Start Here</h2>
+      <div class="criterion">
+        <h3 class="criterion-title">Trust tier</h3>
+        <p>
+          Every MCP server on this site carries a <a href="/leaderboard">composite trust score</a> — a single 
+          rating that factors in static analysis, dependency health, and CVE watchlist matches. 
+          Servers in the top tier have passed automated security scanning and are updated regularly. 
+          Start with the highest tier that meets your needs.
+        </p>
+      </div>
+      <div class="criterion">
+        <h3 class="criterion-title">Security scan date</h3>
+        <p>
+          Check when the server was last scanned. A recent scan (within weeks) means active monitoring. 
+          An old or missing scan is a yellow flag — the server may have unaddressed vulnerabilities. 
+          Scan dates are shown on every <a href="/#serversGrid">server detail page</a>.
+        </p>
+      </div>
+      <div class="criterion">
+        <h3 class="criterion-title">Known CVEs</h3>
+        <p>
+          The <a href="/leaderboard">security scanner</a> cross-references dependencies against public CVE 
+          databases. A server with zero CVE matches and open-source dependencies is the safest bet for 
+          production use. Any CVE match should be reviewed before deployment.
+        </p>
+      </div>
+      <div class="criterion">
+        <h3 class="criterion-title">Agent Hygiene Score</h3>
+        <p>
+          The <a href="/agent-hygiene">Agent Hygiene Score</a> evaluates how safe a server is to hand to 
+          an autonomous AI agent: schema strictness, least-privilege scoping, declared boundaries, 
+          auditability, and maintenance signal. This is separate from the security audit — it answers:
+          "can an agent use this safely without overscoping?"
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">2. Maintenance &amp; Community</h2>
+      <div class="criterion">
+        <h3 class="criterion-title">GitHub stars &amp; activity</h3>
+        <p>
+          Stars are a rough proxy for community trust. More importantly, check commit recency:
+          a server with commits in the last 90 days is actively maintained. An abandoned server won't 
+          receive security patches or protocol updates. The <a href="/leaderboard">leaderboard</a> 
+          ranks servers by multiple signals including community activity.
+        </p>
+      </div>
+      <div class="criterion">
+        <h3 class="criterion-title">Open issues &amp; responsiveness</h3>
+        <p>
+          A healthy project addresses bugs and questions within a reasonable timeframe. Check the 
+          GitHub repo for open issue counts and how quickly the maintainer responds. Servers with 
+          hundreds of unresolved issues may be hard to depend on.
+        </p>
+      </div>
+      <div class="criterion">
+        <h3 class="criterion-title">License</h3>
+        <p>
+          Most MCP servers are MIT or Apache 2.0 licensed — permissive and safe for commercial use. 
+          Verify the license in the server's repository before adopting it in a production project. 
+          Proprietary or missing licenses warrant extra scrutiny.
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">3. Technical Fit</h2>
+      <div class="criterion">
+        <h3 class="criterion-title">Authentication model</h3>
+        <p>
+          How does the server authenticate? API key? OAuth? No auth (local-only)? Match the auth model 
+          to your deployment: for <a href="/local-stdio">local stdio</a> servers, API keys stored in the 
+          config file are normal. For <a href="/remote-servers">remote servers</a>, prefer OAuth or 
+          short-lived tokens over shared secrets.
+        </p>
+      </div>
+      <div class="criterion">
+        <h3 class="criterion-title">Transport: local vs remote</h3>
+        <p>
+          MCP servers can communicate over <strong>stdio</strong> (local process, subprocess launched by 
+          the client) or <strong>SSE/streamable HTTP</strong> (remote, over the network). Choose stdio 
+          for development and sensitive data that should never leave your machine. Choose remote for 
+          team-accessible services and cloud-native deployments. See <a href="/local-stdio">Local &amp; stdio</a> 
+          and <a href="/remote-servers">Remote servers</a> for details.
+        </p>
+      </div>
+      <div class="criterion">
+        <h3 class="criterion-title">Client compatibility</h3>
+        <p>
+          Not every server works with every client. The directory lists <strong>{clientsCount.toLocaleString()}+ MCP clients</strong> 
+          on the <a href="/mcp-clients">clients page</a>. Check that the server's transport and tools are 
+          compatible with your chosen client before investing time in configuration.
+        </p>
+      </div>
+      <div class="criterion">
+        <h3 class="criterion-title">Primitives supported</h3>
+        <p>
+          MCP servers can expose <strong>tools</strong> (callable actions), <strong>resources</strong> 
+          (readable data), and <strong>prompts</strong> (templated interactions). Check which primitives 
+          a server supports — a server with tools and resources is more versatile than one with only 
+          prompts. Server detail pages list every available tool and resource.
+        </p>
+      </div>
+      <div class="criterion">
+        <h3 class="criterion-title">Installable via package manager</h3>
+        <p>
+          Servers available as npm or PyPI packages are trivially installable. Those requiring source 
+          builds add friction and potential version drift. Server detail pages show npm package and 
+          GitHub URL to help you evaluate installation options.
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section-title">4. Real-World Validation</h2>
+      <div class="criterion">
+        <h3 class="criterion-title">Community reviews &amp; ratings</h3>
+        <p>
+          Check what other users say. The directory includes <a href="/leaderboard">community ratings</a> 
+          and review counts on every server card and detail page. A server with multiple positive reviews 
+          and high ratings has been battle-tested by real users.
+        </p>
+      </div>
+      <div class="criterion">
+        <h3 class="criterion-title">Download &amp; install metrics</h3>
+        <p>
+          npm download counts and GitHub statistics give a rough sense of adoption. A server with 
+          consistent weekly downloads is being used in production — a good sign. These numbers are 
+          visible on each server's detail page.
+        </p>
+      </div>
+      <div class="criterion">
+        <h3 class="criterion-title">Topic stacks</h3>
+        <p>
+          If you're working on a specific use case (browser automation, web scraping, database access), 
+          check the relevant <a href="/topics">topic stack</a>. Each stack is a pre-verified bundle of 
+          servers that work together for one job-to-be-done, saving you research time.
+        </p>
+      </div>
+    </section>
+
+    <!-- Quick-reference table -->
+    <section class="section">
+      <h2 class="section-title">Quick Reference</h2>
+      <div class="quick-ref-grid">
+        <div class="ref-card">
+          <h3>🟢 Must-check</h3>
+          <ul>
+            <li>Trust tier (top tier preferred)</li>
+            <li>Security scan date (recent)</li>
+            <li>Commit activity (last 90 days)</li>
+            <li>License (permissive)</li>
+          </ul>
+        </div>
+        <div class="ref-card">
+          <h3>🔵 Should-check</h3>
+          <ul>
+            <li>Agent Hygiene Score</li>
+            <li>GitHub stars and open issues</li>
+            <li>Client compatibility</li>
+            <li>Auth model fits your deployment</li>
+          </ul>
+        </div>
+        <div class="ref-card">
+          <h3>🟣 Nice-to-know</h3>
+          <ul>
+            <li>Available tools &amp; resources count</li>
+            <li>Package manager availability</li>
+            <li>Community reviews &amp; ratings</li>
+            <li>Topic stack membership</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Newsletter CTA -->
+    <div class="newsletter-banner" style="margin-top: 2rem;">
+      <HeaderNewsletter />
+    </div>
+
+    <!-- Footer links -->
+    <div class="footer-links">
+      <a href="/"><FolderIcon client:load size={16} /> Back to MCP Shelf</a>
+      <a href="/leaderboard"><ToolboxIcon client:load size={16} /> Leaderboard</a>
+      <a href="/agent-hygiene"><VintageIcon client:load name="Windows95TextFile" size={16} /> Agent Hygiene</a>
+      <a href="/topics"><ComputerIcon client:load size={16} /> Topic Stacks</a>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+  .hero-section {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 1.5rem 0;
+  }
+  .page-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .page-subtitle {
+    font-size: 1.1rem;
+    color: hsl(var(--muted));
+    max-width: 700px;
+    margin: 1rem auto;
+    line-height: 1.6;
+  }
+  .breadcrumb {
+    margin-bottom: 1rem;
+  }
+  .breadcrumb a {
+    color: hsl(var(--foreground));
+    text-decoration: underline;
+  }
+  .breadcrumb-separator {
+    margin: 0 0.25rem;
+    color: hsl(var(--muted));
+  }
+  .section {
+    margin: 1.5rem 0;
+  }
+  .section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 1.5rem 0 0.75rem;
+    color: hsl(var(--foreground));
+  }
+  .criterion {
+    margin: 0.75rem 0;
+    padding: 0.75rem 1rem;
+    background: hsl(var(--card));
+    border-radius: 8px;
+    border: 1px solid hsl(var(--border));
+  }
+  .criterion-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 0.25rem;
+  }
+  .criterion p {
+    margin: 0;
+    line-height: 1.6;
+    color: hsl(var(--muted));
+  }
+  .criterion a {
+    color: hsl(var(--foreground));
+  }
+  .quick-ref-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+  }
+  .ref-card {
+    padding: 1rem;
+    background: hsl(var(--card));
+    border-radius: 8px;
+    border: 1px solid hsl(var(--border));
+  }
+  .ref-card h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+  }
+  .ref-card ul {
+    margin: 0;
+    padding-left: 1.2rem;
+  }
+  .ref-card li {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: hsl(var(--muted));
+  }
+  .newsletter-banner {
+    margin: 1.5rem 0;
+    display: flex;
+    justify-content: center;
+  }
+  .footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    margin: 2rem 0;
+  }
+  .footer-links a {
+    color: hsl(var(--foreground));
+    text-decoration: underline;
+  }
+
+  @media (max-width: 768px) {
+    .quick-ref-grid {
+      grid-template-columns: 1fr;
+    }
+    .page-title { font-size: 1.6rem; }
+  }
+</style>
