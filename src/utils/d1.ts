@@ -30,6 +30,9 @@ export interface MCPServerRow {
   execution_json: string | null;
   review_count: number | null;
   avg_rating: number | null;
+  license: string | null;
+  mcp_primitives: string | null;
+  compatible_clients: string | null;
 }
 
 /** Consolidated per-server recheck record (written by composite-trust-monitor). */
@@ -148,6 +151,9 @@ export interface MCPServer {
   installs7d?: number;
   reviewCount?: number;
   avgRating?: number | null;
+  license?: string | null;
+  mcpPrimitives?: string[] | null;
+  compatibleClients?: string[] | null;
   fields: {
     name: string;
     description: string;
@@ -284,6 +290,9 @@ function rowToServer(row: MCPServerRow): MCPServer {
     installs7d: row.installs_7d || 0,
     reviewCount: row.review_count || 0,
     avgRating: row.avg_rating ?? null,
+    license: row.license ?? null,
+    mcpPrimitives: row.mcp_primitives ? (() => { try { return JSON.parse(row.mcp_primitives) as string[]; } catch { return null; } })() : null,
+    compatibleClients: row.compatible_clients ? (() => { try { return JSON.parse(row.compatible_clients) as string[]; } catch { return null; } })() : null,
     fields: {
       name: row.name,
       description: row.description || '',
