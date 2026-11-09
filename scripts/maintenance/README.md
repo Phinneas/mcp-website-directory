@@ -24,7 +24,7 @@ This directory contains scripts to keep the MCP Clients and Servers data clean a
 
 ## Full Pipeline
 To refresh and clean the entire clients list:
-1. Run discovery scripts (e.g. `scrape_clients.js` and `extract_github_urls.js`).
+1. Run discovery scripts (e.g. `archive/scripts/scrape_clients.js` and `archive/scripts/extract_github_urls.js`).
 2. `node scripts/maintenance/validate_clients.js`
 3. `node scripts/maintenance/cleanup_clients.js`
 4. `node scripts/maintenance/final_polish.js`

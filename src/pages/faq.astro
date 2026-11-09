@@ -160,12 +160,29 @@ const faqSections = [
 
 const totalQuestions = faqSections.reduce((sum, s) => sum + s.items.length, 0);
 const totalTopics = faqSections.length;
+
+// FAQPage structured data — generated from the same Q&A data the page renders
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqSections.flatMap(section =>
+    section.items.map(faq => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.answer,
+      },
+    }))
+  ),
+};
 ---
 
 <BaseLayout
     title="FAQ | My MCP Shelf"
     description="Frequently asked questions about Model Context Protocol, MCP servers, and how to use My MCP Shelf"
     canonical="https://www.mymcpshelf.com/faq"
+    structuredData={structuredData}
 >
     <div class="container">
         <section class="hero-section">

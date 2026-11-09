@@ -18,7 +18,12 @@
  * composite record. Scoring is delegated to the pure, unit-tested
  * ./lib/composite-checks.js.
  *
- * Trigger: single weekly cron (see composite-trust-wrangler.toml) OR HTTP GET.
+ * Trigger: daily cron (see composite-trust-wrangler.toml) OR HTTP GET.
+ *
+ * The index is 7,000+ servers and growing, so no single invocation scans it
+ * all. Each run assesses up to RUN_CAP servers under a time budget, paging
+ * with a cursor persisted in `worker_state` (ordered by id) — runs resume
+ * where the previous one stopped until the sweep wraps around.
  */
 
 import {
@@ -372,31 +377,73 @@ async function assessOne(server, prevComposite, env, token) {
 
 // ── Orchestration ───────────────────────────────────────────────────────────
 
-async function runAll(env) {
-  console.log('composite-trust-monitor: starting consolidated recheck...');
-  const token = env.GITHUB_TOKEN;
+const RUN_CAP = 1000;                     // max servers assessed per invocation
+const SUB_BATCH = 15;                     // parallel assessOne() calls per sub-batch
+const TIME_BUDGET_MS = 10 * 60 * 1000;    // stop cleanly before Workers kills the invocation
+const CURSOR_KEY = 'composite_trust:cursor';
+const LAST_SWEEP_KEY = 'composite_trust:last_sweep_at';
 
-  const servers = await env.DB.prepare(
-    `SELECT id, name, deployment_type, github_url, npm_package, composite_trust_json
-     FROM servers ORDER BY stars DESC LIMIT 500`
-  ).all();
-
-  if (!servers.results?.length) {
-    console.log('composite-trust-monitor: no servers found');
-    return;
-  }
-
+async function ensureSchema(env) {
   // Ensure columns exist (idempotent).
   try { await env.DB.prepare('ALTER TABLE servers ADD COLUMN composite_trust_json TEXT').run(); } catch { /* exists */ }
   try { await env.DB.prepare('ALTER TABLE servers ADD COLUMN remote_health_json TEXT').run(); } catch { /* exists */ }
   try { await env.DB.prepare('ALTER TABLE servers ADD COLUMN execution_json TEXT').run(); } catch { /* exists */ }
+  await env.DB.prepare(
+    'CREATE TABLE IF NOT EXISTS worker_state (key TEXT PRIMARY KEY, value TEXT NOT NULL, updated_at TEXT NOT NULL)'
+  ).run();
+}
 
-  const batchSize = 15;
+async function readState(env, key) {
+  try {
+    const row = await env.DB.prepare('SELECT value FROM worker_state WHERE key = ?').bind(key).first();
+    return row?.value ?? null;
+  } catch {
+    return null;
+  }
+}
+
+async function writeState(env, key, value) {
+  await env.DB.prepare(
+    `INSERT INTO worker_state (key, value, updated_at) VALUES (?, ?, ?)
+     ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at`
+  ).bind(key, value, new Date().toISOString()).run();
+}
+
+async function runAll(env) {
+  const startedAt = Date.now();
+  console.log('composite-trust-monitor: starting consolidated recheck...');
+  const token = env.GITHUB_TOKEN;
+
+  await ensureSchema(env);
+
+  // Cursor by id: each invocation resumes where the previous one stopped, so
+  // the whole index is scanned across runs instead of re-checking the same
+  // top slice every time.
+  const cursor = (await readState(env, CURSOR_KEY)) || '';
+  const servers = await env.DB.prepare(
+    `SELECT id, name, deployment_type, github_url, npm_package, composite_trust_json
+     FROM servers WHERE id > ? ORDER BY id LIMIT ?`
+  ).bind(cursor, RUN_CAP).all();
+
+  if (!servers.results?.length) {
+    // End of table — wrap the cursor so the next run starts a fresh sweep.
+    await writeState(env, CURSOR_KEY, '');
+    await writeState(env, LAST_SWEEP_KEY, new Date().toISOString());
+    console.log('composite-trust-monitor: sweep complete — cursor reset for next sweep');
+    return { processed: 0, flagged: 0, cursor: '', sweepComplete: true };
+  }
+
   let processed = 0;
   let flagged = 0;
+  let lastId = cursor;
 
-  for (let i = 0; i < servers.results.length; i += batchSize) {
-    const batch = servers.results.slice(i, i + batchSize);
+  for (let i = 0; i < servers.results.length; i += SUB_BATCH) {
+    if (Date.now() - startedAt > TIME_BUDGET_MS) {
+      console.log(`composite-trust-monitor: time budget hit after ${processed} servers — next run resumes from "${lastId}"`);
+      await writeState(env, CURSOR_KEY, lastId);
+      return { processed, flagged, cursor: lastId, sweepComplete: false };
+    }
+    const batch = servers.results.slice(i, i + SUB_BATCH);
     await Promise.all(batch.map(async (server) => {
       let prev = null;
       try { prev = server.composite_trust_json ? JSON.parse(server.composite_trust_json) : null; } catch { prev = null; }
@@ -429,11 +476,24 @@ async function runAll(env) {
         console.error(`composite-trust: failed for ${server.id}:`, err.message);
       }
     }));
+    // Advance the cursor past this sub-batch even if some rows failed —
+    // failures are retried on the next sweep.
+    lastId = batch[batch.length - 1].id;
+    await writeState(env, CURSOR_KEY, lastId);
     // Rate-limit pause between batches.
-    if (i + batchSize < servers.results.length) await new Promise((r) => setTimeout(r, 1200));
+    if (i + SUB_BATCH < servers.results.length) await new Promise((r) => setTimeout(r, 1200));
   }
 
-  console.log(`composite-trust-monitor: done — ${processed} assessed, ${flagged} flagged for review`);
+  // A partial page means we reached the end of the table: reset the cursor so
+  // the next run starts a fresh sweep. A full page keeps the cursor in place.
+  const sweepComplete = servers.results.length < RUN_CAP;
+  if (sweepComplete) {
+    await writeState(env, CURSOR_KEY, '');
+    await writeState(env, LAST_SWEEP_KEY, new Date().toISOString());
+  }
+
+  console.log(`composite-trust-monitor: done — ${processed} assessed, ${flagged} flagged, cursor=${sweepComplete ? '(reset)' : `"${lastId}"`}`);
+  return { processed, flagged, cursor: sweepComplete ? '' : lastId, sweepComplete };
 }
 
 // ── Worker entry ────────────────────────────────────────────────────────────
@@ -448,8 +508,8 @@ export default {
   },
   async fetch(request, env) {
     try {
-      await runAll(env);
-      return new Response(JSON.stringify({ ok: true, message: 'composite-trust recheck complete' }), {
+      const stats = await runAll(env);
+      return new Response(JSON.stringify({ ok: true, message: 'composite-trust batch complete', ...stats }), {
         headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
       });
     } catch (err) {

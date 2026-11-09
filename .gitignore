@@ -62,5 +62,16 @@ github_*.log
 github_*.json
 .aider*
 
+# Napkin generated diagrams (regenerated at build time)
+public/diagrams/
+
 # Local Cloudflare/Wrangler D1 state — never commit
 .wrangler/
+
+# Local agent state — never commit
+.recall/
+.openrig/
+.claude/plugins/
+
+# npm lockfile (project uses pnpm)
+package-lock.json

@@ -14,6 +14,11 @@ compatibility_date = "2024-11-12"
 # This worker runs all four checks per server in a single pass and writes one
 # combined `composite_trust_json` record (plus the Composite Trust Score).
 # The four workers above are SUPERSEDED — disable their crons on next deploy.
+#
+# Scale: the index is 7,000+ servers (was ~500 when this was written). Each
+# invocation assesses up to 1,000 servers under a 10-minute budget and persists
+# a cursor (by id) in the `worker_state` table, so runs page through the whole
+# index across days instead of re-checking the same top slice.
 # ─────────────────────────────────────────────────────────────────────────────
 
 [[d1_databases]]
@@ -22,7 +27,7 @@ database_name = "mcp-directory"
 database_id = "527bf637-7aba-4719-8d39-b9e6e614a3b9"
 
 [triggers]
-crons = ["0 2 * * Tue"]   # Single weekly slot: Tuesday 02:00 UTC
+crons = ["17 2 * * *"]   # Daily 02:17 UTC — full index sweep across ~8 runs
 
 # Optional: higher GitHub API rate limits
 # [vars]

@@ -4,6 +4,8 @@ import sitemap from '@astrojs/sitemap';
 import react from '@astrojs/react';
 import cloudflare from '@astrojs/cloudflare';
 
+import { remarkNapkin } from './src/plugins/remark-napkin.mjs';
+
 import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
@@ -18,6 +20,9 @@ export default defineConfig({
   integrations: [react(), mdx(), sitemap({
     filter: (page) => !page.includes('/server/'),
   })],
+  markdown: {
+    remarkPlugins: [remarkNapkin],
+  },
 
   vite: {
     plugins: [tailwindcss()]
