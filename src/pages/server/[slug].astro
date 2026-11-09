@@ -21,6 +21,7 @@ import GitHubHealthVitals from '../../components/GitHubHealthVitals';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getRelatedServers, getCategoryDisplayName } from '../../utils/serverData.js';
 import { slugify } from '../../utils/slugify.js';
+import { isIndexableServer } from '../../utils/indexing.js';
 import { staticServers as fallbackServers } from '../../data/staticServers.js';
 import { getSecurityAudit, getScoreTier } from '../../data/securityAudit';
 import CustomMcpCta from '../../components/CustomMcpCta.astro';
@@ -247,7 +248,11 @@ const structuredData = {
   structuredData={structuredData}
 >
   <Fragment slot="head">
-    <meta name="robots" content="noindex">
+    {
+      isIndexableServer(server)
+        ? <meta name="robots" content="index, follow">
+        : <meta name="robots" content="noindex">
+    }
     <meta name="keywords" content={`${server.fields.category || ''}, ${server.fields.language || ''}, MCP, Model Context Protocol, ${serverName}`}>
   </Fragment>
 
