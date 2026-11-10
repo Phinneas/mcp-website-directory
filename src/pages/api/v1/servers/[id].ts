@@ -180,6 +180,9 @@ export const GET: APIRoute = async ({ params, locals }) => {
     language: server.fields.language,
     stars: server.fields.stars,
     github_url: server.fields.github_url,
+    license: server.license ?? null,
+    mcp_primitives: server.mcpPrimitives ?? null,
+    compatible_clients: server.compatibleClients ?? null,
     shelf_url: `https://www.mymcpshelf.com/server/${server.id}`,
   };
 

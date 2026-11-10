@@ -24,12 +24,12 @@ GET https://www.mymcpshelf.com/api/v1/search-ai?q={query}&limit={limit}
 GET https://www.mymcpshelf.com/api/v1/servers?q={query}&category={category}&limit={limit}&offset={offset}
 - Paginated server list with full badge data.
 - Response includes: servers[], total, offset, limit, has_more.
-- Each server includes: composite_trust, reliability, green_score, scan_badge, install_count, installs_24h, installs_7d.
+- Each server includes: composite_trust, reliability, green_score, scan_badge, install_count, installs_24h, installs_7d, license (SPDX identifier), mcp_primitives (supported MCP protocol capabilities like resources/tools/prompts/sampling), compatible_clients (client compatibility declarations).
 
 ### 3. Server detail
 GET https://www.mymcpshelf.com/api/v1/servers/{id}
 - Full server details including security audit, reliability breakdown, env schema, CLI command/args.
-- Response includes: composite_trust, green_score, scan, reliability, security, verified.
+- Response includes: composite_trust, green_score, scan, reliability, security, verified, license, mcp_primitives, compatible_clients.
 
 ### 4. Security scan status
 GET https://www.mymcpshelf.com/api/v1/security/scan-status?server_id={id}

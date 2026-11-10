@@ -201,6 +201,15 @@ mcp.tool(
       if (live.verified != null) {
         lines.push(`verified:   ${live.verified ? 'Yes' : 'No'}`);
       }
+      if (live.license) {
+        lines.push(`license:    ${live.license}`);
+      }
+      if (live.mcp_primitives && live.mcp_primitives.length) {
+        lines.push(`primitives: ${live.mcp_primitives.join(', ')}`);
+      }
+      if (live.compatible_clients && live.compatible_clients.length) {
+        lines.push(`clients:    ${live.compatible_clients.join(', ')}`);
+      }
       return { content: [{ type: 'text', text: lines.join('\n') }] };
     }
 

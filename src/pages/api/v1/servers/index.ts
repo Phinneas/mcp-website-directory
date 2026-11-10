@@ -51,6 +51,9 @@ export const GET: APIRoute = async ({ request, locals, url }) => {
       install_count: server.installCount ?? 0,
       installs_24h: server.installs24h ?? 0,
       installs_7d: server.installs7d ?? 0,
+      license: server.license ?? null,
+      mcp_primitives: server.mcpPrimitives ?? null,
+      compatible_clients: server.compatibleClients ?? null,
     };
   });
 
