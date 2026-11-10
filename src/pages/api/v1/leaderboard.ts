@@ -5,7 +5,7 @@
  * Returns servers ranked by real install counts from the CLI.
  *
  * Query params:
- *   sort: 'total' | 'trending' | 'hot'  (default: 'total')
+ *   sort: 'total' | 'trending' | 'hot' | 'rating' | 'bookmarked'  (default: 'total')
  *   category: filter by category (default: all)
  *   limit: results per page (default: 50, max: 100)
  *   offset: pagination offset
@@ -25,7 +25,7 @@ export const GET: APIRoute = async ({ url, locals }) => {
   }
 
   const sortParam = url.searchParams.get('sort') || 'total';
-  const sort: LeaderboardSort = ['total', 'trending', 'hot'].includes(sortParam)
+  const sort: LeaderboardSort = ['total', 'trending', 'hot', 'rating', 'bookmarked'].includes(sortParam)
     ? sortParam as LeaderboardSort
     : 'total';
   const category = url.searchParams.get('category') || '';

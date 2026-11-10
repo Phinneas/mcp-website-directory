@@ -328,7 +328,7 @@ export async function getServersPage(
     deployment?: string;
     deployments?: string[];
     localOnly?: boolean;
-    sort?: 'stars' | 'installs' | 'trending';
+    sort?: 'stars' | 'installs' | 'trending' | 'rating' | 'bookmarked';
   } = {}
 ): Promise<ServersPage> {
   const conditions: string[] = [];
@@ -380,14 +380,21 @@ export async function getServersPage(
     case 'trending':
       orderBy = 'installs_24h DESC NULLS LAST, stars DESC';
       break;
+    case 'rating':
+      orderBy = 'cs.avg_rating DESC NULLS LAST, stars DESC';
+      break;
+    case 'bookmarked':
+      orderBy = 'bookmark_count DESC, install_count DESC';
+      break;
     default:
       orderBy = 'stars DESC, downloads DESC';
   }
 
-  // Fetch page — include community stats (review count/rating) via LEFT JOIN
+  // Fetch page — include community stats (review count/rating) and bookmark count
   const rows = await db
     .prepare(
-      `SELECT servers.*, cs.review_count, cs.avg_rating
+      `SELECT servers.*, cs.review_count, cs.avg_rating,
+              (SELECT COUNT(*) FROM user_bookmarks ub WHERE ub.server_id = servers.id) AS bookmark_count
        FROM servers
        LEFT JOIN community_stats cs ON cs.server_id = servers.id
        ${where}
@@ -496,14 +503,16 @@ export interface LeaderboardEntry {
   badge_tier: string;
 }
 
-export type LeaderboardSort = 'total' | 'trending' | 'hot';
+export type LeaderboardSort = 'total' | 'trending' | 'hot' | 'rating' | 'bookmarked';
 
 /**
- * Get the leaderboard — servers sorted by real install counts.
+ * Get the leaderboard — servers sorted by install counts, rating, or bookmarks.
  * Sort modes:
- *   'total'     — all-time install count (like skills.sh's All Time tab)
- *   'trending'  — 24h install count (like skills.sh's Trending tab)
- *   'hot'       — servers with rapidly accelerating installs (24h > 2x prev_24h)
+ *   'total'      — all-time install count (like skills.sh's All Time tab)
+ *   'trending'   — 24h install count (like skills.sh's Trending tab)
+ *   'hot'        — servers with rapidly accelerating installs (24h > 2x prev_24h)
+ *   'rating'     — average review rating DESC (NULLS LAST)
+ *   'bookmarked' — bookmark count DESC (from user_bookmarks)
  */
 export async function getLeaderboard(
   db: D1Database,
@@ -525,12 +534,21 @@ export async function getLeaderboard(
     : '';
 
   let orderBy: string;
+  let extraJoin = '';
   switch (sort) {
     case 'trending':
       orderBy = 'ic.installs_24h DESC';
       break;
     case 'hot':
       orderBy = 'ic.installs_24h DESC, ic.peak_24h DESC';
+      break;
+    case 'rating':
+      orderBy = 'cs.avg_rating DESC NULLS LAST, ic.total_installs DESC';
+      extraJoin = 'LEFT JOIN community_stats cs ON cs.server_id = s.id';
+      break;
+    case 'bookmarked':
+      orderBy = 'ub.bookmark_count DESC, ic.total_installs DESC';
+      extraJoin = 'LEFT JOIN (SELECT server_id, COUNT(*) AS bookmark_count FROM user_bookmarks GROUP BY server_id) ub ON ub.server_id = s.id';
       break;
     default:
       orderBy = 'ic.total_installs DESC';
@@ -558,6 +576,7 @@ export async function getLeaderboard(
               ic.first_install_at, ic.last_install_at
        FROM install_counts ic
        JOIN servers s ON s.id = ic.server_id
+       ${extraJoin}
        WHERE ic.total_installs > 0 ${categoryFilter}
        ORDER BY ${orderBy}
        LIMIT ? OFFSET ?`

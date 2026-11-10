@@ -23,8 +23,13 @@ export const GET: APIRoute = async ({ request, locals, url }) => {
   const limit = Math.min(Math.max(parseInt(url.searchParams.get('limit') || '20', 10), 1), 100);
   const offset = Math.max(parseInt(url.searchParams.get('offset') || '0', 10), 0);
   const category = url.searchParams.get('category') || '';
+  const sortParam = url.searchParams.get('sort') || 'stars';
+  const validSorts = ['stars', 'installs', 'trending', 'rating', 'bookmarked'] as const;
+  const sort = validSorts.includes(sortParam as typeof validSorts[number])
+    ? sortParam as typeof validSorts[number]
+    : 'stars';
 
-  const page = await getServersPage(db, { offset, limit, category, search: q });
+  const page = await getServersPage(db, { offset, limit, category, search: q, sort });
 
   const servers = page.servers.map((server) => {
     const audit = server.securityAudit;
