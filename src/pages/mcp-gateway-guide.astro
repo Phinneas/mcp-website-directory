@@ -1,0 +1,414 @@
+---
+// GET /mcp-gateway-guide — MCP Gateway Pillar Guide
+export const prerender = true;
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HeaderNewsletter from '../components/HeaderNewsletter.astro';
+import CustomMcpCta from '../components/CustomMcpCta.astro';
+import { FolderIcon, ToolboxIcon, ComputerIcon, VintageIcon } from '../components/VintageIcon';
+
+const pageTitle = 'What Is an MCP Gateway? — Complete Guide | My MCP Shelf';
+const pageDescription = 'An MCP gateway centralizes authentication, policy, audit logging, and routing for multiple MCP servers behind a single endpoint. Compare options and evaluate trade-offs.';
+const canonicalUrl = 'https://www.mymcpshelf.com/mcp-gateway-guide';
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'What Is an MCP Gateway? Gateway vs Proxy vs Direct Connection',
+  description: pageDescription,
+  url: canonicalUrl,
+  author: { '@type': 'Person', name: 'My MCP Shelf' },
+  publisher: {
+    '@type': 'Organization',
+    name: 'My MCP Shelf',
+    url: 'https://www.mymcpshelf.com',
+  },
+};
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDescription}
+  canonical={canonicalUrl}
+  structuredData={structuredData}
+>
+  <div class="page-container">
+    <!-- Hero -->
+    <section class="hero-section">
+      <div class="hero-content">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <a href="/">Home</a>
+          <span class="breadcrumb-separator">/</span>
+          <a href="/blog">Blog</a>
+          <span class="breadcrumb-separator">/</span>
+          <span>MCP Gateway Guide</span>
+        </nav>
+        <h1 class="page-title">What Is an MCP Gateway?</h1>
+        <p class="page-subtitle">
+          Gateway vs proxy vs direct connection — and when your team needs one.
+          A complete guide to centralizing authentication, policy, audit logging,
+          and routing for multiple MCP servers.
+        </p>
+      </div>
+    </section>
+
+    <!-- Newsletter CTA -->
+    <div class="newsletter-banner" style="margin-bottom: 1.5rem;">
+      <HeaderNewsletter />
+    </div>
+
+    <!-- 1. What is an MCP Gateway? -->
+    <section class="section">
+      <h2 class="section-title">What Is an MCP Gateway?</h2>
+      <p>
+        An MCP gateway is a middleware server that sits between your AI clients (Claude Desktop, Cursor, 
+        custom agents) and the MCP servers they talk to. Instead of each client connecting directly to 
+        every server, all connections route through the gateway, which handles authentication, 
+        authorization, rate limiting, audit logging, and server routing in one place.
+      </p>
+      <p>
+        Think of it as an API gateway for the MCP ecosystem — the same pattern organizations use to 
+        manage microservices, applied to AI tool access.
+      </p>
+      <div class="callout">
+        <strong>In short:</strong> rather than managing N connections from M clients (N×M problem), you 
+        manage N connections from the gateway and 1 connection from each client — a linear, not quadratic, 
+        architecture.
+      </div>
+    </section>
+
+    <!-- 2. Why Teams Use One -->
+    <section class="section">
+      <h2 class="section-title">Why Teams Use an MCP Gateway</h2>
+
+      <div class="criterion">
+        <h3 class="criterion-title">Authentication &amp; SSO integration</h3>
+        <p>
+          Each MCP server may require its own API key. A gateway centralizes credential management:
+          store secrets in one place, integrate with your existing SSO provider (Okta, Azure AD, 
+          Google Workspace), and rotate credentials without touching every client configuration. 
+          <a href="/enterprise-saas">Enterprise SaaS deployments</a> typically require this level of 
+          credential management.
+        </p>
+      </div>
+
+      <div class="criterion">
+        <h3 class="criterion-title">Policy &amp; tool allowlists</h3>
+        <p>
+          Not every tool on a server should be accessible to every user. A gateway lets you define 
+          allowlists: which tools an LLM can call, which data sources it can read, and which operations 
+          require manual approval. The <a href="/agent-hygiene">Agent Hygiene Score</a> rubric's 
+          "least-privilege scoping" dimension directly applies here.
+        </p>
+      </div>
+
+      <div class="criterion">
+        <h3 class="criterion-title">Audit logging</h3>
+        <p>
+          Every tool invocation, resource read, and prompt execution flows through the gateway, which 
+          can log the request, the user, the response, and the latency. This is essential for SOC 2, 
+          HIPAA, and internal compliance requirements. See <a href="/enterprise-readiness">Enterprise Readiness</a> 
+          for deployment options that include audit infrastructure.
+        </p>
+      </div>
+
+      <div class="criterion">
+        <h3 class="criterion-title">Rate limits &amp; cost control</h3>
+        <p>
+          Gateway-level rate limiting prevents runaway agent loops from exhausting API quotas or 
+          budgets. You can set per-user, per-server, or per-tool limits and monitor usage in real time.
+        </p>
+      </div>
+
+      <div class="criterion">
+        <h3 class="criterion-title">Route multiple servers behind one endpoint</h3>
+        <p>
+          Instead of distributing N server URLs to every client, clients connect to one gateway URL.
+          The gateway routes requests to the correct upstream server based on the tool name or resource 
+          path. This is especially valuable for <a href="/remote-servers">remote servers</a> and 
+          <a href="/self-hosted">self-hosted deployments</a> where endpoints may change as infrastructure evolves.
+        </p>
+      </div>
+
+      <div class="criterion">
+        <h3 class="criterion-title">Remote vs local transport abstraction</h3>
+        <p>
+          A gateway can bridge transport types: expose a remote SSE endpoint for cloud clients while 
+          the upstream servers run locally via stdio. This lets teams develop with local servers and 
+          deploy the same tools to production behind the gateway — no code changes needed.
+        </p>
+      </div>
+    </section>
+
+    <!-- 3. How It Differs from a Proxy or API Gateway -->
+    <section class="section">
+      <h2 class="section-title">Gateway vs Plain Proxy vs API Gateway</h2>
+
+      <div class="comparison-table">
+        <div class="comp-row header">
+          <div class="comp-col feature">Feature</div>
+          <div class="comp-col proxy">Plain Reverse Proxy</div>
+          <div class="comp-col apigw">API Gateway</div>
+          <div class="comp-col mgw">MCP Gateway</div>
+        </div>
+        <div class="comp-row">
+          <div class="comp-col feature">Protocol awareness</div>
+          <div class="comp-col proxy">HTTP only</div>
+          <div class="comp-col apigw">HTTP/REST aware</div>
+          <div class="comp-col mgw">MCP protocol aware</div>
+        </div>
+        <div class="comp-row">
+          <div class="comp-col feature">Tool-level routing</div>
+          <div class="comp-col proxy">None</div>
+          <div class="comp-col apigw">Endpoint-based</div>
+          <div class="comp-col mgw">By tool name and resource</div>
+        </div>
+        <div class="comp-row">
+          <div class="comp-col feature">Auth</div>
+          <div class="comp-col proxy">Basic/TLS</div>
+          <div class="comp-col apigw">OAuth, JWTs, API keys</div>
+          <div class="comp-col mgw">SSO + per-server credentials</div>
+        </div>
+        <div class="comp-row">
+          <div class="comp-col feature">Audit trail</div>
+          <div class="comp-col proxy">Connection-level logs</div>
+          <div class="comp-col apigw">Request/response logs</div>
+          <div class="comp-col mgw">Per-tool invocation logs</div>
+        </div>
+        <div class="comp-row">
+          <div class="comp-col feature">Transport bridging</div>
+          <div class="comp-col proxy">None</div>
+          <div class="comp-col apigw">Protocol translation</div>
+          <div class="comp-col mgw">stdio ↔ SSE bridging</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. How to Evaluate One -->
+    <section class="section">
+      <h2 class="section-title">How to Evaluate an MCP Gateway</h2>
+      <p>
+        Use the same <a href="/mcp-server-checklist">MCP Server Selection Checklist</a> as a starting 
+        point, with these gateway-specific considerations:
+      </p>
+      <ul class="eval-list">
+        <li>
+          <strong>Security trust tier &amp; scan date:</strong> A gateway is a privileged position — 
+          every tool call flows through it. Verify the gateway's <a href="/leaderboard">composite trust score</a> 
+          and scan recency before production deployment.
+        </li>
+        <li>
+          <strong>Authentication provider support:</strong> Does it integrate with your identity provider 
+          (Okta, Azure AD, Google, LDAP)? Can it proxy credentials to upstream servers?
+        </li>
+        <li>
+          <strong>Tool allowlisting granularity:</strong> Can you restrict specific tools per user or 
+          group? Or is it all-or-nothing access to a server?
+        </li>
+        <li>
+          <strong>Audit export:</strong> Can logs be exported to your SIEM (Splunk, Datadog, ELK)? 
+          In what format?
+        </li>
+        <li>
+          <strong>Deployment model:</strong> Is it available as a <a href="/self-hosted">self-hosted</a> 
+          container, a <a href="/cloud-native">cloud-native</a> service, or an <a href="/enterprise-saas">enterprise SaaS</a> 
+          offering? Each model has different implications for data residency and compliance.
+        </li>
+      </ul>
+    </section>
+
+    <!-- 5. Main Options -->
+    <section class="section">
+      <h2 class="section-title">Main Gateway Options</h2>
+
+      <div class="criterion">
+        <h3 class="criterion-title">Cloudflare One — MCP server portals</h3>
+        <p>
+          Cloudflare One provides MCP server portals that centralize multiple MCP servers behind a 
+          single HTTP(S) endpoint with built-in authentication (SSO/OAuth), tool- and prompt-level 
+          allowlisting, session audit logging, and policy enforcement. Portals integrate with 
+          Cloudflare's Zero Trust Gateway for TLS decryption and traffic routing. Best suited for 
+          organizations already using Cloudflare One or deploying Cloudflare's AI access controls. 
+          <a href="https://developers.cloudflare.com/cloudflare-one/access-controls/ai-controls/mcp-portals/">Documentation →</a>
+        </p>
+      </div>
+
+      <div class="criterion">
+        <h3 class="criterion-title">AWS A2A Gateway</h3>
+        <p>
+          AWS published an <a href="https://aws.amazon.com/blogs/machine-learning/building-a-serverless-a2a-gateway-for-agent-discovery-routing-and-access-control/">open architecture for building serverless A2A gateways</a> 
+          that solves the N×M connection problem for multi-agent systems. The design uses API Gateway, 
+          Lambda, DynamoDB, and Amazon Titan embeddings for semantic agent discovery with OAuth 2.0 
+          authentication and SSE streaming. This is an agent-to-agent architecture rather than an 
+          MCP-specific gateway, but many of the same routing and auth patterns apply. 
+          <a href="/blog/aws-launches-serverless-gateway-for-multi-agent-systems">Related article →</a>
+        </p>
+      </div>
+
+      <div class="criterion">
+        <h3 class="criterion-title">Build your own (custom gateway)</h3>
+        <p>
+          Teams with specific requirements often build their own gateway using the MCP SDKs. 
+          The <a href="/blog/notion-mcp-gateway">Notion MCP Gateway guide</a> demonstrates this 
+          pattern for a specific service, but the same architecture applies to aggregating any 
+          set of MCP servers. Custom gateways offer maximum flexibility at the cost of maintenance 
+          burden.
+        </p>
+      </div>
+    </section>
+
+    <!-- 6. Cluster Spoke Topics -->
+    <section class="section">
+      <h2 class="section-title">Deeper Reading</h2>
+      <p>
+        This guide is the hub of the MCP Gateway content cluster. Related content includes:
+      </p>
+      <ul class="cluster-list">
+        <li><a href="/blog/notion-mcp-gateway">Building a Production Notion MCP Gateway</a> — step-by-step implementation guide for a custom gateway</li>
+        <li><a href="/blog/aws-launches-serverless-gateway-for-multi-agent-systems">AWS Launches Serverless Gateway for Multi-Agent Systems</a> — industry news analysis</li>
+        <li><a href="/remote-servers">Remote MCP Servers</a> — directory of SSE/HTTP servers suitable for gateway proxying</li>
+        <li><a href="/self-hosted">Self-Hosted MCP Servers</a> — on-premise and VPC deployment options</li>
+        <li><a href="/enterprise-readiness">Enterprise Readiness</a> — compare deployment models including gateway architectures</li>
+        <li><a href="/mcp-clients">MCP Clients Directory</a> — which clients support gateway-style connections</li>
+        <li><a href="/mcp-server-checklist">MCP Server Selection Checklist</a> — evaluation framework for choosing gateway servers</li>
+      </ul>
+    </section>
+
+    <!-- Newsletter CTA -->
+    <div class="newsletter-banner" style="margin-top: 2rem;">
+      <HeaderNewsletter />
+    </div>
+
+    <!-- Footer links -->
+    <div class="footer-links">
+      <a href="/"><FolderIcon client:load size={16} /> Back to MCP Shelf</a>
+      <a href="/blog"><VintageIcon client:load name="Windows95TextFile" size={16} /> All Guides</a>
+      <a href="/leaderboard"><ToolboxIcon client:load size={16} /> Leaderboard</a>
+      <a href="/mcp-server-checklist"><ComputerIcon client:load size={16} /> Selection Checklist</a>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+  .hero-section {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 1.5rem 0;
+  }
+  .page-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .page-subtitle {
+    font-size: 1.1rem;
+    color: hsl(var(--muted));
+    max-width: 750px;
+    margin: 1rem auto;
+    line-height: 1.6;
+  }
+  .breadcrumb {
+    margin-bottom: 1rem;
+  }
+  .breadcrumb a { color: hsl(var(--foreground)); text-decoration: underline; }
+  .breadcrumb-separator { margin: 0 0.25rem; color: hsl(var(--muted)); }
+  .section { margin: 1.5rem 0; }
+  .section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 1.5rem 0 0.75rem;
+    color: hsl(var(--foreground));
+  }
+  .section p {
+    line-height: 1.7;
+    margin: 0.75rem 0;
+    color: hsl(var(--foreground));
+  }
+  .section a { color: hsl(var(--foreground)); }
+
+  .criterion {
+    margin: 0.75rem 0;
+    padding: 0.75rem 1rem;
+    background: hsl(var(--card));
+    border-radius: 8px;
+    border: 1px solid hsl(var(--border));
+  }
+  .criterion-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 0.25rem;
+  }
+  .criterion p { margin: 0; line-height: 1.6; color: hsl(var(--muted)); }
+
+  .callout {
+    padding: 0.75rem 1rem;
+    background: hsl(var(--card));
+    border-left: 3px solid #3b82f6;
+    border-radius: 4px;
+    margin: 1rem 0;
+    line-height: 1.6;
+    color: hsl(var(--foreground));
+  }
+
+  .comparison-table {
+    display: grid;
+    grid-template-columns: 180px 1fr 1fr 1fr;
+    gap: 0;
+    border: 1px solid hsl(var(--border));
+    border-radius: 8px;
+    overflow: hidden;
+    font-size: 0.9rem;
+  }
+  .comp-row { display: contents; }
+  .comp-row > div {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid hsl(var(--border));
+    background: hsl(var(--card));
+    display: flex;
+    align-items: center;
+  }
+  .comp-row.header > div {
+    font-weight: 600;
+    background: hsl(var(--accent));
+    color: hsl(var(--foreground));
+  }
+  .comp-col.feature { font-weight: 500; }
+  .comp-col.proxy { color: hsl(var(--muted)); }
+  .comp-col.apigw { color: hsl(var(--muted)); }
+  .comp-col.mgw { color: hsl(var(--foreground)); font-weight: 500; }
+
+  .eval-list { padding-left: 1.2rem; }
+  .eval-list li { line-height: 1.6; margin: 0.5rem 0; }
+  .cluster-list { padding-left: 1.2rem; }
+  .cluster-list li { line-height: 1.6; margin: 0.4rem 0; }
+  .cluster-list li a { color: hsl(var(--foreground)); }
+
+  .newsletter-banner {
+    margin: 1.5rem 0;
+    display: flex;
+    justify-content: center;
+  }
+  .footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    margin: 2rem 0;
+  }
+  .footer-links a { color: hsl(var(--foreground)); text-decoration: underline; }
+
+  @media (max-width: 768px) {
+    .comparison-table {
+      grid-template-columns: 1fr 1fr;
+      font-size: 0.8rem;
+    }
+    .page-title { font-size: 1.6rem; }
+  }
+</style>
