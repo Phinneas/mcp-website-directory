@@ -28,8 +28,12 @@ export const GET: APIRoute = async ({ request, locals, url }) => {
   const sort = validSorts.includes(sortParam as typeof validSorts[number])
     ? sortParam as typeof validSorts[number]
     : 'stars';
+  const primitivesParam = url.searchParams.get('primitives') || '';
+  const primitives = primitivesParam
+    ? primitivesParam.split(',').map(p => p.trim().toLowerCase()).filter(Boolean)
+    : undefined;
 
-  const page = await getServersPage(db, { offset, limit, category, search: q, sort });
+  const page = await getServersPage(db, { offset, limit, category, search: q, sort, primitives });
 
   const servers = page.servers.map((server) => {
     const audit = server.securityAudit;

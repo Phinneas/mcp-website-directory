@@ -328,6 +328,7 @@ export async function getServersPage(
     deployment?: string;
     deployments?: string[];
     localOnly?: boolean;
+    primitives?: string[];
     sort?: 'stars' | 'installs' | 'trending' | 'rating' | 'bookmarked';
   } = {}
 ): Promise<ServersPage> {
@@ -346,6 +347,15 @@ export async function getServersPage(
   } else if (deployment && deployment !== 'all') {
     conditions.push('deployment_type = ?');
     params.push(deployment);
+  }
+
+  if (primitives && primitives.length > 0) {
+    const primitiveConditions = primitives.map(() =>
+      `mcp_primitives LIKE '%' || ? || '%'`
+    );
+    conditions.push(`(${primitiveConditions.join(' OR ')})`);
+    // Include JSON quotes in bound value so LIKE matches the stored JSON array string token
+    params.push(...primitives.map(p => `"${p}"`));
   }
 
   if (localOnly) {

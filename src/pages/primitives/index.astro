@@ -1,0 +1,58 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const primitives = [
+  { slug: 'tools', label: 'Tools', description: 'Servers that expose callable tools for AI agents to perform actions' },
+  { slug: 'resources', label: 'Resources', description: 'Servers that provide readable data resources like files, database records, or API responses' },
+  { slug: 'prompts', label: 'Prompts', description: 'Servers that offer prompt templates for guiding AI agent behavior' },
+  { slug: 'sampling', label: 'Sampling', description: 'Servers that support model sampling for generating completions' },
+];
+
+const pageTitle = 'MCP Primitives | Browse by Capability | My MCP Shelf';
+const pageDescription = 'Browse MCP servers by primitive capability: Tools, Resources, Prompts, and Sampling. Find servers that support the protocol features you need.';
+---
+
+<BaseLayout title={pageTitle} description={pageDescription}>
+  <div class="hero-section">
+    <div class="hero-content">
+      <div class="breadcrumb">
+        <a href="/">Home</a>
+        <span>›</span>
+        <span>Primitives</span>
+      </div>
+      <h1 class="page-title">MCP Primitives</h1>
+      <p class="page-subtitle">Browse MCP servers by their supported protocol capabilities</p>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="category-nav">
+      {primitives.map(p => (
+        <a href={`/primitives/${p.slug}`} class="category-link">
+          {p.label}
+        </a>
+      ))}
+    </div>
+
+    <div class="featured-content" style="margin-top: 2rem;">
+      <h2>What are MCP Primitives?</h2>
+      <p>
+        MCP primitives are the fundamental capabilities that an MCP server can provide to AI agents.
+        Each server declares which primitives it supports, helping agents understand what the server can do.
+      </p>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
+        {primitives.map(p => (
+          <a href={`/primitives/${p.slug}`} style="text-decoration: none; color: inherit;">
+            <div style="border: 1px solid #e2e2e2; border-radius: 10px; padding: 1.5rem; transition: box-shadow 0.2s, border-color 0.2s;"
+                 onmouseover="this.style.borderColor='#1a56db'; this.style.boxShadow='0 2px 8px rgba(26,86,219,0.1)'"
+                 onmouseout="this.style.borderColor='#e2e2e2'; this.style.boxShadow='none'">
+              <h3 style="margin: 0 0 0.5rem; font-size: 1.1rem;">{p.label}</h3>
+              <p style="margin: 0; color: #666; font-size: 0.9rem;">{p.description}</p>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</BaseLayout>

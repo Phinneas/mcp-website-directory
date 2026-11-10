@@ -173,6 +173,7 @@ export default function ServerGrid({ initialServers, total: initialTotal, meta }
   const [localOnly, setLocalOnly] = useState(false);
   const deployment = meta?.deployment || 'all';
   const deployments = meta?.deployments || '';
+  const primitives = meta?.primitives || '';
   const [offset, setOffset] = useState(initialServers.length);
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -186,7 +187,8 @@ export default function ServerGrid({ initialServers, total: initialTotal, meta }
     deps: string,
     off: number,
     append: boolean,
-    local: boolean
+    local: boolean,
+    prim?: string
   ) => {
     if (append) setLoadingMore(true);
     else setLoading(true);
@@ -198,6 +200,7 @@ export default function ServerGrid({ initialServers, total: initialTotal, meta }
       else if (dep && dep !== 'all') params.set('deployment', dep);
       if (q.trim()) params.set('search', q.trim());
       if (local) params.set('local_only', 'true');
+      if (prim) params.set('primitives', prim);
 
       const res = await fetch(`/api/servers?${params}`);
       if (!res.ok) throw new Error('fetch failed');
@@ -229,10 +232,10 @@ export default function ServerGrid({ initialServers, total: initialTotal, meta }
     }
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
-      fetchServers(search, category, deployment, deployments, 0, false, localOnly);
+      fetchServers(search, category, deployment, deployments, 0, false, localOnly, primitives);
     }, 300);
     return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
-  }, [search, category, deployment, deployments, localOnly, fetchServers, initialCategory]);
+  }, [search, category, deployment, deployments, localOnly, fetchServers, initialCategory, primitives]);
 
   const hasMore = offset < total;
 
@@ -300,7 +303,7 @@ export default function ServerGrid({ initialServers, total: initialTotal, meta }
           <button
             className="btn btn-primary"
             style={{ padding: '0.75rem 2rem', fontSize: '1rem' }}
-            onClick={() => fetchServers(search, category, deployment, deployments, offset, true, localOnly)}
+            onClick={() => fetchServers(search, category, deployment, deployments, offset, true, localOnly, primitives)}
             disabled={loadingMore}
           >
             {loadingMore ? 'Loading…' : `Load More (${total - offset} remaining)`}
