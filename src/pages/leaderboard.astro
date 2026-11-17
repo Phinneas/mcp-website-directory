@@ -60,7 +60,14 @@ function formatCount(n: number): string {
 }
 ---
 
-<BaseLayout title="MCP Server Leaderboard — Real Install Counts | MyMCPShelf" description="See which MCP servers developers are actually installing. Real install counts from verified, security-checked servers.">
+<BaseLayout
+  title="MCP Server Leaderboard — Real Install Counts | MyMCPShelf"
+  description="See which MCP servers developers are actually installing. Real install counts from verified, security-checked servers."
+  breadcrumbs={[
+    { name: 'Home', url: '/' },
+    { name: 'Leaderboard' },
+  ]}
+>
   <div class="leaderboard-page">
     <div class="leaderboard-hero">
       <h1>MCP Server Leaderboard</h1>

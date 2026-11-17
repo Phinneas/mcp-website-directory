@@ -27,6 +27,7 @@ const post =
         track: collectionEntry.data.track,
         tags: collectionEntry.data.tags,
         image: collectionEntry.data.image,
+        canonical: (collectionEntry.data as any).canonical,
         entry: collectionEntry,
       }
     : null;
@@ -49,7 +50,8 @@ const tags = post ? post.tags : undefined;
 const image = post ? post.image : externalPost!.image;
 
 const newsletter = newsletterForTrack(track);
-const canonical = `https://www.mymcpshelf.com/blog/${slug}`;
+/* Use frontmatter canonical if set (for cross-reference / consolidation), otherwise default to this post's URL */
+const canonical = (post && post.canonical) || `https://www.mymcpshelf.com/blog/${slug}`;
 
 const structuredData = {
   '@context': 'https://schema.org',
@@ -75,6 +77,11 @@ const structuredData = {
     canonical={canonical}
     ogType="article"
     structuredData={structuredData}
+    breadcrumbs={[
+      { name: 'Home', url: '/' },
+      { name: 'Blog', url: '/blog' },
+      { name: title },
+    ]}
 >
     <div class="container">
         <main>
