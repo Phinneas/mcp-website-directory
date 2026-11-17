@@ -8,8 +8,8 @@
  * Included from the sitemap index at /sitemap-index.xml.
  */
 import type { APIRoute } from 'astro';
-import { getIndexableServers } from '../../utils/indexing.js';
-import serversData from '../../data/servers.json';
+import { getIndexableServers } from '../utils/indexing.js';
+import serversData from '../data/servers.json';
 
 export const prerender = false;
 
